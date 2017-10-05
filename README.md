@@ -4,10 +4,9 @@ Turn command-line applications into webapps.
 
 Jobson lets developers share command-line applications over the web
 without modification by providing an abstraction layer over process 
-forking, HTTP API generation, standard IO, and websockets.
+forking, HTTP API generation, standard IO, and websockets. 
 
-Jobson uses declarative job specs (YAML) to describe what an
-application is, what inputs it needs, and how to run it:
+It uses a high-level declarative spec (YAML) that describes applications:
 
 ```yaml
 name: Trivial Application
@@ -27,7 +26,7 @@ execution:
   - $request
 ```
 
-Declarative specs enable Jobson to automatically generate and manage:
+Jobson uses these specs to automatically generate and manage:
 
 - A HTTP API (`/v1/jobs`, `/v1/specs`, `/v1/jobs/{id}/stderr`. etc.)
 
