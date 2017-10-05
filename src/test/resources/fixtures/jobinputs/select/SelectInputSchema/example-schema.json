@@ -1,0 +1,11 @@
+{
+  "id": "foo",
+  "name": "Example Options Schema",
+  "description": "Example Description",
+  "type": "select",
+  "options": [
+    { "id": "a", "name": "Select A", "description": "Some description" },
+    { "id": "b", "name": "Option B" }
+  ],
+  "default": "a"
+}

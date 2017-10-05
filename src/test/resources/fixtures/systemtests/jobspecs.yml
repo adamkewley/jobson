@@ -1,0 +1,75 @@
+- id: first-spec
+  name: First job spec
+  description: The first job spec
+
+  expectedInputs:
+
+  - id: favorite-name
+    type: select
+    name: Favorite Name
+    description: Select your favorite name
+    options:
+    - id: adam
+      name: Adam
+    - id: emma
+      name: Emma
+      description: Who is this person?
+
+  - id: football-team
+    type: select
+    name: Football Team
+    description: Select your favorite football team
+    options:
+    - id: liverpool
+      name: Liverpool FC
+      description: The only correct choice
+    - id: manchester
+      name: Manchester
+      description: The wrong choice
+
+  execution:
+    application: echo
+    arguments:
+    - hello world
+
+
+- id: second-spec
+  name: Second job spec
+  description: The second job spec
+
+  expectedInputs:
+
+  - id: query
+    type: sql
+    name: Query
+    description: The main query to run
+    tables:
+    - id: table1
+      name: Table 1
+      description: The first table
+      columns:
+      - id: column1
+        name: Column 1
+        description: The first column
+        type: string
+      - id: column2
+        name: Column 2
+        description: The second column
+        type: int
+
+  execution:
+    application: bash
+    arguments:
+    - script.sh
+    dependencies:
+    - source: script.sh
+      target: script.sh
+
+- id: third-spec
+  name: Third job spec
+  description: The third job spec
+  expectedInputs: []
+
+  execution:
+    application: cat
+    arguments: []

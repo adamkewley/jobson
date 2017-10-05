@@ -1,0 +1,6 @@
+{
+  "spec": "job-schema-1",
+  "inputs": {
+    "sql-input-schema": "select column_1_A from table_1 where column_1_A = 5;"
+  }
+}

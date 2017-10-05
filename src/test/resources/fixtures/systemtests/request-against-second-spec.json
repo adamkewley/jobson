@@ -1,0 +1,7 @@
+{
+  "name": "first job",
+  "spec": "second-spec",
+  "inputs": {
+    "query": "select column1 from table1;"
+  }
+}

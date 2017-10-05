@@ -1,0 +1,1 @@
+"select this_column_does_not_exist from table_1;"

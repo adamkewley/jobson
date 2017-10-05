@@ -1,0 +1,31 @@
+specs:
+  dir: specs
+
+jobs:
+  dir: jobs
+
+workingDirs:
+  dir: wds
+
+users:
+  file: users
+
+authentication:
+  type: basic
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 8081
+
+logging: # slf4j
+  level: INFO
+  appenders:
+    - type: console
+      threshold: ALL
+      timeZone: UTC
+      target: stdout
+      logFormat: "%d{yy/MM/dd HH:mm:ss} %-5p %c: %m%n"

@@ -1,0 +1,3 @@
+# can create unix crypt pws with: python3 -c 'import crypt; print(crypt.crypt("test", crypt.mksalt(crypt.METHOD_SHA512)))'
+# pw = password123
+testuser:basic:$6$jFt3P4C.qO2nP14C$z751MgEcut6vBlTcIEKDnFydFgloiFKoINa/uwiHm3DbyUWsfABB4TTCM.C9OBuVflJUzLdPt5VdxjAn9QIW81

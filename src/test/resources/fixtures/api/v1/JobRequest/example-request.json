@@ -1,0 +1,14 @@
+{
+  "name": "job",
+  "spec": "suede-cluster-job",
+  "inputs": {
+    "main-table": {
+      "type": "sql",
+      "value": "select a, b from T where a = 5;"
+    },
+    "format": {
+      "type": "select",
+      "value": "csv"
+    }
+  }
+}

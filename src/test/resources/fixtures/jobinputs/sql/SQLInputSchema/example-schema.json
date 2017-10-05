@@ -1,0 +1,25 @@
+{
+  "id": "sql-input-schema",
+  "name": "An SQL input schema",
+  "description": "An SQL input schema",
+  "type": "sql",
+  "tables": [
+    {
+      "id": "table_1",
+      "name": "Table 1",
+      "description": "Table 1",
+      "columns": [
+        { "id": "column_1_A", "name": "Column 1A", "description": "Column 1A", "type": "int" },
+        { "id": "column_1_B", "name": "Column 1B", "description": "Column 1B", "type": "[string]" }
+      ]
+    },
+    {
+      "id": "table_2",
+      "name": "Table 2",
+      "description": "Table 2",
+      "columns": [
+        { "id": "column_2_A", "name": "Column 2A", "description": "Column 2A", "type": "string" }
+      ]
+    }
+  ]
+}

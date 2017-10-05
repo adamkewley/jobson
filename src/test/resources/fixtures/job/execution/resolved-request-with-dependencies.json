@@ -1,0 +1,64 @@
+{
+  "name": "some job",
+  "owner": "akewley",
+
+  "inputs": {
+    "sql-input-schema": "select column_1_A from table_1 where column_1_A = 5;",
+    "foo": "a"
+  },
+
+  "spec": {
+    "id": "job-schema-1",
+    "name": "Job Schema 1",
+    "description": "Job Schema 1",
+    "expectedInputs": [
+      {
+        "id": "sql-input-schema",
+        "name": "An SQL input schema",
+        "description": "An SQL input schema",
+        "type": "sql",
+        "tables": [
+          {
+            "id": "table_1",
+            "name": "Table 1",
+            "description": "Table 1",
+            "columns": [
+              { "id": "column_1_A", "name": "Column 1A", "description": "Column 1A", "type": "int" },
+              { "id": "column_1_B", "name": "Column 1B", "description": "Column 1B", "type": "[string]" }
+            ]
+          },
+          {
+            "id": "table_2",
+            "name": "Table 2",
+            "description": "Table 2",
+            "columns": [
+              { "id": "column_2_A", "name": "Column 2A", "description": "Column 2A", "type": "string" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "foo",
+        "name": "Example Options Schema",
+        "description": "Example Description",
+        "type": "select",
+        "options": [
+          { "id": "a", "name": "Select A", "description": "Some description" },
+          { "id": "b", "name": "Option B" }
+        ],
+        "default": "a"
+      }
+    ],
+    "execution": {
+      "application": "bash",
+      "arguments": [
+        "arg1",
+        "arg2"
+      ],
+      "dependencies": [
+        { "source": "src/test/resources/fixtures/dao/FilesystemBasedJobsDAO/dependencies/first", "target": "first" },
+        { "source": "src/test/resources/fixtures/dao/FilesystemBasedJobsDAO/dependencies/second", "target": "second" }
+      ]
+    }
+  }
+}
