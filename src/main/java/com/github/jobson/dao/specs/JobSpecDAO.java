@@ -19,16 +19,14 @@
 
 package com.github.jobson.dao.specs;
 
-import com.github.jobson.api.v1.JobSpecDetailsResponse;
 import com.github.jobson.api.v1.JobSpecId;
-import com.github.jobson.api.v1.JobSpecSummary;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface JobSpecDAO extends JobSpecConfigurationDAO {
 
+    Optional<JobSpecSummary> getJobSpecSummaryById(JobSpecId jobSpecId);
     List<JobSpecSummary> getJobSpecSummaries(int pageSize, int page);
     List<JobSpecSummary> getJobSpecSummaries(int pageSize, int page, String query);
-    Optional<JobSpecDetailsResponse> getJobSpecDetailsById(JobSpecId jobSpecId);
 }

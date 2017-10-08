@@ -21,43 +21,55 @@ package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.jobson.dao.specs.JobSpecSummary;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.List;
 import java.util.Map;
 
-@ApiModel(description = "Response to a request for job summaries")
-public final class JobSummariesResponse {
+@ApiModel(description = "A job spec summary")
+public class APIJobSpecSummary extends JobSpecSummary {
 
-    @ApiModelProperty(value = "The summaries returned")
-    @JsonProperty
-    private List<JobSummary> entries;
+    public static APIJobSpecSummary fromJobSpecSummary(
+            JobSpecSummary summary,
+            Map<String, APIRestLink> restLinks) {
+
+        return new APIJobSpecSummary(
+                summary.getId(),
+                summary.getName(),
+                summary.getDescription(),
+                restLinks);
+    }
+
 
     @ApiModelProperty(value = "Links to related resources and actions")
     @JsonProperty
-    private Map<String, RESTLink> _links;
-
+    private Map<String, APIRestLink> _links;
 
 
     /**
      * @deprecated Used by JSON deserializer
      */
-    public JobSummariesResponse() {}
+    public APIJobSpecSummary() {}
 
-    public JobSummariesResponse(List<JobSummary> entries, Map<String, RESTLink> _links) {
-        this.entries = entries;
+    public APIJobSpecSummary(
+            JobSpecId id,
+            String name,
+            String description,
+            Map<String, APIRestLink> _links) {
+
+        super(id, name, description);
         this._links = _links;
     }
 
 
-
-    public List<JobSummary> getEntries() {
-        return entries;
+    @JsonIgnore
+    public Map<String, APIRestLink> getLinks() {
+        return _links;
     }
 
-    @JsonIgnore
-    public Map<String, RESTLink> getLinks() {
-        return _links;
+
+    public JobSpecSummary toJobSpecSummary() {
+        return new JobSpecSummary(getId(), getName(), getDescription());
     }
 }

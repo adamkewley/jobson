@@ -20,14 +20,13 @@
 package com.github.jobson.specs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.api.v1.JobSpecDetailsResponse;
 import com.github.jobson.api.v1.JobSpecId;
-import com.github.jobson.api.v1.JobSpecSummary;
+import com.github.jobson.dao.specs.JobSpecSummary;
 import com.github.jobson.jobinputs.JobExpectedInput;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
+import java.nio.file.Path;
 import java.util.List;
 
 public final class JobSpec {
@@ -103,11 +102,16 @@ public final class JobSpec {
 
 
     public JobSpecSummary toSummary() {
-        return new JobSpecSummary(this.getId(), this.getName(), this.getDescription(), new HashMap<>());
+        return new JobSpecSummary(this.getId(), this.getName(), this.getDescription());
     }
 
-    public JobSpecDetailsResponse toAPIDetails() {
-        return new JobSpecDetailsResponse(this.id, this.name, this.description, this.expectedInputs);
+    public JobSpec withDependenciesResolvedRelativeTo(Path p) {
+        return new JobSpec(
+                id,
+                name,
+                description,
+                expectedInputs,
+                execution.withDependenciesResolvedRelativeTo(p));
     }
 
 

@@ -36,6 +36,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static com.github.jobson.Helpers.now;
 import static com.github.jobson.Helpers.tryGet;
 import static com.github.jobson.api.v1.JobStatus.*;
 import static com.github.jobson.jobs.management.JobEventListeners.createNullListeners;
@@ -71,17 +72,19 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
 
     public boolean tryAbort(JobId jobId) {
         return tryGet(executingJobs, jobId)
-                .map(executingJob -> {
-                    final boolean cancelled =
-                            executingJob.getCompletionPromise().cancel(true);
-
-                    if (cancelled) {
-                        updateJobStatus(jobId, ABORTED, "Aborted");
-                    }
-
-                    return cancelled;
-                })
+                .map(this::tryCancel)
                 .orElseGet(() -> tryRemoveFromQueue(jobId));
+    }
+
+    private boolean tryCancel(ExecutingJob executingJob) {
+        final boolean cancelled =
+                executingJob.getCompletionPromise().cancel(true);
+
+        if (cancelled) {
+            updateJobStatus(executingJob.getId(), ABORTED, "Aborted");
+        }
+
+        return cancelled;
     }
 
     private void updateJobStatus(JobId jobId, JobStatus jobStatus, String message) {
@@ -93,16 +96,18 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
         return jobQueue.stream()
                 .filter(queuedJob -> queuedJob.getId().equals(jobId))
                 .findFirst()
-                .map(queuedJob -> {
-                    final boolean removed = jobQueue.remove(queuedJob);
-
-                    if (removed) {
-                        updateJobStatus(jobId, ABORTED, "Aborted");
-                    }
-
-                    return removed;
-                })
+                .map(this::tryRemove)
                 .orElse(false);
+    }
+
+    private boolean tryRemove(QueuedJob queuedJob) {
+        final boolean removed = jobQueue.remove(queuedJob);
+
+        if (removed) {
+            updateJobStatus(queuedJob.getId(), ABORTED, "Aborted");
+        }
+
+        return removed;
     }
 
     public Pair<JobId, CancelablePromise<FinalizedJob>> submit(ValidJobRequest validJobRequest) {
@@ -113,14 +118,7 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
         final PersistedJobRequest persistedJobRequest = jobDAO.persist(validJobRequest);
         final SimpleCancelablePromise<FinalizedJob> ret = new SimpleCancelablePromise<>();
 
-        final QueuedJob queuedJob = new QueuedJob(
-                persistedJobRequest.getId(),
-                persistedJobRequest.getOwner(),
-                persistedJobRequest.getName(),
-                persistedJobRequest.getInputs(),
-                persistedJobRequest.getSpec(),
-                listeners,
-                ret);
+        final QueuedJob queuedJob = QueuedJob.fromPersistedJobRequest(persistedJobRequest, listeners, ret);
 
         jobQueue.add(queuedJob);
 
@@ -152,16 +150,8 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
         final CancelablePromise<JobExecutionResult> executionPromise =
                 jobExecutor.execute(queuedJob, JobEventListeners.create(stdout, stderr));
 
-        final ExecutingJob executingJob = new ExecutingJob(
-                queuedJob.getId(),
-                queuedJob.getOwner(),
-                queuedJob.getName(),
-                queuedJob.getInputs(),
-                queuedJob.getSpec(),
-                new Date(),
-                stdout,
-                stderr,
-                queuedJob.getCompletionPromise());
+        final ExecutingJob executingJob =
+                ExecutingJob.fromQueuedJob(queuedJob, now(), stdout, stderr);
 
         executingJobs.put(executingJob.getId(), executingJob);
 
@@ -175,13 +165,8 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
 
         updateJobStatus(executingJob.getId(), jobExecutionResult.getFinalStatus(), "Execution finished");
 
-        final FinalizedJob finalizedJob = new FinalizedJob(
-                executingJob.getId(),
-                executingJob.getOwner(),
-                executingJob.getName(),
-                executingJob.getInputs(),
-                executingJob.getSpec(),
-                jobExecutionResult.getFinalStatus());
+        final FinalizedJob finalizedJob =
+                FinalizedJob.fromExecutingJob(executingJob, jobExecutionResult.getFinalStatus());
 
         executingJob.getCompletionPromise().complete(finalizedJob);
     }

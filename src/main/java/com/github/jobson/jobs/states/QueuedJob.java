@@ -21,16 +21,35 @@ package com.github.jobson.jobs.states;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.jobson.api.v1.JobId;
+import com.github.jobson.api.v1.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
 import com.github.jobson.jobs.management.JobEventListeners;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.utils.CancelablePromise;
+import com.github.jobson.utils.SimpleCancelablePromise;
 
+import java.util.List;
 import java.util.Map;
 
 public final class QueuedJob extends PersistedJobRequest {
+
+    public static QueuedJob fromPersistedJobRequest(
+            PersistedJobRequest persistedJobRequest,
+            JobEventListeners listeners,
+            SimpleCancelablePromise<FinalizedJob> promise) {
+
+        return new QueuedJob(
+                persistedJobRequest.getId(),
+                persistedJobRequest.getOwner(),
+                persistedJobRequest.getName(),
+                persistedJobRequest.getInputs(),
+                persistedJobRequest.getTimestamps(),
+                persistedJobRequest.getSpec(),
+                listeners,
+                promise);
+    }
 
     @JsonIgnore
     private final JobEventListeners queuedListeners;
@@ -44,11 +63,12 @@ public final class QueuedJob extends PersistedJobRequest {
             UserId owner,
             String name,
             Map<JobExpectedInputId, JobInput> inputs,
+            List<JobTimestamp> timestamps,
             JobSpec spec,
             JobEventListeners jobEventListeners,
             CancelablePromise<FinalizedJob> completionPromise) {
 
-        super(id, owner, name, inputs, spec);
+        super(id, owner, name, inputs, timestamps, spec);
 
         this.queuedListeners = jobEventListeners;
         this.completionPromise = completionPromise;

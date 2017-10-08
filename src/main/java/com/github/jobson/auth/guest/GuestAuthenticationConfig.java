@@ -17,15 +17,22 @@
  * under the License.
  */
 
-package com.github.jobson.auth.disabled;
+package com.github.jobson.auth.guest;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.config.AuthenticationBootstrap;
 import com.github.jobson.config.AuthenticationConfig;
 import io.dropwizard.auth.AuthDynamicFeature;
 
-public final class DisabledAuthenticationConfig implements AuthenticationConfig {
+public final class GuestAuthenticationConfig implements AuthenticationConfig {
+
+    @JsonProperty
+    private String guestUserName = "guest";
+
     @Override
     public void enable(AuthenticationBootstrap bootstrap) {
-        bootstrap.getEnvironment().register(new AuthDynamicFeature(new DisabledContainerRequestFilter()));
+        bootstrap.getEnvironment().register(
+                new AuthDynamicFeature(
+                        new GuestContainerRequestFilter(guestUserName)));
     }
 }

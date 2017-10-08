@@ -115,6 +115,7 @@ public abstract class JobExecutorTest {
                 STANDARD_REQUEST.getOwner(),
                 STANDARD_REQUEST.getName(),
                 STANDARD_REQUEST.getInputs(),
+                STANDARD_REQUEST.getTimestamps(),
                 newSpec);
     }
 

@@ -63,7 +63,7 @@ public final class SystemTestHelpers {
 
                 final String specYAML = TestHelpers.YAML_MAPPER.writeValueAsString(spec);
 
-                Files.write(jobSpecsDir.resolve(spec.getId().toString()).resolve(Constants.JOB_SPEC_FILENAME), specYAML.getBytes());
+                Files.write(jobSpecsDir.resolve(spec.getId().toString()).resolve(Constants.SPEC_DIR_SPEC_FILENAME), specYAML.getBytes());
             }
 
             // This is used by the second spec

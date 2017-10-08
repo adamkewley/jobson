@@ -20,7 +20,6 @@
 package com.github.jobson.commands;
 
 import com.github.jobson.Constants;
-import com.github.jobson.Helpers;
 import io.dropwizard.cli.Command;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -30,6 +29,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static com.github.jobson.Helpers.loadResourceFileAsString;
 
 public final class NewCommand extends Command {
 
@@ -46,7 +47,7 @@ public final class NewCommand extends Command {
         final String configTemplate;
 
         try {
-            configTemplate = Helpers.loadResourceFileAsString("config-template.yml");
+            configTemplate = loadResourceFileAsString("config-template.yml");
         } catch (IOException ex) {
             System.err.println(ex.toString());
             System.err.println("Error loading template files. This should not happen and is not your fault - please report it");
@@ -55,19 +56,19 @@ public final class NewCommand extends Command {
         }
 
         try {
-            final Path configPath = Paths.get(Constants.CONFIG_FILENAME);
+            final Path configPath = Paths.get(Constants.WORKSPACE_CONFIG_FILENAME);
             tryWriteFile(configPath, configTemplate.getBytes());
 
-            final Path usersPath = Paths.get(Constants.USERS_FILENAME);
+            final Path usersPath = Paths.get(Constants.WORKSPACE_USER_FILENAME);
             tryWriteFile(usersPath, new byte[]{});
 
-            final Path specDir = Paths.get(Constants.DEFAULT_SPECS_DIR_NAME);
+            final Path specDir = Paths.get(Constants.WORKSPACE_SPECS_DIRNAME);
             tryCreateDir(specDir);
 
-            final Path jobsDir = Paths.get(Constants.DEFAULT_JOBS_DIR_NAME);
+            final Path jobsDir = Paths.get(Constants.WORKSPACE_JOBS_DIRNAME);
             tryCreateDir(jobsDir);
 
-            final Path wdsDir = Paths.get(Constants.DEFAULT_WDS_DIR_NAME);
+            final Path wdsDir = Paths.get(Constants.WORKSPACE_WDS_DIRNAME);
             tryCreateDir(wdsDir);
 
             System.out.println("Deployment created. Remember to add users (useradd, passwd), specs (generate), and boot the server (serve)");

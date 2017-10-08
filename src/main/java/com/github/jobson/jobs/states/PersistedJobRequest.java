@@ -21,12 +21,18 @@ package com.github.jobson.jobs.states;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.api.v1.JobId;
+import com.github.jobson.api.v1.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
 import com.github.jobson.specs.JobSpec;
+import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
 import java.util.Map;
+
+import static com.github.jobson.api.v1.JobStatus.SUBMITTED;
+import static java.util.Collections.singletonList;
 
 /**
  * Used internally after a resolved job is persisted (i.e. assigned a JobID and
@@ -34,8 +40,23 @@ import java.util.Map;
  */
 public class PersistedJobRequest extends ValidJobRequest {
 
+    public static PersistedJobRequest createFromValidRequest(ValidJobRequest validJobRequest, JobId jobId) {
+        return new PersistedJobRequest(
+                jobId,
+                validJobRequest.getOwner(),
+                validJobRequest.getName(),
+                validJobRequest.getInputs(),
+                singletonList(JobTimestamp.now(SUBMITTED, "Job persisted")),
+                validJobRequest.getSpec());
+    }
+
+
     @JsonProperty
     private JobId id;
+
+    @ApiModelProperty(value = "Timestamps indicating when job status changes occurred")
+    @JsonProperty
+    private List<JobTimestamp> timestamps;
 
 
 
@@ -49,15 +70,21 @@ public class PersistedJobRequest extends ValidJobRequest {
             UserId owner,
             String name,
             Map<JobExpectedInputId, JobInput> inputs,
+            List<JobTimestamp> timestamps,
             JobSpec spec) {
 
         super(owner, name, inputs, spec);
         this.id = id;
+        this.timestamps = timestamps;
     }
 
 
 
     public JobId getId() {
         return this.id;
+    }
+
+    public List<JobTimestamp> getTimestamps() {
+        return timestamps;
     }
 }

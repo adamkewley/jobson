@@ -19,44 +19,49 @@
 
 package com.github.jobson.api.v1;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.Map;
+@ApiModel(description = "Summary information for a user")
+public final class APIUserSummary {
 
-@ApiModel(description = "Response to a successful job submission request")
-public final class JobRequestResponse {
-
-    @ApiModelProperty(value = "A unique identifier for the job that was created by the submission request")
+    @ApiModelProperty(value = "A unique identifier for the user", example = "akewley")
     @JsonProperty
-    private JobId id;
-
-    @ApiModelProperty(value = "Links to related resources and actions")
-    @JsonProperty
-    private Map<String, RESTLink> _links;
+    private UserId id;
 
 
 
     /**
      * @deprecated Used by JSON deserializer
      */
-    public JobRequestResponse() {}
+    public APIUserSummary()  {}
 
-    public JobRequestResponse(JobId id, Map<String, RESTLink> _links) {
+    public APIUserSummary(UserId id) {
         this.id = id;
-        this._links = _links;
     }
 
 
 
-    public JobId getId() {
+    public UserId getId() {
         return id;
     }
 
-    @JsonIgnore
-    public Map<String, RESTLink> getLinks() {
-        return _links;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        APIUserSummary that = (APIUserSummary) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

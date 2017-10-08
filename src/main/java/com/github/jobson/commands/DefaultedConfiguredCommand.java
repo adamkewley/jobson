@@ -23,7 +23,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.cli.ConfiguredCommand;
 import net.sourceforge.argparse4j.inf.Subparser;
 
-import static com.github.jobson.Constants.CONFIG_FILENAME;
+import static com.github.jobson.Constants.WORKSPACE_CONFIG_FILENAME;
 
 /**
  * By default, Dropwizard's ConfiguredCommand will create a default instance
@@ -40,7 +40,7 @@ public abstract class DefaultedConfiguredCommand<T extends Configuration> extend
     public void configure(Subparser subparser) {
         subparser.addArgument("file")
                 .nargs("?")
-                .setDefault(CONFIG_FILENAME)
+                .setDefault(WORKSPACE_CONFIG_FILENAME)
                 .help("application configuration file");
     }
 }

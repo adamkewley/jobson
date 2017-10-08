@@ -95,7 +95,7 @@ public final class GenerateSpecsCommand extends DefaultedConfiguredCommand<Appli
             System.err.println("create    " + specDir);
             Files.createDirectory(specDir);
 
-            final Path specFilePath = specDir.resolve(Constants.JOB_SPEC_FILENAME);
+            final Path specFilePath = specDir.resolve(Constants.SPEC_DIR_SPEC_FILENAME);
 
             System.err.println("create    " + specFilePath);
 

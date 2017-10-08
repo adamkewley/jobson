@@ -19,11 +19,10 @@
 
 package com.github.jobson.dao.jobs;
 
-import com.github.jobson.api.v1.JobDetailsResponse;
 import com.github.jobson.api.v1.JobId;
 import com.github.jobson.api.v1.JobStatus;
-import com.github.jobson.api.v1.JobSummary;
 import com.github.jobson.dao.BinaryData;
+import com.github.jobson.specs.JobSpec;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,10 +30,11 @@ import java.util.Set;
 
 public interface ReadonlyJobDAO {
 
-    Optional<JobDetailsResponse> getJobDetailsById(JobId jobId);
+    Optional<JobDetails> getJobDetailsById(JobId jobId);
+    Optional<JobSpec> getSpecJobWasSubmittedAgainst(JobId jobId);
 
-    List<JobSummary> getJobSummaries(int pageSize, int page);
-    List<JobSummary> getJobSummaries(int pageSize, int page, String query);
+    List<JobDetails> getJobs(int pageSize, int page);
+    List<JobDetails> getJobs(int pageSize, int page, String query);
 
     boolean jobExists(JobId jobId);
 

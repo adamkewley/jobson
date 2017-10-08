@@ -20,7 +20,7 @@
 package com.github.jobson.systemtests.httpapi;
 
 import com.github.jobson.resources.v1.UserResource;
-import com.github.jobson.api.v1.UserSummary;
+import com.github.jobson.api.v1.APIUserSummary;
 import com.github.jobson.config.ApplicationConfig;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
@@ -38,11 +38,11 @@ public final class TestUsersAPI {
 
     @Test
     public void testGetCurrentUserRespondsWithCurrentUser() throws IOException {
-        final UserSummary userSummary =
+        final APIUserSummary APIUserSummary =
                 generateAuthenticatedRequest(RULE, UserResource.PATH + "/current")
                 .get()
-                .readEntity(UserSummary.class);
+                .readEntity(APIUserSummary.class);
 
-        assertThat(userSummary.getId().toString()).isEqualTo(SYSTEMTEST_USER);
+        assertThat(APIUserSummary.getId().toString()).isEqualTo(SYSTEMTEST_USER);
     }
 }

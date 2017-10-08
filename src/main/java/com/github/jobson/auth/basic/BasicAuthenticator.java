@@ -58,20 +58,12 @@ public final class BasicAuthenticator implements Authenticator<BasicCredentials,
     @Override
     public Optional<Principal> authenticate(BasicCredentials basicCredentials) throws AuthenticationException {
         final UserId id = new UserId(basicCredentials.getUsername());
-        final Optional<UserCredentials> maybeCredentials = readonlyUserDAO.getUserCredentialsById(id);
 
-        if (maybeCredentials.isPresent()) {
-            final UserCredentials credentials = maybeCredentials.get();
-
-            if (credentials.getAuthName().equals(BASIC_AUTH_NAME)) {
-                final boolean areEqual =
+        return readonlyUserDAO.getUserCredentialsById(id)
+                .filter(credentials -> credentials.getAuthName().equals(BASIC_AUTH_NAME))
+                .filter(credentials ->
                         credentials.getAuthField().equals(
-                                crypt(basicCredentials.getPassword(), credentials.getAuthField()));
-
-                if (areEqual) {
-                    return Optional.of(new PrincipalImpl(credentials.getId().toString()));
-                } else return Optional.empty();
-            } else return Optional.empty();
-        } else return Optional.empty();
+                                crypt(basicCredentials.getPassword(), credentials.getAuthField())))
+                .map(credentials -> new PrincipalImpl(credentials.getId().toString()));
     }
 }

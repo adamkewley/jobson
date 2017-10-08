@@ -21,6 +21,7 @@ package com.github.jobson.resources.v1;
 
 import com.github.jobson.api.v1.*;
 import com.github.jobson.dao.specs.JobSpecDAO;
+import com.github.jobson.dao.specs.JobSpecSummary;
 import io.swagger.annotations.*;
 
 import javax.annotation.security.PermitAll;
@@ -33,8 +34,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 @Api(description = "Operations related to job specifications")
 @Path(JobSpecResource.PATH)
@@ -48,9 +52,10 @@ public final class JobSpecResource {
 
 
     public JobSpecResource(JobSpecDAO jobSpecDAO, int defaultPageSize) {
+        requireNonNull(jobSpecDAO);
 
-        Objects.requireNonNull(jobSpecDAO);
-        if (defaultPageSize < 0) throw new RuntimeException("Default page size cannot be negative");
+        if (defaultPageSize < 0)
+            throw new RuntimeException("Default page size cannot be negative");
 
         this.jobSpecDAO = jobSpecDAO;
         this.defaultPageSize = defaultPageSize;
@@ -73,7 +78,7 @@ public final class JobSpecResource {
     })
     @Produces("application/json")
     @PermitAll
-    public JobSpecSummariesResponse fetchJobSpecSummaries(
+    public APIJobSpecsResponse fetchJobSpecSummaries(
             @Context
                     SecurityContext context,
             @ApiParam(value = "The page number (0-indexed)")
@@ -89,26 +94,29 @@ public final class JobSpecResource {
         final int requestedPage = page.isPresent() ? page.get() : 0;
         final int requestedPageSize = pageSize.isPresent() ? pageSize.get() : defaultPageSize;
 
-        if (requestedPage < 0) throw new WebApplicationException("Requested page cannot be negative", 400);
-        if (requestedPageSize < 0) throw new WebApplicationException("Requested page size cannot be negative", 400);
+        if (requestedPage < 0)
+            throw new WebApplicationException("Requested page cannot be negative", 400);
+        if (requestedPageSize < 0)
+            throw new WebApplicationException("Requested page size cannot be negative", 400);
 
         final List<JobSpecSummary> jobSummaries =
                 query.isPresent() ?
                         jobSpecDAO.getJobSpecSummaries(requestedPageSize, requestedPage, query.get()) :
                         jobSpecDAO.getJobSpecSummaries(requestedPageSize, requestedPage);
 
-        // Add a REST link to the spec's details
-        for (JobSpecSummary jobSpecSummary: jobSummaries) {
-            try {
-                final URI jobDetailsURI = new URI(JobSpecResource.PATH + "/" + jobSpecSummary.getId().toString());
+        final List<APIJobSpecSummary> apiJobSpecSummaries =
+                jobSummaries.stream().map(summary -> {
+                    try {
+                        final HashMap<String, APIRestLink> restLinks = new HashMap<>();
+                        final URI jobDetailsURI = new URI(JobSpecResource.PATH + "/" + summary.getId().toString());
+                        restLinks.put("details", new APIRestLink(jobDetailsURI));
+                        return APIJobSpecSummary.fromJobSpecSummary(summary, restLinks);
+                    } catch (URISyntaxException ex) {
+                        throw new WebApplicationException(ex);
+                    }
+                }).collect(toList());
 
-                jobSpecSummary.getLinks().put("details", new RESTLink(jobDetailsURI));
-            } catch (URISyntaxException ex) {
-                throw new WebApplicationException(ex);
-            }
-        }
-
-        return new JobSpecSummariesResponse(jobSummaries, new HashMap<>());
+        return new APIJobSpecsResponse(apiJobSpecSummaries, new HashMap<>());
     }
 
     @GET
@@ -119,12 +127,12 @@ public final class JobSpecResource {
             notes = "If found, returns a job spec. A job spec describes declaratively what a " +
                     "job needs in order to run.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Job specification found and returned", response = JobSpecDetailsResponse.class),
+            @ApiResponse(code = 200, message = "Job specification found and returned", response = APIJobSpecResponse.class),
             @ApiResponse(code = 404, message = "The job specification cannot be found", response = APIErrorMessage.class)
     })
     @Produces("application/json")
     @PermitAll
-    public Optional<JobSpecDetailsResponse> fetchJobSpecDetailsById(
+    public Optional<APIJobSpecResponse> fetchJobSpecDetailsById(
             @Context
                     SecurityContext context,
             @ApiParam(value = "The job spec's ID")
@@ -134,6 +142,6 @@ public final class JobSpecResource {
 
         if (jobSpecId == null) throw new WebApplicationException("Job Spec ID cannot be null", 400);
 
-        return jobSpecDAO.getJobSpecDetailsById(jobSpecId);
+        return jobSpecDAO.getJobSpecById(jobSpecId).map(APIJobSpecResponse::fromJobSpec);
     }
 }

@@ -21,14 +21,28 @@ package com.github.jobson.jobs.states;
 
 import com.github.jobson.api.v1.JobId;
 import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.api.v1.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
 import com.github.jobson.specs.JobSpec;
 
+import java.util.List;
 import java.util.Map;
 
 public final class FinalizedJob extends PersistedJobRequest {
+
+    public static FinalizedJob fromExecutingJob(ExecutingJob executingJob, JobStatus finalStatus) {
+        return new FinalizedJob(
+                executingJob.getId(),
+                executingJob.getOwner(),
+                executingJob.getName(),
+                executingJob.getInputs(),
+                executingJob.getTimestamps(),
+                executingJob.getSpec(),
+                finalStatus);
+    }
+
 
     private final JobStatus finalStatus;
 
@@ -37,10 +51,11 @@ public final class FinalizedJob extends PersistedJobRequest {
             UserId owner,
             String name,
             Map<JobExpectedInputId, JobInput> inputs,
+            List<JobTimestamp> timestamps,
             JobSpec spec,
             JobStatus finalStatus) {
 
-        super(id, owner, name, inputs, spec);
+        super(id, owner, name, inputs, timestamps, spec);
         this.finalStatus = finalStatus;
     }
 

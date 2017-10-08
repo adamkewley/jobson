@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModel;
 
 import java.util.Set;
 
+import static com.github.jobson.Helpers.setOf;
+
 @ApiModel(description = "The status of a job")
 public enum JobStatus {
 
@@ -35,7 +37,7 @@ public enum JobStatus {
     }
 
     public static Set<JobStatus> getAbortableStatuses() {
-        return Helpers.setOf(SUBMITTED, RUNNING);
+        return setOf(SUBMITTED, RUNNING);
     }
 
 

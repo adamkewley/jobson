@@ -22,13 +22,11 @@ package com.github.jobson.dao.jobs;
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.JobDetailsResponse;
+import com.github.jobson.api.v1.JobId;
 import com.github.jobson.dao.IdGenerator;
 import com.github.jobson.jobs.states.PersistedJobRequest;
 import com.github.jobson.jobs.states.ValidJobRequest;
 import com.github.jobson.specs.JobSpec;
-import com.github.jobson.api.v1.JobId;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -36,20 +34,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
+import static com.github.jobson.Constants.JOB_DIR_JOB_DETAILS_FILENAME;
+import static com.github.jobson.Helpers.*;
 import static com.github.jobson.Helpers.readJSON;
-import static com.github.jobson.Helpers.tryResolve;
+import static com.github.jobson.TestHelpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class FilesystemJobsDAOTest extends JobsDAOTest {
 
-    private static Path createTmpDir() throws IOException {
-        return Files.createTempDirectory(FilesystemJobsDAOTest.class.getSimpleName());
-    }
-
     private static FilesystemJobsDAO createStandardFilesystemDAO() {
         try {
-            final Path jobDir = createTmpDir();
+            final Path jobDir = createTmpDir(FilesystemJobsDAOTest.class);
             return createStandardFilesystemDAO(jobDir);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -57,13 +54,11 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
     }
 
     private static FilesystemJobsDAO createStandardFilesystemDAO(Path jobDir) throws IOException {
-        final IdGenerator idGenerator = createIdGenerator();
-
-        return new FilesystemJobsDAO(jobDir, idGenerator);
+        return new FilesystemJobsDAO(jobDir, createIdGenerator());
     }
 
     private static IdGenerator createIdGenerator() {
-        return () -> Helpers.generateRandomBase36String(10);
+        return () -> generateRandomBase36String(10);
     }
 
 
@@ -77,7 +72,7 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
 
     @Test(expected = NullPointerException.class)
     public void testCtorThrowsIfPassedNulls() throws IOException {
-        final Path jobDir = createTmpDir();
+        final Path jobDir = createTmpDir(FilesystemJobsDAOTest.class);
         final IdGenerator idGenerator = createIdGenerator();
 
         new FilesystemJobsDAO(jobDir, null);
@@ -86,7 +81,7 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
 
     @Test(expected = FileNotFoundException.class)
     public void testCtorThrowsIfPassedANonExistentJobsDir() throws IOException {
-        final Path invalidPath = Paths.get(TestHelpers.genrateRandomAlphanumericString());
+        final Path invalidPath = Paths.get(genrateRandomAlphanumericString());
         createStandardFilesystemDAO(invalidPath);
     }
 
@@ -94,13 +89,13 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
 
     @Test
     public void testPersistNewJobCreatesAJobDirNamedWithTheJobID() throws IOException {
-        final Path jobsDir = createTmpDir();
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final JobId jobId = persistValidRequest(jobsDir).getId();
-        assertThat(Helpers.tryResolve(jobsDir, jobId)).isPresent();
+        assertThat(tryResolve(jobsDir, jobId)).isPresent();
     }
 
     private PersistedJobRequest persistValidRequest(Path jobsDir) throws IOException {
-        return persistRequest(jobsDir, TestHelpers.STANDARD_VALID_REQUEST);
+        return persistRequest(jobsDir, STANDARD_VALID_REQUEST);
     }
 
     private PersistedJobRequest persistRequest(Path jobsDir, ValidJobRequest jobRequest) throws IOException {
@@ -110,70 +105,57 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
 
     @Test
     public void testPersistNewJobJobDirectoryContainsAJobRequestJSONFile() throws IOException {
-        final Path jobsDir = createTmpDir();
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final JobId jobId = persistValidRequest(jobsDir).getId();
-        Assertions.assertThat(Helpers.tryResolve(jobsDir, jobId, Constants.JOB_REQUEST_FILENAME)).isPresent();
+        assertThat(tryResolve(jobsDir, jobId, JOB_DIR_JOB_DETAILS_FILENAME)).isPresent();
     }
 
     @Test
     public void testPersistNewJobJobDirectoryJobRequestJSONFileIsValidJSON() throws IOException {
-        final Path jobsDir = createTmpDir();
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final JobId jobId = persistValidRequest(jobsDir).getId();
-        Helpers.readJSON(Helpers.tryResolve(jobsDir, jobId, Constants.JOB_REQUEST_FILENAME).get(), Object.class);
+        readJSON(tryResolve(jobsDir, jobId, JOB_DIR_JOB_DETAILS_FILENAME).get(), Object.class);
     }
 
     @Test
-    public void testPersistNewJobJobDirectoryContainsAJobMetadataFile() throws IOException {
-        final Path jobsDir = createTmpDir();
+    public void testPersistNewJobDirJobRequestJSONFileIsJobDetails() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final JobId jobId = persistValidRequest(jobsDir).getId();
-        Assertions.assertThat(Helpers.tryResolve(jobsDir, jobId, Constants.METADATA_FILENAME)).isPresent();
+        readJSON(tryResolve(jobsDir, jobId, JOB_DIR_JOB_DETAILS_FILENAME).get(), JobDetails.class);
     }
 
-    @Test
-    public void testPersistNewJobJobDirectoryJobMetadataFileIsValidJSON() throws IOException {
-        final Path jobsDir = createTmpDir();
-        final JobId jobId = persistValidRequest(jobsDir).getId();
-        Helpers.readJSON(Helpers.tryResolve(jobsDir, jobId, Constants.METADATA_FILENAME).get(), Object.class);
-    }
-
-    @Test
-    public void testPersistNewJobJobDirectoryJobMetadataFileParsesToAJobMetadataObject() throws IOException {
-        final Path jobsDir = createTmpDir();
-        final JobId jobId = persistValidRequest(jobsDir).getId();
-        Helpers.readJSON(Helpers.tryResolve(jobsDir, jobId, Constants.METADATA_FILENAME).get(), JobDetailsResponse.class);
-    }
 
     @Test
     public void testPersistNewJobJobDirectoryContainsTheJobsSchema() throws IOException {
-        final Path jobsDir = createTmpDir();
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final JobId jobId = persistValidRequest(jobsDir).getId();
-        Assertions.assertThat(Helpers.tryResolve(jobsDir, jobId, Constants.JOB_SCHEMA_FILENAME)).isPresent();
+        assertThat(tryResolve(jobsDir, jobId, Constants.JOB_DIR_JOB_SPEC_FILENAME)).isPresent();
     }
 
     @Test
     public void testPersistNewJobJobDirectorySchemaFileIsValidJSON() throws IOException {
-        final Path jobsDir = createTmpDir();
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final JobId jobId = persistValidRequest(jobsDir).getId();
-        Assertions.assertThat(Helpers.tryResolve(jobsDir, jobId, Constants.JOB_SCHEMA_FILENAME)).isPresent();
+        assertThat(Helpers.tryResolve(jobsDir, jobId, Constants.JOB_DIR_JOB_SPEC_FILENAME)).isPresent();
     }
 
 
     @Test
     public void testPersistNewJobJobDirectoryJSONParsesToAJobSchemaConfiguration() throws IOException {
-        final Path jobsDir = createTmpDir();
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final JobId jobId = persistValidRequest(jobsDir).getId();
-        Helpers.readJSON(Helpers.tryResolve(jobsDir, jobId, Constants.JOB_SCHEMA_FILENAME).get(), JobSpec.class);
+        readJSON(tryResolve(jobsDir, jobId, Constants.JOB_DIR_JOB_SPEC_FILENAME).get(), JobSpec.class);
     }
 
 
 
     @Test
     public void testHasStdoutReturnsFalseIfTheStdoutFileWasDeleted() throws IOException {
-        final Path jobsDir = createTmpDir();
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final FilesystemJobsDAO filesystemJobsDAO = createStandardFilesystemDAO(jobsDir);
-        final JobId jobId = filesystemJobsDAO.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = filesystemJobsDAO.persist(STANDARD_VALID_REQUEST).getId();
         filesystemJobsDAO.appendStdout(jobId, TestHelpers.generateRandomByteObservable());
-        final Path stdoutFile = jobsDir.resolve(jobId.toString()).resolve(Constants.STDOUT_FILENAME);
+        final Path stdoutFile = jobsDir.resolve(jobId.toString()).resolve(Constants.JOB_DIR_STDOUT_FILENAME);
 
         Files.delete(stdoutFile);
 
@@ -184,14 +166,32 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
 
     @Test
     public void testHasStderrReturnsFalseIfTheStderrFileWasDeleted() throws IOException {
-        final Path jobsDir = createTmpDir();
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         dao.appendStderr(jobId, TestHelpers.generateRandomByteObservable());
-        final Path stderrFilePath = jobsDir.resolve(jobId.toString()).resolve(Constants.STDERR_FILENAME);
+        final Path stderrFilePath = jobsDir.resolve(jobId.toString()).resolve(Constants.JOB_DIR_STDERR_FILENAME);
 
         Files.delete(stderrFilePath);
 
         assertThat(dao.hasStderr(jobId)).isFalse();
+    }
+
+    @Test
+    public void testGetSpecJobWasSubmittedAgainstReturnsOptionalEmptyIfJobDoesntExist() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+        assertThat(dao.getSpecJobWasSubmittedAgainst(generateJobId())).isNotPresent();
+    }
+
+    @Test
+    public void testGetSpecJobWasSubmittedAgainstReturnsSpecIfJobDoesExist() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        final Optional<JobSpec> maybeJobSpec = dao.getSpecJobWasSubmittedAgainst(jobId);
+
+        assertThat(maybeJobSpec).isPresent();
+        assertThat(maybeJobSpec.get()).isEqualTo(STANDARD_VALID_REQUEST.getSpec());
     }
 }

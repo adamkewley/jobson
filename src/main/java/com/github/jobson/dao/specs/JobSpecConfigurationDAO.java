@@ -25,6 +25,5 @@ import com.github.jobson.specs.JobSpec;
 import java.util.Optional;
 
 public interface JobSpecConfigurationDAO {
-
-    Optional<JobSpec> getJobSpecConfigurationById(JobSpecId jobSpecId);
+    Optional<JobSpec> getJobSpecById(JobSpecId jobSpecId);
 }

@@ -21,27 +21,32 @@ package com.github.jobson;
 
 public final class Constants {
 
-    public static final String ALI_VISIBLE_TIMESTAMPS_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SS'Z'";
-    public static final String ALI_VISIBLE_TIMESTAMPS_TIMEZONE = "UTC";
+    public static final String WORKSPACE_CONFIG_FILENAME = "config.yml";
+    public static final String WORKSPACE_USER_FILENAME = "users";
+    public static final String WORKSPACE_SPECS_DIRNAME = "specs";
+    public static final String WORKSPACE_WDS_DIRNAME = "wds";
+    public static final String WORKSPACE_JOBS_DIRNAME = "jobs";
+
+    public static final String JOB_DIR_STDOUT_FILENAME = "stdout";
+    public static final String JOB_DIR_STDERR_FILENAME = "stderr";
+    public static final String JOB_DIR_JOB_DETAILS_FILENAME = "request.json";
+    public static final String JOB_DIR_JOB_SPEC_FILENAME = "spec.json";
+
+    public static final String SPEC_DIR_SPEC_FILENAME = "spec.yml";
+
+
     public static final int DEFAULT_PAGE_SIZE = 50;
     public static final int MAX_RUNNING_JOBS = 10;
     public static final int DELAY_BEFORE_FORCIBLY_KILLING_JOBS = 10;
     public static final int MAX_JOB_ID_GENERATION_ATTEMPTS = 100;
-    public static final String STDOUT_FILENAME = "stdout";
-    public static final String STDERR_FILENAME = "stderr";
-    public static final String METADATA_FILENAME = "metadata.json";
-    public static final String JOB_REQUEST_FILENAME = "request.json";
-    public static final String JOB_SCHEMA_FILENAME = "spec.json";
-    public static final int JOB_TIMESTAMP_RESOLUTION_IN_MILLISECONDS = 10;
-    public static final String JOB_SPEC_FILENAME = "spec.yml";
-    public static final String WS_JOB_EVENTS = "/v1/jobs/events";
-    public static final String CONFIG_FILENAME = "config.yml";
-    public static final String USERS_FILENAME = "users";
     public static final int STDIO_BUFFER_LEN_IN_BYTES = 256;
-    public static final String DEFAULT_SPECS_DIR_NAME = "specs";
-    public static final String DEFAULT_WDS_DIR_NAME = "wds";
-    public static final String DEFAULT_JOBS_DIR_NAME = "jobs";
+
+
+    public static final String API_VISIBLE_TIMESTAMPS_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSS'Z'";
+    public static final int JOB_TIMESTAMP_RESOLUTION_IN_MILLISECONDS = 1;
+    public static final String API_VISIBLE_TIMESTAMPS_TIMEZONE = "UTC";
+    public static final String WEBSOCKET_JOB_EVENTS_PATH = "/v1/jobs/events";
 
     public static final String BASIC_AUTH_NAME = "basic";
-    public static final String DISABLED_AUTH_NAME = "disabled";
+    public static final String GUEST_AUTH_NAME = "disabled";
 }

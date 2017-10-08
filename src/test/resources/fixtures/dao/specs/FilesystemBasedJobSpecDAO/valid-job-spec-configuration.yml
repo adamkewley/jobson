@@ -1,11 +1,11 @@
 name: A valid job spec
-description: An example of a valid job spec
+name: An example of a valid job spec
 
 expectedInputs:
 - id: name
   type: select
   name: The user's name
-  description: The name of the user
+  name: The name of the user
   options:
   - id: adam
     name: adam
@@ -17,5 +17,5 @@ execution:
   arguments:
     - Hello world
   dependencies:
-    - source: /tmp/libyaml.so
+    - source: libyaml.so
       target: libyaml.so

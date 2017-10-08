@@ -22,6 +22,7 @@ package com.github.jobson.specs;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
+import java.nio.file.Path;
 
 public final class JobDependencyConfiguration {
 
@@ -53,6 +54,11 @@ public final class JobDependencyConfiguration {
 
     public String getTarget() {
         return target;
+    }
+
+
+    public JobDependencyConfiguration withSourceResolvedRelativeTo(Path p) {
+        return new JobDependencyConfiguration(p.resolve(source).toString(), target);
     }
 
 

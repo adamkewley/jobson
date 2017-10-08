@@ -24,6 +24,7 @@ import com.github.jobson.HttpStatusCodes;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.dao.BinaryData;
+import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.specs.JobSpecConfigurationDAO;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
@@ -49,6 +50,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.jobson.TestHelpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -79,11 +81,11 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobSummariesReturnsASummariesResponseContainingSummariesFromTheDAO() throws IOException {
-        final List<JobSummary> summariesReturnedByDAO = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> summariesReturnedByDAO = generateRandomJobDetails();
         final JobDAO jobDAO = mockJobDAOThatReturns(summariesReturnedByDAO);
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final JobSummariesResponse returnedSummaries = jobResource.fetchJobSummaries(
+        final APIJobsResponse returnedSummaries = jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.empty(),
@@ -92,9 +94,9 @@ public final class JobResourceTest {
         Assertions.assertThat(returnedSummaries.getEntries()).isEqualTo(summariesReturnedByDAO);
     }
 
-    private JobDAO mockJobDAOThatReturns(List<JobSummary> summaries) {
+    private JobDAO mockJobDAOThatReturns(List<JobDetails> details) {
         final JobDAO jobDAO = mock(JobDAO.class);
-        when(jobDAO.getJobSummaries(anyInt(), anyInt())).thenReturn(summaries);
+        when(jobDAO.getJobs(anyInt(), anyInt())).thenReturn(details);
         return jobDAO;
     }
 
@@ -108,44 +110,44 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobSummariesCallsTheDAOWithPageIndex0IfPageIsNotSpecified() throws IOException {
-        final List<JobSummary> summariesReturnedByDAO = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> summariesReturnedByDAO = generateRandomJobDetails();
         final JobDAO jobDAO = mockJobDAOThatReturns(summariesReturnedByDAO);
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        jobResource.fetchJobSummaries(
+        jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty());
 
         verify(jobDAO, times(1))
-                .getJobSummaries(anyInt(), eq(0));
+                .getJobs(anyInt(), eq(0));
     }
 
     @Test
     public void testFetchJobSummariesCallsTheDAOWithSpecifiedPageIndex() throws IOException {
-        final List<JobSummary> summariesReturnedByDAO = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> summariesReturnedByDAO = generateRandomJobDetails();
         final JobDAO jobDAO = mockJobDAOThatReturns(summariesReturnedByDAO);
         final JobResource jobResource = resourceThatUses(jobDAO);
         final int requestedPage = 5;
 
-        jobResource.fetchJobSummaries(
+        jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.of(requestedPage),
                 Optional.empty(),
                 Optional.empty());
 
         verify(jobDAO, times(1))
-                .getJobSummaries(anyInt(), eq(requestedPage));
+                .getJobs(anyInt(), eq(requestedPage));
     }
 
     @Test(expected = WebApplicationException.class)
     public void testFetchJobSummariesThrowsExceptionIfSpecifiedPageIndexIsNegative() throws IOException {
-        final List<JobSummary> jobSummaries = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> jobSummaries = generateRandomJobDetails();
         final JobDAO jobDAO = mockJobDAOThatReturns(jobSummaries);
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        jobResource.fetchJobSummaries(
+        jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.of(-1), // Should cause exception
                 Optional.empty(),
@@ -154,7 +156,7 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobSummariesCallsTheDAOWithTheDefaultPageSizeIfPageSizeNotSpecifed() throws IOException {
-        final List<JobSummary> jobSummaries = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> jobSummaries = generateRandomJobDetails();
         final JobDAO jobDAO = mockJobDAOThatReturns(jobSummaries);
         final int defaultPageSize = TestHelpers.randomIntBetween(5, 15);
 
@@ -164,40 +166,40 @@ public final class JobResourceTest {
                 mock(JobSpecConfigurationDAO.class),
                 defaultPageSize);
 
-        jobResource.fetchJobSummaries(
+        jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty());
 
         verify(jobDAO, times(1))
-                .getJobSummaries(eq(defaultPageSize), anyInt());
+                .getJobs(eq(defaultPageSize), anyInt());
     }
 
     @Test
     public void testFetchJobSummariesCallsTheDAOWithThePageSizeIfItIsSpecified() throws IOException {
-        final List<JobSummary> jobSummaries = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> jobSummaries = generateRandomJobDetails();
         final JobDAO jobDAO = mockJobDAOThatReturns(jobSummaries);
         final JobResource jobResource = resourceThatUses(jobDAO);
         final int requestedPageSize = TestHelpers.randomIntBetween(1, jobSummaries.size());
 
-        jobResource.fetchJobSummaries(
+        jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.of(requestedPageSize),
                 Optional.empty());
 
         verify(jobDAO, times(1))
-                .getJobSummaries(eq(requestedPageSize), anyInt());
+                .getJobs(eq(requestedPageSize), anyInt());
     }
 
     @Test(expected = WebApplicationException.class)
     public void testFetchJobSummariesThrowsExceptionIfRequestedPageSizeIsNegative() throws IOException {
-        final List<JobSummary> jobSummaries = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> jobSummaries = generateRandomJobDetails();
         final JobDAO jobDAO = mockJobDAOThatReturns(jobSummaries);
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        jobResource.fetchJobSummaries(
+        jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.of(-1), // Should cause exception
@@ -206,53 +208,32 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobSummariesCallsTheQueryOverloadOnTheDAOIfAQueryWasSpecified() throws IOException {
-        final List<JobSummary> jobSummaries = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> jobSummaries = generateRandomJobDetails();
         final JobDAO jobDAO = mockJobDAOThatReturns(jobSummaries);
         final JobResource jobResource = resourceThatUses(jobDAO);
         final String queryString = TestHelpers.generateRandomString();
 
-        jobResource.fetchJobSummaries(
+        jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.empty(),
                 Optional.of(queryString));
 
         verify(jobDAO, times(1))
-                .getJobSummaries(anyInt(), anyInt(), eq(queryString));
+                .getJobs(anyInt(), anyInt(), eq(queryString));
     }
 
-    @Test
-    public void testFetchJobSummariesContainsALinkToTheDetails() throws IOException {
-        final List<JobSummary> jobSummariesReturnedByDAO = TestHelpers.generateRandomJobSummaries();
-        final JobDAO jobDAO = mockJobDAOThatReturns(jobSummariesReturnedByDAO);
-        final JobResource jobResource = resourceThatUses(jobDAO);
-
-        final JobSummariesResponse jobSummariesResponse = jobResource.fetchJobSummaries(
-                TestHelpers.generateSecureSecurityContext(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty());
-
-        jobSummariesResponse.getEntries()
-                .forEach(this::assertHasValidDetailsRESTLink);
-    }
-
-    private void assertHasValidDetailsRESTLink(JobSummary jobSummary) {
-        assertThat(jobSummary.getLinks().containsKey("details")).isTrue();
-        assertThat(jobSummary.getLinks().get("details").getHref().toString()).isEqualTo(JobResource.PATH + "/" + jobSummary.getId().toString());
-    }
 
     @Test
     public void testFetchJobSummariesContainsLinksToAbortJobIfJobIsAbortable() throws IOException {
-        final List<JobSummary> jobSummariesWithAbortableStatus =
-                TestHelpers.generateRandomList(10, 20,
-                        () -> TestHelpers.generateJobSummaryWithStatus(JobStatus.RUNNING));
+        final List<JobDetails> jobSummariesWithAbortableStatus =
+                generateRandomList(10, 20, () -> generateJobDetailsWithStatus(JobStatus.RUNNING));
 
         final JobDAO jobDAO = mockJobDAOThatReturns(jobSummariesWithAbortableStatus);
 
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final JobSummariesResponse resp = jobResource.fetchJobSummaries(
+        final APIJobsResponse resp = jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.empty(),
@@ -261,7 +242,7 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertHasAJobAbortionRESTLink);
     }
 
-    private void assertHasAJobAbortionRESTLink(JobSummary jobSummary) {
+    private void assertHasAJobAbortionRESTLink(APIJobResponse jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("abort")).isTrue();
         assertThat(jobSummary.getLinks().get("abort").getHref().toString())
                 .isEqualTo(JobResource.PATH + "/" + jobSummary.getId().toString() + "/abort");
@@ -269,15 +250,14 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobSummariesDoesNotContainsLinksToAbortJobIfJobIsNotAbortable() throws IOException {
-        final List<JobSummary> notAbortableSummaries =
-                TestHelpers.generateRandomList(10, 20,
-                        () -> TestHelpers.generateJobSummaryWithStatus(JobStatus.FINISHED));
+        final List<JobDetails> notAbortableSummaries =
+                generateRandomList(10, 20, () -> generateJobDetailsWithStatus(JobStatus.FINISHED));
 
         final JobDAO jobDAO = mockJobDAOThatReturns(notAbortableSummaries);
 
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final JobSummariesResponse resp = jobResource.fetchJobSummaries(
+        final APIJobsResponse resp = jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.empty(),
@@ -286,21 +266,21 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertDoesNotHaveAbortionRESTLink);
     }
 
-    private void assertDoesNotHaveAbortionRESTLink(JobSummary jobSummary) {
+    private void assertDoesNotHaveAbortionRESTLink(APIJobResponse jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("abort")).isFalse();
     }
 
     @Test
     public void testFetchJobSummariesContainsLinksToJobStdoutIfJobHasStdout() throws IOException {
-        final List<JobSummary> summaries = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> summaries = generateRandomJobDetails();
 
         final JobDAO jobDAO = mock(JobDAO.class);
-        when(jobDAO.getJobSummaries(anyInt(), anyInt())).thenReturn(summaries);
+        when(jobDAO.getJobs(anyInt(), anyInt())).thenReturn(summaries);
         when(jobDAO.hasStdout(any())).thenReturn(true);
 
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final JobSummariesResponse resp = jobResource.fetchJobSummaries(
+        final APIJobsResponse resp = jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.empty(),
@@ -309,7 +289,7 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertHasAValidStdoutRESTLink);
     }
 
-    private void assertHasAValidStdoutRESTLink(JobSummary jobSummary) {
+    private void assertHasAValidStdoutRESTLink(APIJobResponse jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("stdout")).isTrue();
         assertThat(jobSummary.getLinks().get("stdout").getHref().toString())
                 .isEqualTo(JobResource.PATH + "/" + jobSummary.getId().toString() + "/stdout");
@@ -317,15 +297,15 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobSummariesDoesNotContainLinksToStdoutIfJobHasNoStdout() throws IOException {
-        final List<JobSummary> jobSummaries = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> jobSummaries = generateRandomJobDetails();
 
         final JobDAO jobDAO = mock(JobDAO.class);
-        when(jobDAO.getJobSummaries(anyInt(), anyInt())).thenReturn(jobSummaries);
+        when(jobDAO.getJobs(anyInt(), anyInt())).thenReturn(jobSummaries);
         when(jobDAO.hasStdout(any())).thenReturn(false);
 
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final JobSummariesResponse resp = jobResource.fetchJobSummaries(
+        final APIJobsResponse resp = jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.empty(),
@@ -334,21 +314,21 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertDoesNotHaveAnStdoutRESTLink);
     }
 
-    private void assertDoesNotHaveAnStdoutRESTLink(JobSummary jobSummary) {
+    private void assertDoesNotHaveAnStdoutRESTLink(APIJobResponse jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("stdout")).isFalse();
     }
 
     @Test
     public void testFetchJobSummariesContainsLinksToJobStderrIfJobHasStderr() throws IOException {
-        final List<JobSummary> jobSummaries = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> jobSummaries = generateRandomJobDetails();
 
         final JobDAO jobDAO = mock(JobDAO.class);
-        when(jobDAO.getJobSummaries(anyInt(), anyInt())).thenReturn(jobSummaries);
+        when(jobDAO.getJobs(anyInt(), anyInt())).thenReturn(jobSummaries);
         when(jobDAO.hasStderr(any())).thenReturn(true);
 
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final JobSummariesResponse resp = jobResource.fetchJobSummaries(
+        final APIJobsResponse resp = jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.empty(),
@@ -357,7 +337,7 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertHasAnStderrRESTLink);
     }
 
-    private void assertHasAnStderrRESTLink(JobSummary jobSummary) {
+    private void assertHasAnStderrRESTLink(APIJobResponse jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("stderr")).isTrue();
         assertThat(jobSummary.getLinks().get("stderr").getHref().toString())
                 .isEqualTo(JobResource.PATH + "/" + jobSummary.getId().toString() + "/stderr");
@@ -365,15 +345,15 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobSummariesDoesNotContainLinksToStderrIfJobHasNoStderr() throws IOException {
-        final List<JobSummary> jobSummaries = TestHelpers.generateRandomJobSummaries();
+        final List<JobDetails> jobSummaries = generateRandomJobDetails();
 
         final JobDAO jobDAO = mock(JobDAO.class);
-        when(jobDAO.getJobSummaries(anyInt(), anyInt())).thenReturn(jobSummaries);
+        when(jobDAO.getJobs(anyInt(), anyInt())).thenReturn(jobSummaries);
         when(jobDAO.hasStderr(any())).thenReturn(false);
 
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final JobSummariesResponse resp = jobResource.fetchJobSummaries(
+        final APIJobsResponse resp = jobResource.getJobs(
                 TestHelpers.generateSecureSecurityContext(),
                 Optional.empty(),
                 Optional.empty(),
@@ -382,8 +362,28 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertDoesNotHaveAnStderrRESTLink);
     }
 
-    private void assertDoesNotHaveAnStderrRESTLink(JobSummary jobSummary) {
+    private void assertDoesNotHaveAnStderrRESTLink(APIJobResponse jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("stderr")).isFalse();
+    }
+
+
+    @Test
+    public void testFetchJobSummariesContainsARESTLinkToTheSpec() {
+        final List<JobDetails> jobSummaries = generateRandomJobDetails();
+
+        final JobDAO jobDAO = mock(JobDAO.class);
+        when(jobDAO.getJobs(anyInt(), anyInt())).thenReturn(jobSummaries);
+        when(jobDAO.hasStderr(any())).thenReturn(false);
+
+        final JobResource jobResource = resourceThatUses(jobDAO);
+
+        final APIJobsResponse resp = jobResource.getJobs(
+                TestHelpers.generateSecureSecurityContext(),
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty());
+
+        resp.getEntries().forEach(this::assertHasASpecRESTLink);
     }
 
 
@@ -392,16 +392,16 @@ public final class JobResourceTest {
     public void testFetchJobDetailsByIdThrowsWebApplicationExceptionIfJobIdIsNotSpecified() {
         final JobResource jobResource = resourceThatUses(mock(JobDAO.class));
 
-        jobResource.fetchJobDetailsById(TestHelpers.generateSecureSecurityContext(), null);
+        jobResource.getJobDetailsById(TestHelpers.generateSecureSecurityContext(), null);
     }
 
     @Test
     public void testFetchJobDetailsByIdCallsTheDAOWithTheProvidedJobIdAndReturnsTheJobDetailsFromTheDAO() throws IOException {
-        final JobDetailsResponse jobDetailsFromDAO = TestHelpers.generateValidJobDetails();
+        final JobDetails jobDetailsFromDAO = generateValidJobDetails();
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsFromDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final Optional<JobDetailsResponse> jobDetailsResponse = jobResource.fetchJobDetailsById(
+        final Optional<APIJobResponse> jobDetailsResponse = jobResource.getJobDetailsById(
                 TestHelpers.generateSecureSecurityContext(),
                 jobDetailsFromDAO.getId());
 
@@ -410,9 +410,15 @@ public final class JobResourceTest {
         assertThat(jobDetailsResponse.get()).isEqualTo(jobDetailsFromDAO);
     }
 
-    private JobDAO mockJobDAOThatReturns(Optional<JobDetailsResponse> jobDetailsReturnedByDAO) {
+    private JobDAO mockJobDAOThatReturns(Optional<JobDetails> jobDetailsReturnedByDAO) {
         final JobDAO jobDAO = mock(JobDAO.class);
         when(jobDAO.getJobDetailsById(any())).thenReturn(jobDetailsReturnedByDAO);
+        return jobDAO;
+    }
+
+    private JobDAO mockJobDAOThatReturnsSpec(Optional<JobSpec> jobSpec) {
+        final JobDAO jobDAO = mock(JobDAO.class);
+        when(jobDAO.getSpecJobWasSubmittedAgainst(any())).thenReturn(jobSpec);
         return jobDAO;
     }
 
@@ -422,8 +428,8 @@ public final class JobResourceTest {
         final JobResource jobResource = resourceThatUses(jobDAO);
         final JobId jobId = TestHelpers.generateJobId();
 
-        final Optional<JobDetailsResponse> resp =
-                jobResource.fetchJobDetailsById(TestHelpers.generateSecureSecurityContext(), jobId);
+        final Optional<APIJobResponse> resp =
+                jobResource.getJobDetailsById(TestHelpers.generateSecureSecurityContext(), jobId);
 
         assertThat(resp).isEqualTo(Optional.empty());
     }
@@ -433,47 +439,69 @@ public final class JobResourceTest {
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.empty());
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        jobResource.fetchJobDetailsById(TestHelpers.generateSecureSecurityContext(), null);
+        jobResource.getJobDetailsById(TestHelpers.generateSecureSecurityContext(), null);
     }
 
     @Test
     public void testFetchJobDetailsByIdSetsAnAbortRESTLinkIfJobIsAbortable() throws IOException {
-        final JobDetailsResponse jobDetailsReturnedByDAO =
-                TestHelpers.generateJobDetailsWithStatus(JobStatus.RUNNING);
+        final APIJobResponse jobDetailsReturnedByDAO =
+                generateJobDetailsWithStatus(JobStatus.RUNNING);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final JobDetailsResponse jobDetailsResponse = jobResource.fetchJobDetailsById(
+        final APIJobResponse APIJobResponse = jobResource.getJobDetailsById(
                 TestHelpers.generateSecureSecurityContext(),
                 jobDetailsReturnedByDAO.getId())
                 .get();
 
-        assertHasAnAbortRESTLink(jobDetailsResponse);
+        assertHasAnAbortRESTLink(APIJobResponse);
     }
 
-    private void assertHasAnAbortRESTLink(JobDetailsResponse jobDetailsResponse) {
-        assertThat(jobDetailsResponse.getLinks().containsKey("abort")).isTrue();
-        assertThat(jobDetailsResponse.getLinks().get("abort").getHref().toString())
-                .isEqualTo(JobResource.PATH + "/" + jobDetailsResponse.getId() + "/abort");
+    private void assertHasAnAbortRESTLink(APIJobResponse APIJobResponse) {
+        assertThat(APIJobResponse.getLinks().containsKey("abort")).isTrue();
+        assertThat(APIJobResponse.getLinks().get("abort").getHref().toString())
+                .isEqualTo(JobResource.PATH + "/" + APIJobResponse.getId() + "/abort");
     }
 
     @Test
     public void testFetchJobDetailsByIdDoesNotSetAnAbortRESTLinkIfJobIsNotAbortable() throws IOException {
-        final JobDetailsResponse jobDetailsReturnedByDAO =
-                TestHelpers.generateJobDetailsWithStatus(JobStatus.FINISHED);
+        final APIJobResponse jobDetailsReturnedByDAO =
+                generateJobDetailsWithStatus(JobStatus.FINISHED);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final JobDetailsResponse jobDetailsResponse = jobResource.fetchJobDetailsById(
+        final APIJobResponse APIJobResponse = jobResource.getJobDetailsById(
                 TestHelpers.generateSecureSecurityContext(),
                 jobDetailsReturnedByDAO.getId())
                 .get();
 
-        assertDoesNotHaveAnAbortRESTLink(jobDetailsResponse);
+        assertDoesNotHaveAnAbortRESTLink(APIJobResponse);
     }
 
-    private void assertDoesNotHaveAnAbortRESTLink(JobDetailsResponse jobDetailsResponse) {
-        assertThat(jobDetailsResponse.getLinks().containsKey("abort")).isFalse();
+    private void assertDoesNotHaveAnAbortRESTLink(APIJobResponse APIJobResponse) {
+        assertThat(APIJobResponse.getLinks().containsKey("abort")).isFalse();
+    }
+
+
+    @Test
+    public void testFetchJobDetailsByIdSetsARESTLinkForTheSpec() {
+        final APIJobResponse jobDetailsReturnedByDAO =
+                generateJobDetailsWithStatus(JobStatus.FINISHED);
+        final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
+        final JobResource jobResource = resourceThatUses(jobDAO);
+
+        final APIJobResponse apiJobResponse = jobResource.getJobDetailsById(
+                generateSecureSecurityContext(),
+                jobDetailsReturnedByDAO.getId())
+                .get();
+
+        assertHasASpecRESTLink(apiJobResponse);
+    }
+
+    private void assertHasASpecRESTLink(APIJobResponse apiJobResponse) {
+        assertThat(apiJobResponse.getLinks().containsKey("spec")).isTrue();
+        assertThat(apiJobResponse.getLinks().get("spec").getHref().toString())
+                .isEqualTo(JobResource.PATH + "/" + apiJobResponse.getId() + "/spec");
     }
 
 
@@ -508,7 +536,7 @@ public final class JobResourceTest {
         jobResource.submitJob(TestHelpers.generateSecureSecurityContext(), generateValidJobRequest());
 
         verify(jobSpecConfigurationDAO, times(1))
-                .getJobSpecConfigurationById(new JobSpecId("job-schema-1"));
+                .getJobSpecById(new JobSpecId("job-schema-1"));
 
         verify(jobManagerActions, times(1)).submit(any());
     }
@@ -529,12 +557,12 @@ public final class JobResourceTest {
 
     private JobSpecConfigurationDAO mockJobSpecDAOThatReturns(JobSpec jobSpec) {
         final JobSpecConfigurationDAO jobSpecConfigurationDAO = mock(JobSpecConfigurationDAO.class);
-        when(jobSpecConfigurationDAO.getJobSpecConfigurationById(any())).thenReturn(Optional.of(jobSpec));
+        when(jobSpecConfigurationDAO.getJobSpecById(any())).thenReturn(Optional.of(jobSpec));
         return jobSpecConfigurationDAO;
     }
 
-    private APIJobRequest generateValidJobRequest() {
-        return TestHelpers.readJSONFixture("fixtures/resources/1_valid-job-request-against-spec.json", APIJobRequest.class);
+    private APIJobSubmissionRequest generateValidJobRequest() {
+        return TestHelpers.readJSONFixture("fixtures/resources/1_valid-job-request-against-spec.json", APIJobSubmissionRequest.class);
     }
 
     @Test
@@ -552,7 +580,7 @@ public final class JobResourceTest {
                 jobSpecConfigurationDAO,
                 Constants.DEFAULT_PAGE_SIZE);
 
-        final JobRequestResponse resp =
+        final APIJobSubmissionResponse resp =
                 jobResource.submitJob(TestHelpers.generateSecureSecurityContext(), generateValidJobRequest());
 
         assertThat(resp.getId()).isEqualTo(jobId);
@@ -576,8 +604,8 @@ public final class JobResourceTest {
                 generateInvalidJobRequest());
     }
 
-    private APIJobRequest generateInvalidJobRequest() {
-        return TestHelpers.readJSONFixture("fixtures/resources/1_invalid-job-request-against-spec.json", APIJobRequest.class);
+    private APIJobSubmissionRequest generateInvalidJobRequest() {
+        return TestHelpers.readJSONFixture("fixtures/resources/1_invalid-job-request-against-spec.json", APIJobSubmissionRequest.class);
     }
 
     @Test
@@ -613,10 +641,10 @@ public final class JobResourceTest {
         assertThat(((SelectInput)jobInput).getValue()).isEqualTo("a");
     }
 
-    private APIJobRequest getJobRequestWithMissingButDefaultedArg() {
+    private APIJobSubmissionRequest getJobRequestWithMissingButDefaultedArg() {
         return TestHelpers.readJSONFixture(
                 "fixtures/resources/2_valid-job-request-without-defaulted-arg.json",
-                APIJobRequest.class);
+                APIJobSubmissionRequest.class);
     }
 
 
@@ -749,5 +777,27 @@ public final class JobResourceTest {
         assertThat(response.getHeaderString("Content-Type")).isEqualTo("application/octet-stream");
         assertThat(response.getHeaderString("Content-Length")).isEqualTo(Long.toString(stderrRawData.length));
         assertThat(readAsByteArray(response)).isEqualTo(stderrRawData);
+    }
+
+
+    @Test
+    public void testFetchJobSpecJobWasSubmittedAgainstReturnsEmptyIfIdDoesNotExist() {
+        final JobDAO jobDAO = mockJobDAOThatReturnsSpec(Optional.empty());
+        final JobResource jobResource = resourceThatUses(jobDAO);
+
+        assertThat(
+                jobResource.fetchJobSpecJobWasSubmittedAgainst(generateSecureSecurityContext(), generateJobId()))
+                .isNotPresent();
+    }
+
+    @Test
+    public void testFetchJobSpecJobWasSubmittedAgainstReturnsTheJobSpecIfIdDoesExist() {
+        final JobSpec jobSpec = generateValidJobSpec();
+        final JobDAO jobDAO = mockJobDAOThatReturnsSpec(Optional.of(jobSpec));
+        final JobResource jobResource = resourceThatUses(jobDAO);
+
+        assertThat(
+                jobResource.fetchJobSpecJobWasSubmittedAgainst(generateSecureSecurityContext(), generateJobId()))
+                .isPresent();
     }
 }

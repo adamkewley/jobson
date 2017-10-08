@@ -21,7 +21,7 @@ package com.github.jobson.commands;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.javafaker.Faker;
-import com.github.jobson.api.v1.APIJobRequest;
+import com.github.jobson.api.v1.APIJobSubmissionRequest;
 import com.github.jobson.api.v1.JobSpecId;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.jobinputs.JobExpectedInputId;
@@ -36,7 +36,7 @@ import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.Map;
 
-import static com.github.jobson.Constants.JOB_SPEC_FILENAME;
+import static com.github.jobson.Constants.SPEC_DIR_SPEC_FILENAME;
 import static com.github.jobson.Helpers.*;
 import static java.util.stream.Collectors.toMap;
 
@@ -62,15 +62,15 @@ public final class GenerateRequestCommand extends DefaultedConfiguredCommand<App
     protected void run(Bootstrap<ApplicationConfig> bootstrap, Namespace namespace, ApplicationConfig applicationConfig) throws Exception {
         final String specId = namespace.get(SPEC_NAME_ARG);
         final Path specsDir = Paths.get(applicationConfig.getJobSpecConfiguration().getDir());
-        final Path specFile = specsDir.resolve(specId).resolve(JOB_SPEC_FILENAME);
+        final Path specFile = specsDir.resolve(specId).resolve(SPEC_DIR_SPEC_FILENAME);
 
         if (specFile.toFile().exists()) {
             final JobSpec jobSpec = readYAML(specFile, JobSpec.class);
             final JobSpecId jobSpecId = new JobSpecId(specId);
             final String jobName = new Faker().lorem().sentence(5);
             final Map<JobExpectedInputId, JsonNode> generatedInputs = generateInputs(jobSpec);
-            final APIJobRequest jobRequest =
-                    new APIJobRequest(jobSpecId, jobName, generatedInputs);
+            final APIJobSubmissionRequest jobRequest =
+                    new APIJobSubmissionRequest(jobSpecId, jobName, generatedInputs);
 
             System.out.println(toJSON(jobRequest));
             System.exit(0);

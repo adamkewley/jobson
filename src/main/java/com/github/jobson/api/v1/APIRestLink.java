@@ -19,49 +19,31 @@
 
 package com.github.jobson.api.v1;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "Summary information for a user")
-public final class UserSummary {
+import java.net.URI;
 
-    @ApiModelProperty(value = "A unique identifier for the user", example = "akewley")
-    @JsonProperty
-    private UserId id;
+@ApiModel(description = "A related resource link")
+public final class APIRestLink {
+
+    @ApiModelProperty(value = "The link's URL")
+    private URI href;
 
 
 
     /**
-     * @deprecated Used by JSON deserializer
+     * @deprecated Used by JSON deserializer.
      */
-    public UserSummary()  {}
+    public APIRestLink() {}
 
-    public UserSummary(UserId id) {
-        this.id = id;
+    public APIRestLink(URI href) {
+        this.href = href;
     }
 
 
 
-    public UserId getId() {
-        return id;
-    }
-
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        UserSummary that = (UserSummary) o;
-
-        return id != null ? id.equals(that.id) : that.id == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    public URI getHref() {
+        return href;
     }
 }

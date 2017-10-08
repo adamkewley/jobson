@@ -21,60 +21,54 @@ package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.jobson.dao.jobs.JobDetails;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
 import java.util.Map;
 
-@ApiModel(description = "A job spec summary")
-public final class JobSpecSummary {
+@ApiModel(description = "A job on the system")
+public class APIJobResponse extends JobDetails {
 
-    @ApiModelProperty(value = "A unique identifier for the job spec being summarized.", example = "akewley")
-    @JsonProperty
-    private JobSpecId id;
+    public static APIJobResponse fromJobDetails(
+            JobDetails jobDetails,
+            Map<String, APIRestLink> restLinks) {
 
-    @ApiModelProperty(value = "Name of the job spec", example = "Echo")
-    @JsonProperty
-    private String name;
+        return new APIJobResponse(
+                jobDetails.getId(),
+                jobDetails.getName(),
+                jobDetails.getOwner(),
+                jobDetails.getTimestamps(),
+                restLinks);
+    }
 
-    @ApiModelProperty(value = "Human-readable description of the job spec", example = "Echoes whatever text is provided via the input")
-    @JsonProperty
-    private String description;
 
     @ApiModelProperty(value = "Links to related resources and actions")
     @JsonProperty
-    private Map<String, RESTLink> _links;
-
+    private Map<String, APIRestLink> _links;
 
 
     /**
      * @deprecated Used by JSON deserializer
      */
-    public JobSpecSummary() {}
+    public APIJobResponse() {}
 
-    public JobSpecSummary(JobSpecId id, String name, String description, Map<String, RESTLink> _links) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
+    public APIJobResponse(
+            JobId id,
+            String name,
+            UserId owner,
+            List<JobTimestamp> timestamps,
+            Map<String, APIRestLink> _links) {
+
+        super(id, name, owner, timestamps);
+
         this._links = _links;
     }
 
 
-    
-    public JobSpecId getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     @JsonIgnore
-    public Map<String, RESTLink> getLinks() {
+    public Map<String, APIRestLink> getLinks() {
         return _links;
     }
 }

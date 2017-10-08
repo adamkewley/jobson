@@ -10,7 +10,7 @@
     description: Select your favorite name
     options:
     - id: adam
-      name: Adam
+      description: Adam
     - id: emma
       name: Emma
       description: Who is this person?
@@ -67,7 +67,7 @@
 
 - id: third-spec
   name: Third job spec
-  description: The third job spec
+  name: The third job spec
   expectedInputs: []
 
   execution:

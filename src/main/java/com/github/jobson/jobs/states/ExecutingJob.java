@@ -21,6 +21,7 @@ package com.github.jobson.jobs.states;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.jobson.api.v1.JobId;
+import com.github.jobson.api.v1.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
@@ -29,9 +30,30 @@ import com.github.jobson.utils.CancelablePromise;
 import io.reactivex.Observable;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public final class ExecutingJob extends PersistedJobRequest  {
+
+    public static ExecutingJob fromQueuedJob(
+            QueuedJob queuedJob,
+            Date date,
+            Observable<byte[]> stdoutObservable,
+            Observable<byte[]> stderrObservable) {
+
+        return new ExecutingJob(
+                queuedJob.getId(),
+                queuedJob.getOwner(),
+                queuedJob.getName(),
+                queuedJob.getInputs(),
+                queuedJob.getTimestamps(),
+                queuedJob.getSpec(),
+                date,
+                stdoutObservable,
+                stderrObservable,
+                queuedJob.getCompletionPromise());
+    }
+
 
     private final Date executionStarted;
 
@@ -50,13 +72,14 @@ public final class ExecutingJob extends PersistedJobRequest  {
             UserId owner,
             String name,
             Map<JobExpectedInputId, JobInput> inputs,
+            List<JobTimestamp> timestamps,
             JobSpec spec,
             Date executionStarted,
             Observable<byte[]> stdout,
             Observable<byte[]> stderr,
             CancelablePromise<FinalizedJob> completionPromise) {
 
-        super(id, owner, name, inputs, spec);
+        super(id, owner, name, inputs, timestamps, spec);
 
         this.executionStarted = executionStarted;
         this.stdout = stdout;

@@ -21,13 +21,23 @@ package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.jobinputs.JobExpectedInput;
+import com.github.jobson.specs.JobSpec;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
 @ApiModel(description = "Response to a request for a job spec's details")
-public final class JobSpecDetailsResponse {
+public final class APIJobSpecResponse {
+
+    public static APIJobSpecResponse fromJobSpec(JobSpec jobSpec) {
+        return new APIJobSpecResponse(
+                jobSpec.getId(),
+                jobSpec.getName(),
+                jobSpec.getDescription(),
+                jobSpec.getExpectedInputs());
+    }
+
 
     @ApiModelProperty(value = "A unique identifier for the job spec")
     @JsonProperty
@@ -50,9 +60,14 @@ public final class JobSpecDetailsResponse {
     /**
      * @deprecated Used by JSON deserializer.
      */
-    public JobSpecDetailsResponse() {}
+    public APIJobSpecResponse() {}
 
-    public JobSpecDetailsResponse(JobSpecId id, String name, String description, List<JobExpectedInput> expectedInputs) {
+    public APIJobSpecResponse(
+            JobSpecId id,
+            String name,
+            String description,
+            List<JobExpectedInput> expectedInputs) {
+
         this.id = id;
         this.name = name;
         this.description = description;
@@ -84,7 +99,7 @@ public final class JobSpecDetailsResponse {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JobSpecDetailsResponse that = (JobSpecDetailsResponse) o;
+        APIJobSpecResponse that = (APIJobSpecResponse) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;

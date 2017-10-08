@@ -61,7 +61,6 @@ public final class App extends Application<ApplicationConfig> {
         environment.jersey().register(new JsonProcessingExceptionMapper(true));
 
 
-
         final Path userFilePath = Paths.get(applicationConfig.getUsersConfiguration().getFile());
 
         if (!userFilePath.toFile().exists()) {
@@ -135,7 +134,7 @@ public final class App extends Application<ApplicationConfig> {
         final WebSocketUpgradeFilter wsFilter = WebSocketUpgradeFilter.configureContext(environment.getApplicationContext());
 
         log.debug("Enabling job events (multi-job) websocket endpoint");
-        wsFilter.addMapping(Constants.WS_JOB_EVENTS, new JobEventSocketCreator(jobManager));
+        wsFilter.addMapping(Constants.WEBSOCKET_JOB_EVENTS_PATH, new JobEventSocketCreator(jobManager));
 
         log.debug("Enabling job stderr updates websocket endpoint");
         wsFilter.addMapping(

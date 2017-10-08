@@ -29,15 +29,15 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 import java.util.Optional;
 
-@ApiModel(description = "A job status change")
-public final class JobStatusChangeTimestamp {
+@ApiModel(description = "Timestamp on a job")
+public final class JobTimestamp {
 
-    public static JobStatusChangeTimestamp now(JobStatus jobStatus, String message) {
-        return new JobStatusChangeTimestamp(jobStatus, Helpers.now(), Optional.of(message));
+    public static JobTimestamp now(JobStatus jobStatus, String message) {
+        return new JobTimestamp(jobStatus, Helpers.now(), Optional.of(message));
     }
 
-    public static JobStatusChangeTimestamp now(JobStatus jobStatus) {
-        return new JobStatusChangeTimestamp(jobStatus, Helpers.now(), Optional.empty());
+    public static JobTimestamp now(JobStatus jobStatus) {
+        return new JobTimestamp(jobStatus, Helpers.now(), Optional.empty());
     }
 
 
@@ -48,7 +48,7 @@ public final class JobStatusChangeTimestamp {
 
     @ApiModelProperty(value = "When the status change occurred")
     @JsonProperty
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.ALI_VISIBLE_TIMESTAMPS_FORMAT, timezone = Constants.ALI_VISIBLE_TIMESTAMPS_TIMEZONE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.API_VISIBLE_TIMESTAMPS_FORMAT, timezone = Constants.API_VISIBLE_TIMESTAMPS_TIMEZONE)
     private Date time;
 
     @ApiModelProperty(value = "(optional) A message associated with the status change")
@@ -60,10 +60,10 @@ public final class JobStatusChangeTimestamp {
     /**
      * @deprecated Used by JSON deserializer
      */
-    public JobStatusChangeTimestamp() {}
+    public JobTimestamp() {}
 
 
-    public JobStatusChangeTimestamp(JobStatus status, Date time, Optional<String> message) {
+    public JobTimestamp(JobStatus status, Date time, Optional<String> message) {
         this.status = status;
         this.time = time;
         this.message = message;

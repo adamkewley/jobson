@@ -38,9 +38,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.github.jobson.Constants.JOB_TIMESTAMP_RESOLUTION_IN_MILLISECONDS;
+import static com.github.jobson.Helpers.randomKeyIn;
+import static com.github.jobson.Helpers.randomSubstring;
+import static com.github.jobson.TestHelpers.*;
 import static com.google.common.collect.Lists.reverse;
 import static com.github.jobson.api.v1.JobStatus.FINISHED;
 import static com.github.jobson.api.v1.JobStatus.RUNNING;
+import static java.lang.Thread.sleep;
 import static java.util.stream.Collectors.*;
 import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,18 +57,18 @@ public abstract class JobsDAOTest {
 
     @Test
     public void testPersistNewJobReturnsPersistedRequestForValidRequest() throws IOException {
-        assertThat(getInstance().persist(TestHelpers.STANDARD_VALID_REQUEST)).isNotNull();
+        assertThat(getInstance().persist(STANDARD_VALID_REQUEST)).isNotNull();
     }
 
     @Test
     public void testGetJobDetailsByIdReturnsEmptyForNotPersistedJob() throws IOException {
-        assertThat(getInstance().getJobDetailsById(TestHelpers.generateJobId())).isNotPresent();
+        assertThat(getInstance().getJobDetailsById(generateJobId())).isNotPresent();
     }
 
     @Test
     public void testGetJobDetailsByIdReturnsOptionalOfJobForAPersistedJob() throws IOException {
         final JobDAO dao = getInstance();
-        final JobId id = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId id = dao.persist(STANDARD_VALID_REQUEST).getId();
         assertThat(dao.getJobDetailsById(id)).isPresent();
     }
 
@@ -72,135 +77,135 @@ public abstract class JobsDAOTest {
     @Test
     public void testJobExistsReturnsTrueForAPersistedJob() throws IOException {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         assertThat(dao.jobExists(jobId));
     }
 
     @Test
     public void testJobExistsReturnsFalseForNotPersistedJob() throws IOException {
         final JobDAO dao = getInstance();
-        assertThat(dao.jobExists(TestHelpers.generateJobId())).isFalse();
+        assertThat(dao.jobExists(generateJobId())).isFalse();
     }
 
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetJobSummariesThrowsIllegalArgumentExceptionIfPageSizeIsNegative() throws IOException {
+    public void testGetJobsThrowsIllegalArgumentExceptionIfPageSizeIsNegative() throws IOException {
         final JobDAO dao =  getInstance();
-        dao.getJobSummaries(-1, 20);
+        dao.getJobs(-1, 20);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetJobSummariesThrowsIllegalArgumentExceptionIfPageIsNegative() throws IOException {
+    public void testGetJobsThrowsIllegalArgumentExceptionIfPageIsNegative() throws IOException {
         final JobDAO dao = getInstance();
-        dao.getJobSummaries(0, -10);
+        dao.getJobs(0, -10);
     }
 
     @Test
-    public void testGetJobSummariesReturnsAList() throws IOException {
+    public void testGetJobsReturnsAList() throws IOException {
         final JobDAO dao = getInstance();
-        assertThat(dao.getJobSummaries(5, 0)).isNotNull();
+        assertThat(dao.getJobs(5, 0)).isNotNull();
     }
 
     @Test
-    public void testGetJobSummariesReturnsTheNewestJobsFirst() throws IOException, InterruptedException {
+    public void testGetJobsReturnsTheNewestJobsFirst() throws IOException, InterruptedException {
         final JobDAO dao = getInstance();
         final List<JobId> jobIdsInCreationOrder = new ArrayList<>();
-        final int numJobsToGenerate = 20;
+        final int numJobsToGenerate = randomIntBetween(10, 30);
 
         for (int i = 0; i < numJobsToGenerate; i++) {
-            jobIdsInCreationOrder.add(dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId());
-            Thread.sleep(Constants.JOB_TIMESTAMP_RESOLUTION_IN_MILLISECONDS * 2);
+            jobIdsInCreationOrder.add(dao.persist(STANDARD_VALID_REQUEST).getId());
+            sleep(JOB_TIMESTAMP_RESOLUTION_IN_MILLISECONDS * 2);
         }
 
         final List<JobId> jobSummariesReturned = dao
-                .getJobSummaries(numJobsToGenerate, 0)
+                .getJobs(numJobsToGenerate, 0)
                 .stream()
-                .map(JobSummary::getId)
+                .map(JobDetails::getId)
                 .collect(toList());
 
         assertThat(jobSummariesReturned).isEqualTo(reverse(jobIdsInCreationOrder));
     }
 
     @Test
-    public void testGetJobSummariesReturnsNoMoreThanTheSpecifiedPageSize() throws IOException {
+    public void testGetJobsReturnsNoMoreThanTheSpecifiedPageSize() throws IOException {
         final JobDAO dao = getInstance();
         final int pageSize = 10;
         final int numJobsToGenerate = pageSize * 2;
 
         for (int i = 0; i < numJobsToGenerate; i++) {
-            dao.persist(TestHelpers.STANDARD_VALID_REQUEST);
+            dao.persist(STANDARD_VALID_REQUEST);
         }
 
-        assertThat(dao.getJobSummaries(pageSize, 0).size()).isEqualTo(pageSize);
+        assertThat(dao.getJobs(pageSize, 0).size()).isEqualTo(pageSize);
     }
 
     @Test
-    public void testGetJobSummariesReturnsNothingIfPageAndPageSizeGoesBeyondTheResultSize() throws IOException {
+    public void testGetJobsReturnsNothingIfPageAndPageSizeGoesBeyondTheResultSize() throws IOException {
         final JobDAO dao = getInstance();
-        assertThat(dao.getJobSummaries(50, 50).size()).isEqualTo(0);
+        assertThat(dao.getJobs(50, 50).size()).isEqualTo(0);
     }
 
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetJobSummariesWithQueryStringThrowsIfPageSizeIsNegative() throws IOException {
+    public void testGetJobsWithQueryStringThrowsIfPageSizeIsNegative() throws IOException {
         final JobDAO dao = getInstance();
-        dao.getJobSummaries(-1, 20, TestHelpers.generateRandomString());
+        dao.getJobs(-1, 20, generateRandomString());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetJobSummariesWithQueryStringThrowsIfPageIsNegative() throws IOException {
+    public void testGetJobsWithQueryStringThrowsIfPageIsNegative() throws IOException {
         final JobDAO dao = getInstance();
-        dao.getJobSummaries(20, -1, TestHelpers.generateRandomString());
+        dao.getJobs(20, -1, generateRandomString());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetJobSummariesWithQueryStringThrowsIfTheQueryIsNull() throws IOException {
+    public void testGetJobsWithQueryStringThrowsIfTheQueryIsNull() throws IOException {
         final JobDAO dao = getInstance();
-        dao.getJobSummaries(20, 10, null);
+        dao.getJobs(20, 10, null);
     }
 
     @Test
-    public void testGetJobSummariesWithQueryStringReturnsAList() throws IOException {
+    public void testGetJobsWithQueryStringReturnsAList() throws IOException {
         final JobDAO dao = getInstance();
 
-        assertThat(dao.getJobSummaries(10, 10, TestHelpers.generateRandomString()))
+        assertThat(dao.getJobs(10, 10, generateRandomString()))
                 .isNotNull();
     }
 
     @Test
-    public void testGetJobSummariesWithAQueryStringReturnsSubmittedJobs() throws IOException {
+    public void testGetJobsWithAQueryStringReturnsSubmittedJobs() throws IOException {
         final JobDAO dao = getInstance();
         final Set<JobId> expectedJobIds = new HashSet<>();
         final int numJobsToGenerate = 20;
 
         for (int i = 0; i < numJobsToGenerate; i++) {
-            expectedJobIds.add(dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId());
+            expectedJobIds.add(dao.persist(STANDARD_VALID_REQUEST).getId());
         }
 
         final Set<JobId> returnedJobIds = dao
-                .getJobSummaries(numJobsToGenerate, 0, "")
+                .getJobs(numJobsToGenerate, 0, "")
                 .stream()
-                .map(JobSummary::getId)
+                .map(JobDetails::getId)
                 .collect(toSet());
 
         assertThat(returnedJobIds).isEqualTo(expectedJobIds);
     }
 
     @Test
-    public void testGetJobSummariesWithQueryStringContainingNameReturnsOnlyJobsWithThatName() throws IOException {
+    public void testGetJobsWithQueryStringContainingNameReturnsOnlyJobsWithThatName() throws IOException {
         final JobDAO dao = getInstance();
         final List<ValidJobRequest> reqs =
                 Stream.generate(TestHelpers::generateRandomString)
                         .map(TestHelpers::validRequestWithName)
-                        .limit(TestHelpers.randomIntBetween(5, 50))
+                        .limit(randomIntBetween(5, 50))
                         .collect(toList());
-        final int numJobRequests = TestHelpers.randomIntBetween(20, 50);
+        final int numJobRequests = randomIntBetween(20, 50);
         final Map<ValidJobRequest, Set<JobId>> responses = new HashMap<>();
 
         for (int i = 0; i < numJobRequests; i++) {
-            final int idx = TestHelpers.randomIntBetween(0, reqs.size() - 1);
+            final int idx = randomIntBetween(0, reqs.size() - 1);
             final ValidJobRequest req = reqs.get(idx);
             final JobId id = dao.persist(req).getId();
 
@@ -213,30 +218,30 @@ public abstract class JobsDAOTest {
             }
         }
 
-        final ValidJobRequest reqBeingQueried = Helpers.randomKeyIn(responses);
+        final ValidJobRequest reqBeingQueried = randomKeyIn(responses);
         final Set<JobId> expectedIds = responses.get(reqBeingQueried);
 
         final Set<JobId> returnedIds =
-                dao.getJobSummaries(numJobRequests, 0, reqBeingQueried.getName())
+                dao.getJobs(numJobRequests, 0, reqBeingQueried.getName())
                         .stream()
-                        .map(JobSummary::getId)
+                        .map(JobDetails::getId)
                         .collect(toSet());
 
         assertThat(returnedIds).isEqualTo(expectedIds);
     }
 
     @Test
-    public void testGetJobSummariesWithQueryStringContainingSubstringOfNameReturnsOnlyJobsWithThatSubstring() throws IOException {
+    public void testGetJobsWithQueryStringContainingSubstringOfNameReturnsOnlyJobsWithThatSubstring() throws IOException {
         final JobDAO dao = getInstance();
         final List<ValidJobRequest> reqs =
-                Stream.generate(() -> TestHelpers.validRequestWithName(TestHelpers.generateRandomString()))
-                        .limit(TestHelpers.randomIntBetween(5, 50))
+                Stream.generate(() -> validRequestWithName(generateRandomString()))
+                        .limit(randomIntBetween(5, 50))
                         .collect(toList());
         final int numJobRequests = TestHelpers.randomIntBetween(20, 50);
         final Map<ValidJobRequest, Set<JobId>> responses = new HashMap<>();
 
         for (int i = 0; i < numJobRequests; i++) {
-            final int idx = TestHelpers.randomIntBetween(0, reqs.size() - 1);
+            final int idx = randomIntBetween(0, reqs.size() - 1);
             final ValidJobRequest req = reqs.get(idx);
             final JobId id = dao.persist(req).getId();
 
@@ -249,24 +254,24 @@ public abstract class JobsDAOTest {
             }
         }
 
-        final ValidJobRequest reqBeingQueried = Helpers.randomKeyIn(responses);
+        final ValidJobRequest reqBeingQueried = randomKeyIn(responses);
         final Set<JobId> expectedIds = responses.get(reqBeingQueried);
-        final String query = Helpers.randomSubstring(reqBeingQueried.getName(), 7);
+        final String query = randomSubstring(reqBeingQueried.getName(), 7);
 
         final Set<JobId> returnedIds =
-                dao.getJobSummaries(numJobRequests, 0, query)
+                dao.getJobs(numJobRequests, 0, query)
                         .stream()
-                        .map(JobSummary::getId)
+                        .map(JobDetails::getId)
                         .collect(toSet());
 
         assertThat(returnedIds).isEqualTo(expectedIds);
     }
 
     @Test
-    public void testGetJobSummariesWithQueryStringContainingAuthorNameReturnsJobsWithThatAuthorName() throws IOException {
+    public void testGetJobsWithQueryStringContainingAuthorNameReturnsJobsWithThatAuthorName() throws IOException {
         final JobDAO dao = getInstance();
-        final ValidJobRequest firstRequest = TestHelpers.validRequestWithOwner(TestHelpers.generateUserId());
-        final ValidJobRequest secondRequest = TestHelpers.validRequestWithOwner(TestHelpers.generateUserId());
+        final ValidJobRequest firstRequest = validRequestWithOwner(generateUserId());
+        final ValidJobRequest secondRequest = validRequestWithOwner(generateUserId());
         final int numJobRequests = 20;
 
         final Map<ValidJobRequest, Set<JobId>> allJobIds =
@@ -278,9 +283,9 @@ public abstract class JobsDAOTest {
         final String query = firstRequest.getOwner().toString();
 
         final Set<JobId> returnedJobIds =
-                dao.getJobSummaries(numJobRequests, 0, query)
+                dao.getJobs(numJobRequests, 0, query)
                         .stream()
-                        .map(JobSummary::getId)
+                        .map(JobDetails::getId)
                         .collect(Collectors.toSet());
 
         final Set<JobId> expectedJobIds = allJobIds.get(firstRequest);
@@ -302,9 +307,9 @@ public abstract class JobsDAOTest {
 
         for (JobId jobId : jobIds) {
             final Set<JobId> returnedIds = dao
-                    .getJobSummaries(numJobRequests, 0, jobId.toString())
+                    .getJobs(numJobRequests, 0, jobId.toString())
                     .stream()
-                    .map(JobSummary::getId)
+                    .map(JobDetails::getId)
                     .collect(Collectors.toSet());
 
             assertThat(returnedIds).contains(jobId);
@@ -316,20 +321,20 @@ public abstract class JobsDAOTest {
     @Test
     public void testHasStdoutReturnsFalseForNonExistentJob() throws IOException {
         final JobDAO dao = getInstance();
-        assertThat(dao.hasStdout(TestHelpers.generateJobId())).isFalse();
+        assertThat(dao.hasStdout(generateJobId())).isFalse();
     }
 
     @Test
     public void testHasStdoutReturnsFalseForPersistedJobBeforeCallingPersistStdout() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         assertThat(dao.hasStdout(jobId)).isFalse();
     }
 
     @Test
     public void testHasStdoutReturnsTrueForPersistedJobAfterCallingPersistStdout() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         dao.appendStdout(jobId, TestHelpers.generateRandomByteObservable());
 
         assertThat(dao.hasStdout(jobId));
@@ -340,20 +345,20 @@ public abstract class JobsDAOTest {
     @Test
     public void testHasStderrReturnsFalseForNonExistentJob() throws IOException {
         final JobDAO dao = getInstance();
-        assertThat(dao.hasStderr(TestHelpers.generateJobId())).isFalse();
+        assertThat(dao.hasStderr(generateJobId())).isFalse();
     }
 
     @Test
     public void testHasStderrReturnsFalseForPersistedJobBeforeCallingPersistStderr() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         assertThat(dao.hasStderr(jobId)).isFalse();
     }
 
     @Test
     public void testHasStderrReturnsTrueForPersistedJobAfterCallingPersistStderr() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         dao.appendStderr(jobId, TestHelpers.generateRandomByteObservable());
 
         assertThat(dao.hasStderr(jobId));
@@ -364,20 +369,20 @@ public abstract class JobsDAOTest {
     @Test
     public void testGetStdoutReturnsEmptyForNonExistentJob() {
         final JobDAO dao = getInstance();
-        assertThat(dao.getStdout(TestHelpers.generateJobId())).isNotPresent();
+        assertThat(dao.getStdout(generateJobId())).isNotPresent();
     }
 
     @Test
     public void testGetStdoutReturnsEmptyForPersistedJobBeforeCallingPersistStdout() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         assertThat(dao.getStdout(jobId)).isNotPresent();
     }
 
     @Test
     public void testGetStdoutReturnsOptionalOfStdoutAfterCallingPersistStdout() throws IOException {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         final byte[] suppliedData = TestHelpers.generateRandomBytes();
         dao.appendStdout(jobId, Observable.just(suppliedData));
         final byte[] returnedData = toByteArray(dao.getStdout(jobId).get().getData());
@@ -390,20 +395,20 @@ public abstract class JobsDAOTest {
     @Test
     public void testGetStderrReturnsEmptyForNonExistentJob() {
         final JobDAO dao = getInstance();
-        assertThat(dao.getStderr(TestHelpers.generateJobId())).isNotPresent();
+        assertThat(dao.getStderr(generateJobId())).isNotPresent();
     }
 
     @Test
     public void testGetStderrReturnsEmptyForPersistedJobBeforeCallingPersistStderr() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         assertThat(dao.getStderr(jobId)).isNotPresent();
     }
 
     @Test
     public void testGetStderrReturnsOptionalOfStderrAfterCallingPersistStderr() throws IOException {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         final byte[] suppliedData = TestHelpers.generateRandomBytes();
         dao.appendStderr(jobId, Observable.just(suppliedData));
         final byte[] returnedData = toByteArray(dao.getStderr(jobId).get().getData());
@@ -415,13 +420,13 @@ public abstract class JobsDAOTest {
     @Test(expected = RuntimeException.class)
     public void testPersistStdoutThrowsForNonExistentJob() {
         final JobDAO dao = getInstance();
-        dao.appendStdout(TestHelpers.generateJobId(), TestHelpers.generateRandomByteObservable());
+        dao.appendStdout(generateJobId(), TestHelpers.generateRandomByteObservable());
     }
 
     @Test
     public void testPersistStdoutSubscribesToTheObservable() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         final AtomicBoolean daoSubscribedToStdout = new AtomicBoolean(false);
         final Observable<byte[]> stdout = Observable.create(subscriber -> daoSubscribedToStdout.set(true));
 
@@ -433,7 +438,7 @@ public abstract class JobsDAOTest {
     @Test
     public void testPersistStdoutReadsDataFromObservable() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         final Subject<byte[]> stdoutSubject = PublishSubject.create();
         final AtomicBoolean stdoutObsWasRead = new AtomicBoolean(false);
         final Observable<byte[]> stdoutObs = stdoutSubject.map(data -> {
@@ -449,7 +454,7 @@ public abstract class JobsDAOTest {
     @Test
     public void testPersistStdoutReturnsADisposableThatStopsFurtherReads() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         final Subject<byte[]> stdoutSubject = PublishSubject.create();
         final AtomicBoolean stdoutObsWasRead = new AtomicBoolean(false);
         final Observable<byte[]> stdoutObs = stdoutSubject.map(data -> {
@@ -469,13 +474,13 @@ public abstract class JobsDAOTest {
     @Test(expected = RuntimeException.class)
     public void testPersistStderrThrowsForNonExistentJob() {
         final JobDAO dao = getInstance();
-        dao.appendStderr(TestHelpers.generateJobId(), TestHelpers.generateRandomByteObservable());
+        dao.appendStderr(generateJobId(), TestHelpers.generateRandomByteObservable());
     }
 
     @Test
     public void testPersistStderrSubscribesToTheObservable() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         final AtomicBoolean daoSubscribedToStderr = new AtomicBoolean(false);
         final Observable<byte[]> stderr = Observable.create(subscriber -> daoSubscribedToStderr.set(true));
 
@@ -487,7 +492,7 @@ public abstract class JobsDAOTest {
     @Test
     public void testPersistStderrReadsDataFromObservable() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         final Subject<byte[]> stderrSubject = PublishSubject.create();
         final AtomicBoolean stderrObsWasRead = new AtomicBoolean(false);
         final Observable<byte[]> stderrObs = stderrSubject.map(data -> {
@@ -503,7 +508,7 @@ public abstract class JobsDAOTest {
     @Test
     public void testPersistStderrReturnsADisposableThatStopsFurtherReads() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         final Subject<byte[]> stderrSubject = PublishSubject.create();
         final AtomicBoolean stderrObsWasRead = new AtomicBoolean(false);
         final Observable<byte[]> stderrObs = stderrSubject.map(data -> {
@@ -523,21 +528,21 @@ public abstract class JobsDAOTest {
     @Test(expected = RuntimeException.class)
     public void testAddNewJobStatusThrowsForNonExistentJob() {
         final JobDAO dao = getInstance();
-        dao.addNewJobStatus(TestHelpers.generateJobId(), TestHelpers.generateJobStatus(), TestHelpers.generateRandomString());
+        dao.addNewJobStatus(generateJobId(), TestHelpers.generateJobStatus(), generateRandomString());
     }
 
     @Test
     public void testAddNewJobStatusAddsTheJobStatusToTheEndOfTheStatusChangesList() {
         final JobDAO dao = getInstance();
-        final JobId jobId = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         final JobStatus newStatus = TestHelpers.generateJobStatus();
-        final String newStatusMessage = TestHelpers.generateRandomString();
+        final String newStatusMessage = generateRandomString();
 
         dao.addNewJobStatus(jobId, newStatus, newStatusMessage);
 
-        final Optional<JobStatusChangeTimestamp> last =
+        final Optional<JobTimestamp> last =
                 dao.getJobDetailsById(jobId)
-                        .map(JobDetailsResponse::getStatusChanges)
+                        .map(JobDetails::getTimestamps)
                         .flatMap(Helpers::lastElement);
 
         assertThat(last).isPresent();
@@ -553,8 +558,8 @@ public abstract class JobsDAOTest {
                 IntStream.range(1, TestHelpers.randomIntBetween(10, 100))
                         .mapToObj(i -> TestHelpers.randomFloat() < 0.5f ? FINISHED : RUNNING)
                         .map(status -> {
-                            final JobId id = dao.persist(TestHelpers.STANDARD_VALID_REQUEST).getId();
-                            dao.addNewJobStatus(id, status, TestHelpers.generateRandomString());
+                            final JobId id = dao.persist(STANDARD_VALID_REQUEST).getId();
+                            dao.addNewJobStatus(id, status, generateRandomString());
                             return Pair.of(status, id);
                         })
                         .collect(groupingBy(Pair::getLeft, mapping(Pair::getRight, toSet())));

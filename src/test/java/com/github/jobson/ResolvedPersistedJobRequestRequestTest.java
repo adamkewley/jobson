@@ -49,9 +49,9 @@ public final class ResolvedPersistedJobRequestRequestTest {
 
         final UserId userId = TestHelpers.generateUserId();
 
-        final APIJobRequest validReq = TestHelpers.readJSONFixture(
+        final APIJobSubmissionRequest validReq = TestHelpers.readJSONFixture(
                 "fixtures/specs/1_valid-job-request-against-schema.json",
-                APIJobRequest.class);
+                APIJobSubmissionRequest.class);
 
 
         final Either<ValidJobRequest, List<ValidationError>> ret =
@@ -70,9 +70,9 @@ public final class ResolvedPersistedJobRequestRequestTest {
 
         final UserId userId = TestHelpers.generateUserId();
 
-        final APIJobRequest jobRequestWithInvalidInputId = TestHelpers.readJSONFixture(
+        final APIJobSubmissionRequest jobRequestWithInvalidInputId = TestHelpers.readJSONFixture(
                 "fixtures/specs/3_request-with-non-existent-input.json",
-                APIJobRequest.class);
+                APIJobSubmissionRequest.class);
 
 
         final Either<ValidJobRequest, List<ValidationError>> ret =
@@ -92,9 +92,9 @@ public final class ResolvedPersistedJobRequestRequestTest {
 
         final UserId userId = TestHelpers.generateUserId();
 
-        final APIJobRequest jobRequestWithInvalidColumnRefInSQL = TestHelpers.readJSONFixture(
+        final APIJobSubmissionRequest jobRequestWithInvalidColumnRefInSQL = TestHelpers.readJSONFixture(
                 "fixtures/specs/4_job-request-with-an-invalid-sql-error.json",
-                APIJobRequest.class);
+                APIJobSubmissionRequest.class);
 
 
         final Either<ValidJobRequest, List<ValidationError>> ret =
@@ -114,9 +114,9 @@ public final class ResolvedPersistedJobRequestRequestTest {
 
         final UserId userId = TestHelpers.generateUserId();
 
-        final APIJobRequest jobRequestWithInvalidSpecifiedOption = TestHelpers.readJSONFixture(
+        final APIJobSubmissionRequest jobRequestWithInvalidSpecifiedOption = TestHelpers.readJSONFixture(
                 "fixtures/specs/5_job-request-with-invalid-option.json",
-                APIJobRequest.class);
+                APIJobSubmissionRequest.class);
 
 
         final Either<ValidJobRequest, List<ValidationError>> ret =
@@ -163,14 +163,14 @@ public final class ResolvedPersistedJobRequestRequestTest {
         final Map<JobExpectedInputId, JsonNode> genericInputs =
                 Helpers.mapValues(inputs, TestHelpers::toJsonNode);
 
-        final APIJobRequest APIJobRequest =
-                new APIJobRequest(
+        final APIJobSubmissionRequest APIJobSubmissionRequest =
+                new APIJobSubmissionRequest(
                         jobSpecId,
                         TestHelpers.generateRandomString(),
                         genericInputs);
 
         final Either<ValidJobRequest, List<ValidationError>> ret =
-                ValidJobRequest.tryCreate(jobSpec, userId, APIJobRequest);
+                ValidJobRequest.tryCreate(jobSpec, userId, APIJobSubmissionRequest);
 
         ret.handleBoth(
                 req -> fail("Invalid request generated no validation errors"),

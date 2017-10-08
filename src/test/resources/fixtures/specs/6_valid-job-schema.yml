@@ -1,5 +1,25 @@
 id: suede-value
 name: Perform generic data extraction jobs on a cluster
+
+expectedInputs:
+  - id: query
+    name: Construct Query
+    description: Select the columns + filters to apply
+    type: sql
+    tables:
+      - id: PreprocessedTransit
+        name: Preprocessed Transits
+        description: The preprocessed transits
+        columns:
+          - id: Col1
+            name: Column 1
+            description: The first column
+            type: int
+          - id: Col1
+            name: Column 2
+            description: The second column
+            type: string
+
 execution:
   application: bash
   arguments:
@@ -12,22 +32,3 @@ execution:
       target: jobscript
     - source: job-dependencies/libs
       target: libs
-
-expectedInputs:
-  - id: query
-    name: Construct Query
-    description: Select the columns + filters to apply
-    type: sql
-    tables:
-      - id: PreprocessedTransit
-        name: Preprocessed Transits
-        name: The preprocessed transits
-        columns:
-          - id: Col1
-            name: Column 1
-            description: The first column
-            type: int
-          - id: Col1
-            name: Column 2
-            description: The second column
-            type: string

@@ -22,8 +22,11 @@ package com.github.jobson.specs;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 public final class ExecutionConfiguration {
 
@@ -44,7 +47,11 @@ public final class ExecutionConfiguration {
      */
     public ExecutionConfiguration() {}
 
-    public ExecutionConfiguration(String application, Optional<List<String>> arguments, Optional<List<JobDependencyConfiguration>> dependencies) {
+    public ExecutionConfiguration(
+            String application,
+            Optional<List<String>> arguments,
+            Optional<List<JobDependencyConfiguration>> dependencies) {
+
         this.application = application;
         this.arguments = arguments;
         this.dependencies = dependencies;
@@ -62,6 +69,17 @@ public final class ExecutionConfiguration {
 
     public Optional<List<JobDependencyConfiguration>> getDependencies() {
         return dependencies;
+    }
+
+
+    public ExecutionConfiguration withDependenciesResolvedRelativeTo(Path p) {
+        final Optional<List<JobDependencyConfiguration>> resolvedJobDependencies =
+                dependencies.map(dependencies ->
+                        dependencies.stream().map(
+                                dependency -> dependency.withSourceResolvedRelativeTo(p))
+                                .collect(toList()));
+
+        return new ExecutionConfiguration(application, arguments, resolvedJobDependencies);
     }
 
 

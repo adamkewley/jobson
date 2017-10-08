@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 @ApiModel(description = "A request to submit a new job")
-public final class APIJobRequest {
+public final class APIJobSubmissionRequest {
 
     @ApiModelProperty(value = "The job spec that the request is being made against")
     @JsonProperty
@@ -51,9 +51,9 @@ public final class APIJobRequest {
     /**
      * @deprecated Used by JSON deserializer.
      */
-    public APIJobRequest() {}
+    public APIJobSubmissionRequest() {}
 
-    public APIJobRequest(
+    public APIJobSubmissionRequest(
             JobSpecId spec,
             String name,
             Map<JobExpectedInputId, JsonNode> inputs) {

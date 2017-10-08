@@ -21,7 +21,7 @@ package com.github.jobson.fixtures;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jobson.api.v1.APIJobRequest;
+import com.github.jobson.api.v1.APIJobSubmissionRequest;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobs.states.ValidJobRequest;
@@ -64,7 +64,7 @@ public final class ValidJobRequestFixture {
 
 
     public ValidJobRequest toValidJobRequest() {
-        final APIJobRequest apiJobRequest = new APIJobRequest(
+        final APIJobSubmissionRequest apiJobSubmissionRequest = new APIJobSubmissionRequest(
                 this.spec.getId(),
                 this.name,
                 this.inputs);
@@ -72,6 +72,6 @@ public final class ValidJobRequestFixture {
         return ValidJobRequest.tryCreate(
                 this.spec,
                 this.owner,
-                apiJobRequest).getLeft().get();
+                apiJobSubmissionRequest).getLeft().get();
     }
 }

@@ -19,18 +19,18 @@
 
 package com.github.jobson.api.v1;
 
-import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIJobRequest;
 import org.junit.Test;
 
 import java.io.IOException;
 
-public final class PersistedJobRequestRequestTest {
+import static com.github.jobson.TestHelpers.readJSONFixture;
+
+public final class APIJobSubmissionRequestTest {
 
     @Test
     public void testCanDeserializeAJobRequest() throws IOException {
-        TestHelpers.readJSONFixture(
-                "fixtures/api/v1/JobRequest/example-request.json",
-                APIJobRequest.class);
+        readJSONFixture(
+                "fixtures/api/v1/APIJobSubmissionRequest/job-request.json",
+                APIJobSubmissionRequest.class);
     }
 }

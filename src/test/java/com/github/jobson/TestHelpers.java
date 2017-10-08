@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.dao.jobs.JobDetails;
+import com.github.jobson.dao.specs.JobSpecSummary;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
@@ -38,6 +40,8 @@ import com.github.jobson.fixtures.ValidJobRequestFixture;
 import com.github.jobson.jobs.states.ValidJobRequest;
 import com.github.jobson.dao.BinaryData;
 import com.github.jobson.dao.users.UserCredentials;
+import com.github.jobson.specs.ExecutionConfiguration;
+import com.github.jobson.specs.JobSpec;
 import com.github.jobson.websockets.v1.JobEvent;
 import io.reactivex.Observable;
 import org.apache.commons.io.IOUtils;
@@ -46,10 +50,16 @@ import org.glassfish.jersey.internal.util.Producer;
 import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
+import static java.nio.file.Files.createTempDirectory;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 
 public final class TestHelpers {
 
@@ -60,7 +70,7 @@ public final class TestHelpers {
 
 
     static {
-        STANDARD_VALID_REQUEST = readJobRequestFixture("fixtures/dao/FilesystemBasedJobsDAO/standard-resolved-request.json");
+        STANDARD_VALID_REQUEST = readJobRequestFixture("fixtures/dao/jobs/FilesystemBasedJobsDAO/standard-resolved-request.json");
     }
 
 
@@ -120,10 +130,6 @@ public final class TestHelpers {
         return TestHelpers.generateRandomString();
     }
 
-    public static String generateUserEmail() {
-        return TestHelpers.generateRandomString();
-    }
-
     public static UserCredentials generateUserDetails() {
         return new UserCredentials(generateUserId(), "someauthname", "someauthfield");
     }
@@ -137,15 +143,15 @@ public final class TestHelpers {
     }
 
     public static JobSpecSummary generateJobSpecSummary() {
-        return new JobSpecSummary(generateJobSpecId(), generateUserName(), generateRandomString(), new HashMap<>());
+        return new JobSpecSummary(generateJobSpecId(), generateUserName(), generateRandomString());
     }
 
-    public static JobStatusChangeTimestamp generateJobStatusChangeTimestamp() {
-        return new JobStatusChangeTimestamp(JobStatus.ABORTED, new Date(), Optional.of(generateRandomString()));
+    public static JobTimestamp generateJobStatusChangeTimestamp() {
+        return new JobTimestamp(JobStatus.ABORTED, new Date(), Optional.of(generateRandomString()));
     }
 
-    public static List<JobStatusChangeTimestamp> generateTypicalJobStatusTimestamps() {
-        final List<JobStatusChangeTimestamp> ret = new ArrayList<>();
+    public static List<JobTimestamp> generateTypicalJobStatusTimestamps() {
+        final List<JobTimestamp> ret = new ArrayList<>();
 
         final int numEntries = rng.nextInt(5) + 1;
 
@@ -168,33 +174,30 @@ public final class TestHelpers {
         return ret;
     }
 
+    public static List<JobDetails> generateRandomJobDetails() {
+        return Stream.generate(TestHelpers::generateValidJobDetails)
+                .limit(randomIntBetween(5, 20))
+                .collect(toList());
+    }
+
     /**
      * GenerateSpecsCommand a valid instance of JobDetails.
      *
      * @return A valid instance of JobDetails.
      */
-    public static JobDetailsResponse generateValidJobDetails() {
+    public static JobDetails generateValidJobDetails() {
         return generateJobDetailsWithStatuses(generateTypicalJobStatusTimestamps());
     }
 
-    public static JobDetailsResponse generateJobDetailsWithStatus(JobStatus jobStatus) {
-        return generateJobDetailsWithStatuses(Arrays.asList(JobStatusChangeTimestamp.now(jobStatus)));
+    public static APIJobResponse generateJobDetailsWithStatus(JobStatus jobStatus) {
+        return generateJobDetailsWithStatuses(Arrays.asList(JobTimestamp.now(jobStatus)));
     }
 
-    public static JobDetailsResponse generateJobDetailsWithStatuses(List<JobStatusChangeTimestamp> jobStatuses) {
-        final JobId jobId = generateJobId();
-
-        final UserCredentials userCredentials = generateUserDetails();
-        final UserSummary userSummary = new UserSummary(userCredentials.getId());
-
-        final JobSpecSummary jobSpecSummary = generateJobSpecSummary();
-        final String name = generateRandomString();
-
-        return new JobDetailsResponse(
-                jobId,
-                name,
-                userSummary,
-                jobSpecSummary,
+    public static APIJobResponse generateJobDetailsWithStatuses(List<JobTimestamp> jobStatuses) {
+        return new APIJobResponse(
+                generateJobId(),
+                generateUserName(),
+                generateUserId(),
                 jobStatuses,
                 new HashMap<>());
     }
@@ -237,7 +240,7 @@ public final class TestHelpers {
         };
     }
 
-    public static APIJobRequest generateJobSubmissionRequest() {
+    public static APIJobSubmissionRequest generateJobSubmissionRequest() {
         final JobSpecId jobSpecId = generateJobSpecId();
         final String description = generateRandomString();
         final Map<JobExpectedInputId, JobInput> inputs = generateRandomJobInputs();
@@ -252,7 +255,7 @@ public final class TestHelpers {
                     }
                 });
 
-        return new APIJobRequest(jobSpecId, description, anonymizedInputs);
+        return new APIJobSubmissionRequest(jobSpecId, description, anonymizedInputs);
     }
 
     public static Map<JobExpectedInputId, JobInput> generateRandomJobInputs() {
@@ -292,29 +295,12 @@ public final class TestHelpers {
         return "select a, b, c from table where a < b and b > c;";
     }
 
-    public static JobRequestResponse generateJobSubmissionResponse() {
-        return new JobRequestResponse(generateJobId(), new HashMap<>());
+    public static APIJobSubmissionResponse generateJobSubmissionResponse() {
+        return new APIJobSubmissionResponse(generateJobId(), new HashMap<>());
     }
 
-    public static List<JobSummary> generateRandomJobSummaries() {
-        return generateRandomList(10, 20, TestHelpers::generateJobSummary);
-    }
-
-    public static JobSummary generateJobSummary() {
-        return generateJobSummaryWithStatus(generateJobStatus());
-    }
-
-    public static JobSummary generateJobSummaryWithStatus(JobStatus jobStatus) {
-        return new JobSummary(
-                generateJobId(),
-                generateUserSummary(),
-                jobStatus,
-                generateRandomString(),
-                new HashMap<>());
-    }
-
-    public static UserSummary generateUserSummary() {
-        return new UserSummary(generateUserId());
+    public static APIUserSummary generateUserSummary() {
+        return new APIUserSummary(generateUserId());
     }
 
     public static List<JobSpecSummary> generateNJobSpecSummaries(int n) {
@@ -331,8 +317,24 @@ public final class TestHelpers {
         return ret;
     }
 
-    public static JobSpecDetailsResponse generateJobSpecDetails() {
-        return new JobSpecDetailsResponse(generateJobSpecId(), generateRandomString(), generateRandomString(), generateRandomJobInputSchemas());
+    public static APIJobSpecResponse generateJobSpecDetails() {
+        return new APIJobSpecResponse(generateJobSpecId(), generateRandomString(), generateRandomString(), generateRandomJobInputSchemas());
+    }
+
+
+    public static JobSpec generateJobSpec() {
+        return new JobSpec(
+                generateJobSpecId(),
+                generateRandomString(),
+                generateRandomString(),
+                generateRandomJobInputSchemas(),
+                generateExecutionConfiguration());
+    }
+
+    public static ExecutionConfiguration generateExecutionConfiguration() {
+        return new ExecutionConfiguration(
+                "echo",
+                Optional.of(singletonList(generateRandomString())), Optional.empty());
     }
 
     public static List<JobExpectedInput> generateRandomJobInputSchemas() {
@@ -395,21 +397,6 @@ public final class TestHelpers {
         return JobStatus.SUBMITTED;
     }
 
-    public static String toUtf8String(byte[] bytes) {
-        try {
-            return new String(bytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static String toUtf8String(BinaryData binaryData) {
-        try {
-            return IOUtils.toString(binaryData.getData());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public static <T> T readJSONFixture(String path, Class<T> klass) {
         final String json = fixture(path);
@@ -478,4 +465,9 @@ public final class TestHelpers {
     public static float randomFloat() {
         return rng.nextFloat();
     }
+
+    public static Path createTmpDir(Class testClass) throws IOException {
+        return createTempDirectory(testClass.getSimpleName());
+    }
+
 }

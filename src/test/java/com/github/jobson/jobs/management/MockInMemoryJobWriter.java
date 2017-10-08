@@ -27,10 +27,13 @@ import com.github.jobson.jobs.states.ValidJobRequest;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.github.jobson.TestHelpers.generateJobId;
+import static com.github.jobson.TestHelpers.generateJobStatusChangeTimestamp;
+import static java.util.Collections.singletonList;
 
 public final class MockInMemoryJobWriter implements WritingJobDAO {
 
@@ -77,6 +80,7 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
                 validJobRequest.getOwner(),
                 validJobRequest.getName(),
                 validJobRequest.getInputs(),
+                singletonList(generateJobStatusChangeTimestamp()),
                 validJobRequest.getSpec());
         return returnedPersistedReq;
     }

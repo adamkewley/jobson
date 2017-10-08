@@ -20,12 +20,7 @@
 package com.github.jobson.dao.specs;
 
 import com.github.jobson.Constants;
-import com.github.jobson.Helpers;
-import com.github.jobson.api.v1.JobSpecDetailsResponse;
 import com.github.jobson.api.v1.JobSpecId;
-import com.github.jobson.api.v1.JobSpecSummary;
-import com.github.jobson.specs.ExecutionConfiguration;
-import com.github.jobson.specs.JobDependencyConfiguration;
 import com.github.jobson.specs.JobSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +34,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.jobson.Helpers.listDirectories;
 import static com.github.jobson.Helpers.readYAML;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -48,30 +44,8 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
     private static final Logger log = LoggerFactory.getLogger(FilesystemJobSpecDAO.class);
 
 
-    public static JobSpec resolveDependencySourcesRelativeTo(Path jobSpecDir, JobSpec jobSpec) {
-        final Optional<List<JobDependencyConfiguration>> resolvedJobDependencies =
-                jobSpec.getExecution().getDependencies().map(dependencies -> dependencies.stream().map(
-                        dependency ->
-                                new JobDependencyConfiguration(
-                                        jobSpecDir.resolve(dependency.getSource()).toString(),
-                                        dependency.getTarget())).collect(toList()));
-
-        final ExecutionConfiguration executionConfiguration =
-                new ExecutionConfiguration(
-                        jobSpec.getExecution().getApplication(),
-                        jobSpec.getExecution().getArguments(),
-                        resolvedJobDependencies);
-
-        return new JobSpec(
-                jobSpec.getId(),
-                jobSpec.getName(),
-                jobSpec.getDescription(),
-                jobSpec.getExpectedInputs(),
-                executionConfiguration);
-    }
-
     private static Optional<JobSpec> loadJobSpecConfiguration(Path jobSpecDir) {
-        final Path jobSpecPath = jobSpecDir.resolve(Constants.JOB_SPEC_FILENAME);
+        final Path jobSpecPath = jobSpecDir.resolve(Constants.SPEC_DIR_SPEC_FILENAME);
 
         try {
             if (jobSpecPath.toFile().exists()) {
@@ -79,7 +53,7 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
                 final JobSpec jobSpec = readYAML(jobSpecYAML, JobSpec.class);
                 jobSpec.setId(new JobSpecId(jobSpecDir.toFile().getName()));
 
-                final JobSpec resolvedJobSpec = resolveDependencySourcesRelativeTo(jobSpecDir, jobSpec);
+                final JobSpec resolvedJobSpec = jobSpec.withDependenciesResolvedRelativeTo(jobSpecDir);
                 return Optional.of(resolvedJobSpec);
             } else {
                 log.error(jobSpecPath.toString() + ": does not exist");
@@ -90,14 +64,8 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
         }
     }
 
-    private static JobSpecSummary toSummary(JobSpec jobSpec) {
-        return jobSpec.toSummary();
-    }
-
-
 
     private final Path jobSpecsDir;
-
 
 
     public FilesystemJobSpecDAO(Path jobSpecsDir) throws IOException {
@@ -112,7 +80,7 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
 
 
     @Override
-    public Optional<JobSpec> getJobSpecConfigurationById(JobSpecId jobSpecId) {
+    public Optional<JobSpec> getJobSpecById(JobSpecId jobSpecId) {
         final Path jobSpecDir = jobSpecsDir.resolve(jobSpecId.toString());
 
         if (!jobSpecDir.toFile().exists()) {
@@ -126,8 +94,8 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
     }
 
     @Override
-    public Optional<JobSpecDetailsResponse> getJobSpecDetailsById(JobSpecId jobSpecId) {
-        return getJobSpecConfigurationById(jobSpecId).map(JobSpec::toAPIDetails);
+    public Optional<JobSpecSummary> getJobSpecSummaryById(JobSpecId jobSpecId) {
+        return getJobSpecById(jobSpecId).map(JobSpec::toSummary);
     }
 
     @Override
@@ -138,13 +106,16 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
     @Override
     public List<JobSpecSummary> getJobSpecSummaries(int pageSize, int page, String query) {
 
-        if (pageSize < 0) throw new IllegalArgumentException("pageSize is negative");
-        if (page < 0) throw new IllegalArgumentException("page is negative");
+        if (pageSize < 0)
+            throw new IllegalArgumentException("pageSize is negative");
+        if (page < 0)
+            throw new IllegalArgumentException("page is negative");
         requireNonNull(query);
 
-        return Helpers.listDirectories(jobSpecsDir)
+        return listDirectories(jobSpecsDir)
                 .map(File::toPath)
-                .map(path -> loadJobSpecConfiguration(path).map(FilesystemJobSpecDAO::toSummary))
+                .map(path -> loadJobSpecConfiguration(path)
+                        .map(JobSpec::toSummary))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .skip(page * pageSize)

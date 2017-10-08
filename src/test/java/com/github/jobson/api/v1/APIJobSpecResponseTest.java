@@ -19,31 +19,16 @@
 
 package com.github.jobson.api.v1;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import org.junit.Test;
 
-import java.net.URI;
+import static com.github.jobson.TestHelpers.readJSONFixture;
 
-@ApiModel(description = "A related resource link")
-public final class RESTLink {
+public final class APIJobSpecResponseTest {
 
-    @ApiModelProperty(value = "The link's URL")
-    private URI href;
-
-
-
-    /**
-     * @deprecated Used by JSON deserializer.
-     */
-    public RESTLink() {}
-
-    public RESTLink(URI href) {
-        this.href = href;
-    }
-
-
-
-    public URI getHref() {
-        return href;
+    @Test
+    public void testCanDeserializeJSONRepresentation() {
+        readJSONFixture(
+                "fixtures/api/v1/APIJobSpecResponseTest/spec-response.json",
+                APIJobSpecResponse.class);
     }
 }

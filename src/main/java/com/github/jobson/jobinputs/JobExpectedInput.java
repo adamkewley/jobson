@@ -40,7 +40,7 @@ import java.util.Optional;
         @JsonSubTypes.Type(value = SQLExpectedInput.class, name = "sql"),
         @JsonSubTypes.Type(value = SelectExpectedInput.class, name = "select"),
         @JsonSubTypes.Type(value = StringExpectedInput.class, name = "string"),
-        @JsonSubTypes.Type(value = StringArrayExpectedInput.class, name = "Array<string>")
+        @JsonSubTypes.Type(value = StringArrayExpectedInput.class, name = "string[]")
 })
 public abstract class JobExpectedInput<TJobInput extends JobInput> {
 

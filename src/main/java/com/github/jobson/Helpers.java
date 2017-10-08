@@ -210,7 +210,7 @@ public final class Helpers {
             @Override
             public T next() {
                 final T ret = returnE.get() ? e : inner.next();
-                returnE.set(returnE.get());
+                returnE.set(!returnE.get());
                 return ret;
             }
         };

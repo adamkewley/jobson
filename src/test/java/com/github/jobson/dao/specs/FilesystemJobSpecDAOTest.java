@@ -19,13 +19,9 @@
 
 package com.github.jobson.dao.specs;
 
-import com.github.jobson.Constants;
-import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.specs.JobSpec;
-import com.github.jobson.api.v1.JobSpecDetailsResponse;
 import com.github.jobson.api.v1.JobSpecId;
-import com.github.jobson.api.v1.JobSpecSummary;
+import com.github.jobson.specs.JobSpec;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -37,7 +33,13 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.jobson.Constants.SPEC_DIR_SPEC_FILENAME;
+import static com.github.jobson.Helpers.generateRandomBase36String;
+import static com.github.jobson.TestHelpers.createTmpDir;
+import static com.github.jobson.TestHelpers.readYAML;
 import static io.dropwizard.testing.FixtureHelpers.fixture;
+import static java.nio.file.Files.createDirectory;
+import static java.nio.file.Files.createTempFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class FilesystemJobSpecDAOTest {
@@ -49,12 +51,12 @@ public final class FilesystemJobSpecDAOTest {
 
     @Test(expected = FileNotFoundException.class)
     public void testCtorThrowsIfDirDoesNotExist() throws IOException {
-        new FilesystemJobSpecDAO(Paths.get(Helpers.generateRandomBase36String(10)));
+        new FilesystemJobSpecDAO(Paths.get(generateRandomBase36String(10)));
     }
 
     @Test(expected = NotDirectoryException.class)
     public void testCtorThrowsIfPathExistsButIsNotADirectory() throws IOException {
-        final Path pathToFile = Files.createTempFile(FilesystemJobSpecDAOTest.class.getSimpleName(), "");
+        final Path pathToFile = createTempFile(FilesystemJobSpecDAOTest.class.getSimpleName(), "");
 
         new FilesystemJobSpecDAO(pathToFile);
     }
@@ -64,51 +66,49 @@ public final class FilesystemJobSpecDAOTest {
 
     @Test
     public void testGetJobSpecDetailsByIdReturnsEmptyOptionalIfJobSpecIdDoesntExistInTheDir() throws IOException {
-        final Path jobSpecsDir = Files.createTempDirectory(FilesystemJobSpecDAOTest.class.getSimpleName());
+        final Path jobSpecsDir = createTmpDir(FilesystemJobSpecDAOTest.class);
 
         final FilesystemJobSpecDAO filesystemJobSpecDAO = new FilesystemJobSpecDAO(jobSpecsDir);
 
-        final JobSpecId jobSpecId = new JobSpecId(Helpers.generateRandomBase36String(10));
+        final JobSpecId jobSpecId = new JobSpecId(generateRandomBase36String(10));
 
-        final Optional<JobSpecDetailsResponse> jobSpecDetailsResponse =
-                filesystemJobSpecDAO.getJobSpecDetailsById(jobSpecId);
+        final Optional<JobSpecSummary> jobSpecDetailsResponse =
+                filesystemJobSpecDAO.getJobSpecSummaryById(jobSpecId);
 
         assertThat(jobSpecDetailsResponse.isPresent()).isFalse();
     }
 
     @Test
     public void testGetJobSpecDetailsByIdLoadsJobSpecDetailsFromTheDirectory() throws IOException {
-        final Path jobSpecsDir = Files.createTempDirectory(FilesystemJobSpecDAOTest.class.getSimpleName());
+        final Path jobSpecsDir = createTmpDir(FilesystemJobSpecDAOTest.class);
 
         final JobSpecId jobSpecId = new JobSpecId("test");
         final Path jobSpecPath = jobSpecsDir.resolve(jobSpecId.toString());
 
-        Files.createDirectory(jobSpecPath);
+        createDirectory(jobSpecPath);
 
-        final Path jobSpecConfigurationPath = jobSpecPath.resolve(Constants.JOB_SPEC_FILENAME);
-        final String jobSpecConfigurationText = fixture("fixtures/dao/FilesystemBasedJobSpecDAO/valid-job-spec-configuration.yml");
+        final Path jobSpecConfigurationPath = jobSpecPath.resolve(SPEC_DIR_SPEC_FILENAME);
+        final String jobSpecConfigurationText = fixture("fixtures/dao/specs/FilesystemBasedJobSpecDAO/valid-job-spec-configuration.yml");
 
         Files.write(jobSpecConfigurationPath, jobSpecConfigurationText.getBytes());
 
         final FilesystemJobSpecDAO filesystemJobSpecDAO = new FilesystemJobSpecDAO(jobSpecsDir);
 
-        final Optional<JobSpecDetailsResponse> maybeJobSpecDetails =
-                filesystemJobSpecDAO.getJobSpecDetailsById(jobSpecId);
+        final Optional<JobSpec> maybeJobSpec =
+                filesystemJobSpecDAO.getJobSpecById(jobSpecId);
 
-        assertThat(maybeJobSpecDetails.isPresent()).isTrue();
+        assertThat(maybeJobSpec).isPresent();
 
-        final JobSpecDetailsResponse jobSpecDetailsResponse = maybeJobSpecDetails.get();
+        final JobSpec jobSpec = maybeJobSpec.get();
 
-        assertThat(jobSpecDetailsResponse.getId()).isEqualTo(jobSpecId);
+        assertThat(jobSpec.getId()).isEqualTo(jobSpecId);
 
-        final JobSpec jobSpec = TestHelpers.readYAML(jobSpecConfigurationText, JobSpec.class);
+        final JobSpec originalJobSpec = readYAML(jobSpecConfigurationText, JobSpec.class);
 
-        jobSpec.setId(jobSpecId);
+        originalJobSpec.setId(jobSpecId);
 
-        assertThat(jobSpecDetailsResponse).isEqualTo(jobSpec.toAPIDetails());
+        assertThat(jobSpec).isEqualTo(originalJobSpec.withDependenciesResolvedRelativeTo(jobSpecPath));
     }
-
-
 
 
 
@@ -118,10 +118,10 @@ public final class FilesystemJobSpecDAOTest {
 
         final FilesystemJobSpecDAO filesystemJobSpecDAO = new FilesystemJobSpecDAO(jobSpecsDir);
 
-        final JobSpecId jobSpecId = new JobSpecId(Helpers.generateRandomBase36String(10));
+        final JobSpecId jobSpecId = new JobSpecId(generateRandomBase36String(10));
 
         final Optional<JobSpec> jobSpecDetailsResponse =
-                filesystemJobSpecDAO.getJobSpecConfigurationById(jobSpecId);
+                filesystemJobSpecDAO.getJobSpecById(jobSpecId);
 
         assertThat(jobSpecDetailsResponse.isPresent()).isFalse();
     }
@@ -133,25 +133,25 @@ public final class FilesystemJobSpecDAOTest {
         final JobSpecId jobSpecId = new JobSpecId("test");
         final Path jobSpecPath = jobSpecsDir.resolve(jobSpecId.toString());
 
-        Files.createDirectory(jobSpecPath);
+        createDirectory(jobSpecPath);
 
-        final Path jobSpecConfigurationPath = jobSpecPath.resolve(Constants.JOB_SPEC_FILENAME);
+        final Path jobSpecConfigurationPath = jobSpecPath.resolve(SPEC_DIR_SPEC_FILENAME);
         final String jobSpecConfigurationText =
-                fixture("fixtures/dao/FilesystemBasedJobSpecDAO/valid-job-spec-configuration-with-abs-path.yml");
+                fixture("fixtures/dao/specs/FilesystemBasedJobSpecDAO/valid-job-spec-configuration-with-abs-path.yml");
 
         Files.write(jobSpecConfigurationPath, jobSpecConfigurationText.getBytes());
 
         final FilesystemJobSpecDAO filesystemJobSpecDAO = new FilesystemJobSpecDAO(jobSpecsDir);
 
         final Optional<JobSpec> maybeJobSpecConfiguration =
-                filesystemJobSpecDAO.getJobSpecConfigurationById(jobSpecId);
+                filesystemJobSpecDAO.getJobSpecById(jobSpecId);
 
         assertThat(maybeJobSpecConfiguration.isPresent()).isTrue();
 
         final JobSpec jobSpec = maybeJobSpecConfiguration.get();
 
         final JobSpec expectedJobSpec =
-                TestHelpers.readYAML(jobSpecConfigurationText, JobSpec.class);
+                readYAML(jobSpecConfigurationText, JobSpec.class);
 
         expectedJobSpec.setId(jobSpecId);
 
@@ -165,17 +165,17 @@ public final class FilesystemJobSpecDAOTest {
         final JobSpecId jobSpecId = new JobSpecId("test");
         final Path jobSpecPath = jobSpecsDir.resolve(jobSpecId.toString());
 
-        Files.createDirectory(jobSpecPath);
+        createDirectory(jobSpecPath);
 
-        final Path jobSpecConfigurationPath = jobSpecPath.resolve(Constants.JOB_SPEC_FILENAME);
-        final String jobSpecConfigurationText = fixture("fixtures/dao/FilesystemBasedJobSpecDAO/valid-job-spec-configuration.yml");
+        final Path jobSpecConfigurationPath = jobSpecPath.resolve(SPEC_DIR_SPEC_FILENAME);
+        final String jobSpecConfigurationText = fixture("fixtures/dao/specs/FilesystemBasedJobSpecDAO/valid-job-spec-configuration.yml");
 
         Files.write(jobSpecConfigurationPath, jobSpecConfigurationText.getBytes());
 
         final FilesystemJobSpecDAO filesystemJobSpecDAO = new FilesystemJobSpecDAO(jobSpecsDir);
 
         final Optional<JobSpec> maybeJobSpecConfiguration =
-                filesystemJobSpecDAO.getJobSpecConfigurationById(jobSpecId);
+                filesystemJobSpecDAO.getJobSpecById(jobSpecId);
 
         assertThat(maybeJobSpecConfiguration.isPresent()).isTrue();
 
@@ -234,15 +234,15 @@ public final class FilesystemJobSpecDAOTest {
 
         final int pageSize = 10;
         final int numberOfSpecs = pageSize * 3;
-        final String jobSpecConfigurationText = fixture("fixtures/dao/FilesystemBasedJobSpecDAO/valid-job-spec-configuration.yml");
+        final String jobSpecConfigurationText = fixture("fixtures/dao/specs/FilesystemBasedJobSpecDAO/valid-job-spec-configuration.yml");
 
         for (int i = 0; i < numberOfSpecs; i++) {
-            final JobSpecId jobSpecId = new JobSpecId(Helpers.generateRandomBase36String(5));
+            final JobSpecId jobSpecId = new JobSpecId(generateRandomBase36String(5));
             final Path jobSpecPath = jobSpecsDir.resolve(jobSpecId.toString());
 
-            Files.createDirectory(jobSpecPath);
+            createDirectory(jobSpecPath);
 
-            final Path jobSpecConfigurationPath = jobSpecPath.resolve(Constants.JOB_SPEC_FILENAME);
+            final Path jobSpecConfigurationPath = jobSpecPath.resolve(SPEC_DIR_SPEC_FILENAME);
 
             Files.write(jobSpecConfigurationPath, jobSpecConfigurationText.getBytes());
         }
@@ -293,15 +293,15 @@ public final class FilesystemJobSpecDAOTest {
 
         final int pageSize = 10;
         final int numberOfSpecs = pageSize * 3;
-        final String jobSpecConfigurationText = fixture("fixtures/dao/FilesystemBasedJobSpecDAO/valid-job-spec-configuration.yml");
+        final String jobSpecConfigurationText = fixture("fixtures/dao/specs/FilesystemBasedJobSpecDAO/valid-job-spec-configuration.yml");
 
         for (int i = 0; i < numberOfSpecs; i++) {
-            final JobSpecId jobSpecId = new JobSpecId(Helpers.generateRandomBase36String(5));
+            final JobSpecId jobSpecId = new JobSpecId(generateRandomBase36String(5));
             final Path jobSpecPath = jobSpecsDir.resolve(jobSpecId.toString());
 
-            Files.createDirectory(jobSpecPath);
+            createDirectory(jobSpecPath);
 
-            final Path jobSpecConfigurationPath = jobSpecPath.resolve(Constants.JOB_SPEC_FILENAME);
+            final Path jobSpecConfigurationPath = jobSpecPath.resolve(SPEC_DIR_SPEC_FILENAME);
 
             Files.write(jobSpecConfigurationPath, jobSpecConfigurationText.getBytes());
         }

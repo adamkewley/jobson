@@ -19,8 +19,8 @@
 
 package com.github.jobson.resources.v1;
 
+import com.github.jobson.api.v1.APIUserSummary;
 import com.github.jobson.api.v1.UserId;
-import com.github.jobson.api.v1.UserSummary;
 import io.swagger.annotations.Api;
 
 import javax.annotation.security.PermitAll;
@@ -40,7 +40,7 @@ public final class UserResource {
     @GET
     @Path("current")
     @PermitAll
-    public UserSummary fetchCurrentUserDetails(@Context SecurityContext context) {
-        return new UserSummary(new UserId(context.getUserPrincipal().getName()));
+    public APIUserSummary fetchCurrentUserDetails(@Context SecurityContext context) {
+        return new APIUserSummary(new UserId(context.getUserPrincipal().getName()));
     }
 }

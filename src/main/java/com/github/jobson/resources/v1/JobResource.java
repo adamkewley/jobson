@@ -22,6 +22,7 @@ package com.github.jobson.resources.v1;
 import com.github.jobson.Helpers;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.dao.BinaryData;
+import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.jobs.ReadonlyJobDAO;
 import com.github.jobson.dao.specs.JobSpecConfigurationDAO;
 import com.github.jobson.jobs.management.JobManagerActions;
@@ -42,7 +43,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 @Api(description = "Operations related to jobs")
 @Path(JobResource.PATH)
@@ -58,9 +59,7 @@ import static java.util.Objects.requireNonNull;
 public final class JobResource {
 
     public static final String PATH = "/v1/jobs";
-
     private static final int MAX_PAGE_SIZE = 20;
-
 
 
     private final JobManagerActions jobManagerActions;
@@ -87,19 +86,18 @@ public final class JobResource {
     }
 
 
-
     @GET
     @ApiOperation(
-            value = "Get summaries of jobs managed by the system.",
+            value = "Retrieve jobs managed by the system.",
             code = 200,
-            notes = "Get summaries of *some* of the jobs managed by the system. The " +
-                    "response does not necessarily contain summaries for *all* the jobs managed " +
-                    "by the system. This is because pagination and client permissions may hide entries. ")
+            notes = "Gets *some* of the jobs managed by the system. The response does not necessarily " +
+                    "contain *all* the jobs managed by the system because pagination " +
+                    "and client permissions may hide entries. ")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Job summaries returned", response = JobSummariesResponse.class)
+            @ApiResponse(code = 200, message = "Entries returned", response = APIJobsResponse.class)
     })
     @PermitAll
-    public JobSummariesResponse fetchJobSummaries(
+    public APIJobsResponse getJobs(
             @Context
                     SecurityContext context,
             @ApiParam(value = "The page number (0-indexed)")
@@ -115,46 +113,52 @@ public final class JobResource {
         final int pageRequested = page.isPresent() ? page.get() : 0;
         final int pageSizeRequested = pageSize.isPresent() ? pageSize.get() : defaultPageSize;
 
-        if (pageRequested < 0) throw new WebApplicationException("Page specified is negative - only positive numbers are allowed", 400);
-        if (pageSizeRequested < 0) throw new WebApplicationException("Page size specified is negative - only positive numbers are allowed", 400);
+        if (pageRequested < 0)
+            throw new WebApplicationException("Page specified is negative - only positive numbers are allowed", 400);
+        if (pageSizeRequested < 0)
+            throw new WebApplicationException("Page size specified is negative - only positive numbers are allowed", 400);
 
-        try {
-            final List<JobSummary> jobSummaries =
-                    query.isPresent() ?
-                            jobDAO.getJobSummaries(pageSizeRequested, pageRequested, query.get()) :
-                            jobDAO.getJobSummaries(pageSizeRequested, pageRequested);
+        final List<JobDetails> jobs =
+                query.isPresent() ?
+                        jobDAO.getJobs(pageSizeRequested, pageRequested, query.get()) :
+                        jobDAO.getJobs(pageSizeRequested, pageRequested);
 
-            for (JobSummary jobSummary: jobSummaries) {
-                final Map<String, RESTLink> restLinks = getRestLinksFromJobSummary(jobSummary);
-                jobSummary.getLinks().putAll(restLinks);
-            }
+        final List<APIJobResponse> apiJobs = jobs
+                .stream()
+                .map(this::toJobResponse)
+                .collect(toList());
 
-            return new JobSummariesResponse(jobSummaries, new HashMap<>());
-        } catch (IOException ex) {
-            throw new WebApplicationException(ex, 500);
-        }
+        return new APIJobsResponse(apiJobs, new HashMap<>());
     }
 
-    private Map<String, RESTLink> getRestLinksFromJobSummary(JobSummary jobSummary) throws IOException {
+    private APIJobResponse toJobResponse(JobDetails jobDetails) {
+        final Map<String, APIRestLink> restLinks = generateRestLinks(jobDetails);
+        return APIJobResponse.fromJobDetails(jobDetails, restLinks);
+    }
+
+    private Map<String, APIRestLink> generateRestLinks(JobDetails job) {
         try {
-            final HashMap<String, RESTLink> ret = new HashMap<>();
+            final HashMap<String, APIRestLink> ret = new HashMap<>();
 
-            final URI jobDetailsURI = new URI(JobResource.PATH + "/" + jobSummary.getId().toString());
-            ret.put("details", new RESTLink(jobDetailsURI));
+            final URI jobDetailsURI = new URI(JobResource.PATH + "/" + job.getId().toString());
+            ret.put("details", new APIRestLink(jobDetailsURI));
 
-            if (jobSummary.getStatus().isAbortable()) {
-                final URI abortJobURI = new URI(JobResource.PATH + "/" + jobSummary.getId().toString() + "/abort");
-                ret.put("abort", new RESTLink(abortJobURI));
+            final URI jobSpecURI = new URI(JobResource.PATH + "/" + job.getId().toString() + "/spec");
+            ret.put("spec", new APIRestLink(jobSpecURI));
+
+            if (job.latestStatus().isAbortable()) {
+                final URI abortJobURI = new URI(JobResource.PATH + "/" + job.getId().toString() + "/abort");
+                ret.put("abort", new APIRestLink(abortJobURI));
             }
 
-            if (jobDAO.hasStderr(jobSummary.getId())) {
-                final URI jobStderrURI = new URI(JobResource.PATH + "/" + jobSummary.getId().toString() + "/stderr");
-                ret.put("stderr", new RESTLink(jobStderrURI));
+            if (jobDAO.hasStderr(job.getId())) {
+                final URI jobStderrURI = new URI(JobResource.PATH + "/" + job.getId().toString() + "/stderr");
+                ret.put("stderr", new APIRestLink(jobStderrURI));
             }
 
-            if (jobDAO.hasStdout(jobSummary.getId())) {
-                final URI jobStdoutURI = new URI(JobResource.PATH + "/" + jobSummary.getId().toString() + "/stdout");
-                ret.put("stdout", new RESTLink(jobStdoutURI));
+            if (jobDAO.hasStdout(job.getId())) {
+                final URI jobStdoutURI = new URI(JobResource.PATH + "/" + job.getId().toString() + "/stdout");
+                ret.put("stdout", new APIRestLink(jobStdoutURI));
             }
 
             return ret;
@@ -170,12 +174,12 @@ public final class JobResource {
             code = 200,
             notes = "")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Job details found", response = JobDetailsResponse.class),
+            @ApiResponse(code = 200, message = "Job details found", response = APIJobResponse.class),
             @ApiResponse(code = 404, message = "The job could not be found", response = APIErrorMessage.class),
             @ApiResponse(code = 401, message = "Client not authorized to request job details", response = APIErrorMessage.class)
     })
     @PermitAll
-    public Optional<JobDetailsResponse> fetchJobDetailsById(
+    public Optional<APIJobResponse> getJobDetailsById(
             @Context
                     SecurityContext context,
             @ApiParam(value = "The job's ID")
@@ -183,27 +187,10 @@ public final class JobResource {
             @NotNull
                     JobId jobId) {
 
-        if (jobId == null) {
+        if (jobId == null)
             throw new WebApplicationException("Job ID is null", 400);
-        } else {
-            final Optional<JobDetailsResponse> resp = jobDAO.getJobDetailsById(jobId);
 
-            // Add REST links
-            final Optional<JobDetailsResponse> respWithRESTLinks =
-                    resp.map(jobDetailsResponse -> {
-                        try {
-                            if (jobDetailsResponse.latestStatus().isAbortable()) {
-                                final URI abortURI = new URI(PATH + "/" + jobDetailsResponse.getId().toString() + "/abort");
-                                jobDetailsResponse.getLinks().put("abort", new RESTLink(abortURI));
-                            }
-                            return jobDetailsResponse;
-                        } catch (URISyntaxException ex) {
-                            throw new WebApplicationException(ex);
-                        }
-                    });
-
-            return respWithRESTLinks;
-        }
+        return jobDAO.getJobDetailsById(jobId).map(this::toJobResponse);
     }
 
     @POST
@@ -217,55 +204,55 @@ public final class JobResource {
                     "matches the job spec. It does not guarantee that the underlying job will complete " +
                     "successfully.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Job request accepted", response = JobRequestResponse.class),
+            @ApiResponse(code = 200, message = "Job request accepted", response = APIJobSubmissionResponse.class),
             @ApiResponse(code = 400, message = "Invalid or malformed job request", response = APIErrorMessage.class)
     })
     @Produces("application/json")
     @Consumes("application/json")
     @PermitAll
-    public JobRequestResponse submitJob(
+    public APIJobSubmissionResponse submitJob(
             @Context
                     SecurityContext context,
             @ApiParam(value = "The job request")
             @NotNull
             @Valid
-                    APIJobRequest APIJobRequest) {
+                    APIJobSubmissionRequest apiJobSubmissionRequest) {
 
         final UserId userId = new UserId(context.getUserPrincipal().getName());
 
-        return validateAPIRequest(APIJobRequest, jobSpecConfigurationDAO, userId).visit(
-                new EitherVisitorT<ValidJobRequest, List<ValidationError>, JobRequestResponse>() {
+        return validateAPIRequest(apiJobSubmissionRequest, jobSpecConfigurationDAO, userId).visit(
+                new EitherVisitorT<ValidJobRequest, List<ValidationError>, APIJobSubmissionResponse>() {
                     @Override
-                    public JobRequestResponse whenLeft(ValidJobRequest left) {
+                    public APIJobSubmissionResponse whenLeft(ValidJobRequest left) {
                         final JobId jobId = jobManagerActions.submit(left).getLeft();
 
-                        return new JobRequestResponse(jobId, new HashMap<>());
+                        return new APIJobSubmissionResponse(jobId, new HashMap<>());
                     }
 
                     @Override
-                    public JobRequestResponse whenRight(List<ValidationError> right) {
+                    public APIJobSubmissionResponse whenRight(List<ValidationError> right) {
                         throw new WebApplicationException("Validation errors were found in the request: " + Helpers.commaSeparatedList(right), 400);
                     }
                 });
     }
 
     public static Either<ValidJobRequest, List<ValidationError>> validateAPIRequest(
-            APIJobRequest APIJobRequest,
+            APIJobSubmissionRequest APIJobSubmissionRequest,
             JobSpecConfigurationDAO jobSpecConfigurationDAO,
             UserId userId) {
 
-        if (APIJobRequest == null)
+        if (APIJobSubmissionRequest == null)
             throw new WebApplicationException("Job id was null", 400);
 
         final Optional<JobSpec> maybeJobSchemaConfiguration =
-                jobSpecConfigurationDAO.getJobSpecConfigurationById(APIJobRequest.getSpec());
+                jobSpecConfigurationDAO.getJobSpecById(APIJobSubmissionRequest.getSpec());
 
         if (!maybeJobSchemaConfiguration.isPresent())
             throw new WebApplicationException(
-                    "The specified schema id (" + APIJobRequest.getSpec() +
+                    "The specified schema id (" + APIJobSubmissionRequest.getSpec() +
                             ") could not be found. Are you sure it's available?");
 
-        return ValidJobRequest.tryCreate(maybeJobSchemaConfiguration.get(), userId, APIJobRequest);
+        return ValidJobRequest.tryCreate(maybeJobSchemaConfiguration.get(), userId, APIJobSubmissionRequest);
     }
 
     @POST
@@ -313,10 +300,12 @@ public final class JobResource {
 
         if (jobId == null) throw new WebApplicationException("Job ID cannot be null", 400);
 
-        final Optional<BinaryData> maybeStdoutData = jobDAO.getStdout(jobId);
+        return generateStdioResponse(jobId, jobDAO.getStdout(jobId));
+    }
 
-        if (maybeStdoutData.isPresent()) {
-            final BinaryData stdoutData = maybeStdoutData.get();
+    private Response generateStdioResponse(JobId jobId, Optional<BinaryData> maybeStdioData) {
+        if (maybeStdioData.isPresent()) {
+            final BinaryData stdoutData = maybeStdioData.get();
 
             final StreamingOutput body = outputStream -> IOUtils.copy(stdoutData.getData(), outputStream);
 
@@ -349,18 +338,28 @@ public final class JobResource {
 
         if (jobId == null) throw new WebApplicationException("Job ID cannot be null", 400);
 
-        final Optional<BinaryData> maybeStderrData = jobDAO.getStderr(jobId);
+        return generateStdioResponse(jobId, jobDAO.getStderr(jobId));
+    }
 
-        if (maybeStderrData.isPresent()) {
-            final BinaryData stderrData = maybeStderrData.get();
-            final StreamingOutput body = outputStream -> IOUtils.copy(stderrData.getData(), outputStream);
+    @GET
+    @Path("/{job-id}/spec")
+    @ApiOperation(
+            value = "Get the spec the job was submitted against",
+            notes = "Get the spec the job was submitted against. Note: This returns the exact spec the job was submitted" +
+                    " against. Any updates to the spec will not be reflected.")
+    @Produces("application/json")
+    @PermitAll
+    public Optional<APIJobSpecResponse> fetchJobSpecJobWasSubmittedAgainst(
+            @Context
+                    SecurityContext context,
+            @ApiParam(value = "ID of the job to get the spec for")
+            @PathParam("job-id")
+            @NotNull
+                    JobId jobId) {
 
-            return Response.ok(body, "application/octet-stream")
-                    .header("Content-Length", stderrData.getSizeOf())
-                    .build();
-        } else {
-            final APIErrorMessage APIErrorMessage = new APIErrorMessage(jobId + ": could not find stderr", "404");
-            return Response.status(404).entity(Entity.json(APIErrorMessage)).build();
-        }
+        if (jobId == null) throw new WebApplicationException("Job ID cannot be null", 400);
+
+        return jobDAO.getSpecJobWasSubmittedAgainst(jobId)
+                .map(APIJobSpecResponse::fromJobSpec);
     }
 }

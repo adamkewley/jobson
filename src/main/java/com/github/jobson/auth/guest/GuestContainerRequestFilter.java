@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package com.github.jobson.auth.disabled;
+package com.github.jobson.auth.guest;
 
-import com.github.jobson.Constants;
 import io.dropwizard.auth.PrincipalImpl;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -28,13 +27,24 @@ import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.security.Principal;
 
-public final class DisabledContainerRequestFilter implements ContainerRequestFilter {
+import static com.github.jobson.Constants.GUEST_AUTH_NAME;
+import static java.util.Objects.requireNonNull;
+
+public final class GuestContainerRequestFilter implements ContainerRequestFilter {
+
+    private final String guestUserName;
+
+    public GuestContainerRequestFilter(String guestUserName) {
+        requireNonNull(guestUserName);
+        this.guestUserName = guestUserName;
+    }
+
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
         containerRequestContext.setSecurityContext(new SecurityContext() {
             @Override
             public Principal getUserPrincipal() {
-                return new PrincipalImpl("guest");
+                return new PrincipalImpl(guestUserName);
             }
 
             @Override
@@ -49,7 +59,7 @@ public final class DisabledContainerRequestFilter implements ContainerRequestFil
 
             @Override
             public String getAuthenticationScheme() {
-                return Constants.DISABLED_AUTH_NAME;
+                return GUEST_AUTH_NAME;
             }
         });
     }

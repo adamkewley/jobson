@@ -26,47 +26,26 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Map;
 
-@ApiModel(description = "Summary information for a job")
-public final class JobSummary {
+@ApiModel(description = "Response to a successful job submission request")
+public final class APIJobSubmissionResponse {
 
-    @ApiModelProperty(value = "A unique identifier for the job")
+    @ApiModelProperty(value = "A unique identifier for the job that was created by the submission request")
     @JsonProperty
     private JobId id;
 
-    @ApiModelProperty(value = "The owner of the job")
-    @JsonProperty
-    private UserSummary owner;
-
-    @ApiModelProperty(value = "The current status of the job")
-    @JsonProperty
-    private JobStatus status;
-
-    @ApiModelProperty(value = "A description of the job")
-    @JsonProperty
-    private String description;
-
     @ApiModelProperty(value = "Links to related resources and actions")
     @JsonProperty
-    private Map<String, RESTLink> _links;
+    private Map<String, APIRestLink> _links;
 
 
 
     /**
      * @deprecated Used by JSON deserializer
      */
-    public JobSummary() {}
+    public APIJobSubmissionResponse() {}
 
-    public JobSummary(
-            JobId id,
-            UserSummary owner,
-            JobStatus status,
-            String description,
-            Map<String, RESTLink> _links) {
-
+    public APIJobSubmissionResponse(JobId id, Map<String, APIRestLink> _links) {
         this.id = id;
-        this.owner = owner;
-        this.status = status;
-        this.description = description;
         this._links = _links;
     }
 
@@ -76,20 +55,8 @@ public final class JobSummary {
         return id;
     }
 
-    public UserSummary getOwner() {
-        return owner;
-    }
-
-    public JobStatus getStatus() {
-        return status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     @JsonIgnore
-    public Map<String, RESTLink> getLinks() {
-        return this._links;
+    public Map<String, APIRestLink> getLinks() {
+        return _links;
     }
 }

@@ -22,15 +22,15 @@ package com.github.jobson.config;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.github.jobson.auth.basic.BasicAuthenticatorConfig;
-import com.github.jobson.auth.disabled.DisabledAuthenticationConfig;
+import com.github.jobson.auth.guest.GuestAuthenticationConfig;
 
 import static com.github.jobson.Constants.BASIC_AUTH_NAME;
-import static com.github.jobson.Constants.DISABLED_AUTH_NAME;
+import static com.github.jobson.Constants.GUEST_AUTH_NAME;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = BasicAuthenticatorConfig.class, name = BASIC_AUTH_NAME),
-        @JsonSubTypes.Type(value = DisabledAuthenticationConfig.class, name = DISABLED_AUTH_NAME)
+        @JsonSubTypes.Type(value = GuestAuthenticationConfig.class, name = GUEST_AUTH_NAME)
 })
 public interface AuthenticationConfig {
 

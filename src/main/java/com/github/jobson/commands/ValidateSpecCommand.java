@@ -91,7 +91,7 @@ public final class ValidateSpecCommand extends DefaultedConfiguredCommand<Applic
     private List<String> validate(Path jobSpecsDir, JobSpecId jobSpecId) {
         final Path jobSpecDir = jobSpecsDir.resolve(jobSpecId.toString());
         final File jobSpecDirF = jobSpecDir.toFile();
-        final Path jobSpecFile = jobSpecDir.resolve(Constants.JOB_SPEC_FILENAME);
+        final Path jobSpecFile = jobSpecDir.resolve(Constants.SPEC_DIR_SPEC_FILENAME);
         final File jobSpecFileF = jobSpecFile.toFile();
 
         if (!jobSpecDirF.exists()) {

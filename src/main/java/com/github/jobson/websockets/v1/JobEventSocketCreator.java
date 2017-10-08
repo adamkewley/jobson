@@ -36,7 +36,10 @@ public final class JobEventSocketCreator implements WebSocketCreator {
 
 
     @Override
-    public Object createWebSocket(ServletUpgradeRequest servletUpgradeRequest, ServletUpgradeResponse servletUpgradeResponse) {
+    public Object createWebSocket(
+            ServletUpgradeRequest servletUpgradeRequest,
+            ServletUpgradeResponse servletUpgradeResponse) {
+
         return new ObservableTextSocket(
                 "job events",
                 this.jobManagerEvents.allJobStatusChanges().map(Helpers::toJSON));

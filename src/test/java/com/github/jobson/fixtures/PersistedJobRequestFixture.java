@@ -21,7 +21,8 @@ package com.github.jobson.fixtures;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jobson.api.v1.APIJobRequest;
+import com.github.jobson.TestHelpers;
+import com.github.jobson.api.v1.APIJobSubmissionRequest;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.api.v1.JobId;
 import com.github.jobson.api.v1.UserId;
@@ -29,7 +30,11 @@ import com.github.jobson.jobs.states.PersistedJobRequest;
 import com.github.jobson.jobs.states.ValidJobRequest;
 import com.github.jobson.specs.JobSpec;
 
+import java.util.Collections;
 import java.util.Map;
+
+import static com.github.jobson.TestHelpers.generateJobStatusChangeTimestamp;
+import static java.util.Collections.singletonList;
 
 public final class PersistedJobRequestFixture {
 
@@ -69,7 +74,7 @@ public final class PersistedJobRequestFixture {
 
 
     public PersistedJobRequest toPersistedJobRequest() {
-        final APIJobRequest APIJobRequest = new APIJobRequest(
+        final APIJobSubmissionRequest APIJobSubmissionRequest = new APIJobSubmissionRequest(
                 this.spec.getId(),
                 this.name,
                 this.inputs);
@@ -77,13 +82,14 @@ public final class PersistedJobRequestFixture {
         final ValidJobRequest validJobRequest = ValidJobRequest.tryCreate(
                 this.spec,
                 this.owner,
-                APIJobRequest).getLeft().get();
+                APIJobSubmissionRequest).getLeft().get();
 
         return new PersistedJobRequest(
                 this.id,
                 this.owner,
                 this.name,
                 validJobRequest.getInputs(),
+                singletonList(generateJobStatusChangeTimestamp()),
                 this.spec);
     }
 }

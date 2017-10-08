@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.github.jobson.Helpers;
-import com.github.jobson.api.v1.APIJobRequest;
+import com.github.jobson.api.v1.APIJobSubmissionRequest;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
@@ -52,17 +52,17 @@ public class ValidJobRequest {
     public static Either<ValidJobRequest, List<ValidationError>> tryCreate(
             JobSpec jobSpec,
             UserId userId,
-            APIJobRequest APIJobRequest) throws RuntimeException {
+            APIJobSubmissionRequest APIJobSubmissionRequest) throws RuntimeException {
 
         final Map<JobExpectedInputId, JobExpectedInput> jobExpectedInputs =
                 jobSpec.getExpectedInputs()
                         .stream()
                         .collect(toMap(JobExpectedInput::getId, identity()));
 
-        return resolveJobInputs(jobExpectedInputs, APIJobRequest.getInputs())
+        return resolveJobInputs(jobExpectedInputs, APIJobSubmissionRequest.getInputs())
                 .leftMap(inputs -> new ValidJobRequest(
                         userId,
-                        APIJobRequest.getName(),
+                        APIJobSubmissionRequest.getName(),
                         inputs,
                         jobSpec))
                 .leftFlatMap(req -> {
