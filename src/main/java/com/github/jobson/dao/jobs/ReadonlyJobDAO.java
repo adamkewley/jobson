@@ -22,9 +22,11 @@ package com.github.jobson.dao.jobs;
 import com.github.jobson.api.v1.JobId;
 import com.github.jobson.api.v1.JobStatus;
 import com.github.jobson.dao.BinaryData;
+import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -45,4 +47,9 @@ public interface ReadonlyJobDAO {
     Optional<BinaryData> getStderr(JobId jobId);
 
     Set<JobId> getJobsWithStatus(JobStatus status);
+
+    boolean hasOutput(JobId jobId, String outputId);
+    Optional<BinaryData> getOutput(JobId jobId, String outputId);
+
+    Map<String, JobOutput> getJobOutputs(JobId jobId);
 }

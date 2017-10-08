@@ -1,34 +1,76 @@
 id: suede-value
 name: Perform generic data extraction jobs on a cluster
 
+
 expectedInputs:
-  - id: query
-    name: Construct Query
-    description: Select the columns + filters to apply
-    type: sql
-    tables:
-      - id: PreprocessedTransit
-        name: Preprocessed Transits
-        description: The preprocessed transits
-        columns:
-          - id: Col1
-            name: Column 1
-            description: The first column
-            type: int
-          - id: Col1
-            name: Column 2
-            description: The second column
-            type: string
+
+- id: example-text-input
+  type: string
+  name: Example Text Input
+  description: An example of text input
+  default: some text
+
+- id: example-select-input
+  type: select
+  name: Example Select Input
+  description: An example of a select input
+  options:
+  - id: opt1
+    name: Option1
+  - id: opt2
+    name: Option2
+
+- id: example-stringarray-input
+  type: string[]
+  name: Example string array
+  description: An exmaple of a string array
+  default:
+  - val1
+  - val2
+
+- id: query
+  type: sql
+  name: Construct Query
+  description: Select the columns + filters to apply
+  tables:
+  - id: PreprocessedTransit
+    name: Preprocessed Transits
+    description: The preprocessed transits
+    columns:
+    - id: Col1
+      name: Column 1
+      description: The first column
+      type: int
+
+    - id: Col1
+      name: Column 2
+      description: The second column
+      type: string
+
 
 execution:
+
   application: bash
+
   arguments:
     - jobscript
     - $expectedInputs.query
     - $requestInputs.query
     - $request
+
   dependencies:
     - source: job-dependencies/jobscript
       target: jobscript
     - source: job-dependencies/libs
       target: libs
+
+
+outputs:
+
+  compiledLib:
+    path: compiledlib
+    mimeType: application/octet-string
+
+  generatedImage:
+    path: image.jpg
+    mimeType: image/png

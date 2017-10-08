@@ -67,9 +67,22 @@
 
 - id: third-spec
   name: Third job spec
-  name: The third job spec
+  description: The third job spec
   expectedInputs: []
 
   execution:
     application: cat
     arguments: []
+
+- id: fourth-spec
+  name: Spec that creates an output
+  description: A spec that creates an empty output file
+  expectedInputs: []
+  execution:
+    application: touch
+    arguments:
+    - outfile
+  outputs:
+    outFile:
+      path: outfile
+      mimeType: text/plain

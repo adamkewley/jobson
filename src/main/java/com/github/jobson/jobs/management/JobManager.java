@@ -21,6 +21,7 @@ package com.github.jobson.jobs.management;
 
 import com.github.jobson.api.v1.JobId;
 import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.dao.BinaryData;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.execution.JobExecutionResult;
 import com.github.jobson.jobs.execution.JobExecutor;
@@ -157,11 +158,19 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
 
         updateJobStatus(queuedJob.getId(), RUNNING, "Submitted to executor");
 
-        executionPromise.thenAccept(res -> onExecutionFinished(executingJob, res));
+        executionPromise.thenAccept(res -> {
+            onExecutionFinished(executingJob, res);
+        });
     }
 
     private void onExecutionFinished(ExecutingJob executingJob, JobExecutionResult jobExecutionResult) {
         executingJobs.remove(executingJob.getId());
+
+        jobExecutionResult.getOutputs().forEach((outputId, data) -> {
+            final String resolvedMimeType = executingJob.getSpec().getOutputs().get(outputId).getMimeType();
+
+            jobDAO.persistOutput(executingJob.getId(), outputId, data.withMimeType(resolvedMimeType));
+        });
 
         updateJobStatus(executingJob.getId(), jobExecutionResult.getFinalStatus(), "Execution finished");
 

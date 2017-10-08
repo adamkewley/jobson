@@ -19,6 +19,7 @@
 
 package com.github.jobson.systemtests.httpapi;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.config.ApplicationConfig;
@@ -31,6 +32,9 @@ import org.junit.Test;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.github.jobson.Helpers.readJSON;
 import static com.github.jobson.HttpStatusCodes.*;
@@ -38,9 +42,11 @@ import static com.github.jobson.TestHelpers.readJSONFixture;
 import static com.github.jobson.api.v1.JobStatus.ABORTED;
 import static com.github.jobson.api.v1.JobStatus.RUNNING;
 import static com.github.jobson.systemtests.SystemTestHelpers.*;
+import static java.lang.Thread.sleep;
 import static java.util.Collections.singletonList;
 import static javax.ws.rs.client.Entity.json;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 public final class TestJobsAPI {
 
@@ -49,6 +55,7 @@ public final class TestJobsAPI {
     private static final APIJobSubmissionRequest REQUEST_AGAINST_FIRST_SPEC;
     private static final APIJobSubmissionRequest REQUEST_AGAINST_SECOND_SPEC;
     private static final APIJobSubmissionRequest REQUEST_AGAINST_THIRD_SPEC;
+    private static final APIJobSubmissionRequest REQUEST_AGAINST_FOUTH_SPEC;
 
     static {
         REQUEST_AGAINST_FIRST_SPEC = readJSONFixture(
@@ -59,6 +66,9 @@ public final class TestJobsAPI {
                 APIJobSubmissionRequest.class);
         REQUEST_AGAINST_THIRD_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-third-spec.json",
+                APIJobSubmissionRequest.class);
+        REQUEST_AGAINST_FOUTH_SPEC = readJSONFixture(
+                "fixtures/systemtests/request-against-fourth-spec.json",
                 APIJobSubmissionRequest.class);
     }
 
@@ -181,7 +191,7 @@ public final class TestJobsAPI {
 
         // Give the job a chance to spin up and write to stdout
         // TODO: Websocket hook this instead.
-        Thread.sleep(100);
+        sleep(100);
 
         final Response stdoutResponse =
                 generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/stdout"))
@@ -192,5 +202,43 @@ public final class TestJobsAPI {
         final byte[] stdoutBytes = stdoutResponse.readEntity(byte[].class);
 
         assertThat(stdoutBytes).isEqualTo("hello world\n".getBytes()); // From the spec execution
+    }
+
+    @Test
+    public void testCanListJobOutputs() throws InterruptedException, IOException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, JobResource.PATH)
+                .post(json(REQUEST_AGAINST_FOUTH_SPEC))
+                .readEntity(APIJobSubmissionResponse.class)
+                .getId();
+
+        // TODO: Websocket hook this instead.
+        sleep(100);
+
+        final Response jobOutputsResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/outputs")).get();
+
+        assertThat(jobOutputsResponse.getStatus()).isEqualTo(OK);
+
+        final Map<String, APIJobOutput> parsedResponse =
+                readJSON(jobOutputsResponse.readEntity(String.class), new TypeReference<Map<String, APIJobOutput>>() {});
+
+        assertThat(parsedResponse.get("outFile").getMimeType()).isEqualTo("text/plain");
+    }
+
+    @Test
+    public void testCanGetJobOutput() throws InterruptedException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, JobResource.PATH)
+                .post(json(REQUEST_AGAINST_FOUTH_SPEC))
+                .readEntity(APIJobSubmissionResponse.class)
+                .getId();
+
+        // TODO: Websocket hook this instead.
+        sleep(100);
+
+        final Response jobOutputsResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/outputs/outFile")).get();
+
+        assertThat(jobOutputsResponse.getStatus()).isEqualTo(OK);
+        assertThat(jobOutputsResponse.getHeaderString("Content-Type")).isEqualTo("text/plain");
     }
 }

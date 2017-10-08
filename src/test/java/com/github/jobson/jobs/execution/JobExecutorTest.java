@@ -23,6 +23,7 @@ import com.github.jobson.TestConstants;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.fixtures.PersistedJobRequestFixture;
 import com.github.jobson.jobs.states.PersistedJobRequest;
+import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.utils.CancelablePromise;
 import com.google.common.primitives.Bytes;
@@ -32,20 +33,24 @@ import com.github.jobson.specs.ExecutionConfiguration;
 import io.reactivex.functions.Action;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static com.github.jobson.TestHelpers.generateRandomBytes;
 import static com.github.jobson.jobs.management.JobEventListeners.createNullListeners;
 import static com.github.jobson.jobs.management.JobEventListeners.createStderrListener;
 import static com.github.jobson.jobs.management.JobEventListeners.createStdoutListener;
+import static java.nio.file.Files.createTempFile;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -90,6 +95,10 @@ public abstract class JobExecutorTest {
     }
 
     private static PersistedJobRequest standardRequestWithCommand(String application, String... args) {
+        return standardRequestWithOutputs(new HashMap<>(), application, args);
+    }
+
+    private static PersistedJobRequest standardRequestWithOutputs(Map<String, JobOutput> outputs, String application, String ...args) {
         final JobSpec existingSpec = STANDARD_REQUEST.getSpec();
         final ExecutionConfiguration existingConfig = existingSpec.getExecution();
 
@@ -108,7 +117,8 @@ public abstract class JobExecutorTest {
                         existingSpec.getName(),
                         existingSpec.getDescription(),
                         existingSpec.getExpectedInputs(),
-                        newConfig);
+                        newConfig,
+                        outputs);
 
         return new PersistedJobRequest(
                 STANDARD_REQUEST.getId(),
@@ -166,6 +176,72 @@ public abstract class JobExecutorTest {
                 ret,
                 result -> assertThat(result.getFinalStatus()).isEqualTo(JobStatus.ABORTED),
                 () -> ret.cancel(true));
+    }
+
+    @Test
+    public void testExecutePromiseResolvesWithTheOutputsWrittenByTheApplication() throws Throwable {
+        final JobExecutor jobExecutor = getInstance();
+
+        final String outputId = "outfile";
+        final String outputPath = outputId;
+
+        final Map<String, JobOutput> outputs = new HashMap<>();
+        outputs.put(outputId, new JobOutput(outputPath, "text/plain"));
+
+        final PersistedJobRequest req =
+                standardRequestWithOutputs(outputs, "touch", outputPath);
+
+        final CancelablePromise<JobExecutionResult> ret =
+                jobExecutor.execute(req, createNullListeners());
+
+        promiseAssert(
+                ret,
+                result -> {
+                    assertThat(result.getOutputs()).isNotEmpty();
+                    assertThat(result.getOutputs().containsKey(outputId)).isTrue();
+                    assertThat(result.getOutputs().get(outputId).getSizeOf()).isEqualTo(0); // touch
+                },
+                () -> {});
+    }
+
+    @Test
+    public void testExecutePromiseResolvesWithTheExepectedOutputData() throws Throwable {
+        final JobExecutor jobExecutor = getInstance();
+
+        final byte[] randomNoise = generateRandomBytes();
+        final Path tmpFile = createTempFile(JobExecutorTest.class.getSimpleName(), "");
+        Files.write(tmpFile, randomNoise);
+
+        final String outputId = "out";
+        final String outputPath = outputId;
+
+        final Map<String, JobOutput> outputs = new HashMap<>();
+        outputs.put(outputId, new JobOutput(outputPath, "application/octet-stream"));
+
+        final PersistedJobRequest jobRequest =
+                standardRequestWithOutputs(
+                        outputs,
+                        "cp",
+                        tmpFile.toAbsolutePath().toString(),
+                        outputPath);
+
+        final CancelablePromise<JobExecutionResult> ret =
+                jobExecutor.execute(jobRequest, createNullListeners());
+
+        promiseAssert(
+                ret,
+                result -> {
+                    assertThat(result.getOutputs()).isNotEmpty();
+                    assertThat(result.getOutputs().containsKey(outputId)).isTrue();
+                    assertThat(result.getOutputs().get(outputId).getSizeOf()).isEqualTo(randomNoise.length);
+                    try {
+                        assertThat(IOUtils.toByteArray(result.getOutputs().get(outputId).getData())).isEqualTo(randomNoise);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                },
+                () -> {});
     }
 
     @Test

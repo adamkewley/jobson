@@ -19,27 +19,32 @@
 
 package com.github.jobson.jobs.execution;
 
+import com.github.jobson.Helpers;
+import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.dao.BinaryData;
 import com.github.jobson.jobs.management.JobEventListeners;
 import com.github.jobson.jobs.states.PersistedJobRequest;
 import com.github.jobson.specs.ExecutionConfiguration;
 import com.github.jobson.specs.JobDependencyConfiguration;
+import com.github.jobson.specs.JobOutput;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static com.github.jobson.Helpers.attachTo;
-import static com.github.jobson.Helpers.writeJSON;
+import static com.github.jobson.Helpers.*;
+import static com.github.jobson.api.v1.JobStatus.FINISHED;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -142,7 +147,14 @@ public final class LocalJobExecutor implements JobExecutor {
                     runningProcess,
                     jobEventListeners.getOnStdoutListener(),
                     jobEventListeners.getOnStderrListener(),
-                    exitCode -> ret.complete(JobExecutionResult.fromExitCode(exitCode)));
+                    exitCode -> {
+                        final JobStatus exitStatus = JobStatus.fromExitCode(exitCode);
+                        if (exitStatus == FINISHED) {
+                            final Map<String, JobOutput> expectedOutputs = req.getSpec().getOutputs();
+                            final Map<String, BinaryData> outputs = getJobOutputs(workingDir, expectedOutputs);
+                            ret.complete(new JobExecutionResult(exitStatus, outputs));
+                        } else ret.complete(new JobExecutionResult(exitStatus));
+                    });
 
             return ret;
 
@@ -150,6 +162,21 @@ public final class LocalJobExecutor implements JobExecutor {
             log.error(req.getId() + ": cannot start: " + ex.toString());
             throw new RuntimeException(ex);
         }
+    }
+
+    private Map<String, BinaryData> getJobOutputs(Path workingDir, Map<String, JobOutput> expectedOutputs) {
+        final Map<String, BinaryData> ret = new HashMap<>();
+
+        for (Map.Entry<String, JobOutput> expectedOutput : expectedOutputs.entrySet()) {
+            final Path expectedOutputFile =
+                    workingDir.resolve(expectedOutput.getValue().getPath());
+
+            if (expectedOutputFile.toFile().exists()) {
+                ret.put(expectedOutput.getKey(), streamBinaryData(expectedOutputFile));
+            }
+        }
+
+        return ret;
     }
 
     private void abort(Process process) {

@@ -22,22 +22,66 @@ package com.github.jobson.dao;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-public interface BinaryData {
+public final class BinaryData {
 
-    InputStream getData();
-    long getSizeOf();
+    public static BinaryData wrap(byte[] bytes) {
+        return new BinaryData(new ByteArrayInputStream(bytes), bytes.length);
+    }
 
-    static BinaryData wrap(byte[] bytes) {
-        return new BinaryData() {
-            @Override
-            public InputStream getData() {
-                return new ByteArrayInputStream(bytes);
-            }
+    public static BinaryData wrap(byte[] bytes, String mimeType) {
+        return new BinaryData(new ByteArrayInputStream(bytes), bytes.length, mimeType);
+    }
 
-            @Override
-            public long getSizeOf() {
-                return bytes.length;
-            }
-        };
+
+    private final InputStream data;
+    private final long sizeOf;
+    private final String mimeType;
+
+    public BinaryData(InputStream data, long sizeOf) {
+        this.data = data;
+        this.sizeOf = sizeOf;
+        this.mimeType = "application/octet-stream";
+    }
+
+    public BinaryData(InputStream data, long sizeOf, String mimeType) {
+        this.data = data;
+        this.sizeOf = sizeOf;
+        this.mimeType = mimeType;
+    }
+
+    public InputStream getData() {
+        return data;
+    }
+
+    public long getSizeOf() {
+        return sizeOf;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+
+    public BinaryData withMimeType(String mimeType) {
+        return new BinaryData(data, sizeOf, mimeType);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BinaryData that = (BinaryData) o;
+
+        if (sizeOf != that.sizeOf) return false;
+        return mimeType != null ? mimeType.equals(that.mimeType) : that.mimeType == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = data != null ? data.hashCode() : 0;
+        result = 31 * result + (int) (sizeOf ^ (sizeOf >>> 32));
+        result = 31 * result + (mimeType != null ? mimeType.hashCode() : 0);
+        return result;
     }
 }
