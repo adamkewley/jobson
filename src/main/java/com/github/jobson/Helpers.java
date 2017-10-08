@@ -20,6 +20,7 @@
 package com.github.jobson;
 
 import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -115,6 +116,10 @@ public final class Helpers {
         return Arrays.stream(p.toFile().listFiles(File::isDirectory));
     }
 
+    public static Stream<File> listEntries(Path p) {
+        return Arrays.stream(p.toFile().listFiles());
+    }
+
     public static String loadResourceFileAsString(String resourceFileName) throws IOException {
         return IOUtils.toString(Helpers.class.getClassLoader().getResourceAsStream(resourceFileName));
     }
@@ -140,17 +145,7 @@ public final class Helpers {
             final long size = Files.size(p);
             final InputStream dataStream = Files.newInputStream(p);
 
-            return new BinaryData() {
-                @Override
-                public InputStream getData() {
-                    return dataStream;
-                }
-
-                @Override
-                public long getSizeOf() {
-                    return size;
-                }
-            };
+            return new BinaryData(dataStream, size);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -247,8 +242,17 @@ public final class Helpers {
         return JSON_MAPPER.readValue(jsonStr, klass);
     }
 
+    public static <T> T loadJSON(Path p, TypeReference<T> tr) throws IOException {
+        final String str = new String(Files.readAllBytes(p));
+        return readJSON(str, tr);
+    }
+
     public static <T> T readJSON(String json, Class<T> klass) throws IOException {
         return JSON_MAPPER.readValue(json, klass);
+    }
+
+    public static <T> T readJSON(String json, TypeReference<T> tr) throws IOException {
+        return JSON_MAPPER.readValue(json, tr);
     }
 
     public static <T> T readJSON(Path p, Class<T> klass) throws IOException {

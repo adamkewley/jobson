@@ -41,6 +41,7 @@ import com.github.jobson.jobs.states.ValidJobRequest;
 import com.github.jobson.dao.BinaryData;
 import com.github.jobson.dao.users.UserCredentials;
 import com.github.jobson.specs.ExecutionConfiguration;
+import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.websockets.v1.JobEvent;
 import io.reactivex.Observable;
@@ -54,6 +55,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
@@ -122,6 +124,10 @@ public final class TestHelpers {
         return generateRandomString().getBytes();
     }
 
+    public static BinaryData generateRandomBinaryData() {
+        return BinaryData.wrap(generateRandomBytes());
+    }
+
     public static UserId generateUserId() {
         return new UserId(TestHelpers.generateRandomString());
     }
@@ -157,6 +163,20 @@ public final class TestHelpers {
 
         for (int i = 0; i < numEntries; i++) {
             ret.add(generateJobStatusChangeTimestamp());
+        }
+
+        return ret;
+    }
+
+    public static JobOutput generateJobOutput() {
+        return new JobOutput(generateRandomString(), generateRandomString());
+    }
+
+    public static <T, U> Map<T, U> generateRandomMap(int numEntries, Supplier<T> keySupplier, Supplier<U> valueSupplier) {
+        final Map<T, U> ret = new HashMap<T, U>();
+
+        for (int i = 0; i < numEntries; i++) {
+            ret.put(keySupplier.get(), valueSupplier.get());
         }
 
         return ret;

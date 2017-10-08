@@ -20,6 +20,10 @@
 package com.github.jobson.jobs.execution;
 
 import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.dao.BinaryData;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class JobExecutionResult {
 
@@ -28,15 +32,29 @@ public final class JobExecutionResult {
     }
 
 
-    private JobStatus finalStatus;
+    private final JobStatus finalStatus;
+    private final Map<String, BinaryData> outputs;
 
 
     public JobExecutionResult(JobStatus finalStatus) {
         this.finalStatus = finalStatus;
+        this.outputs = new HashMap<>();
+    }
+
+    public JobExecutionResult(
+            JobStatus finalStatus,
+            Map<String, BinaryData> outputs) {
+
+        this.finalStatus = finalStatus;
+        this.outputs = outputs;
     }
 
 
     public JobStatus getFinalStatus() {
         return finalStatus;
+    }
+
+    public Map<String, BinaryData> getOutputs() {
+        return outputs;
     }
 }

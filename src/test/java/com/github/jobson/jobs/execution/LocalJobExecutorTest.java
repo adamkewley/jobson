@@ -19,33 +19,31 @@
 
 package com.github.jobson.jobs.execution;
 
-import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
+import com.github.jobson.jobs.states.PersistedJobRequest;
+import com.github.jobson.specs.ExecutionConfiguration;
+import com.github.jobson.specs.JobSpec;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Optional;
 
-import static com.github.jobson.TestHelpers.genrateRandomAlphanumericString;
+import static com.github.jobson.Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS;
+import static com.github.jobson.TestHelpers.*;
 
 public final class LocalJobExecutorTest extends JobExecutorTest {
-
-    private Path createTmpDir() {
-        try {
-            return Files.createTempDirectory(LocalJobExecutorTest.class.getSimpleName());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     protected JobExecutor getInstance() {
         try {
-            return new LocalJobExecutor(createTmpDir(), Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS);
-        } catch (FileNotFoundException e) {
+            return new LocalJobExecutor(createTmpDir(LocalJobExecutorTest.class), DELAY_BEFORE_FORCIBLY_KILLING_JOBS);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -53,17 +51,17 @@ public final class LocalJobExecutorTest extends JobExecutorTest {
 
     @Test(expected = NullPointerException.class)
     public void testCtorThrowsIfWorkingDirsIsNull() throws FileNotFoundException {
-        new LocalJobExecutor(null, Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS);
+        new LocalJobExecutor(null, DELAY_BEFORE_FORCIBLY_KILLING_JOBS);
     }
 
     @Test(expected = FileNotFoundException.class)
     public void testCtorThrowsIfWorkingDirsDoesNotExist() throws FileNotFoundException {
-        new LocalJobExecutor(Paths.get(TestHelpers.genrateRandomAlphanumericString()), Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS);
+        new LocalJobExecutor(Paths.get(genrateRandomAlphanumericString()), DELAY_BEFORE_FORCIBLY_KILLING_JOBS);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCtorThrowsIfDelayIsNegative() throws FileNotFoundException {
-        new LocalJobExecutor(createTmpDir(), -1);
+    public void testCtorThrowsIfDelayIsNegative() throws IOException {
+        new LocalJobExecutor(createTmpDir(LocalJobExecutorTest.class), -1);
     }
 
     /**

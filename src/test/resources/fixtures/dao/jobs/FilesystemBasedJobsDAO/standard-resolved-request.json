@@ -55,6 +55,12 @@
         "arg1",
         "arg2"
       ]
+    },
+    "outputs": {
+      "outfile": {
+        "path": "outfile",
+        "mimeType": "text/plain"
+      }
     }
   }
 }

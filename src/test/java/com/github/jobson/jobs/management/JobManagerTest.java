@@ -22,9 +22,11 @@ package com.github.jobson.jobs.management;
 import com.github.jobson.Constants;
 import com.github.jobson.TestConstants;
 import com.github.jobson.TestHelpers;
+import com.github.jobson.dao.BinaryData;
 import com.github.jobson.jobs.execution.JobExecutionResult;
 import com.github.jobson.jobs.execution.JobExecutor;
 import com.github.jobson.jobs.states.FinalizedJob;
+import com.github.jobson.specs.JobOutput;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import com.github.jobson.websockets.v1.JobEvent;
@@ -42,16 +44,20 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.github.jobson.TestConstants.DEFAULT_TIMEOUT;
 import static com.github.jobson.TestHelpers.STANDARD_VALID_REQUEST;
 import static com.github.jobson.TestHelpers.generateRandomBytes;
 import static com.github.jobson.api.v1.JobStatus.*;
+import static com.github.jobson.dao.BinaryData.wrap;
 import static com.github.jobson.jobs.management.JobEventListeners.createNullListeners;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -100,7 +106,7 @@ public final class JobManagerTest {
         final Pair<JobId, CancelablePromise<FinalizedJob>> ret =
                 jobManager.submit(STANDARD_VALID_REQUEST);
 
-        ret.getRight().get(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+        ret.getRight().get(DEFAULT_TIMEOUT, MILLISECONDS);
 
         assertThat(statusesEmitted).isEqualTo(asList(SUBMITTED, RUNNING, FINISHED));
     }
@@ -119,7 +125,7 @@ public final class JobManagerTest {
         final Pair<JobId, CancelablePromise<FinalizedJob>> ret =
                 jobManager.submit(STANDARD_VALID_REQUEST);
 
-        ret.getRight().get(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+        ret.getRight().get(DEFAULT_TIMEOUT, MILLISECONDS);
 
         assertThat(statusesEmitted).isEqualTo(asList(SUBMITTED, RUNNING, FATAL_ERROR));
     }
@@ -138,7 +144,7 @@ public final class JobManagerTest {
         final Pair<JobId, CancelablePromise<FinalizedJob>> ret =
                 jobManager.submit(STANDARD_VALID_REQUEST);
 
-        ret.getRight().get(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+        ret.getRight().get(DEFAULT_TIMEOUT, MILLISECONDS);
 
         assertThat(statusesEmitted).isEqualTo(asList(SUBMITTED, RUNNING, ABORTED));
     }
@@ -198,7 +204,7 @@ public final class JobManagerTest {
 
         executorPromise.complete(new JobExecutionResult(FINISHED));
 
-        ret.getRight().get(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+        ret.getRight().get(DEFAULT_TIMEOUT, MILLISECONDS);
 
         assertThat(bytesFromObservable.get()).isEqualTo(bytesExpected);
     }
@@ -257,7 +263,7 @@ public final class JobManagerTest {
 
         executorPromise.complete(new JobExecutionResult(FINISHED));
 
-        ret.getRight().get(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+        ret.getRight().get(DEFAULT_TIMEOUT, MILLISECONDS);
 
         assertThat(bytesFromObservable.get()).isEqualTo(bytesExpected);
     }
@@ -282,7 +288,7 @@ public final class JobManagerTest {
         assertThat(ret).isNotNull();
         assertThat(ret.getLeft()).isNotNull();
         assertThat(ret.getRight()).isNotNull();
-        assertThat(ret.getRight().get(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS)).isNotNull();
+        assertThat(ret.getRight().get(DEFAULT_TIMEOUT, MILLISECONDS)).isNotNull();
     }
 
     @Test
@@ -305,7 +311,7 @@ public final class JobManagerTest {
 
         p.complete(JobExecutionResult.fromExitCode(0));
 
-        assertThat(ret.get(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS)).isNotNull();
+        assertThat(ret.get(DEFAULT_TIMEOUT, MILLISECONDS)).isNotNull();
     }
 
     @Test
@@ -405,7 +411,7 @@ public final class JobManagerTest {
         assertThat(ret).isNotNull();
         assertThat(ret.getLeft()).isNotNull();
         assertThat(ret.getRight()).isNotNull();
-        assertThat(ret.getRight().get(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS)).isNotNull();
+        assertThat(ret.getRight().get(DEFAULT_TIMEOUT, MILLISECONDS)).isNotNull();
     }
 
     @Test
@@ -428,7 +434,7 @@ public final class JobManagerTest {
 
         p.complete(JobExecutionResult.fromExitCode(0));
 
-        assertThat(ret.get(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS)).isNotNull();
+        assertThat(ret.get(DEFAULT_TIMEOUT, MILLISECONDS)).isNotNull();
     }
 
 
@@ -445,7 +451,7 @@ public final class JobManagerTest {
         final Pair<JobId, CancelablePromise<FinalizedJob>> ret =
                 jobManager.submit(STANDARD_VALID_REQUEST);
 
-        ret.getRight().get(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+        ret.getRight().get(DEFAULT_TIMEOUT, MILLISECONDS);
 
         assertThat(jobManager.tryAbort(ret.getLeft())).isFalse();
     }
@@ -462,5 +468,39 @@ public final class JobManagerTest {
         assertThat(jobManager.tryAbort(ret.getLeft())).isTrue();
 
         // TODO: Check status is aborted.
+    }
+
+
+    @Test
+    public void testSubmitPersistsJobOutputsAfterExecution() throws InterruptedException, ExecutionException, TimeoutException {
+        final CancelablePromise<JobExecutionResult> executorPromise = new SimpleCancelablePromise<>();
+        final MockInMemoryJobWriter writingJobDAO = new MockInMemoryJobWriter();
+
+        final JobManager jobManager =
+                createManagerWith(writingJobDAO, MockJobExecutor.thatUses(executorPromise));
+
+        final byte[] executorOutputBytes = generateRandomBytes();
+        final Map<String, BinaryData> outputsFromExecutor = new HashMap<>();
+
+        for (Map.Entry<String, JobOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
+            outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes));
+        }
+
+        final JobExecutionResult jobExecutionResult = new JobExecutionResult(FINISHED, outputsFromExecutor);
+
+        final CancelablePromise<FinalizedJob> p = jobManager.submit(STANDARD_VALID_REQUEST).getRight();
+
+        executorPromise.complete(jobExecutionResult);
+
+        p.get(DEFAULT_TIMEOUT, MILLISECONDS);
+
+        for (Map.Entry<String, JobOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
+            final PersistOutputArgs expectedArgs = new PersistOutputArgs(
+                    writingJobDAO.getReturnedPersistedReq().getId(),
+                    output.getKey(),
+                    wrap(executorOutputBytes, output.getValue().getMimeType()));
+
+            assertThat(writingJobDAO.getPersistOutputCalledWith()).contains(expectedArgs);
+        }
     }
 }

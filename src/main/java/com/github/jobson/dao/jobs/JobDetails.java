@@ -30,10 +30,12 @@ import com.github.jobson.api.v1.JobStatus;
 import com.github.jobson.api.v1.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobs.states.PersistedJobRequest;
+import com.github.jobson.specs.JobOutput;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class JobDetails {
 

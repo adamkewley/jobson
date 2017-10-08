@@ -21,13 +21,17 @@ package com.github.jobson.jobs.management;
 
 import com.github.jobson.api.v1.JobId;
 import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.dao.BinaryData;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.states.PersistedJobRequest;
 import com.github.jobson.jobs.states.ValidJobRequest;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
+import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -44,6 +48,7 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
     private final AtomicBoolean persistStderrDisposed = new AtomicBoolean(false);
     private Optional<ValidJobRequest> persistCalledWith = Optional.empty();
     private PersistedJobRequest returnedPersistedReq;
+    private List<PersistOutputArgs> persistOutputCalledWith = new ArrayList<>();
 
 
     @Override
@@ -88,6 +93,11 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
     @Override
     public void addNewJobStatus(JobId jobId, JobStatus newStatus, String statusMessage) {}
 
+    @Override
+    public void persistOutput(JobId jobId, String outputId, BinaryData data) {
+        persistOutputCalledWith.add(new PersistOutputArgs(jobId, outputId, data));
+    }
+
 
     public Optional<JobId> getPersistStdoutCalledWith() {
         return persistStdoutCalledWith;
@@ -111,5 +121,9 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
 
     public PersistedJobRequest getReturnedPersistedReq() {
         return returnedPersistedReq;
+    }
+
+    public List<PersistOutputArgs> getPersistOutputCalledWith() {
+        return persistOutputCalledWith;
     }
 }

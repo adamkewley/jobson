@@ -27,7 +27,9 @@ import com.github.jobson.jobinputs.JobExpectedInput;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class JobSpec {
 
@@ -52,6 +54,10 @@ public final class JobSpec {
     @Valid
     private ExecutionConfiguration execution;
 
+    @JsonProperty
+    @Valid
+    private Map<String, JobOutput> outputs = new HashMap<>();
+
 
 
     /**
@@ -73,6 +79,21 @@ public final class JobSpec {
         this.execution = execution;
     }
 
+    public JobSpec(
+            JobSpecId id,
+            String name,
+            String description,
+            List<JobExpectedInput> expectedInputs,
+            ExecutionConfiguration execution,
+            Map<String, JobOutput> outputs) {
+
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.expectedInputs = expectedInputs;
+        this.execution = execution;
+        this.outputs = outputs;
+    }
 
 
     public JobSpecId getId() {
@@ -99,6 +120,9 @@ public final class JobSpec {
         return execution;
     }
 
+    public Map<String, JobOutput> getOutputs() {
+        return outputs;
+    }
 
 
     public JobSpecSummary toSummary() {
@@ -111,9 +135,9 @@ public final class JobSpec {
                 name,
                 description,
                 expectedInputs,
-                execution.withDependenciesResolvedRelativeTo(p));
+                execution.withDependenciesResolvedRelativeTo(p),
+                outputs);
     }
-
 
 
     @Override
@@ -121,15 +145,15 @@ public final class JobSpec {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JobSpec that = (JobSpec) o;
+        JobSpec jobSpec = (JobSpec) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (expectedInputs != null ? !expectedInputs.equals(that.expectedInputs) : that.expectedInputs != null)
+        if (id != null ? !id.equals(jobSpec.id) : jobSpec.id != null) return false;
+        if (name != null ? !name.equals(jobSpec.name) : jobSpec.name != null) return false;
+        if (description != null ? !description.equals(jobSpec.description) : jobSpec.description != null) return false;
+        if (expectedInputs != null ? !expectedInputs.equals(jobSpec.expectedInputs) : jobSpec.expectedInputs != null)
             return false;
-        return execution != null ? execution.equals(that.execution) : that.execution == null;
-
+        if (execution != null ? !execution.equals(jobSpec.execution) : jobSpec.execution != null) return false;
+        return outputs != null ? outputs.equals(jobSpec.outputs) : jobSpec.outputs == null;
     }
 
     @Override
@@ -139,6 +163,7 @@ public final class JobSpec {
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (expectedInputs != null ? expectedInputs.hashCode() : 0);
         result = 31 * result + (execution != null ? execution.hashCode() : 0);
+        result = 31 * result + (outputs != null ? outputs.hashCode() : 0);
         return result;
     }
 }

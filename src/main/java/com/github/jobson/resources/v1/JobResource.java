@@ -27,6 +27,7 @@ import com.github.jobson.dao.jobs.ReadonlyJobDAO;
 import com.github.jobson.dao.specs.JobSpecConfigurationDAO;
 import com.github.jobson.jobs.management.JobManagerActions;
 import com.github.jobson.jobs.states.ValidJobRequest;
+import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.utils.Either;
 import com.github.jobson.utils.EitherVisitorT;
@@ -273,7 +274,8 @@ public final class JobResource {
             @NotNull
                     JobId jobId) {
 
-        if (jobId == null) throw new WebApplicationException("Job ID cannot be null", 400);
+        if (jobId == null)
+            throw new WebApplicationException("Job ID cannot be null", 400);
 
         if (jobDAO.jobExists(jobId)) {
             if (jobManagerActions.tryAbort(jobId)) return;
@@ -300,17 +302,17 @@ public final class JobResource {
 
         if (jobId == null) throw new WebApplicationException("Job ID cannot be null", 400);
 
-        return generateStdioResponse(jobId, jobDAO.getStdout(jobId));
+        return generateBinaryDataResponse(jobId, jobDAO.getStdout(jobId));
     }
 
-    private Response generateStdioResponse(JobId jobId, Optional<BinaryData> maybeStdioData) {
-        if (maybeStdioData.isPresent()) {
-            final BinaryData stdoutData = maybeStdioData.get();
+    private Response generateBinaryDataResponse(JobId jobId, Optional<BinaryData> maybeBinaryData) {
+        if (maybeBinaryData.isPresent()) {
+            final BinaryData binaryData = maybeBinaryData.get();
 
-            final StreamingOutput body = outputStream -> IOUtils.copy(stdoutData.getData(), outputStream);
+            final StreamingOutput body = outputStream -> IOUtils.copy(binaryData.getData(), outputStream);
 
-            return Response.ok(body, "application/octet-stream")
-                    .header("Content-Length", stdoutData.getSizeOf())
+            return Response.ok(body, binaryData.getMimeType())
+                    .header("Content-Length", binaryData.getSizeOf())
                     .build();
         } else {
             final APIErrorMessage APIErrorMessage = new APIErrorMessage(jobId + ": could not be found", "404");
@@ -336,9 +338,10 @@ public final class JobResource {
             @NotNull
             JobId jobId) {
 
-        if (jobId == null) throw new WebApplicationException("Job ID cannot be null", 400);
+        if (jobId == null)
+            throw new WebApplicationException("Job ID cannot be null", 400);
 
-        return generateStdioResponse(jobId, jobDAO.getStderr(jobId));
+        return generateBinaryDataResponse(jobId, jobDAO.getStderr(jobId));
     }
 
     @GET
@@ -357,9 +360,70 @@ public final class JobResource {
             @NotNull
                     JobId jobId) {
 
-        if (jobId == null) throw new WebApplicationException("Job ID cannot be null", 400);
+        if (jobId == null)
+            throw new WebApplicationException("Job ID cannot be null", 400);
 
         return jobDAO.getSpecJobWasSubmittedAgainst(jobId)
                 .map(APIJobSpecResponse::fromJobSpec);
+    }
+
+    @GET
+    @Path("/{job-id}/outputs")
+    @ApiOperation(
+            value = "Get the outputs produced by the job",
+            notes = "Gets all the outputs produced by the job. If the job has not *written* any outputs (even if specified)" +
+                    "then an empty map is returned. If the job does not exist, a 404 is returned")
+    @Produces("application/json")
+    @PermitAll
+    public Map<String, APIJobOutput> fetchJobOutputs(
+            @Context
+                    SecurityContext context,
+            @ApiParam(value = "ID of the job to get the outputs for")
+            @PathParam("job-id")
+            @NotNull
+                    JobId jobId) {
+
+        if (!jobDAO.jobExists(jobId))
+            throw new WebApplicationException(jobId + ": does not exist", 404);
+
+        final Map<String, APIJobOutput> ret = new HashMap<>();
+
+        for (Map.Entry<String, JobOutput> entry : jobDAO.getJobOutputs(jobId).entrySet()) {
+            final String href = PATH + "/" + jobId + "/outputs/" + entry.getKey();
+
+            ret.put(entry.getKey(), new APIJobOutput(entry.getValue().getMimeType(), href));
+        }
+
+        return ret;
+    }
+
+    @GET
+    @Path("/{job-id}/outputs/{output-id}")
+    @ApiOperation(
+            value = "Get an output produced by the job",
+            notes = "Gets an output produced by the job. If the job has not written this output, of it it has been " +
+                    "subsequently deleted, a 404 shall be returned")
+    @PermitAll
+    public Response fetchJobOutput(
+            @Context
+                    SecurityContext context,
+            @ApiParam(value = "ID of the job to get the output for")
+            @PathParam("job-id")
+            @NotNull
+                    JobId jobId,
+            @ApiParam(value = "ID of the output")
+            @PathParam("output-id")
+            @NotNull
+                    String outputId) {
+
+        if (!jobDAO.jobExists(jobId))
+            throw new WebApplicationException(jobId + ": does not exist", 404);
+
+        final Optional<BinaryData> maybeJobOutput = jobDAO.getOutput(jobId, outputId);
+
+        if (!maybeJobOutput.isPresent())
+            throw new WebApplicationException(jobId + ": " + outputId + ": does not exist", 404);
+
+        return generateBinaryDataResponse(jobId, maybeJobOutput);
     }
 }

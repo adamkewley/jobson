@@ -23,11 +23,14 @@ import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.dao.BinaryData;
 import com.github.jobson.jobs.states.ValidJobRequest;
+import com.github.jobson.specs.JobOutput;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
@@ -42,6 +45,7 @@ import static com.github.jobson.Constants.JOB_TIMESTAMP_RESOLUTION_IN_MILLISECON
 import static com.github.jobson.Helpers.randomKeyIn;
 import static com.github.jobson.Helpers.randomSubstring;
 import static com.github.jobson.TestHelpers.*;
+import static com.github.jobson.dao.BinaryData.wrap;
 import static com.google.common.collect.Lists.reverse;
 import static com.github.jobson.api.v1.JobStatus.FINISHED;
 import static com.github.jobson.api.v1.JobStatus.RUNNING;
@@ -568,5 +572,78 @@ public abstract class JobsDAOTest {
             final Set<JobId> returnedIds = dao.getJobsWithStatus(status);
             assertThat(returnedIds).isEqualTo(expectedIds);
         });
+    }
+
+
+    @Test
+    public void testHasOutputReturnsFalseIfNoOutputPersisted() {
+        final JobDAO dao = getInstance();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+
+        assertThat(dao.hasOutput(jobId, generateRandomString())).isFalse();
+    }
+
+    @Test
+    public void testHasOutputReturnsTrueIfOutputIsPersisted() {
+        final JobDAO dao = getInstance();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+
+        final String outputId = generateRandomString();
+
+        dao.persistOutput(
+                jobId,
+                outputId,
+                generateRandomBinaryData());
+
+        assertThat(dao.hasOutput(jobId, outputId)).isTrue();
+    }
+
+    @Test
+    public void testGetOutputReturnsPersistedOutput() throws IOException {
+        final JobDAO dao = getInstance();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+
+        final String outputId = generateRandomString();
+        final byte[] persistedData = generateRandomBytes();
+
+        dao.persistOutput(jobId, outputId, wrap(persistedData));
+
+        final Optional<BinaryData> maybeRet = dao.getOutput(jobId, outputId);
+
+        assertThat(maybeRet).isPresent();
+
+        final byte[] returnedData = IOUtils.toByteArray(maybeRet.get().getData());
+
+        assertThat(returnedData).isEqualTo(persistedData);
+    }
+
+
+    @Test
+    public void testGetJobOutputsReturnsEmptyListForNonExistentJob() {
+        final JobDAO dao = getInstance();
+
+        final Map<String, JobOutput> returnedJobOutputs = dao.getJobOutputs(generateJobId());
+
+        assertThat(returnedJobOutputs.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void testGetJobOutputsReturnsEmptyListForExistentJobWithOutputs() {
+        final JobDAO dao = getInstance();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+
+        final Set<String> persistedOutputs = new HashSet<>();
+        final int numberOfFilesToPersist = randomIntBetween(5, 15);
+
+        for (int i = 0; i < numberOfFilesToPersist; i++) {
+            final String outputId = generateRandomString();
+            final byte[] persistedData = generateRandomBytes();
+            dao.persistOutput(jobId, outputId, wrap(persistedData));
+            persistedOutputs.add(outputId);
+        }
+
+        final Set<String> returnedIds = dao.getJobOutputs(jobId).keySet();
+
+        assertThat(returnedIds).isEqualTo(persistedOutputs);
     }
 }
