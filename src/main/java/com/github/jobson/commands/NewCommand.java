@@ -87,8 +87,7 @@ public final class NewCommand extends Command {
             System.err.println("create    " + path);
             Files.write(path, content);
         } else {
-            System.err.println("cannot create file '" + path + "': File exists");
-            System.exit(1);
+            System.err.println("cannot create file '" + path + "': file exists: skipping");
         }
     }
 
