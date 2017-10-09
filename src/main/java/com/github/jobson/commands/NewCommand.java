@@ -97,8 +97,7 @@ public final class NewCommand extends Command {
             System.err.println("create    " + path);
             Files.createDirectory(path);
         } else {
-            System.err.println("cannot create directory '" + path + "': Already exists");
-            System.exit(1);
+            System.err.println("cannot create directory '" + path + "': already exists: skipping");
         }
     }
 }
