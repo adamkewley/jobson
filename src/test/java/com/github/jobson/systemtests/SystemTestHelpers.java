@@ -45,6 +45,10 @@ public final class SystemTestHelpers {
 
     
     public static DropwizardAppRule<ApplicationConfig> createStandardRule() {
+        return createStandardRuleWithTemplate("fixtures/systemtests/application-config-template.yml");
+    }
+
+    public static DropwizardAppRule<ApplicationConfig> createStandardRuleWithTemplate(String fixture) {
         try {
             final Path usersFilePath = Files.createTempFile(SystemTestHelpers.class.getSimpleName(), "user-file");
             final String users = fixture("fixtures/systemtests/users");
@@ -74,7 +78,7 @@ public final class SystemTestHelpers {
             final Path workingDirsDir = Files.createTempDirectory(SystemTestHelpers.class.getSimpleName());
 
             final String resolvedAppConfigText =
-                    fixture("fixtures/systemtests/application-config-template.yml")
+                    fixture(fixture)
                             .replaceAll("\\$userFile", usersFilePath.toAbsolutePath().toString())
                             .replaceAll("\\$sessionsFile", sessionsFilePath.toAbsolutePath().toString())
                             .replaceAll("\\$jobSpecDir", jobSpecsDir.toAbsolutePath().toString())
@@ -104,8 +108,10 @@ public final class SystemTestHelpers {
     }
 
     public static void authenticate(Invocation.Builder builder) {
-        builder.header("Authorization", "Basic " + Base64.encodeAsString(SYSTEMTEST_USER + ":" + SYSTEMTEST_PASSWORD));
+        authenticate(builder, SYSTEMTEST_USER, SYSTEMTEST_PASSWORD);
     }
 
-
+    public static void authenticate(Invocation.Builder builder, String username, String password) {
+        builder.header("Authorization", "Basic " + Base64.encodeAsString(username + ":" + password));
+    }
 }

@@ -53,7 +53,7 @@ public final class APIJobSpecResponse {
 
     @ApiModelProperty(value = "The inputs the job expects. Job requests against this job spec must satisfy these inputs.")
     @JsonProperty
-    private List<JobExpectedInput> expectedInputs;
+    private List<JobExpectedInput<?>> expectedInputs;
 
 
 
@@ -66,7 +66,7 @@ public final class APIJobSpecResponse {
             JobSpecId id,
             String name,
             String description,
-            List<JobExpectedInput> expectedInputs) {
+            List<JobExpectedInput<?>> expectedInputs) {
 
         this.id = id;
         this.name = name;
@@ -88,7 +88,7 @@ public final class APIJobSpecResponse {
         return description;
     }
 
-    public List<JobExpectedInput> getExpectedInputs() {
+    public List<JobExpectedInput<?>> getExpectedInputs() {
         return expectedInputs;
     }
 

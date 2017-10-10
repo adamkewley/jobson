@@ -51,4 +51,5 @@ public final class Constants {
 
     public static final String BASIC_AUTH_NAME = "basic";
     public static final String GUEST_AUTH_NAME = "disabled";
+    public static final String CUSTOM_AUTH_NAME = "custom";
 }

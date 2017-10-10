@@ -20,14 +20,13 @@
 package com.github.jobson.resources.v1;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIJobSpecsResponse;
 import com.github.jobson.api.v1.APIJobSpecResponse;
-import com.github.jobson.api.v1.JobSpecId;
 import com.github.jobson.api.v1.APIJobSpecSummary;
+import com.github.jobson.api.v1.APIJobSpecsResponse;
+import com.github.jobson.api.v1.JobSpecId;
 import com.github.jobson.dao.specs.JobSpecDAO;
 import com.github.jobson.dao.specs.JobSpecSummary;
 import com.github.jobson.specs.JobSpec;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
@@ -35,7 +34,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.github.jobson.TestHelpers.*;
 import static java.util.stream.Collectors.toList;

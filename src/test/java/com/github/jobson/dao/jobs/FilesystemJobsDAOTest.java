@@ -84,7 +84,7 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
 
     @Test(expected = FileNotFoundException.class)
     public void testCtorThrowsIfPassedANonExistentJobsDir() throws IOException {
-        final Path invalidPath = Paths.get(genrateRandomAlphanumericString());
+        final Path invalidPath = Paths.get(generateAlphanumStr());
         createStandardFilesystemDAO(invalidPath);
     }
 

@@ -21,7 +21,6 @@ package com.github.jobson.jobs.management;
 
 import com.github.jobson.api.v1.JobId;
 import com.github.jobson.api.v1.JobStatus;
-import com.github.jobson.dao.BinaryData;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.execution.JobExecutionResult;
 import com.github.jobson.jobs.execution.JobExecutor;
@@ -34,7 +33,10 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.github.jobson.Helpers.now;

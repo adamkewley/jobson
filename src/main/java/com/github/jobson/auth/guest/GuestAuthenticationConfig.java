@@ -20,9 +20,12 @@
 package com.github.jobson.auth.guest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.config.AuthenticationBootstrap;
+import com.github.jobson.auth.AuthenticationBootstrap;
+import com.github.jobson.auth.PermitAllAuthorizer;
 import com.github.jobson.config.AuthenticationConfig;
-import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthFilter;
+
+import java.security.Principal;
 
 public final class GuestAuthenticationConfig implements AuthenticationConfig {
 
@@ -30,9 +33,11 @@ public final class GuestAuthenticationConfig implements AuthenticationConfig {
     private String guestUserName = "guest";
 
     @Override
-    public void enable(AuthenticationBootstrap bootstrap) {
-        bootstrap.getEnvironment().register(
-                new AuthDynamicFeature(
-                        new GuestContainerRequestFilter(guestUserName)));
+    public AuthFilter<?, Principal> createAuthFilter(AuthenticationBootstrap bootstrap) {
+        return new GuestAuthFilter.Builder<>()
+                .setAuthenticator(new GuestAuthenticator(guestUserName))
+                .setAuthorizer(new PermitAllAuthorizer())
+                .setRealm("GUEST")
+                .buildAuthFilter();
     }
 }

@@ -19,17 +19,12 @@
 
 package com.github.jobson.systemtests.bootup;
 
-import com.github.jobson.App;
 import com.github.jobson.config.ApplicationConfig;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import static com.github.jobson.systemtests.SystemTestHelpers.createStandardRule;
-import static io.dropwizard.testing.FixtureHelpers.fixture;
 
 public final class TestAppBootsWithValidSimpleConfig {
 

@@ -83,7 +83,8 @@ public final class GenerateRequestCommand extends DefaultedConfiguredCommand<App
     private Map<JobExpectedInputId, JsonNode> generateInputs(JobSpec jobSpec) {
         return jobSpec.getExpectedInputs().stream().map(expectedInput -> {
             final JobExpectedInputId id = expectedInput.getId();
-            final JobInput generatedInput = expectedInput.generateExampleInput();
+            final JobInput generatedInput = expectedInput.getDefault().isPresent() ?
+                    expectedInput.getDefault().get() : expectedInput.generateExampleInput();
             final JsonNode inputAsNode = toJSONNode(generatedInput);
             return new AbstractMap.SimpleEntry<>(id, inputAsNode);
         }).collect(toMap(e -> e.getKey(), e -> e.getValue()));

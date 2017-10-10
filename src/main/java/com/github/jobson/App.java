@@ -1,9 +1,9 @@
 package com.github.jobson;
 
 import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.commands.*;
 import com.github.jobson.config.ApplicationConfig;
-import com.github.jobson.config.AuthenticationBootstrap;
 import com.github.jobson.dao.jobs.FilesystemJobsDAO;
 import com.github.jobson.dao.jobs.JobDAO;
 import com.github.jobson.dao.specs.FilesystemJobSpecDAO;
@@ -20,17 +20,21 @@ import com.github.jobson.websockets.v1.JobEventSocketCreator;
 import com.github.jobson.websockets.v1.StderrUpdateSocketCreator;
 import com.github.jobson.websockets.v1.StdoutUpdateSocketCreator;
 import io.dropwizard.Application;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.http.pathmap.RegexPathSpec;
 import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Principal;
 
 import static com.github.jobson.Helpers.generateRandomBase36String;
 import static com.github.jobson.api.v1.JobStatus.ABORTED;
@@ -76,7 +80,11 @@ public final class App extends Application<ApplicationConfig> {
 
         log.debug("Enabling authentication");
         final AuthenticationBootstrap authenticationBootstrap = new AuthenticationBootstrap(environment.jersey(), userDAO);
-        applicationConfig.getAuthenticationConfiguration().enable(authenticationBootstrap);
+        final AuthFilter<?, Principal> authFilter =
+                applicationConfig.getAuthenticationConfiguration().createAuthFilter(authenticationBootstrap);
+
+        environment.jersey().register(new AuthDynamicFeature(authFilter));
+        environment.jersey().register(RolesAllowedDynamicFeature.class);
 
 
 

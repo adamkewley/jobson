@@ -28,9 +28,7 @@ import com.github.jobson.jobs.states.ValidJobRequest;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;

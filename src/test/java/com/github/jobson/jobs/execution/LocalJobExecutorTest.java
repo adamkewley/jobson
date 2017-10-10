@@ -19,23 +19,15 @@
 
 package com.github.jobson.jobs.execution;
 
-import com.github.jobson.TestHelpers;
-import com.github.jobson.jobs.states.PersistedJobRequest;
-import com.github.jobson.specs.ExecutionConfiguration;
-import com.github.jobson.specs.JobSpec;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Optional;
 
 import static com.github.jobson.Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS;
-import static com.github.jobson.TestHelpers.*;
+import static com.github.jobson.TestHelpers.createTmpDir;
+import static com.github.jobson.TestHelpers.generateAlphanumStr;
 
 public final class LocalJobExecutorTest extends JobExecutorTest {
 
@@ -56,7 +48,7 @@ public final class LocalJobExecutorTest extends JobExecutorTest {
 
     @Test(expected = FileNotFoundException.class)
     public void testCtorThrowsIfWorkingDirsDoesNotExist() throws FileNotFoundException {
-        new LocalJobExecutor(Paths.get(genrateRandomAlphanumericString()), DELAY_BEFORE_FORCIBLY_KILLING_JOBS);
+        new LocalJobExecutor(Paths.get(generateAlphanumStr()), DELAY_BEFORE_FORCIBLY_KILLING_JOBS);
     }
 
     @Test(expected = IllegalArgumentException.class)

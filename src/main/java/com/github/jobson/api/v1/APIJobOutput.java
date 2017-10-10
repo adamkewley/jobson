@@ -25,9 +25,11 @@
 package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
 
 import javax.validation.constraints.NotNull;
 
+@ApiModel(description = "Information about a job's output")
 public final class APIJobOutput {
 
     @JsonProperty

@@ -20,20 +20,17 @@
 package com.github.jobson.systemtests.httpapi;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.config.ApplicationConfig;
+import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.systemtests.SystemTestHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.github.jobson.Helpers.readJSON;
@@ -46,7 +43,6 @@ import static java.lang.Thread.sleep;
 import static java.util.Collections.singletonList;
 import static javax.ws.rs.client.Entity.json;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 public final class TestJobsAPI {
 

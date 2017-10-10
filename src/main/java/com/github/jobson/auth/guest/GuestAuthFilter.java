@@ -17,33 +17,27 @@
  * under the License.
  */
 
-package com.github.jobson.config;
+package com.github.jobson.auth.guest;
 
-import com.github.jobson.dao.users.UserDAO;
-import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.auth.AuthFilter;
 
-import static java.util.Objects.requireNonNull;
+import javax.ws.rs.container.ContainerRequestContext;
+import java.io.IOException;
+import java.security.Principal;
 
-public final class AuthenticationBootstrap {
+public final class GuestAuthFilter<P extends Principal> extends AuthFilter<Void, P> {
 
-    private JerseyEnvironment environment;
-    private UserDAO userDAO;
-
-
-    public AuthenticationBootstrap(JerseyEnvironment environment, UserDAO userDAO) {
-        requireNonNull(environment);
-        requireNonNull(environment);
-
-        this.environment = environment;
-        this.userDAO = userDAO;
+    @Override
+    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+        this.authenticate(containerRequestContext, null, "GUEST");
     }
 
+    public static class Builder<P extends Principal> extends AuthFilterBuilder<Void, P, GuestAuthFilter<P>> {
+        public Builder() {}
 
-    public JerseyEnvironment getEnvironment() {
-        return environment;
-    }
-
-    public UserDAO getUserDAO() {
-        return userDAO;
+        @Override
+        protected GuestAuthFilter<P> newInstance() {
+            return new GuestAuthFilter<>();
+        }
     }
 }

@@ -47,7 +47,7 @@ public final class JobSpec {
     @JsonProperty
     @NotNull
     @Valid
-    private List<JobExpectedInput> expectedInputs;
+    private List<JobExpectedInput<?>> expectedInputs;
 
     @JsonProperty
     @NotNull
@@ -69,7 +69,7 @@ public final class JobSpec {
             JobSpecId id,
             String name,
             String description,
-            List<JobExpectedInput> expectedInputs,
+            List<JobExpectedInput<?>> expectedInputs,
             ExecutionConfiguration execution) {
 
         this.id = id;
@@ -83,7 +83,7 @@ public final class JobSpec {
             JobSpecId id,
             String name,
             String description,
-            List<JobExpectedInput> expectedInputs,
+            List<JobExpectedInput<?>> expectedInputs,
             ExecutionConfiguration execution,
             Map<String, JobOutput> outputs) {
 
@@ -112,7 +112,7 @@ public final class JobSpec {
         return description;
     }
 
-    public List<JobExpectedInput> getExpectedInputs() {
+    public List<JobExpectedInput<?>> getExpectedInputs() {
         return expectedInputs;
     }
 

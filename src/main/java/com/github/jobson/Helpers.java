@@ -45,6 +45,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static com.github.jobson.Constants.STDIO_BUFFER_LEN_IN_BYTES;
+import static java.lang.System.arraycopy;
+
 public final class Helpers {
 
     private static final ObjectMapper JSON_MAPPER =
@@ -64,16 +67,6 @@ public final class Helpers {
             'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
     private static final int numBase36Characters = base36Characters.length;
-    
-    private static final char[] base64Characters = new char[] {
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-            'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-            'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', '+', '/'
-    };
-    private static final int numBase64Characters = base64Characters.length;
 
 
 
@@ -114,10 +107,6 @@ public final class Helpers {
 
     public static Stream<File> listDirectories(Path p) {
         return Arrays.stream(p.toFile().listFiles(File::isDirectory));
-    }
-
-    public static Stream<File> listEntries(Path p) {
-        return Arrays.stream(p.toFile().listFiles());
     }
 
     public static String loadResourceFileAsString(String resourceFileName) throws IOException {
@@ -321,20 +310,16 @@ public final class Helpers {
     }
 
     private static void streamInto(InputStream inputStream, Observer<byte[]> observer) throws IOException {
-        // TODO: Clean this up - currently reads into a 256 byte array and copies it into
-        // TODO: which is both dirty and naughty.
+        byte[] bytes = new byte[STDIO_BUFFER_LEN_IN_BYTES];
 
-        byte[] bytes = new byte[Constants.STDIO_BUFFER_LEN_IN_BYTES];
-
-        int bufLen = 0;
-        while((bufLen = inputStream.read(bytes, 0, Constants.STDIO_BUFFER_LEN_IN_BYTES)) != -1) {
+        int bufLen;
+        while((bufLen = inputStream.read(bytes, 0, STDIO_BUFFER_LEN_IN_BYTES)) != -1) {
+            // Copy is necessary because observers might assume the buffer is
+            // immutable, coming from an observable.
             byte[] outputBytes = new byte[bufLen];
-            for (int i = 0; i < bufLen; i++)
-                outputBytes[i] = bytes[i];
-
+            arraycopy(bytes, 0, outputBytes, 0, bufLen);
             observer.onNext(outputBytes);
         }
-
         observer.onComplete();
     }
 

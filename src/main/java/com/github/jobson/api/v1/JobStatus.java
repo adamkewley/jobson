@@ -1,7 +1,6 @@
 package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.Helpers;
 import io.swagger.annotations.ApiModel;
 
 import java.util.Set;

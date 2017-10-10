@@ -24,8 +24,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.dao.BinaryData;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.specs.JobSpecSummary;
+import com.github.jobson.dao.users.UserCredentials;
+import com.github.jobson.fixtures.ValidJobRequestFixture;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
@@ -36,22 +39,16 @@ import com.github.jobson.jobinputs.sql.ColumnSchema;
 import com.github.jobson.jobinputs.sql.SQLExpectedInput;
 import com.github.jobson.jobinputs.sql.SQLInput;
 import com.github.jobson.jobinputs.sql.TableSchema;
-import com.github.jobson.fixtures.ValidJobRequestFixture;
 import com.github.jobson.jobs.states.ValidJobRequest;
-import com.github.jobson.dao.BinaryData;
-import com.github.jobson.dao.users.UserCredentials;
 import com.github.jobson.specs.ExecutionConfiguration;
 import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.websockets.v1.JobEvent;
 import io.reactivex.Observable;
-import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.internal.util.Producer;
 
 import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.*;
@@ -65,10 +62,29 @@ import static java.util.stream.Collectors.toList;
 
 public final class TestHelpers {
 
-    public static final ObjectMapper JSON_MAPPER = new ObjectMapper().registerModule(new Jdk8Module());
-    public static final ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory()).registerModule(new Jdk8Module());
+    public static final ObjectMapper JSON_MAPPER = 
+            new ObjectMapper().registerModule(new Jdk8Module());
+    public static final ObjectMapper YAML_MAPPER = 
+            new ObjectMapper(new YAMLFactory()).registerModule(new Jdk8Module());
     private static final Random rng = new Random();
     public static final ValidJobRequest STANDARD_VALID_REQUEST;
+
+    private static final char[] alphaChars = new char[] {
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+            'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
+            'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+            'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
+            'W', 'X', 'Y', 'Z'
+    };
+    
+    private static final char[] alphanumChars = new char[] {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 
+            'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 
+            'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 
+            'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 
+            'Y', 'Z'
+    };
 
 
     static {
@@ -76,31 +92,27 @@ public final class TestHelpers {
     }
 
 
-    public static String genrateRandomAlphanumericString() {
-        return genrateRandomAlphanumericString(10);
+    public static String generateAlphanumStr() {
+        return generateAlphanumStr(10);
     }
 
-    public static String genrateRandomAlphanumericString(int outputLength) {
+    public static String generateAlphanumStr(int len) {
+        final char chars[] = new char[len];
+        for (int i = 0; i < len; i++) {
+            chars[i] = alphanumChars[randomIntBetween(0, alphanumChars.length)];
+        }
+        return new String(chars);
+    }
 
-        final String[] alphanumericCharacters = {
-                "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b",
-                "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
-                "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-                "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
-                "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
-                "Y", "Z"
-        };
+    public static String generateClassName() {
+        final int len = randomIntBetween(5, 15);
+        final char ret[] = new char[len];
 
-        final int numCharacters = alphanumericCharacters.length;
-
-        String ret = "";
-
-        for(int i = 0; i < outputLength; i++) {
-            final int idx = randomIntBetween(0, numCharacters);
-            ret += alphanumericCharacters[idx];
+        for (int i = 0; i < len; i++) {
+            ret[i] = alphaChars[randomIntBetween(0, alphaChars.length)];
         }
 
-        return ret;
+        return new String(ret);
     }
 
     /**
@@ -141,7 +153,7 @@ public final class TestHelpers {
     }
 
     public static JobId generateJobId() {
-        return new JobId(TestHelpers.genrateRandomAlphanumericString(10));
+        return new JobId(TestHelpers.generateAlphanumStr(10));
     }
 
     public static JobSpecId generateJobSpecId() {
@@ -357,11 +369,11 @@ public final class TestHelpers {
                 Optional.of(singletonList(generateRandomString())), Optional.empty());
     }
 
-    public static List<JobExpectedInput> generateRandomJobInputSchemas() {
+    public static List<JobExpectedInput<?>> generateRandomJobInputSchemas() {
         return generateRandomList(5, 20, TestHelpers::generateRandomJobInputSchema);
     }
 
-    public static JobExpectedInput generateRandomJobInputSchema() {
+    public static JobExpectedInput<?> generateRandomJobInputSchema() {
         if (randomIntBetween(0, 1) == 0) {
             return new SQLExpectedInput(
                     generateJobInputSchemaId(),

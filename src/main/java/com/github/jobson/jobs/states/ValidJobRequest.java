@@ -207,7 +207,7 @@ public class ValidJobRequest {
             JobExpectedInputId jobExpectedInputId,
             JobInput input) {
 
-        final Optional<JobExpectedInput> maybeJobSchema =
+        final Optional<JobExpectedInput<?>> maybeJobSchema =
                 req.spec.getExpectedInputs()
                 .stream()
                 .filter(schema -> schema.getId().equals(jobExpectedInputId))

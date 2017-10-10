@@ -39,18 +39,14 @@ public final class APIErrorMessage {
     }
 
 
-    @ApiModelProperty(
-            value = "An explanation of the error",
-		    required = true,
-		    example = "Your request is not authenticated - I don't know who you are.")
+    @ApiModelProperty(value = "An explanation of the error", required = true)
     public String getMessage() {
         return this.message;
     }
 
     @ApiModelProperty(
             value = "The HTTP status code associated with the message.",
-            required = true,
-            example = "404")
+            required = true)
     public String getCode() {
         return this.code;
     }

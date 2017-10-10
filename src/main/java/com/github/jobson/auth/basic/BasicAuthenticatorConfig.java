@@ -20,12 +20,13 @@
 package com.github.jobson.auth.basic;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.config.AuthenticationBootstrap;
+import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.config.AuthenticationConfig;
-import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.PermitAllAuthorizer;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+
+import java.security.Principal;
 
 public final class BasicAuthenticatorConfig implements AuthenticationConfig {
 
@@ -34,13 +35,11 @@ public final class BasicAuthenticatorConfig implements AuthenticationConfig {
 
 
     @Override
-    public void enable(AuthenticationBootstrap bootstrap) {
-        bootstrap.getEnvironment().register(new AuthDynamicFeature(
-                new BasicCredentialAuthFilter.Builder<>()
-                        .setAuthenticator(new BasicAuthenticator(bootstrap.getUserDAO()))
-                        .setAuthorizer(new PermitAllAuthorizer())
-                        .setRealm(realm)
-                        .buildAuthFilter()));
-        bootstrap.getEnvironment().register(RolesAllowedDynamicFeature.class);
+    public AuthFilter<?, Principal> createAuthFilter(AuthenticationBootstrap bootstrap) {
+        return new BasicCredentialAuthFilter.Builder<>()
+                .setAuthenticator(new BasicAuthenticator(bootstrap.getUserDAO()))
+                .setAuthorizer(new PermitAllAuthorizer())
+                .setRealm(realm)
+                .buildAuthFilter();
     }
 }

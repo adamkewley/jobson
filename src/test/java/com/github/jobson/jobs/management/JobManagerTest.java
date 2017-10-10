@@ -20,9 +20,11 @@
 package com.github.jobson.jobs.management;
 
 import com.github.jobson.Constants;
-import com.github.jobson.TestConstants;
 import com.github.jobson.TestHelpers;
+import com.github.jobson.api.v1.JobId;
+import com.github.jobson.api.v1.JobStatus;
 import com.github.jobson.dao.BinaryData;
+import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.execution.JobExecutionResult;
 import com.github.jobson.jobs.execution.JobExecutor;
 import com.github.jobson.jobs.states.FinalizedJob;
@@ -30,9 +32,6 @@ import com.github.jobson.specs.JobOutput;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import com.github.jobson.websockets.v1.JobEvent;
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobStatus;
-import com.github.jobson.dao.jobs.WritingJobDAO;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
@@ -50,7 +49,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.github.jobson.TestConstants.DEFAULT_TIMEOUT;

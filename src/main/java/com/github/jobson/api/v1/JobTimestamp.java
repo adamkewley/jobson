@@ -48,7 +48,10 @@ public final class JobTimestamp {
 
     @ApiModelProperty(value = "When the status change occurred")
     @JsonProperty
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constants.API_VISIBLE_TIMESTAMPS_FORMAT, timezone = Constants.API_VISIBLE_TIMESTAMPS_TIMEZONE)
+    @JsonFormat(
+            shape = JsonFormat.Shape.STRING,
+            pattern = Constants.API_VISIBLE_TIMESTAMPS_FORMAT,
+            timezone = Constants.API_VISIBLE_TIMESTAMPS_TIMEZONE)
     private Date time;
 
     @ApiModelProperty(value = "(optional) A message associated with the status change")

@@ -21,7 +21,6 @@ package com.github.jobson.auth.basic;
 
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.dao.users.ReadonlyUserDAO;
-import com.github.jobson.dao.users.UserCredentials;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.PrincipalImpl;
@@ -35,8 +34,8 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.codec.digest.Crypt.crypt;
 
 /**
- * An authenticator that uses the UserDAO to authenticate users (as opposed to,
- * say, an external system like OAuth2)
+ * An authenticator that uses the UserDAO to authenticate users (as opposed to
+ * an external system like OAuth2)
  */
 public final class BasicAuthenticator implements Authenticator<BasicCredentials, Principal> {
 

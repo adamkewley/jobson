@@ -17,18 +17,33 @@
  * under the License.
  */
 
-package com.github.jobson.specs;
+package com.github.jobson.auth;
 
-import com.github.jobson.TestHelpers;
-import org.junit.Test;
+import com.github.jobson.dao.users.UserDAO;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
 
-import java.io.IOException;
+import static java.util.Objects.requireNonNull;
 
-public final class JobSchemaConfigurationTest {
-    @Test
-    public void testCanDeserializeAValidYamlJobSchema() throws IOException {
-        TestHelpers.readYAMLFixture(
-                "fixtures/specs/6_valid-job-schema.yml",
-                JobSpec.class);
+public final class AuthenticationBootstrap {
+
+    private JerseyEnvironment environment;
+    private UserDAO userDAO;
+
+
+    public AuthenticationBootstrap(JerseyEnvironment environment, UserDAO userDAO) {
+        requireNonNull(environment);
+        requireNonNull(environment);
+
+        this.environment = environment;
+        this.userDAO = userDAO;
+    }
+
+
+    public JerseyEnvironment getEnvironment() {
+        return environment;
+    }
+
+    public UserDAO getUserDAO() {
+        return userDAO;
     }
 }

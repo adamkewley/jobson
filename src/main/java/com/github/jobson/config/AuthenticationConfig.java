@@ -21,18 +21,22 @@ package com.github.jobson.config;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.auth.basic.BasicAuthenticatorConfig;
+import com.github.jobson.auth.custom.CustomAuthenticatorConfig;
 import com.github.jobson.auth.guest.GuestAuthenticationConfig;
+import io.dropwizard.auth.AuthFilter;
 
-import static com.github.jobson.Constants.BASIC_AUTH_NAME;
-import static com.github.jobson.Constants.GUEST_AUTH_NAME;
+import java.security.Principal;
+
+import static com.github.jobson.Constants.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = BasicAuthenticatorConfig.class, name = BASIC_AUTH_NAME),
-        @JsonSubTypes.Type(value = GuestAuthenticationConfig.class, name = GUEST_AUTH_NAME)
+        @JsonSubTypes.Type(value = GuestAuthenticationConfig.class, name = GUEST_AUTH_NAME),
+        @JsonSubTypes.Type(value = CustomAuthenticatorConfig.class, name = CUSTOM_AUTH_NAME)
 })
 public interface AuthenticationConfig {
-
-    void enable(AuthenticationBootstrap bootstrap);
+    AuthFilter<?, Principal> createAuthFilter(AuthenticationBootstrap bootstrap);
 }

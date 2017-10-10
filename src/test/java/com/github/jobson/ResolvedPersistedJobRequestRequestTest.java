@@ -20,17 +20,19 @@
 package com.github.jobson;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jobson.api.v1.APIJobSubmissionRequest;
+import com.github.jobson.api.v1.JobSpecId;
+import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
-import com.github.jobson.jobinputs.stringarray.StringArrayExpectedInput;
-import com.github.jobson.api.v1.*;
-import com.github.jobson.jobs.states.ValidJobRequest;
-import com.github.jobson.specs.JobSpec;
-import com.github.jobson.utils.ValidationError;
 import com.github.jobson.jobinputs.select.SelectInput;
+import com.github.jobson.jobinputs.stringarray.StringArrayExpectedInput;
+import com.github.jobson.jobs.states.ValidJobRequest;
 import com.github.jobson.specs.ExecutionConfiguration;
+import com.github.jobson.specs.JobSpec;
 import com.github.jobson.utils.Either;
+import com.github.jobson.utils.ValidationError;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -133,7 +135,7 @@ public final class ResolvedPersistedJobRequestRequestTest {
         final JobSpecId jobSpecId = TestHelpers.generateJobSpecId();
         final JobExpectedInputId schemaInputId = TestHelpers.generateJobInputSchemaId();
 
-        final List<JobExpectedInput> expectedInputs = new ArrayList<>();
+        final List<JobExpectedInput<?>> expectedInputs = new ArrayList<>();
         expectedInputs.add(
                 new StringArrayExpectedInput(
                         schemaInputId,

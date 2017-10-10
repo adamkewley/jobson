@@ -21,16 +21,14 @@ package com.github.jobson.fixtures;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.APIJobSubmissionRequest;
-import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.api.v1.JobId;
 import com.github.jobson.api.v1.UserId;
+import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.states.PersistedJobRequest;
 import com.github.jobson.jobs.states.ValidJobRequest;
 import com.github.jobson.specs.JobSpec;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static com.github.jobson.TestHelpers.generateJobStatusChangeTimestamp;

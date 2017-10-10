@@ -19,7 +19,6 @@
 
 package com.github.jobson.jobs.execution;
 
-import com.github.jobson.Helpers;
 import com.github.jobson.api.v1.JobStatus;
 import com.github.jobson.dao.BinaryData;
 import com.github.jobson.jobs.management.JobEventListeners;
@@ -32,7 +31,8 @@ import com.github.jobson.utils.SimpleCancelablePromise;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
