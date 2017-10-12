@@ -30,6 +30,7 @@ import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.config.AuthenticationConfig;
 import io.dropwizard.auth.AuthFilter;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -61,8 +62,14 @@ public final class CustomAuthenticatorConfig implements AuthenticationConfig {
 
         final ClassLoader classLoader;
         if (classPath.isPresent()) {
+            final File localPath = new File(classPath.get());
+
+            if (!localPath.exists())
+                throw new RuntimeException(classPath.get() +  ": does not exist");
+
             try {
-                classLoader = URLClassLoader.newInstance(new URL[] { new URL(classPath.get()) });
+                final URL fileURL = localPath.toURI().toURL();
+                classLoader = URLClassLoader.newInstance(new URL[] { fileURL });
             } catch (MalformedURLException ex) {
                 throw new RuntimeException(ex);
             }
