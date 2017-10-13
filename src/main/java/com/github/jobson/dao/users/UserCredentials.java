@@ -24,11 +24,22 @@ import com.github.jobson.api.v1.UserId;
 
 import javax.validation.constraints.NotNull;
 
+import static java.lang.String.format;
+
 public final class UserCredentials {
 
     public static UserCredentials fromUserFileLine(String line) {
         final String fields[] = line.split(":");
-        return new UserCredentials(new UserId(fields[0]), fields[1], fields[2]);
+
+        if (fields.length == 3) {
+            return new UserCredentials(new UserId(fields[0]), fields[1], fields[2]);
+        } else {
+            throw new RuntimeException(format(
+                    "Error reading a line in the users file. %s columns are present " +
+                    "in '%s'. Three columns (username, auth method, and auth field) are expected.",
+                    fields.length,
+                    line));
+        }
     }
 
 
