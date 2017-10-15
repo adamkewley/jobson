@@ -29,18 +29,20 @@ execution:
   - ${inputs.message}
 ```
 
-Specs are used by Jobson to automatically generate:
+Specs are used by Jobson to:
 
-- A HTTP API (`/v1/jobs`, `/v1/specs`, `/v1/jobs/{id}/stderr`. etc.)
+- Generate a HTTP API (`/v1/jobs`, `/v1/specs`, `/v1/jobs/{id}/stderr`. etc.)
 
-- A dynamic websocket API (`/v1/jobs/events`,
+- Generate a dynamic websocket API (`/v1/jobs/events`,
 `/v1/jobs/{id}/stderr/updates`, etc.)
 
-- Request validation
+- Handle request validation
 
-- A persistence layer (specs, jobs, metadata, outputs)
+- Create a persistence layer (specs, jobs, metadata, outputs)
 
-- An authentication layer
+- Run the application
+
+- Handle application outputs
 
 Jobson and [Jobson UI](https://github.com/adamkewley/jobson-ui) were
 developed on a project where researchers and developers collaborate
