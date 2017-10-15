@@ -24,7 +24,7 @@ expectedInputs:
 
 
 execution:
-  application: cat
+  application: echo
   arguments:
   - ${inputs.message}
 ```
