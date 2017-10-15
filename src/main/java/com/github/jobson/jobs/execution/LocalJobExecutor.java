@@ -21,11 +21,14 @@ package com.github.jobson.jobs.execution;
 
 import com.github.jobson.api.v1.JobStatus;
 import com.github.jobson.dao.BinaryData;
+import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.management.JobEventListeners;
 import com.github.jobson.jobs.states.PersistedJobRequest;
+import com.github.jobson.scripting.FreeFunction;
 import com.github.jobson.specs.ExecutionConfiguration;
 import com.github.jobson.specs.JobDependencyConfiguration;
 import com.github.jobson.specs.JobOutput;
+import com.github.jobson.specs.RawTemplateString;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import org.apache.commons.io.FileUtils;
@@ -45,6 +48,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.github.jobson.Helpers.*;
 import static com.github.jobson.api.v1.JobStatus.FINISHED;
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -55,18 +59,44 @@ public final class LocalJobExecutor implements JobExecutor {
     private static final Logger log = Logger.getLogger(LocalJobExecutor.class);
 
 
+    private static String resolveArg(PersistedJobRequest persistedJobRequest, Path jobWorkingDir, RawTemplateString arg) {
+        final Map<String, Object> environment = new HashMap<>();
+        environment.put("request", persistedJobRequest);
+        environment.put("inputs", mapKeys(persistedJobRequest.getInputs(), JobExpectedInputId::toString));
 
-    private static String resolveArg(PersistedJobRequest persistedJobRequest, Path jobWorkingDir, String arg) {
-        if (arg.equals("$request")) {
-            try {
-                final Path path = Files.createTempFile(jobWorkingDir, "request", "");
-                writeJSON(path, persistedJobRequest);
-                return path.toAbsolutePath().toString();
-            } catch (IOException ex) {
-                log.error("Cannot resolve argument: " + ex.toString());
-                throw new RuntimeException(ex);
+        environment.put("toJSON", new FreeFunction() {
+            @Override
+            public Object call(Object... args) {
+                if (args.length != 1)
+                    throw new RuntimeException(format("toJSON called with %s args (expects 1)", args.length));
+                return toJSON(args[0]);
             }
-        } else return arg;
+        });
+
+        environment.put("toFile", new FreeFunction() {
+            @Override
+            public Object call(Object... args) {
+                if (args.length != 1) {
+                    throw new RuntimeException(format("asFile called with %s args (expects 1)", args.length));
+                } else if (!(args[0] instanceof String)) {
+                    throw new RuntimeException(format(
+                            "asFile called with %s, should be called with a string (try using toJSON?)",
+                            args[0].getClass().getSimpleName()));
+                } else {
+                    try {
+                        final String fileContent = (String)args[0];
+                        final Path path = Files.createTempFile(jobWorkingDir, "request", "");
+                        Files.write(path, fileContent.getBytes());
+                        return path.toAbsolutePath().toString();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(
+                                format("Could not create an input file (needed in '%s').", arg), ex);
+                    }
+                }
+            }
+        });
+
+        return arg.tryEvaluate(environment);
     }
 
     private static void copyJobDependency(JobDependencyConfiguration jobDependencyConfiguration, Path workingDir) {

@@ -81,6 +81,15 @@ public final class Helpers {
         return new String(ret);
     }
 
+    public static String capitalize(String str) {
+        if (str.length() == 0) return str;
+        else {
+            final String firstLetter = str.substring(0, 1);
+            final String rest = str.substring(1);
+            return firstLetter.toUpperCase() + rest;
+        }
+    }
+
     private static int randomIntBetween(int low, int high) {
         if (low > high) throw new IllegalArgumentException();
 
@@ -166,6 +175,12 @@ public final class Helpers {
         ret.putAll(first);
         ret.putAll(second);
         return ret;
+    }
+
+    public static <T, U, V> Map<V, U> mapKeys(Map<T, U> m, Function<T, V> f) {
+        return m.entrySet().stream()
+                .map(e -> new AbstractMap.SimpleEntry<>(f.apply(e.getKey()), e.getValue()))
+                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
     }
 
     public static <T, U, V> Map<T, V> mapValues(Map<T, U> m, Function<U, V> f) {

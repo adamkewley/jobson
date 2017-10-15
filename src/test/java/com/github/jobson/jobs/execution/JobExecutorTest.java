@@ -28,6 +28,7 @@ import com.github.jobson.jobs.states.PersistedJobRequest;
 import com.github.jobson.specs.ExecutionConfiguration;
 import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.specs.RawTemplateString;
 import com.github.jobson.utils.CancelablePromise;
 import com.google.common.primitives.Bytes;
 import io.reactivex.functions.Action;
@@ -39,6 +40,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
@@ -46,10 +48,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-import static com.github.jobson.TestHelpers.generateRandomBytes;
+import static com.github.jobson.Helpers.toJSON;
+import static com.github.jobson.TestHelpers.*;
 import static com.github.jobson.jobs.management.JobEventListeners.*;
 import static java.nio.file.Files.createTempFile;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class JobExecutorTest {
@@ -100,8 +104,11 @@ public abstract class JobExecutorTest {
         final JobSpec existingSpec = STANDARD_REQUEST.getSpec();
         final ExecutionConfiguration existingConfig = existingSpec.getExecution();
 
-        final Optional<List<String>> boxedArgs =
-                args.length > 0 ? Optional.of(Arrays.asList(args)) : Optional.empty();
+        final List<RawTemplateString> templateArgs =
+                Arrays.stream(args).map(RawTemplateString::new).collect(toList());
+
+        final Optional<List<RawTemplateString>> boxedArgs =
+                args.length > 0 ? Optional.of(templateArgs) : Optional.empty();
 
         final ExecutionConfiguration newConfig =
                 new ExecutionConfiguration(
@@ -245,7 +252,7 @@ public abstract class JobExecutorTest {
     @Test
     public void testExecuteWritesStdoutToTheStdoutListener() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
-        final String msgSuppliedToEcho = TestHelpers.generateRandomString();
+        final String msgSuppliedToEcho = generateRandomString();
         final PersistedJobRequest req =
                 standardRequestWithCommand("echo", msgSuppliedToEcho);
         final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
@@ -288,7 +295,7 @@ public abstract class JobExecutorTest {
     @Test
     public void testExecuteWritesStderrToTheStderrListener() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
-        final String msgSuppliedToEcho = TestHelpers.generateRandomString();
+        final String msgSuppliedToEcho = generateRandomString();
         final String bashArg = "echo " + msgSuppliedToEcho + " 1>&2"; // TODO: Naughty.
         final PersistedJobRequest req =
                 standardRequestWithCommand("bash", "-c", bashArg);
@@ -325,5 +332,93 @@ public abstract class JobExecutorTest {
                 jobExecutor.execute(STANDARD_REQUEST, listeners);
 
         promiseAssert(ret, result -> assertThat(completedCalled.get()).isTrue());
+    }
+
+    @Test
+    public void testExecuteEvaluatesJobInputsAsExpected() throws InterruptedException {
+        final JobExecutor jobExecutor = getInstance();
+        final PersistedJobRequest req =
+                standardRequestWithCommand("echo", "${inputs.foo}");
+        final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
+        final Subject<byte[]> stdoutSubject = PublishSubject.create();
+
+        stdoutSubject.subscribe(bytes ->
+                bytesEchoedToStdout.getAndUpdate(existingBytes ->
+                        Bytes.concat(existingBytes, bytes)));
+
+        final Semaphore s = new Semaphore(1);
+        s.acquire();
+        stdoutSubject.doOnComplete(s::release).subscribe();
+
+        final JobEventListeners listeners =
+                createStdoutListener(stdoutSubject);
+
+        jobExecutor.execute(req, listeners);
+
+        s.tryAcquire(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+
+        final String stringFromStdout = new String(bytesEchoedToStdout.get()).trim();
+        assertThat(stringFromStdout).isEqualTo("a"); // from spec
+    }
+
+    @Test
+    public void testExecuteEvaluatesToJSONFunctionAsExpected() throws InterruptedException {
+        final JobExecutor jobExecutor = getInstance();
+        final PersistedJobRequest req =
+                standardRequestWithCommand("echo", "${toJSON(inputs)}");
+        final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
+        final Subject<byte[]> stdoutSubject = PublishSubject.create();
+
+        stdoutSubject.subscribe(bytes ->
+                bytesEchoedToStdout.getAndUpdate(existingBytes ->
+                        Bytes.concat(existingBytes, bytes)));
+
+        final Semaphore s = new Semaphore(1);
+        s.acquire();
+        stdoutSubject.doOnComplete(s::release).subscribe();
+
+        final JobEventListeners listeners =
+                createStdoutListener(stdoutSubject);
+
+        jobExecutor.execute(req, listeners);
+
+        s.tryAcquire(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+
+        final String stringFromStdout = new String(bytesEchoedToStdout.get()).trim();
+
+        assertThat(stringFromStdout).isEqualTo(toJSON(STANDARD_VALID_REQUEST.getInputs()));
+    }
+
+    @Test
+    public void testExecuteEvaluatesToFileAsExpected() throws InterruptedException, IOException {
+        final JobExecutor jobExecutor = getInstance();
+        final PersistedJobRequest req =
+                standardRequestWithCommand("echo", "${toFile(toJSON(inputs))}");
+        final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
+        final Subject<byte[]> stdoutSubject = PublishSubject.create();
+
+        stdoutSubject.subscribe(bytes ->
+                bytesEchoedToStdout.getAndUpdate(existingBytes ->
+                        Bytes.concat(existingBytes, bytes)));
+
+        final Semaphore s = new Semaphore(1);
+        s.acquire();
+        stdoutSubject.doOnComplete(s::release).subscribe();
+
+        final JobEventListeners listeners =
+                createStdoutListener(stdoutSubject);
+
+        jobExecutor.execute(req, listeners);
+
+        s.tryAcquire(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+
+        final String stringFromStdout = new String(bytesEchoedToStdout.get()).trim();
+        final Path p = Paths.get(stringFromStdout);
+
+        assertThat(p.toFile().exists());
+
+        final String loadedJson = new String(Files.readAllBytes(p));
+
+        assertThat(loadedJson).isEqualTo(toJSON(STANDARD_VALID_REQUEST.getInputs()));
     }
 }

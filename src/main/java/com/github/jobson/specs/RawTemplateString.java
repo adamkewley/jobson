@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,65 +17,51 @@
  * under the License.
  */
 
-package com.github.jobson.jobinputs.sql;
+package com.github.jobson.specs;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.github.jobson.jobinputs.JobInput;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.github.jobson.scripting.TemplateStringEvaluator;
 
-import javax.validation.constraints.NotNull;
+import java.util.Map;
 
-@ApiModel(description = "A job input that satisfies an sql expected input")
-public final class SQLInput implements JobInput {
+public final class RawTemplateString {
 
-    @ApiModelProperty(
-            value = "An SQL string against the schema",
-            example = "select TransitId from PreprocessedTransit")
-    @JsonIgnore
-    @NotNull
-    private String value;
+    private final String value;
 
 
-
-    /**
-     * @deprecated Used by JSON deserializer.
-     */
-    public SQLInput() {}
-
-    @JsonCreator
-    public SQLInput(String value) {
+    public RawTemplateString(String value) {
         this.value = value;
     }
 
 
+    public String tryEvaluate(Map<String, Object> environment) {
+        return TemplateStringEvaluator.evaluate(value, environment);
+    }
 
-    @JsonValue
+    @JsonCreator
     public String getValue() {
         return value;
     }
 
-
+    @Override
+    @JsonValue
+    public String toString() {
+        return value;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SQLInput sqlInput = (SQLInput) o;
+        RawTemplateString that = (RawTemplateString) o;
 
-        return value != null ? value.equals(sqlInput.value) : sqlInput.value == null;
+        return value != null ? value.equals(that.value) : that.value == null;
     }
 
     @Override
     public int hashCode() {
         return value != null ? value.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return value;
     }
 }

@@ -32,6 +32,8 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,6 +47,8 @@ import static com.github.jobson.api.v1.JobStatus.*;
 import static com.github.jobson.jobs.management.JobEventListeners.createNullListeners;
 
 public final class JobManager implements JobManagerEvents, JobManagerActions {
+
+    private static Logger log = LoggerFactory.getLogger(JobManager.class);
 
     private final ConcurrentLinkedQueue<QueuedJob> jobQueue = new ConcurrentLinkedQueue<>();
     private final Map<JobId, ExecutingJob> executingJobs = Collections.synchronizedMap(new HashMap<>());
@@ -150,19 +154,24 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
         stdout.subscribe(queuedJob.getQueuedListeners().getOnStdoutListener());
         stderr.subscribe(queuedJob.getQueuedListeners().getOnStderrListener());
 
-        final CancelablePromise<JobExecutionResult> executionPromise =
-                jobExecutor.execute(queuedJob, JobEventListeners.create(stdout, stderr));
+        try {
+            final CancelablePromise<JobExecutionResult> executionPromise =
+                    jobExecutor.execute(queuedJob, JobEventListeners.create(stdout, stderr));
 
-        final ExecutingJob executingJob =
-                ExecutingJob.fromQueuedJob(queuedJob, now(), stdout, stderr);
+            final ExecutingJob executingJob =
+                    ExecutingJob.fromQueuedJob(queuedJob, now(), stdout, stderr);
 
-        executingJobs.put(executingJob.getId(), executingJob);
+            executingJobs.put(executingJob.getId(), executingJob);
 
-        updateJobStatus(queuedJob.getId(), RUNNING, "Submitted to executor");
+            updateJobStatus(queuedJob.getId(), RUNNING, "Submitted to executor");
 
-        executionPromise.thenAccept(res -> {
-            onExecutionFinished(executingJob, res);
-        });
+            executionPromise.thenAccept(res -> {
+                onExecutionFinished(executingJob, res);
+            });
+        } catch (Throwable ex) {
+            log.error("Error starting job execution: " + ex.toString());
+            updateJobStatus(queuedJob.getId(), FATAL_ERROR, "Error executing job: " + ex.toString());
+        }
     }
 
     private void onExecutionFinished(ExecutingJob executingJob, JobExecutionResult jobExecutionResult) {

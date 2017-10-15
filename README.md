@@ -1,32 +1,35 @@
 # Jobson
 
-Turn command-line applications into webapps.
+Jobson is a webserver that hosts command-line applications by
+abstracing away process forking, HTTP API generation, standard
+IO, and websockets.
 
-Jobson lets developers share command-line applications over the web
-without modification by providing an abstraction layer over process 
-forking, HTTP API generation, standard IO, and websockets. 
-
-It uses a high-level declarative spec (YAML) that describes applications:
+It uses a high-level spec (YAML) to describe applications:
 
 ```yaml
 name: Trivial Application
-description: Echoes client request
+
+description: >
+
+  Echoes client requests
+
 
 expectedInputs:
 
-- id: msg
+- id: message
   type: string
-  name: Message to Echo
+  name: Message
   description: The message to echo
   default: Hello, world!
 
+
 execution:
-  application: echo
-  args:
-  - $request
+  application: cat
+  arguments:
+  - ${inputs.message}
 ```
 
-Jobson uses these specs to automatically generate and manage:
+Specs are used by Jobson to automatically generate:
 
 - A HTTP API (`/v1/jobs`, `/v1/specs`, `/v1/jobs/{id}/stderr`. etc.)
 
@@ -40,8 +43,8 @@ Jobson uses these specs to automatically generate and manage:
 - An authentication layer
 
 Jobson and [Jobson UI](https://github.com/adamkewley/jobson-ui) were
-developed on a project where researchers and developers work together 
-on a variety of data pipelines. We spent a lot of time handling data 
+developed on a project where researchers and developers collaborate
+to develop data pipelines. We spent a lot of time handling data
 requests, explaining how to install applications, explaining how to
 run applications, tracing requests, etc. Attempts to engineer around the 
 problem with bespoke web servers worked, but those systems were
@@ -50,7 +53,7 @@ brittle and needed redevelopment every time a new workflow came along.
 Jobson was developed to generate a self-explanatory, standard API 
 that is simple, can be changed *very* easily (via spec files), and 
 contained enough information (names, descriptions) for frontends to
-automatically generate user-friendly UIs.
+provide a decent user experience.
 
 
 # Build
@@ -135,4 +138,5 @@ req.open("GET", "http://localhost:8080/v1/jobs");
 req.setRequestHeader("Authorization", "Basic " + btoa("exampleuser:password"));
 req.send();
 ```
+
 

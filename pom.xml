@@ -123,6 +123,15 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- For template expressions found in job arguments etc. -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>4.7</version>
+            <scope>compile</scope>
+        </dependency>
+
+
         <!-- For building dummy ContainerRequestContexts -->
         <dependency>
             <groupId>org.glassfish.jersey.test-framework</groupId>
@@ -171,6 +180,25 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+
+            <!-- Compile ANTLR4 grammar files into java classes -->
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.7</version>
+
+                <executions>
+                    <execution>
+                        <id>antlr</id>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                        <configuration>
+                            <visitor>true</visitor>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
 

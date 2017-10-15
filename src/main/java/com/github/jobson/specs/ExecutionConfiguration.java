@@ -35,7 +35,7 @@ public final class ExecutionConfiguration {
     private String application;
 
     @JsonProperty
-    private Optional<List<String>> arguments;
+    private Optional<List<RawTemplateString>> arguments;
 
     @JsonProperty
     private Optional<List<JobDependencyConfiguration>> dependencies = Optional.empty();
@@ -49,7 +49,7 @@ public final class ExecutionConfiguration {
 
     public ExecutionConfiguration(
             String application,
-            Optional<List<String>> arguments,
+            Optional<List<RawTemplateString>> arguments,
             Optional<List<JobDependencyConfiguration>> dependencies) {
 
         this.application = application;
@@ -63,7 +63,7 @@ public final class ExecutionConfiguration {
         return application;
     }
 
-    public Optional<List<String>> getArguments() {
+    public Optional<List<RawTemplateString>> getArguments() {
         return arguments;
     }
 

@@ -43,6 +43,7 @@ import com.github.jobson.jobs.states.ValidJobRequest;
 import com.github.jobson.specs.ExecutionConfiguration;
 import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.specs.RawTemplateString;
 import com.github.jobson.websockets.v1.JobEvent;
 import io.reactivex.Observable;
 import org.glassfish.jersey.internal.util.Producer;
@@ -366,7 +367,7 @@ public final class TestHelpers {
     public static ExecutionConfiguration generateExecutionConfiguration() {
         return new ExecutionConfiguration(
                 "echo",
-                Optional.of(singletonList(generateRandomString())), Optional.empty());
+                Optional.of(singletonList(new RawTemplateString(generateRandomString()))), Optional.empty());
     }
 
     public static List<JobExpectedInput<?>> generateRandomJobInputSchemas() {
