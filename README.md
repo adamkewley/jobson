@@ -45,22 +45,22 @@ Specs are used by Jobson to:
 - Handle application outputs
 
 Jobson and [Jobson UI](https://github.com/adamkewley/jobson-ui) were
-developed on a project where researchers and developers collaborate
-to develop data pipelines. We spent a lot of time handling data
-requests, explaining how to install applications, explaining how to
-run applications, tracing requests, etc. Attempts to engineer around the 
-problem with bespoke web servers worked, but those systems were
-brittle and needed redevelopment every time a new workflow came along. 
+developed for data-centric teams. We were spending a lot of time 
+handling data requests, explaining how to install applications, 
+explaining how to run applications, tracing requests, etc. Attempts 
+to engineer around the problem with bespoke web servers worked, but 
+those systems needed redevelopment every time a new workflow came along. 
 
-Jobson was developed to generate a self-explanatory, standard API 
-that is simple, can be changed *very* easily (via spec files), and 
-contained enough information (names, descriptions) for frontends to
-provide a decent user experience.
+Jobson was developed to generate a standard API that is simple, 
+can be changed *very* easily (via spec files), and contains enough
+information (names, descriptions) for frontends to provide a decent 
+user experience.
 
 
 # Build
 
-Built with `Maven` and `JDK 1.8+`. From the project directory:
+The entire project is built with `Maven` and `JDK 1.8+`. From the 
+project directory:
 
 ```bash
 mvn package
