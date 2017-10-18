@@ -17,11 +17,11 @@
  * under the License.
  */
 
-package com.github.jobson.jobs.states;
+package com.github.jobson.jobs.jobstates;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobTimestamp;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
@@ -31,17 +31,17 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.jobson.api.v1.JobStatus.SUBMITTED;
+import static com.github.jobson.jobs.JobStatus.SUBMITTED;
 import static java.util.Collections.singletonList;
 
 /**
  * Used internally after a resolved job is persisted (i.e. assigned a JobID and
  * queued).
  */
-public class PersistedJobRequest extends ValidJobRequest {
+public class PersistedJob extends ValidJobRequest {
 
-    public static PersistedJobRequest createFromValidRequest(ValidJobRequest validJobRequest, JobId jobId) {
-        return new PersistedJobRequest(
+    public static PersistedJob createFromValidRequest(ValidJobRequest validJobRequest, JobId jobId) {
+        return new PersistedJob(
                 jobId,
                 validJobRequest.getOwner(),
                 validJobRequest.getName(),
@@ -63,9 +63,9 @@ public class PersistedJobRequest extends ValidJobRequest {
     /**
      * @deprecated Used by JSON deserializer
      */
-    public PersistedJobRequest() {}
+    public PersistedJob() {}
 
-    public PersistedJobRequest(
+    public PersistedJob(
             JobId id,
             UserId owner,
             String name,

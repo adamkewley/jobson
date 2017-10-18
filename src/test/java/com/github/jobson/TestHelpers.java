@@ -39,11 +39,11 @@ import com.github.jobson.jobinputs.sql.ColumnSchema;
 import com.github.jobson.jobinputs.sql.SQLExpectedInput;
 import com.github.jobson.jobinputs.sql.SQLInput;
 import com.github.jobson.jobinputs.sql.TableSchema;
-import com.github.jobson.jobs.states.ValidJobRequest;
-import com.github.jobson.specs.ExecutionConfiguration;
-import com.github.jobson.specs.JobOutput;
-import com.github.jobson.specs.JobSpec;
-import com.github.jobson.specs.RawTemplateString;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.jobs.JobTimestamp;
+import com.github.jobson.jobs.jobstates.ValidJobRequest;
+import com.github.jobson.specs.*;
 import com.github.jobson.websockets.v1.JobEvent;
 import io.reactivex.Observable;
 import org.glassfish.jersey.internal.util.Producer;
@@ -222,12 +222,12 @@ public final class TestHelpers {
         return generateJobDetailsWithStatuses(generateTypicalJobStatusTimestamps());
     }
 
-    public static APIJobResponse generateJobDetailsWithStatus(JobStatus jobStatus) {
+    public static APIJob generateJobDetailsWithStatus(JobStatus jobStatus) {
         return generateJobDetailsWithStatuses(Arrays.asList(JobTimestamp.now(jobStatus)));
     }
 
-    public static APIJobResponse generateJobDetailsWithStatuses(List<JobTimestamp> jobStatuses) {
-        return new APIJobResponse(
+    public static APIJob generateJobDetailsWithStatuses(List<JobTimestamp> jobStatuses) {
+        return new APIJob(
                 generateJobId(),
                 generateUserName(),
                 generateUserId(),
@@ -273,7 +273,7 @@ public final class TestHelpers {
         };
     }
 
-    public static APIJobSubmissionRequest generateJobSubmissionRequest() {
+    public static APIJobRequest generateJobSubmissionRequest() {
         final JobSpecId jobSpecId = generateJobSpecId();
         final String description = generateRandomString();
         final Map<JobExpectedInputId, JobInput> inputs = generateRandomJobInputs();
@@ -288,7 +288,7 @@ public final class TestHelpers {
                     }
                 });
 
-        return new APIJobSubmissionRequest(jobSpecId, description, anonymizedInputs);
+        return new APIJobRequest(jobSpecId, description, anonymizedInputs);
     }
 
     public static Map<JobExpectedInputId, JobInput> generateRandomJobInputs() {
@@ -328,12 +328,12 @@ public final class TestHelpers {
         return "select a, b, c from table where a < b and b > c;";
     }
 
-    public static APIJobSubmissionResponse generateJobSubmissionResponse() {
-        return new APIJobSubmissionResponse(generateJobId(), new HashMap<>());
+    public static APIJobCreatedResponse generateJobSubmissionResponse() {
+        return new APIJobCreatedResponse(generateJobId(), new HashMap<>());
     }
 
-    public static APIUserSummary generateUserSummary() {
-        return new APIUserSummary(generateUserId());
+    public static APIUserDetails generateUserSummary() {
+        return new APIUserDetails(generateUserId());
     }
 
     public static List<JobSpecSummary> generateNJobSpecSummaries(int n) {
@@ -350,8 +350,8 @@ public final class TestHelpers {
         return ret;
     }
 
-    public static APIJobSpecResponse generateJobSpecDetails() {
-        return new APIJobSpecResponse(generateJobSpecId(), generateRandomString(), generateRandomString(), generateRandomJobInputSchemas());
+    public static APIJobSpec generateJobSpecDetails() {
+        return new APIJobSpec(generateJobSpecId(), generateRandomString(), generateRandomString(), generateRandomJobInputSchemas());
     }
 
 

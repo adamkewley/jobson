@@ -21,39 +21,53 @@ package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.jobson.dao.jobs.JobDetails;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobTimestamp;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
 import java.util.Map;
 
-@ApiModel(description = "Response to a successful job submission request")
-public final class APIJobSubmissionResponse {
+@ApiModel(description = "Details of a job on the system")
+public class APIJob extends JobDetails {
 
-    @ApiModelProperty(value = "A unique identifier for the job that was created by the submission request")
-    @JsonProperty
-    private JobId id;
+    public static APIJob fromJobDetails(
+            JobDetails jobDetails,
+            Map<String, APIRestLink> restLinks) {
+
+        return new APIJob(
+                jobDetails.getId(),
+                jobDetails.getName(),
+                jobDetails.getOwner(),
+                jobDetails.getTimestamps(),
+                restLinks);
+    }
+
 
     @ApiModelProperty(value = "Links to related resources and actions")
     @JsonProperty
     private Map<String, APIRestLink> _links;
 
 
-
     /**
      * @deprecated Used by JSON deserializer
      */
-    public APIJobSubmissionResponse() {}
+    public APIJob() {}
 
-    public APIJobSubmissionResponse(JobId id, Map<String, APIRestLink> _links) {
-        this.id = id;
+    public APIJob(
+            JobId id,
+            String name,
+            UserId owner,
+            List<JobTimestamp> timestamps,
+            Map<String, APIRestLink> _links) {
+
+        super(id, name, owner, timestamps);
+
         this._links = _links;
     }
 
-
-
-    public JobId getId() {
-        return id;
-    }
 
     @JsonIgnore
     public Map<String, APIRestLink> getLinks() {

@@ -19,11 +19,11 @@
 
 package com.github.jobson.dao.jobs;
 
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.dao.BinaryData;
-import com.github.jobson.jobs.states.PersistedJobRequest;
-import com.github.jobson.jobs.states.ValidJobRequest;
+import com.github.jobson.jobs.jobstates.PersistedJob;
+import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
@@ -31,7 +31,7 @@ public interface WritingJobDAO {
     Disposable appendStdout(JobId jobId, Observable<byte[]> stdout);
     Disposable appendStderr(JobId jobId, Observable<byte[]> stderr);
 
-    PersistedJobRequest persist(ValidJobRequest validJobRequest);
+    PersistedJob persist(ValidJobRequest validJobRequest);
 
     void addNewJobStatus(JobId jobId, JobStatus newStatus, String statusMessage);
 

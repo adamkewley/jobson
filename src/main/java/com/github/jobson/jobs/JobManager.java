@@ -17,14 +17,10 @@
  * under the License.
  */
 
-package com.github.jobson.jobs.management;
+package com.github.jobson.jobs;
 
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobStatus;
 import com.github.jobson.dao.jobs.WritingJobDAO;
-import com.github.jobson.jobs.execution.JobExecutionResult;
-import com.github.jobson.jobs.execution.JobExecutor;
-import com.github.jobson.jobs.states.*;
+import com.github.jobson.jobs.jobstates.*;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import com.github.jobson.websockets.v1.JobEvent;
@@ -43,8 +39,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.github.jobson.Helpers.now;
 import static com.github.jobson.Helpers.tryGet;
-import static com.github.jobson.api.v1.JobStatus.*;
-import static com.github.jobson.jobs.management.JobEventListeners.createNullListeners;
+import static com.github.jobson.jobs.JobStatus.*;
 
 public final class JobManager implements JobManagerEvents, JobManagerActions {
 
@@ -84,6 +79,8 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
     }
 
     private boolean tryCancel(ExecutingJob executingJob) {
+        log.debug("Received cancellation signal for executing job " + executingJob.getId());
+
         final boolean cancelled =
                 executingJob.getCompletionPromise().cancel(true);
 
@@ -118,24 +115,24 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
     }
 
     public Pair<JobId, CancelablePromise<FinalizedJob>> submit(ValidJobRequest validJobRequest) {
-        return submit(validJobRequest, createNullListeners());
+        return submit(validJobRequest, JobEventListeners.createNullListeners());
     }
 
     public Pair<JobId, CancelablePromise<FinalizedJob>> submit(ValidJobRequest validJobRequest, JobEventListeners listeners) {
-        final PersistedJobRequest persistedJobRequest = jobDAO.persist(validJobRequest);
+        final PersistedJob persistedJob = jobDAO.persist(validJobRequest);
         final SimpleCancelablePromise<FinalizedJob> ret = new SimpleCancelablePromise<>();
 
-        final QueuedJob queuedJob = QueuedJob.fromPersistedJobRequest(persistedJobRequest, listeners, ret);
+        final QueuedJob queuedJob = QueuedJob.fromPersistedJobRequest(persistedJob, listeners, ret);
 
         jobQueue.add(queuedJob);
 
-        ret.onCancel(() -> tryAbort(persistedJobRequest.getId()));
+        ret.onCancel(() -> tryAbort(persistedJob.getId()));
 
-        updateJobStatus(persistedJobRequest.getId(), SUBMITTED, "Queued by job manager");
+        updateJobStatus(persistedJob.getId(), SUBMITTED, "Queued by job manager");
 
         tryAdvancingJobQueue();
 
-        return Pair.of(persistedJobRequest.getId(), ret);
+        return Pair.of(persistedJob.getId(), ret);
     }
 
     private void tryAdvancingJobQueue() {
@@ -167,6 +164,10 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
 
             executionPromise.thenAccept(res -> {
                 onExecutionFinished(executingJob, res);
+            });
+
+            executingJob.getCompletionPromise().onCancel(() -> {
+                executionPromise.cancel(true);
             });
         } catch (Throwable ex) {
             log.error("Error starting job execution: " + ex.toString());

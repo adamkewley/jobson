@@ -23,17 +23,37 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.util.Map;
+import java.util.Scanner;
 
 public final class TemplateStringEvaluator {
 
     public static String evaluate(String templateString, Map<String, Object> environment) {
-        final TemplateStringLexer lexer = new TemplateStringLexer(CharStreams.fromString(templateString));
-        final CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-        final TemplateStringParser parser = new TemplateStringParser(tokenStream);
+        final Scanner s = new Scanner(templateString);
+        // TODO: This is a hack that fails if a string literal contains "}"
+        // TODO: It's because i couldn't be bothered nesting grammars.
+        s.useDelimiter("((?!\\\\)\\$\\{)|(})");
+
+        StringBuilder ret = new StringBuilder();
+        boolean isInsideExpr = templateString.startsWith("${");
+        while(s.hasNext()) {
+            final String str = s.next();
+
+            if (isInsideExpr) {
+                final JsLikeExpressionLexer lexer = new JsLikeExpressionLexer(CharStreams.fromString(str));
+                final CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+                final JsLikeExpressionParser parser = new JsLikeExpressionParser(tokenStream);
 
 
-        final TemplateStringEvaluatorVisitor visitor = new TemplateStringEvaluatorVisitor(environment);
+                final TemplateStringEvaluatorVisitor visitor = new TemplateStringEvaluatorVisitor(environment);
 
-        return parser.templateString().accept(visitor).toString();
+                ret.append(parser.expression().accept(visitor).toString());
+            } else {
+                ret.append(str);
+            }
+
+            isInsideExpr = !isInsideExpr;
+        }
+
+        return ret.toString();
     }
 }

@@ -28,6 +28,10 @@ import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 
 import java.security.Principal;
 
+/**
+ * Configuration for a basic authenticator. Authenticates incoming requests using
+ * the HTTP Basic protocol (RFC 2617)
+ */
 public final class BasicAuthenticatorConfig implements AuthenticationConfig {
 
     @JsonProperty

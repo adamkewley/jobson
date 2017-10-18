@@ -21,11 +21,11 @@ package com.github.jobson.dao.jobs;
 
 import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobStatus;
-import com.github.jobson.api.v1.JobTimestamp;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.dao.BinaryData;
-import com.github.jobson.jobs.states.ValidJobRequest;
+import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.JobOutput;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
@@ -46,8 +46,8 @@ import static com.github.jobson.Constants.JOB_TIMESTAMP_RESOLUTION_IN_MILLISECON
 import static com.github.jobson.Helpers.randomKeyIn;
 import static com.github.jobson.Helpers.randomSubstring;
 import static com.github.jobson.TestHelpers.*;
-import static com.github.jobson.api.v1.JobStatus.FINISHED;
-import static com.github.jobson.api.v1.JobStatus.RUNNING;
+import static com.github.jobson.jobs.JobStatus.FINISHED;
+import static com.github.jobson.jobs.JobStatus.RUNNING;
 import static com.github.jobson.dao.BinaryData.wrap;
 import static com.google.common.collect.Lists.reverse;
 import static java.lang.Thread.sleep;

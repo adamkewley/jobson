@@ -17,15 +17,15 @@
  * under the License.
  */
 
-package com.github.jobson.jobs.states;
+package com.github.jobson.jobs.jobstates;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobTimestamp;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
-import com.github.jobson.jobs.management.JobEventListeners;
+import com.github.jobson.jobs.JobEventListeners;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
@@ -33,20 +33,20 @@ import com.github.jobson.utils.SimpleCancelablePromise;
 import java.util.List;
 import java.util.Map;
 
-public final class QueuedJob extends PersistedJobRequest {
+public final class QueuedJob extends PersistedJob {
 
     public static QueuedJob fromPersistedJobRequest(
-            PersistedJobRequest persistedJobRequest,
+            PersistedJob persistedJob,
             JobEventListeners listeners,
             SimpleCancelablePromise<FinalizedJob> promise) {
 
         return new QueuedJob(
-                persistedJobRequest.getId(),
-                persistedJobRequest.getOwner(),
-                persistedJobRequest.getName(),
-                persistedJobRequest.getInputs(),
-                persistedJobRequest.getTimestamps(),
-                persistedJobRequest.getSpec(),
+                persistedJob.getId(),
+                persistedJob.getOwner(),
+                persistedJob.getName(),
+                persistedJob.getInputs(),
+                persistedJob.getTimestamps(),
+                persistedJob.getSpec(),
                 listeners,
                 promise);
     }

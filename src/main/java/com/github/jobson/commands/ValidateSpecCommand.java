@@ -20,7 +20,7 @@
 package com.github.jobson.commands;
 
 import com.github.jobson.Constants;
-import com.github.jobson.api.v1.JobSpecId;
+import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.specs.ExecutionConfiguration;
 import com.github.jobson.specs.JobDependencyConfiguration;

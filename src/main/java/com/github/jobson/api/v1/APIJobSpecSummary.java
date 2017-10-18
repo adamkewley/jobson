@@ -22,12 +22,13 @@ package com.github.jobson.api.v1;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.dao.specs.JobSpecSummary;
+import com.github.jobson.specs.JobSpecId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Map;
 
-@ApiModel(description = "A job spec summary")
+@ApiModel(description = "Summary of a job spec")
 public class APIJobSpecSummary extends JobSpecSummary {
 
     public static APIJobSpecSummary fromJobSpecSummary(

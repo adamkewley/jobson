@@ -20,7 +20,7 @@
 package com.github.jobson.dao.specs;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.JobSpecId;
+import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.specs.JobSpec;
 import org.junit.Test;
 

@@ -30,6 +30,10 @@ import io.dropwizard.auth.PrincipalImpl;
 import java.security.Principal;
 import java.util.Optional;
 
+/**
+ * An authenticator that always authenticates, returning a principal with the
+ * ctor-supplied username.
+ */
 public final class GuestAuthenticator implements Authenticator<Void, Principal> {
 
     private final Optional<Principal> p;

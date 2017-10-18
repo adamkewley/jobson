@@ -20,8 +20,8 @@
 package com.github.jobson.systemtests.httpapi;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIJobSpecResponse;
-import com.github.jobson.api.v1.APIJobSpecsResponse;
+import com.github.jobson.api.v1.APIJobSpec;
+import com.github.jobson.api.v1.APIJobSpecCollection;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.resources.v1.JobSpecResource;
 import com.github.jobson.specs.JobSpec;
@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
 
+import static com.github.jobson.Constants.HTTP_SPECS_PATH;
 import static com.github.jobson.HttpStatusCodes.OK;
 import static com.github.jobson.HttpStatusCodes.UNAUTHORIZED;
 import static com.github.jobson.TestHelpers.readYAMLFixture;
@@ -48,27 +49,27 @@ public final class TestJobSpecsAPI {
 
     @Test
     public void testUnauthorizedIfGETSummariesWithoutCredentials() {
-        final Response response = generateRequest(RULE, JobSpecResource.PATH).get();
+        final Response response = generateRequest(RULE, HTTP_SPECS_PATH).get();
         assertThat(response.getStatus()).isEqualTo(UNAUTHORIZED);
     }
 
     @Test
     public void testOKIfGETSummariesWithCredentials() throws IOException {
-        final Response resp = generateAuthenticatedRequest(RULE, JobSpecResource.PATH).get();
+        final Response resp = generateAuthenticatedRequest(RULE, HTTP_SPECS_PATH).get();
         assertThat(resp.getStatus()).isEqualTo(OK);
     }
 
     @Test
     public void testOKSummariesResponseContainsSummaries() throws IOException {
-        final Response response = generateAuthenticatedRequest(RULE, JobSpecResource.PATH).get();
-        response.readEntity(APIJobSpecsResponse.class);
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_SPECS_PATH).get();
+        response.readEntity(APIJobSpecCollection.class);
     }
 
     @Test
     public void testGetJobSpecSummariesContainsTheJobSpecsInTheJobSpecsFolder() throws IOException {
-        final APIJobSpecsResponse resp = generateAuthenticatedRequest(RULE, JobSpecResource.PATH)
+        final APIJobSpecCollection resp = generateAuthenticatedRequest(RULE, HTTP_SPECS_PATH)
                 .get()
-                .readEntity(APIJobSpecsResponse.class);
+                .readEntity(APIJobSpecCollection.class);
 
         final List<JobSpec> specsProvidedWhenBooting =
                 asList(readYAMLFixture("fixtures/systemtests/jobspecs.yml", JobSpec[].class));
@@ -79,17 +80,17 @@ public final class TestJobSpecsAPI {
 
     @Test
     public void testGetJobSpecByIdHasAuthenticationErrorIfNotSignedIn() {
-        final Response response = generateRequest(RULE,JobSpecResource.PATH + "/first-spec").get();
+        final Response response = generateRequest(RULE,HTTP_SPECS_PATH + "/first-spec").get();
         assertThat(response.getStatus()).isEqualTo(UNAUTHORIZED);
     }
 
     @Test
     public void testGetJobSpecByIdReturnsAJobSpecIfSignedIn() throws IOException {
-        final Response response = generateAuthenticatedRequest(RULE, JobSpecResource.PATH + "/first-spec")
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_SPECS_PATH + "/first-spec")
                 .get();
 
         assertThat(response.getStatus()).isEqualTo(OK);
 
-        TestHelpers.readJSON(response.readEntity(String.class), APIJobSpecResponse.class);
+        TestHelpers.readJSON(response.readEntity(String.class), APIJobSpec.class);
     }
 }

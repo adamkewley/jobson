@@ -25,12 +25,12 @@ import java.io.IOException;
 
 import static com.github.jobson.TestHelpers.readJSONFixture;
 
-public final class APIJobSubmissionRequestTest {
+public final class APIJobRequestTest {
 
     @Test
     public void testCanDeserializeAJobRequest() throws IOException {
         readJSONFixture(
                 "fixtures/api/v1/APIJobSubmissionRequest/job-request.json",
-                APIJobSubmissionRequest.class);
+                APIJobRequest.class);
     }
 }

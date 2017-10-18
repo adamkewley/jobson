@@ -52,7 +52,22 @@ public final class TemplateStringEvaluatorTest {
         final String str = generateRandomBase36String(30);
         final String ret = evaluate(str, EMPTY_ENVIRONMENT);
 
-        assertThat(str).isEqualTo(ret);
+        assertThat(ret).isEqualTo(str);
+    }
+
+    @Test
+    public void testTypicalNonTemplatedString() {
+        final String standardStrings[] = {
+                "some_python_script.py",
+                "/some/abs/path",
+                "some-other/relative/path",
+                "--option"
+        };
+
+        for (String str : standardStrings) {
+            final String ret = evaluate(str, EMPTY_ENVIRONMENT);
+            assertThat(ret).isEqualTo(str);
+        }
     }
 
     @Test

@@ -23,12 +23,12 @@ import org.junit.Test;
 
 import static com.github.jobson.TestHelpers.readJSONFixture;
 
-public final class APIJobSpecResponseTest {
+public final class APIJobSpecTest {
 
     @Test
     public void testCanDeserializeJSONRepresentation() {
         readJSONFixture(
                 "fixtures/api/v1/APIJobSpecResponseTest/spec-response.json",
-                APIJobSpecResponse.class);
+                APIJobSpec.class);
     }
 }

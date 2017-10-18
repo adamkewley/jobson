@@ -22,21 +22,22 @@ package com.github.jobson.api.v1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.jobinputs.JobExpectedInputId;
+import com.github.jobson.specs.JobSpecId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-@ApiModel(description = "A request to submit a new job")
-public final class APIJobSubmissionRequest {
+@ApiModel(description = "A job request")
+public final class APIJobRequest {
 
     @ApiModelProperty(value = "The job spec that the request is being made against")
     @JsonProperty
     @NotNull
     private JobSpecId spec;
 
-    @ApiModelProperty(value = "A name of the job")
+    @ApiModelProperty(value = "Human-readable name for the job")
     @JsonProperty
     @NotNull
     private String name;
@@ -51,9 +52,9 @@ public final class APIJobSubmissionRequest {
     /**
      * @deprecated Used by JSON deserializer.
      */
-    public APIJobSubmissionRequest() {}
+    public APIJobRequest() {}
 
-    public APIJobSubmissionRequest(
+    public APIJobRequest(
             JobSpecId spec,
             String name,
             Map<JobExpectedInputId, JsonNode> inputs) {

@@ -22,11 +22,11 @@ package com.github.jobson.dao.jobs;
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.JobId;
+import com.github.jobson.jobs.JobId;
 import com.github.jobson.dao.BinaryData;
 import com.github.jobson.dao.IdGenerator;
-import com.github.jobson.jobs.states.PersistedJobRequest;
-import com.github.jobson.jobs.states.ValidJobRequest;
+import com.github.jobson.jobs.jobstates.PersistedJob;
+import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.JobSpec;
 import org.junit.Test;
 
@@ -97,11 +97,11 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
         assertThat(tryResolve(jobsDir, jobId)).isPresent();
     }
 
-    private PersistedJobRequest persistValidRequest(Path jobsDir) throws IOException {
+    private PersistedJob persistValidRequest(Path jobsDir) throws IOException {
         return persistRequest(jobsDir, STANDARD_VALID_REQUEST);
     }
 
-    private PersistedJobRequest persistRequest(Path jobsDir, ValidJobRequest jobRequest) throws IOException {
+    private PersistedJob persistRequest(Path jobsDir, ValidJobRequest jobRequest) throws IOException {
         final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
         return dao.persist(jobRequest);
     }

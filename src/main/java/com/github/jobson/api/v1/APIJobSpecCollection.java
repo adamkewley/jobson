@@ -27,10 +27,10 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import java.util.Map;
 
-@ApiModel(description = "Response to a request for job spec summaries")
-public final class APIJobSpecsResponse {
+@ApiModel(description = "A collection of job spec summaries")
+public final class APIJobSpecCollection {
 
-    @ApiModelProperty(value = "The summaries returned")
+    @ApiModelProperty(value = "The summaries")
     @JsonProperty
     private List<APIJobSpecSummary> entries;
 
@@ -43,9 +43,9 @@ public final class APIJobSpecsResponse {
     /**
      * @deprecated Used by JSON deserializer.
      */
-    public APIJobSpecsResponse() {}
+    public APIJobSpecCollection() {}
 
-    public APIJobSpecsResponse(
+    public APIJobSpecCollection(
             List<APIJobSpecSummary> entries,
             Map<String, APIRestLink> _links) {
 

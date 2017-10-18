@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package com.github.jobson.jobs.execution;
+package com.github.jobson.jobs;
 
-import com.github.jobson.api.v1.JobStatus;
 import com.github.jobson.dao.BinaryData;
 
 import java.util.HashMap;

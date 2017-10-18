@@ -32,6 +32,7 @@ import org.junit.Test;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 
+import static com.github.jobson.Constants.HTTP_USERS_PATH;
 import static com.github.jobson.HttpStatusCodes.OK;
 import static com.github.jobson.HttpStatusCodes.UNAUTHORIZED;
 import static com.github.jobson.TestHelpers.generateRandomString;
@@ -53,7 +54,7 @@ public final class TestCustomAuth {
 
     @Test
     public void testAcceptsCredentialsHardCodedByTheCustomAuthScheme() {
-        final Invocation.Builder b = generateRequest(RULE, UserResource.PATH + "/current");
+        final Invocation.Builder b = generateRequest(RULE, HTTP_USERS_PATH + "/current");
         authenticate(b, USERNAME_IN_CONFIG_TEMPLATE, PASSWORD_IN_CONFIG_TEMPLATE);
 
         final Response response = b.get();
@@ -63,7 +64,7 @@ public final class TestCustomAuth {
 
     @Test
     public void testRejectsRequestsIfTheyDoNotMatchCustomScheme() {
-        final Invocation.Builder b = generateRequest(RULE, UserResource.PATH + "/current");
+        final Invocation.Builder b = generateRequest(RULE, HTTP_USERS_PATH + "/current");
         authenticate(b, USERNAME_IN_CONFIG_TEMPLATE, generateRandomString());
 
         final Response response = b.get();

@@ -17,11 +17,11 @@
  * under the License.
  */
 
-package com.github.jobson.jobs.states;
+package com.github.jobson.jobs.jobstates;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobTimestamp;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public final class ExecutingJob extends PersistedJobRequest  {
+public final class ExecutingJob extends PersistedJob {
 
     public static ExecutingJob fromQueuedJob(
             QueuedJob queuedJob,

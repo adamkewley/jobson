@@ -20,7 +20,7 @@
 package com.github.jobson.resources.v1;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIUserSummary;
+import com.github.jobson.api.v1.APIUserDetails;
 import com.github.jobson.api.v1.UserId;
 import org.junit.Test;
 
@@ -64,8 +64,8 @@ public final class UserResourceTest {
 
         final UserResource userResource = new UserResource();
 
-        final APIUserSummary APIUserSummary = userResource.fetchCurrentUserDetails(securityContext);
+        final APIUserDetails APIUserDetails = userResource.fetchCurrentUserDetails(securityContext);
 
-        assertThat(APIUserSummary.getId()).isEqualTo(userId);
+        assertThat(APIUserDetails.getId()).isEqualTo(userId);
     }
 }

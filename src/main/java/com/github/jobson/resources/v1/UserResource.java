@@ -19,7 +19,7 @@
 
 package com.github.jobson.resources.v1;
 
-import com.github.jobson.api.v1.APIUserSummary;
+import com.github.jobson.api.v1.APIUserDetails;
 import com.github.jobson.api.v1.UserId;
 import io.swagger.annotations.Api;
 
@@ -30,17 +30,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 
+import static com.github.jobson.Constants.HTTP_USERS_PATH;
+
 @Api(description = "Operations related to users")
-@Path(UserResource.PATH)
+@Path(HTTP_USERS_PATH)
 @Produces("application/json")
 public final class UserResource {
-
-    public static final String PATH = "/v1/users";
-
     @GET
     @Path("current")
     @PermitAll
-    public APIUserSummary fetchCurrentUserDetails(@Context SecurityContext context) {
-        return new APIUserSummary(new UserId(context.getUserPrincipal().getName()));
+    public APIUserDetails fetchCurrentUserDetails(@Context SecurityContext context) {
+        return new APIUserDetails(new UserId(context.getUserPrincipal().getName()));
     }
 }

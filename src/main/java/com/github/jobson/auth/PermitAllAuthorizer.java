@@ -26,8 +26,8 @@ import java.security.Principal;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An authorizer that just accepts any principal into any role
- * (everyone's an admin in this alpha version).
+ * An authorizer that just accepts any principal into any role (roles are not
+ * implemented yet).
  */
 public final class PermitAllAuthorizer implements Authorizer<Principal> {
 

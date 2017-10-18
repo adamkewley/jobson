@@ -27,6 +27,10 @@ import io.dropwizard.auth.AuthFilter;
 
 import java.security.Principal;
 
+/**
+ * An authentication configuration that just lets any connection through to the
+ * server, listing the client as "guest".
+ */
 public final class GuestAuthenticationConfig implements AuthenticationConfig {
 
     @JsonProperty

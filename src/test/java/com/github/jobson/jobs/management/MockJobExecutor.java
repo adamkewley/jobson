@@ -19,10 +19,11 @@
 
 package com.github.jobson.jobs.management;
 
-import com.github.jobson.api.v1.JobStatus;
-import com.github.jobson.jobs.execution.JobExecutionResult;
-import com.github.jobson.jobs.execution.JobExecutor;
-import com.github.jobson.jobs.states.PersistedJobRequest;
+import com.github.jobson.jobs.JobEventListeners;
+import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.jobs.JobExecutionResult;
+import com.github.jobson.jobs.JobExecutor;
+import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import io.reactivex.Observable;
@@ -72,7 +73,7 @@ public final class MockJobExecutor implements JobExecutor {
     }
 
     @Override
-    public CancelablePromise<JobExecutionResult> execute(PersistedJobRequest persistedJobRequest, JobEventListeners jobEventListeners) {
+    public CancelablePromise<JobExecutionResult> execute(PersistedJob persistedJob, JobEventListeners jobEventListeners) {
         stdout.subscribe(jobEventListeners.getOnStdoutListener());
         stderr.subscribe(jobEventListeners.getOnStderrListener());
         return ret;

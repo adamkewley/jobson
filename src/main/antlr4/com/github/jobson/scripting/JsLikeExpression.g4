@@ -17,34 +17,32 @@
  * under the License.
  */
 
-grammar TemplateString;
-
-templateString
-    : templateStringComponent* EOF
-    ;
-
-templateStringComponent
-    : '${' expression '}'              # ExpressionComponent
-    | ('\\$' | ~'${' | ' ' | Number | '-' | '>' | '&' | '/' | '.')+  # StringComponent
-    ;
+/*
+ * A grammar that has the most rudimentary parts of javascript,
+ * such that expressions are forward-compatible with real javascript
+ * engines
+ */
+grammar JsLikeExpression;
 
 expression
-    : expression '[' expression ']'    # MemberIndexExpression
-    | expression '.' Identifier        # MemberDotExpression
-    | expression functionArgs          # FunctionCallExpression
-    | Identifier                       # IdentifierExpression
-    | StringLiteral                    # StringLiteralExpression
+    : expression '[' expression ']'  # MemberIndexExpression
+    | expression '.' Identifier      # MemberDotExpression
+    | expression functionArgs        # FunctionCallExpression
+    | Identifier                     # IdentifierExpression
+    | StringLiteral                  # StringLiteralExpression
     ;
 
 functionArgs
     : '(' expression (',' expression)* ')'
     ;
 
+Identifier: IdentifierStart IdentifierPart*;
+IdentifierStart: ('A'..'Z'|'a'..'z');
+IdentifierPart
+    :  IdentifierStart
+    | '0'..'9'
+    | '_';
 
-Number: '0'..'9'+;
-
-Identifier: ('A'..'Z'|'a'..'z')('A'..'Z'|'a'..'z'|'0'..'9')*;
 StringLiteral :   '"' ( Escape | ~('"' | '\\' ) )+ '"';
 fragment Escape : '\\' ( '"' | '\\' );
-
 WS: (' ' | '\t' | '\r' | '\n') -> skip;

@@ -19,12 +19,12 @@
 
 package com.github.jobson.jobs.management;
 
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.dao.BinaryData;
 import com.github.jobson.dao.jobs.WritingJobDAO;
-import com.github.jobson.jobs.states.PersistedJobRequest;
-import com.github.jobson.jobs.states.ValidJobRequest;
+import com.github.jobson.jobs.jobstates.PersistedJob;
+import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
@@ -45,7 +45,7 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
     private Optional<JobId> persistStderrCalledWith = Optional.empty();
     private final AtomicBoolean persistStderrDisposed = new AtomicBoolean(false);
     private Optional<ValidJobRequest> persistCalledWith = Optional.empty();
-    private PersistedJobRequest returnedPersistedReq;
+    private PersistedJob returnedPersistedReq;
     private List<PersistOutputArgs> persistOutputCalledWith = new ArrayList<>();
 
 
@@ -76,9 +76,9 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
     }
 
     @Override
-    public PersistedJobRequest persist(ValidJobRequest validJobRequest) {
+    public PersistedJob persist(ValidJobRequest validJobRequest) {
         persistCalledWith = Optional.of(validJobRequest);
-        returnedPersistedReq = new PersistedJobRequest(
+        returnedPersistedReq = new PersistedJob(
                 generateJobId(),
                 validJobRequest.getOwner(),
                 validJobRequest.getName(),
@@ -117,7 +117,7 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
         return persistCalledWith;
     }
 
-    public PersistedJobRequest getReturnedPersistedReq() {
+    public PersistedJob getReturnedPersistedReq() {
         return returnedPersistedReq;
     }
 

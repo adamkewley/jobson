@@ -19,8 +19,8 @@
 
 package com.github.jobson.websockets.v1;
 
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.jobs.management.JobManagerEvents;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobManagerEvents;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
@@ -28,10 +28,11 @@ import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.github.jobson.Constants.WEBSOCKET_STDERR_UPDATES_PATTERN;
+
 public final class StderrUpdateSocketCreator implements WebSocketCreator {
 
-    public static final String URI_PATTERN_REGEXP = "/v1/jobs/(.+?)/stderr/updates";
-    private static Pattern URI_PATTERN = Pattern.compile(URI_PATTERN_REGEXP);
+    private static Pattern URI_PATTERN = Pattern.compile(WEBSOCKET_STDERR_UPDATES_PATTERN);
 
 
     private static JobId extractJobId(String requestPath) {

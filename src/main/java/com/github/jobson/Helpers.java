@@ -297,8 +297,7 @@ public final class Helpers {
             try {
                 streamInto(process.getInputStream(), stdoutObserver);
             } catch (IOException e) {
-                log.error("Error reading from stdout. Aborting process");
-                process.destroy();
+                log.debug("Could not read from stdout (probably because the process died). Stopping stdout thread.");
             }
         }).start();
 
@@ -308,8 +307,7 @@ public final class Helpers {
             try {
                 streamInto(process.getErrorStream(), stderrObserver);
             } catch (IOException e) {
-                log.error("Error reading from stderr. Aborting process");
-                process.destroy();
+                log.debug("Could not read from stderr (probably because the process died). Stopping stderr thread.");
             }
         }).start();
 
@@ -319,7 +317,7 @@ public final class Helpers {
                 final int exitCode = process.waitFor();
                 onExit.accept(exitCode);
             } catch (InterruptedException e) {
-                log.error("Wait thread interrupted (this shouldn't happen)");
+                log.error("Subprocess wait thread interrupted. This shouldn't happen.");
             }
         }).start();
     }

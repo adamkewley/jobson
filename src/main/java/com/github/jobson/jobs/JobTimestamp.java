@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.github.jobson.api.v1;
+package com.github.jobson.jobs;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

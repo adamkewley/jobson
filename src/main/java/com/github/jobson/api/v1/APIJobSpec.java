@@ -22,16 +22,17 @@ package com.github.jobson.api.v1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.specs.JobSpecId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
-@ApiModel(description = "Response to a request for a job spec's details")
-public final class APIJobSpecResponse {
+@ApiModel(description = "A job spec's details")
+public final class APIJobSpec {
 
-    public static APIJobSpecResponse fromJobSpec(JobSpec jobSpec) {
-        return new APIJobSpecResponse(
+    public static APIJobSpec fromJobSpec(JobSpec jobSpec) {
+        return new APIJobSpec(
                 jobSpec.getId(),
                 jobSpec.getName(),
                 jobSpec.getDescription(),
@@ -39,11 +40,11 @@ public final class APIJobSpecResponse {
     }
 
 
-    @ApiModelProperty(value = "A unique identifier for the job spec")
+    @ApiModelProperty(value = "ID of the job spec")
     @JsonProperty
     private JobSpecId id;
 
-    @ApiModelProperty(value = "Name of the job spec")
+    @ApiModelProperty(value = "Human-readable name of the job spec")
     @JsonProperty
     private String name;
 
@@ -51,7 +52,7 @@ public final class APIJobSpecResponse {
     @JsonProperty
     private String description;
 
-    @ApiModelProperty(value = "The inputs the job expects. Job requests against this job spec must satisfy these inputs.")
+    @ApiModelProperty(value = "The inputs clients must provide to spawn to create a job from this spec")
     @JsonProperty
     private List<JobExpectedInput<?>> expectedInputs;
 
@@ -60,9 +61,9 @@ public final class APIJobSpecResponse {
     /**
      * @deprecated Used by JSON deserializer.
      */
-    public APIJobSpecResponse() {}
+    public APIJobSpec() {}
 
-    public APIJobSpecResponse(
+    public APIJobSpec(
             JobSpecId id,
             String name,
             String description,
@@ -99,7 +100,7 @@ public final class APIJobSpecResponse {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        APIJobSpecResponse that = (APIJobSpecResponse) o;
+        APIJobSpec that = (APIJobSpec) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;

@@ -29,10 +29,9 @@ import java.util.Map;
 
 import static com.github.jobson.Helpers.commaSeparatedList;
 import static java.lang.String.format;
-import static java.lang.String.join;
 import static java.util.stream.Collectors.toList;
 
-public final class TemplateStringEvaluatorVisitor extends TemplateStringBaseVisitor<Object> {
+public final class TemplateStringEvaluatorVisitor extends JsLikeExpressionBaseVisitor<Object> {
 
     private final Map<String, Object> environment;
 
@@ -43,33 +42,24 @@ public final class TemplateStringEvaluatorVisitor extends TemplateStringBaseVisi
 
 
     @Override
-    public Object visitTemplateString(TemplateStringParser.TemplateStringContext ctx) {
-        return join("", ctx.templateStringComponent().stream()
-                .map(component -> component.accept(this).toString())
-                .collect(toList()));
-    }
-
-    @Override
-    public Object visitExpressionComponent(TemplateStringParser.ExpressionComponentContext ctx) {
-        return ctx.expression().accept(this);
-    }
-
-    @Override
-    public Object visitStringComponent(TemplateStringParser.StringComponentContext ctx) {
-        return ctx.getText();
-    }
-
-    @Override
-    public Object visitStringLiteralExpression(TemplateStringParser.StringLiteralExpressionContext ctx) {
-        // Strip and unescape it
+    public Object visitStringLiteralExpression(JsLikeExpressionParser.StringLiteralExpressionContext ctx) {
         final String str = ctx.getText();
-        return str.substring(1, str.length() - 1).replace("\\\"", "\"");
+        final String strippedString = str.substring(1, str.length() - 1);
+        return strippedString.replace("\\\"", "\""); // Unescape
     }
 
     @Override
-    public Object visitMemberDotExpression(TemplateStringParser.MemberDotExpressionContext ctx) {
+    public Object visitMemberDotExpression(JsLikeExpressionParser.MemberDotExpressionContext ctx) {
         final Object lhs = ctx.expression().accept(this);
         return evaluateObjectMember(lhs, ctx.Identifier().getText());
+    }
+
+
+    @Override
+    public Object visitMemberIndexExpression(JsLikeExpressionParser.MemberIndexExpressionContext ctx) {
+        final Object lhs = ctx.expression(0).accept(this);
+        final String rhs = ctx.expression(1).accept(this).toString();
+        return evaluateObjectMember(lhs, rhs);
     }
 
     private Object evaluateObjectMember(Object obj, String str) {
@@ -109,15 +99,9 @@ public final class TemplateStringEvaluatorVisitor extends TemplateStringBaseVisi
         return (m.getModifiers() & Modifier.PUBLIC) != 0;
     }
 
-    @Override
-    public Object visitMemberIndexExpression(TemplateStringParser.MemberIndexExpressionContext ctx) {
-        final Object lhs = ctx.expression(0).accept(this);
-        final String rhs = ctx.expression(1).accept(this).toString();
-        return evaluateObjectMember(lhs, rhs);
-    }
 
     @Override
-    public Object visitFunctionCallExpression(TemplateStringParser.FunctionCallExpressionContext ctx) {
+    public Object visitFunctionCallExpression(JsLikeExpressionParser.FunctionCallExpressionContext ctx) {
         final Object maybeMethod =
                 ctx.expression().accept(this);
 
@@ -132,17 +116,17 @@ public final class TemplateStringEvaluatorVisitor extends TemplateStringBaseVisi
         } throw new RuntimeException(ctx.expression().getText() + ": Is not a function");
     }
 
-    private List<Object> evaluateFunctionArgs(TemplateStringParser.FunctionArgsContext ctx) {
+    private List<Object> evaluateFunctionArgs(JsLikeExpressionParser.FunctionArgsContext ctx) {
         return ctx.expression().stream().map(expr -> expr.accept(this)).collect(toList());
     }
 
     @Override
-    public Object visitIdentifierExpression(TemplateStringParser.IdentifierExpressionContext ctx) {
+    public Object visitIdentifierExpression(JsLikeExpressionParser.IdentifierExpressionContext ctx) {
         return environment.get(ctx.getText());
     }
 
     @Override
-    public Object visitFunctionArgs(TemplateStringParser.FunctionArgsContext ctx) {
-        throw new RuntimeException("Call to function args context - this shouldn't happen");
+    public Object visitFunctionArgs(JsLikeExpressionParser.FunctionArgsContext ctx) {
+        throw new RuntimeException("Tried to evaluate function args directly - this shouldn't happen");
     }
 }

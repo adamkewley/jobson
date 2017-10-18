@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.github.jobson.jobs.management;
+package com.github.jobson.jobs;
 
 import io.reactivex.Observer;
 import io.reactivex.subjects.PublishSubject;

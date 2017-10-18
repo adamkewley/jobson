@@ -21,8 +21,8 @@ package com.github.jobson.commands;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.javafaker.Faker;
-import com.github.jobson.api.v1.APIJobSubmissionRequest;
-import com.github.jobson.api.v1.JobSpecId;
+import com.github.jobson.api.v1.APIJobRequest;
+import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
@@ -69,8 +69,8 @@ public final class GenerateRequestCommand extends DefaultedConfiguredCommand<App
             final JobSpecId jobSpecId = new JobSpecId(specId);
             final String jobName = new Faker().lorem().sentence(5);
             final Map<JobExpectedInputId, JsonNode> generatedInputs = generateInputs(jobSpec);
-            final APIJobSubmissionRequest jobRequest =
-                    new APIJobSubmissionRequest(jobSpecId, jobName, generatedInputs);
+            final APIJobRequest jobRequest =
+                    new APIJobRequest(jobSpecId, jobName, generatedInputs);
 
             System.out.println(toJSON(jobRequest));
             System.exit(0);

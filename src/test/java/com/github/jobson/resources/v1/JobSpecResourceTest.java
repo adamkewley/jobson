@@ -20,10 +20,10 @@
 package com.github.jobson.resources.v1;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIJobSpecResponse;
+import com.github.jobson.api.v1.APIJobSpec;
 import com.github.jobson.api.v1.APIJobSpecSummary;
-import com.github.jobson.api.v1.APIJobSpecsResponse;
-import com.github.jobson.api.v1.JobSpecId;
+import com.github.jobson.api.v1.APIJobSpecCollection;
+import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.dao.specs.JobSpecDAO;
 import com.github.jobson.dao.specs.JobSpecSummary;
 import com.github.jobson.specs.JobSpec;
@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.jobson.Constants.HTTP_SPECS_PATH;
 import static com.github.jobson.TestHelpers.*;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,12 +75,12 @@ public final class JobSpecResourceTest {
 
         final SecurityContext securityContext = generateSecureSecurityContext();
 
-        final APIJobSpecsResponse apiJobSpecsResponse =
+        final APIJobSpecCollection apiJobSpecCollection =
                 jobSpecResource.fetchJobSpecSummaries(securityContext, Optional.empty(), Optional.empty(), Optional.empty());
 
-        assertThat(apiJobSpecsResponse).isNotNull();
+        assertThat(apiJobSpecCollection).isNotNull();
         assertThat(
-                apiJobSpecsResponse.getEntries().stream().map(APIJobSpecSummary::toJobSpecSummary).collect(toList()))
+                apiJobSpecCollection.getEntries().stream().map(APIJobSpecSummary::toJobSpecSummary).collect(toList()))
                 .isEqualTo(jobSpecSummariesReturnedByDAO);
     }
 
@@ -95,7 +96,7 @@ public final class JobSpecResourceTest {
         final SecurityContext securityContext = generateSecureSecurityContext();
 
         // Should throw
-        final APIJobSpecsResponse APIJobSpecsResponse =
+        final APIJobSpecCollection APIJobSpecCollection =
                 jobSpecResource.fetchJobSpecSummaries(securityContext, Optional.empty(), Optional.of(-1), Optional.empty());
     }
 
@@ -195,13 +196,13 @@ public final class JobSpecResourceTest {
 
         final SecurityContext securityContext = generateSecureSecurityContext();
 
-        final APIJobSpecsResponse APIJobSpecsResponse =
+        final APIJobSpecCollection APIJobSpecCollection =
                 jobSpecResource.fetchJobSpecSummaries(securityContext, Optional.empty(), Optional.empty(), Optional.empty());
 
-        for (APIJobSpecSummary APIJobSpecSummary : APIJobSpecsResponse.getEntries()) {
+        for (APIJobSpecSummary APIJobSpecSummary : APIJobSpecCollection.getEntries()) {
             assertThat(APIJobSpecSummary.getLinks().containsKey("details")).isTrue();
             assertThat(APIJobSpecSummary.getLinks().get("details").getHref().toString())
-                    .contains(JobSpecResource.PATH + "/" + APIJobSpecSummary.getId().toString());
+                    .contains(HTTP_SPECS_PATH + "/" + APIJobSpecSummary.getId().toString());
         }
     }
 
@@ -217,7 +218,7 @@ public final class JobSpecResourceTest {
 
         final SecurityContext securityContext = generateSecureSecurityContext();
 
-        final Optional<APIJobSpecResponse> response = jobSpecResource.fetchJobSpecDetailsById(securityContext, null);
+        final Optional<APIJobSpec> response = jobSpecResource.fetchJobSpecDetailsById(securityContext, null);
     }
 
     @Test
@@ -232,10 +233,10 @@ public final class JobSpecResourceTest {
         final SecurityContext securityContext = generateSecureSecurityContext();
         final JobSpecId jobSpecId = jobSpecFromDAO.getId();
 
-        final Optional<APIJobSpecResponse> maybeJobSpecFromResource =
+        final Optional<APIJobSpec> maybeJobSpecFromResource =
                 jobSpecResource.fetchJobSpecDetailsById(securityContext, jobSpecId);
 
         assertThat(maybeJobSpecFromResource).isPresent();
-        assertThat(maybeJobSpecFromResource.get()).isEqualTo(APIJobSpecResponse.fromJobSpec(jobSpecFromDAO));
+        assertThat(maybeJobSpecFromResource.get()).isEqualTo(APIJobSpec.fromJobSpec(jobSpecFromDAO));
     }
 }

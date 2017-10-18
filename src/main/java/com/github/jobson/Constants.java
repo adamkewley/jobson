@@ -39,7 +39,7 @@ public final class Constants {
 
     public static final int DEFAULT_PAGE_SIZE = 50;
     public static final int MAX_RUNNING_JOBS = 10;
-    public static final int DELAY_BEFORE_FORCIBLY_KILLING_JOBS = 10;
+    public static final int DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_SECONDS = 10;
     public static final int MAX_JOB_ID_GENERATION_ATTEMPTS = 100;
     public static final int STDIO_BUFFER_LEN_IN_BYTES = 256;
 
@@ -47,7 +47,17 @@ public final class Constants {
     public static final String API_VISIBLE_TIMESTAMPS_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSS'Z'";
     public static final int JOB_TIMESTAMP_RESOLUTION_IN_MILLISECONDS = 1;
     public static final String API_VISIBLE_TIMESTAMPS_TIMEZONE = "UTC";
+
+
     public static final String WEBSOCKET_JOB_EVENTS_PATH = "/v1/jobs/events";
+    public static final String WEBSOCKET_STDOUT_UPDATES_PATTERN = "/v1/jobs/(.+?)/stdout/updates";
+    public static final String WEBSOCKET_STDERR_UPDATES_PATTERN = "/v1/jobs/(.+?)/stderr/updates";
+    public static final long WEBSOCKET_TCP_IDLE_TIMEOUT_IN_MILLISECONDS = Long.MAX_VALUE;
+
+    public static final String HTTP_USERS_PATH = "/v1/users";
+    public static final String HTTP_SPECS_PATH = "/v1/specs";
+    public static final String HTTP_JOBS_PATH = "/v1/jobs";
+
 
     public static final String BASIC_AUTH_NAME = "basic";
     public static final String GUEST_AUTH_NAME = "disabled";

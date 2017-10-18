@@ -19,43 +19,49 @@
 
 package com.github.jobson.api.v1;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "A unique identifier for a job on the system")
-public final class JobId {
+@ApiModel(description = "Summary information for a user")
+public final class APIUserDetails {
 
-    private final String jobId;
+    @ApiModelProperty(value = "A unique identifier for the user", example = "akewley")
+    @JsonProperty
+    private UserId id;
 
 
 
-    @JsonCreator
-    public JobId(String jobId) {
-        this.jobId = jobId;
+    /**
+     * @deprecated Used by JSON deserializer
+     */
+    public APIUserDetails()  {}
+
+    public APIUserDetails(UserId id) {
+        this.id = id;
     }
 
 
 
-    @Override
-    @JsonValue
-    public String toString() {
-        return this.jobId;
+    public UserId getId() {
+        return id;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JobId jobId1 = (JobId) o;
+        APIUserDetails that = (APIUserDetails) o;
 
-        return jobId != null ? jobId.equals(jobId1.jobId) : jobId1.jobId == null;
+        return id != null ? id.equals(that.id) : that.id == null;
 
     }
 
     @Override
     public int hashCode() {
-        return jobId != null ? jobId.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 }

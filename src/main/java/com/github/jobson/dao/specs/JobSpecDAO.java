@@ -19,7 +19,7 @@
 
 package com.github.jobson.dao.specs;
 
-import com.github.jobson.api.v1.JobSpecId;
+import com.github.jobson.specs.JobSpecId;
 
 import java.util.List;
 import java.util.Optional;

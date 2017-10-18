@@ -21,19 +21,20 @@ package com.github.jobson.dao.jobs;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.jobson.Helpers;
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobStatus;
-import com.github.jobson.api.v1.JobTimestamp;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.dao.BinaryData;
 import com.github.jobson.dao.IdGenerator;
-import com.github.jobson.jobs.states.PersistedJobRequest;
-import com.github.jobson.jobs.states.ValidJobRequest;
+import com.github.jobson.jobs.jobstates.PersistedJob;
+import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import org.apache.commons.io.IOUtils;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +62,7 @@ import static java.util.stream.Collectors.toSet;
  */
 public final class FilesystemJobsDAO implements JobDAO {
 
-    private static final Logger log = Logger.getLogger(FilesystemJobsDAO.class);
+    private static final Logger log = LoggerFactory.getLogger(FilesystemJobsDAO.class);
 
 
     private final Object fsLock = new Object();
@@ -167,15 +168,15 @@ public final class FilesystemJobsDAO implements JobDAO {
     }
 
     @Override
-    public PersistedJobRequest persist(ValidJobRequest validJobRequest) {
+    public PersistedJob persist(ValidJobRequest validJobRequest) {
         final JobId jobId = generateUniqueJobId();
 
-        final PersistedJobRequest persistedJobRequest =
-                PersistedJobRequest.createFromValidRequest(validJobRequest, jobId);
+        final PersistedJob persistedJob =
+                PersistedJob.createFromValidRequest(validJobRequest, jobId);
 
-        createNewJobDirectory(persistedJobRequest);
+        createNewJobDirectory(persistedJob);
 
-        return persistedJobRequest;
+        return persistedJob;
     }
 
     private JobId generateUniqueJobId() {
@@ -192,19 +193,19 @@ public final class FilesystemJobsDAO implements JobDAO {
         throw new RuntimeException(errorMsg);
     }
 
-    private void createNewJobDirectory(PersistedJobRequest persistedJobRequest) {
-        final JobId id = persistedJobRequest.getId();
+    private void createNewJobDirectory(PersistedJob persistedJob) {
+        final JobId id = persistedJob.getId();
         try {
             final Path jobDir = jobsDirectory.resolve(id.toString());
             createDirectory(jobDir);
             log.debug(id + ": created job dir: " + jobDir);
 
             final Path jobSpecPath = jobDir.resolve(JOB_DIR_JOB_SPEC_FILENAME);
-            writeJSON(jobSpecPath, persistedJobRequest.getSpec());
+            writeJSON(jobSpecPath, persistedJob.getSpec());
             log.debug(id + ": written spec file: " + jobSpecPath);
 
             final Path jobDetailsPath = jobDir.resolve(JOB_DIR_JOB_DETAILS_FILENAME);
-            writeJSON(jobDetailsPath, fromPersistedJob(persistedJobRequest));
+            writeJSON(jobDetailsPath, fromPersistedJob(persistedJob));
             log.debug(id + ": written job details: " + jobDetailsPath);
         } catch (IOException ex) {
             log.error(id + ": could not setup job directory: " + ex);

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "An error message produced by the API.")
+@ApiModel(description = "An error message")
 public final class APIErrorMessage {
 
     private final String message;

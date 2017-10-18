@@ -27,8 +27,6 @@ import com.github.jobson.auth.custom.CustomAuthenticatorConfig;
 import com.github.jobson.auth.guest.GuestAuthenticationConfig;
 import io.dropwizard.auth.AuthFilter;
 
-import java.security.Principal;
-
 import static com.github.jobson.Constants.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
@@ -38,5 +36,5 @@ import static com.github.jobson.Constants.*;
         @JsonSubTypes.Type(value = CustomAuthenticatorConfig.class, name = CUSTOM_AUTH_NAME)
 })
 public interface AuthenticationConfig {
-    AuthFilter<?, Principal> createAuthFilter(AuthenticationBootstrap bootstrap);
+    AuthFilter createAuthFilter(AuthenticationBootstrap bootstrap);
 }

@@ -21,10 +21,12 @@ package com.github.jobson.jobs.execution;
 
 import com.github.jobson.TestConstants;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.jobs.JobExecutionResult;
+import com.github.jobson.jobs.JobExecutor;
+import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.fixtures.PersistedJobRequestFixture;
-import com.github.jobson.jobs.management.JobEventListeners;
-import com.github.jobson.jobs.states.PersistedJobRequest;
+import com.github.jobson.jobs.JobEventListeners;
+import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.specs.ExecutionConfiguration;
 import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;
@@ -50,7 +52,7 @@ import java.util.function.Consumer;
 
 import static com.github.jobson.Helpers.toJSON;
 import static com.github.jobson.TestHelpers.*;
-import static com.github.jobson.jobs.management.JobEventListeners.*;
+import static com.github.jobson.jobs.JobEventListeners.*;
 import static java.nio.file.Files.createTempFile;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
@@ -58,10 +60,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class JobExecutorTest {
 
-    private static final PersistedJobRequest STANDARD_REQUEST;
+    private static final PersistedJob STANDARD_REQUEST;
 
 
-    private static PersistedJobRequest readJobRequestFixture(String path) {
+    private static PersistedJob readJobRequestFixture(String path) {
         final PersistedJobRequestFixture fixture =
                 TestHelpers.readJSONFixture(path, PersistedJobRequestFixture.class);
         return fixture.toPersistedJobRequest();
@@ -96,11 +98,11 @@ public abstract class JobExecutorTest {
         } catch (InterruptedException ex) {}
     }
 
-    private static PersistedJobRequest standardRequestWithCommand(String application, String... args) {
+    private static PersistedJob standardRequestWithCommand(String application, String... args) {
         return standardRequestWithOutputs(new HashMap<>(), application, args);
     }
 
-    private static PersistedJobRequest standardRequestWithOutputs(Map<String, JobOutput> outputs, String application, String ...args) {
+    private static PersistedJob standardRequestWithOutputs(Map<String, JobOutput> outputs, String application, String ...args) {
         final JobSpec existingSpec = STANDARD_REQUEST.getSpec();
         final ExecutionConfiguration existingConfig = existingSpec.getExecution();
 
@@ -125,7 +127,7 @@ public abstract class JobExecutorTest {
                         newConfig,
                         outputs);
 
-        return new PersistedJobRequest(
+        return new PersistedJob(
                 STANDARD_REQUEST.getId(),
                 STANDARD_REQUEST.getOwner(),
                 STANDARD_REQUEST.getName(),
@@ -160,7 +162,7 @@ public abstract class JobExecutorTest {
     @Test
     public void testExecutePromiseResolvesWithFatalErrorForFailingCommand() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
-        final PersistedJobRequest req =
+        final PersistedJob req =
                 standardRequestWithCommand("cat", "does-not-exist");
         final CancelablePromise<JobExecutionResult> ret =
                 jobExecutor.execute(req, createNullListeners());
@@ -172,7 +174,7 @@ public abstract class JobExecutorTest {
     @Test
     public void testExecutePromiseResolvesWithAbortedIfPromiseIsCancelled() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
-        final PersistedJobRequest req =
+        final PersistedJob req =
                 standardRequestWithCommand("cat"); // Long-running, because it blocks on an STDIN read.
         final CancelablePromise<JobExecutionResult> ret =
                 jobExecutor.execute(req, createNullListeners());
@@ -193,7 +195,7 @@ public abstract class JobExecutorTest {
         final Map<String, JobOutput> outputs = new HashMap<>();
         outputs.put(outputId, new JobOutput(outputPath, "text/plain"));
 
-        final PersistedJobRequest req =
+        final PersistedJob req =
                 standardRequestWithOutputs(outputs, "touch", outputPath);
 
         final CancelablePromise<JobExecutionResult> ret =
@@ -223,7 +225,7 @@ public abstract class JobExecutorTest {
         final Map<String, JobOutput> outputs = new HashMap<>();
         outputs.put(outputId, new JobOutput(outputPath, "application/octet-stream"));
 
-        final PersistedJobRequest jobRequest =
+        final PersistedJob jobRequest =
                 standardRequestWithOutputs(
                         outputs,
                         "cp",
@@ -253,7 +255,7 @@ public abstract class JobExecutorTest {
     public void testExecuteWritesStdoutToTheStdoutListener() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
         final String msgSuppliedToEcho = generateRandomString();
-        final PersistedJobRequest req =
+        final PersistedJob req =
                 standardRequestWithCommand("echo", msgSuppliedToEcho);
         final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
         final Subject<byte[]> stdoutSubject = PublishSubject.create();
@@ -297,7 +299,7 @@ public abstract class JobExecutorTest {
         final JobExecutor jobExecutor = getInstance();
         final String msgSuppliedToEcho = generateRandomString();
         final String bashArg = "echo " + msgSuppliedToEcho + " 1>&2"; // TODO: Naughty.
-        final PersistedJobRequest req =
+        final PersistedJob req =
                 standardRequestWithCommand("bash", "-c", bashArg);
         final AtomicReference<byte[]> bytesEchoedToStderr = new AtomicReference<>(new byte[]{});
         final Subject<byte[]> stderrSubject = PublishSubject.create();
@@ -337,7 +339,7 @@ public abstract class JobExecutorTest {
     @Test
     public void testExecuteEvaluatesJobInputsAsExpected() throws InterruptedException {
         final JobExecutor jobExecutor = getInstance();
-        final PersistedJobRequest req =
+        final PersistedJob req =
                 standardRequestWithCommand("echo", "${inputs.foo}");
         final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
         final Subject<byte[]> stdoutSubject = PublishSubject.create();
@@ -364,7 +366,7 @@ public abstract class JobExecutorTest {
     @Test
     public void testExecuteEvaluatesToJSONFunctionAsExpected() throws InterruptedException {
         final JobExecutor jobExecutor = getInstance();
-        final PersistedJobRequest req =
+        final PersistedJob req =
                 standardRequestWithCommand("echo", "${toJSON(inputs)}");
         final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
         final Subject<byte[]> stdoutSubject = PublishSubject.create();
@@ -392,7 +394,7 @@ public abstract class JobExecutorTest {
     @Test
     public void testExecuteEvaluatesToFileAsExpected() throws InterruptedException, IOException {
         final JobExecutor jobExecutor = getInstance();
-        final PersistedJobRequest req =
+        final PersistedJob req =
                 standardRequestWithCommand("echo", "${toFile(toJSON(inputs))}");
         final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
         final Subject<byte[]> stdoutSubject = PublishSubject.create();

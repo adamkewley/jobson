@@ -51,7 +51,6 @@ public final class UserId {
         UserId userId = (UserId) o;
 
         return id != null ? id.equals(userId.id) : userId.id == null;
-
     }
 
     @Override

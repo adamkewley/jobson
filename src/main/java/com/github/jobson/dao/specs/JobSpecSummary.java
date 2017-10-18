@@ -25,7 +25,7 @@
 package com.github.jobson.dao.specs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.api.v1.JobSpecId;
+import com.github.jobson.specs.JobSpecId;
 import io.swagger.annotations.ApiModelProperty;
 
 public class JobSpecSummary {

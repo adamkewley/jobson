@@ -61,7 +61,6 @@ public final class JobOutput {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -73,7 +72,6 @@ public final class JobOutput {
 
     @Override
     public int hashCode() {
-
         int result = path != null ? path.hashCode() : 0;
         result = 31 * result + (mimeType != null ? mimeType.hashCode() : 0);
         return result;

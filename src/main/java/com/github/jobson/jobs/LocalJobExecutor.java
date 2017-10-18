@@ -17,13 +17,11 @@
  * under the License.
  */
 
-package com.github.jobson.jobs.execution;
+package com.github.jobson.jobs;
 
-import com.github.jobson.api.v1.JobStatus;
 import com.github.jobson.dao.BinaryData;
 import com.github.jobson.jobinputs.JobExpectedInputId;
-import com.github.jobson.jobs.management.JobEventListeners;
-import com.github.jobson.jobs.states.PersistedJobRequest;
+import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.scripting.FreeFunction;
 import com.github.jobson.specs.ExecutionConfiguration;
 import com.github.jobson.specs.JobDependencyConfiguration;
@@ -47,7 +45,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.jobson.Helpers.*;
-import static com.github.jobson.api.v1.JobStatus.FINISHED;
+import static com.github.jobson.jobs.JobStatus.FINISHED;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
@@ -59,10 +57,10 @@ public final class LocalJobExecutor implements JobExecutor {
     private static final Logger log = Logger.getLogger(LocalJobExecutor.class);
 
 
-    private static String resolveArg(PersistedJobRequest persistedJobRequest, Path jobWorkingDir, RawTemplateString arg) {
+    private static String resolveArg(PersistedJob persistedJob, Path jobWorkingDir, RawTemplateString arg) {
         final Map<String, Object> environment = new HashMap<>();
-        environment.put("request", persistedJobRequest);
-        environment.put("inputs", mapKeys(persistedJobRequest.getInputs(), JobExpectedInputId::toString));
+        environment.put("request", persistedJob);
+        environment.put("inputs", mapKeys(persistedJob.getInputs(), JobExpectedInputId::toString));
 
         environment.put("toJSON", new FreeFunction() {
             @Override
@@ -105,10 +103,10 @@ public final class LocalJobExecutor implements JobExecutor {
 
         try {
             if (source.toFile().isDirectory()) {
-                log.info("copy dependency: " + source.toString() + " -> " + target.toString());
+                log.debug("copy dependency: " + source.toString() + " -> " + target.toString());
                 FileUtils.copyDirectory(source.toFile(), target.toFile());
             } else {
-                log.info("copy dependency: " + source.toString() + " -> " + target.toString());
+                log.debug("copy dependency: " + source.toString() + " -> " + target.toString());
                 Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException ex) {
@@ -137,7 +135,7 @@ public final class LocalJobExecutor implements JobExecutor {
 
 
     @Override
-    public CancelablePromise<JobExecutionResult> execute(PersistedJobRequest req, JobEventListeners jobEventListeners) {
+    public CancelablePromise<JobExecutionResult> execute(PersistedJob req, JobEventListeners jobEventListeners) {
 
         final ExecutionConfiguration executionConfiguration = req.getSpec().getExecution();
 
@@ -210,10 +208,14 @@ public final class LocalJobExecutor implements JobExecutor {
     }
 
     private void abort(Process process) {
+        log.debug("Aborting process: " + process);
         process.destroy();
         try {
             final boolean terminated = process.waitFor(delayBeforeForciblyKillingJobs, TimeUnit.SECONDS);
-            if (!terminated) process.destroyForcibly();
+            if (!terminated) {
+                log.warn(process + " did not abort within " + delayBeforeForciblyKillingJobs + " seconds, aborting forcibly (SIGKILL)");
+                process.destroyForcibly();
+            }
         } catch (InterruptedException e) {
             log.error("Abortion interrupted while waiting on process (this shouldn't happen)");
         }

@@ -22,6 +22,7 @@ package com.github.jobson.systemtests.httpapi;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.config.ApplicationConfig;
+import com.github.jobson.jobs.JobId;
 import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.systemtests.SystemTestHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -33,11 +34,12 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Map;
 
+import static com.github.jobson.Constants.HTTP_JOBS_PATH;
 import static com.github.jobson.Helpers.readJSON;
 import static com.github.jobson.HttpStatusCodes.*;
 import static com.github.jobson.TestHelpers.readJSONFixture;
-import static com.github.jobson.api.v1.JobStatus.ABORTED;
-import static com.github.jobson.api.v1.JobStatus.RUNNING;
+import static com.github.jobson.jobs.JobStatus.ABORTED;
+import static com.github.jobson.jobs.JobStatus.RUNNING;
 import static com.github.jobson.systemtests.SystemTestHelpers.*;
 import static java.lang.Thread.sleep;
 import static java.util.Collections.singletonList;
@@ -48,30 +50,30 @@ public final class TestJobsAPI {
 
     @ClassRule
     public static final DropwizardAppRule<ApplicationConfig> RULE = SystemTestHelpers.createStandardRule();
-    private static final APIJobSubmissionRequest REQUEST_AGAINST_FIRST_SPEC;
-    private static final APIJobSubmissionRequest REQUEST_AGAINST_SECOND_SPEC;
-    private static final APIJobSubmissionRequest REQUEST_AGAINST_THIRD_SPEC;
-    private static final APIJobSubmissionRequest REQUEST_AGAINST_FOUTH_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_FIRST_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_SECOND_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_THIRD_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_FOUTH_SPEC;
 
     static {
         REQUEST_AGAINST_FIRST_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-first-spec.json",
-                APIJobSubmissionRequest.class);
+                APIJobRequest.class);
         REQUEST_AGAINST_SECOND_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-second-spec.json",
-                APIJobSubmissionRequest.class);
+                APIJobRequest.class);
         REQUEST_AGAINST_THIRD_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-third-spec.json",
-                APIJobSubmissionRequest.class);
+                APIJobRequest.class);
         REQUEST_AGAINST_FOUTH_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-fourth-spec.json",
-                APIJobSubmissionRequest.class);
+                APIJobRequest.class);
     }
 
 
     @Test
     public void testUnauthorizedIfCallingAPIWithoutCredentials() throws IOException {
-        final Response response = generateRequest(RULE, JobResource.PATH)
+        final Response response = generateRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(REQUEST_AGAINST_FIRST_SPEC));
 
         assertThat(response.getStatus()).isEqualTo(UNAUTHORIZED);
@@ -79,7 +81,7 @@ public final class TestJobsAPI {
 
     @Test
     public void testBadRequestIfAuthorizedButBadRequest() throws IOException {
-        final Response response = generateAuthenticatedRequest(RULE, JobResource.PATH)
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(singletonList("Not a request")));
 
         assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
@@ -87,7 +89,7 @@ public final class TestJobsAPI {
 
     @Test
     public void testOKForCorrectAuthorizedRequest() throws IOException {
-        final Response response = generateAuthenticatedRequest(RULE, JobResource.PATH)
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(REQUEST_AGAINST_FIRST_SPEC));
 
         assertThat(response.getStatus()).isEqualTo(OK);
@@ -95,7 +97,7 @@ public final class TestJobsAPI {
 
     @Test
     public void testCorrectRequestAgainst2ndSpecRespondsWithOK() throws IOException {
-        final Response response = generateAuthenticatedRequest(RULE, JobResource.PATH)
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(REQUEST_AGAINST_SECOND_SPEC));
 
         assertThat(response.getStatus()).isEqualTo(OK);
@@ -103,18 +105,18 @@ public final class TestJobsAPI {
 
     @Test
     public void testOKResponseContainsJobResponse() throws IOException {
-        final Response response = generateAuthenticatedRequest(RULE, JobResource.PATH)
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(REQUEST_AGAINST_SECOND_SPEC));
 
-        response.readEntity(APIJobSubmissionResponse.class);
+        response.readEntity(APIJobCreatedResponse.class);
     }
 
     @Test
     public void testCanGETJobDetailsForANewJob() throws IOException {
-        final Response response = generateAuthenticatedRequest(RULE, JobResource.PATH)
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(REQUEST_AGAINST_SECOND_SPEC));
 
-        final JobId jobId = response.readEntity(APIJobSubmissionResponse.class).getId();
+        final JobId jobId = response.readEntity(APIJobCreatedResponse.class).getId();
 
         final Invocation.Builder requestForDetailsBuilder =
                 generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId));
@@ -122,23 +124,23 @@ public final class TestJobsAPI {
         final Response detailsResponse = requestForDetailsBuilder.get();
 
         assertThat(detailsResponse.getStatus()).isEqualTo(OK);
-        readJSON(detailsResponse.readEntity(String.class), APIJobResponse.class);
+        readJSON(detailsResponse.readEntity(String.class), APIJob.class);
     }
 
     private String jobResourceSubpath(Object subpath) {
-        return JobResource.PATH + "/" + subpath.toString();
+        return HTTP_JOBS_PATH + "/" + subpath.toString();
     }
 
     @Test
     public void testCanAbortAJob() throws IOException {
-        final Response response = generateAuthenticatedRequest(RULE, JobResource.PATH)
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(REQUEST_AGAINST_THIRD_SPEC));
 
-        final JobId jobId = response.readEntity(APIJobSubmissionResponse.class).getId();
+        final JobId jobId = response.readEntity(APIJobCreatedResponse.class).getId();
 
-        final APIJobResponse APIJobResponse = fetchJobDetails(jobId);
+        final APIJob APIJobDetails = fetchJobDetails(jobId);
 
-        assertThat(APIJobResponse.latestStatus()).isEqualTo(RUNNING);
+        assertThat(APIJobDetails.latestStatus()).isEqualTo(RUNNING);
 
         final Invocation.Builder abortionRequest = generateAuthenticatedRequest(
                 RULE, jobResourceSubpath(jobId + "/abort"));
@@ -147,42 +149,42 @@ public final class TestJobsAPI {
 
         assertThat(abortionResponse.getStatus()).isEqualTo(NO_CONTENT);
 
-        final APIJobResponse jobDetailsAfterAbortion = fetchJobDetails(jobId);
+        final APIJob jobDetailsAfterAbortion = fetchJobDetails(jobId);
 
         assertThat(jobDetailsAfterAbortion.latestStatus()).isEqualTo(ABORTED);
     }
 
-    private APIJobResponse fetchJobDetails(JobId jobId) throws IOException {
+    private APIJob fetchJobDetails(JobId jobId) throws IOException {
         final Invocation.Builder builder = generateRequest(RULE, jobResourceSubpath(jobId));
         authenticate(builder);
-        return readJSON(builder.get().readEntity(String.class), APIJobResponse.class);
+        return readJSON(builder.get().readEntity(String.class), APIJob.class);
     }
 
     @Test
     public void testCanGETJobSummaries() throws IOException {
         final Invocation.Builder builder =
-                generateAuthenticatedRequest(RULE, JobResource.PATH);
+                generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH);
 
         for (int i = 0; i < 10; i++) {
-            builder.post(json(REQUEST_AGAINST_SECOND_SPEC), APIJobSubmissionResponse.class);
+            builder.post(json(REQUEST_AGAINST_SECOND_SPEC), APIJobCreatedResponse.class);
         }
 
         final Response jobSummariesResponse =
-                generateAuthenticatedRequest(RULE, JobResource.PATH).get();
+                generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH).get();
 
         assertThat(jobSummariesResponse.getStatus()).isEqualTo(OK);
 
-        final APIJobsResponse jobSummaries =
-                readJSON(jobSummariesResponse.readEntity(String.class), APIJobsResponse.class);
+        final APIJobDetailsCollection jobSummaries =
+                readJSON(jobSummariesResponse.readEntity(String.class), APIJobDetailsCollection.class);
 
         assertThat(jobSummaries.getEntries().isEmpty()).isFalse();
     }
 
     @Test
     public void testCanGETStdout() throws IOException, InterruptedException {
-        final JobId jobId = generateAuthenticatedRequest(RULE, JobResource.PATH)
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(REQUEST_AGAINST_FIRST_SPEC))
-                .readEntity(APIJobSubmissionResponse.class)
+                .readEntity(APIJobCreatedResponse.class)
                 .getId();
 
         // Give the job a chance to spin up and write to stdout
@@ -202,9 +204,9 @@ public final class TestJobsAPI {
 
     @Test
     public void testCanListJobOutputs() throws InterruptedException, IOException {
-        final JobId jobId = generateAuthenticatedRequest(RULE, JobResource.PATH)
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(REQUEST_AGAINST_FOUTH_SPEC))
-                .readEntity(APIJobSubmissionResponse.class)
+                .readEntity(APIJobCreatedResponse.class)
                 .getId();
 
         // TODO: Websocket hook this instead.
@@ -223,9 +225,9 @@ public final class TestJobsAPI {
 
     @Test
     public void testCanGetJobOutput() throws InterruptedException {
-        final JobId jobId = generateAuthenticatedRequest(RULE, JobResource.PATH)
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(REQUEST_AGAINST_FOUTH_SPEC))
-                .readEntity(APIJobSubmissionResponse.class)
+                .readEntity(APIJobCreatedResponse.class)
                 .getId();
 
         // TODO: Websocket hook this instead.

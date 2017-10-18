@@ -23,17 +23,17 @@ import ch.qos.logback.classic.Level;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
-import com.github.jobson.api.v1.APIJobSubmissionRequest;
+import com.github.jobson.api.v1.APIJobRequest;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.dao.jobs.FilesystemJobsDAO;
 import com.github.jobson.dao.specs.FilesystemJobSpecDAO;
-import com.github.jobson.jobs.execution.JobExecutor;
-import com.github.jobson.jobs.execution.LocalJobExecutor;
-import com.github.jobson.jobs.management.JobEventListeners;
-import com.github.jobson.jobs.management.JobManager;
-import com.github.jobson.jobs.states.FinalizedJob;
-import com.github.jobson.jobs.states.ValidJobRequest;
+import com.github.jobson.jobs.JobExecutor;
+import com.github.jobson.jobs.LocalJobExecutor;
+import com.github.jobson.jobs.JobEventListeners;
+import com.github.jobson.jobs.JobManager;
+import com.github.jobson.jobs.jobstates.FinalizedJob;
+import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.utils.EitherVisitor;
 import com.github.jobson.utils.ValidationError;
 import io.dropwizard.setup.Bootstrap;
@@ -100,9 +100,9 @@ public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConf
 
         final String requestJson = new String(requestBytes);
 
-        final APIJobSubmissionRequest jobSubmissionRequest;
+        final APIJobRequest jobSubmissionRequest;
         try {
-            jobSubmissionRequest = readJSON(requestJson, APIJobSubmissionRequest.class);
+            jobSubmissionRequest = readJSON(requestJson, APIJobRequest.class);
         } catch (JsonParseException ex) {
             System.err.println("Could not parse json. Message: " + ex.getMessage());
             System.exit(1);
@@ -120,7 +120,7 @@ public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConf
 
         log.info("Creating temporary directory for job working dirs");
         final Path jobWorkingDirs = Files.createTempDirectory("wds");
-        final JobExecutor jobExecutor = new LocalJobExecutor(jobWorkingDirs, Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS);
+        final JobExecutor jobExecutor = new LocalJobExecutor(jobWorkingDirs, Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_SECONDS);
 
         final FilesystemJobsDAO filesystemJobsDAO = new FilesystemJobsDAO(tmpDir, () -> Helpers.generateRandomBase36String(10));
 

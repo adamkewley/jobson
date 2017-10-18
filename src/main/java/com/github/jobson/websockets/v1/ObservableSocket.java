@@ -55,24 +55,24 @@ public abstract class ObservableSocket<T> {
     protected abstract void onMessage(T messageData) throws IOException;
 
     private void onStderrError(Throwable ex) {
-        log.error("Closing websocket because an error was thrown by the observable. Error: " + ex);
+        log.debug("Closing websocket because an error was thrown by the observable. Error: " + ex);
         this.session.close(SERVER_UNEXPECTED_CONDITION_STATUS, "Internal server error");
     }
 
     private void onStderrClosed() {
-        log.info("Closing websocket because observable closed");
+        log.debug("Closing websocket because observable closed");
         this.session.close(NORMAL_SOCKET_CLOSURE_STATUS, "Sever event stream ended");
     }
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
-        log.info("Creating websocket");
+        log.info("Creating websocket: " + session.getRemote().getInetSocketAddress().toString());
         this.session = session;
     }
 
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
-        log.info("Closing websocket. Reason: " + closeReason);
+        log.debug("Closing websocket: reason: " + closeReason + ": session: " + session.getRemote().getInetSocketAddress().toString());
         this.eventsSubscription.dispose();
     }
 }

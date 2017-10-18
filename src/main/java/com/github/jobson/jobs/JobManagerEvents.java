@@ -17,17 +17,17 @@
  * under the License.
  */
 
-package com.github.jobson.jobs.management;
+package com.github.jobson.jobs;
 
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.jobs.states.FinalizedJob;
-import com.github.jobson.jobs.states.ValidJobRequest;
-import com.github.jobson.utils.CancelablePromise;
-import org.apache.commons.lang3.tuple.Pair;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.websockets.v1.JobEvent;
+import io.reactivex.Observable;
 
-public interface JobManagerActions {
+import java.util.Optional;
 
-    Pair<JobId, CancelablePromise<FinalizedJob>> submit(ValidJobRequest validJobRequest);
-    Pair<JobId, CancelablePromise<FinalizedJob>> submit(ValidJobRequest validJobRequest, JobEventListeners jobEventListeners);
-    boolean tryAbort(JobId jobId);
+public interface JobManagerEvents {
+
+    Observable<JobEvent> allJobStatusChanges();
+    Optional<Observable<byte[]>> stdoutUpdates(JobId jobId);
+    Optional<Observable<byte[]>> stderrUpdates(JobId jobId);
 }

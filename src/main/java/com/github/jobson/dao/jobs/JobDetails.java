@@ -25,11 +25,11 @@
 package com.github.jobson.dao.jobs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobStatus;
-import com.github.jobson.api.v1.JobTimestamp;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
-import com.github.jobson.jobs.states.PersistedJobRequest;
+import com.github.jobson.jobs.jobstates.PersistedJob;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
@@ -37,12 +37,12 @@ import java.util.List;
 
 public class JobDetails {
 
-    public static JobDetails fromPersistedJob(PersistedJobRequest persistedJobRequest) {
+    public static JobDetails fromPersistedJob(PersistedJob persistedJob) {
         return new JobDetails(
-                persistedJobRequest.getId(),
-                persistedJobRequest.getName(),
-                persistedJobRequest.getOwner(),
-                persistedJobRequest.getTimestamps());
+                persistedJob.getId(),
+                persistedJob.getName(),
+                persistedJob.getOwner(),
+                persistedJob.getTimestamps());
     }
 
 
@@ -111,7 +111,6 @@ public class JobDetails {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -125,7 +124,6 @@ public class JobDetails {
 
     @Override
     public int hashCode() {
-
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (owner != null ? owner.hashCode() : 0);

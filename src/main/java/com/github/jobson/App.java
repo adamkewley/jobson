@@ -1,6 +1,6 @@
 package com.github.jobson;
 
-import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.commands.*;
 import com.github.jobson.config.ApplicationConfig;
@@ -10,9 +10,9 @@ import com.github.jobson.dao.specs.FilesystemJobSpecDAO;
 import com.github.jobson.dao.specs.JobSpecDAO;
 import com.github.jobson.dao.users.FilesystemUserDAO;
 import com.github.jobson.dao.users.UserDAO;
-import com.github.jobson.jobs.execution.JobExecutor;
-import com.github.jobson.jobs.execution.LocalJobExecutor;
-import com.github.jobson.jobs.management.JobManager;
+import com.github.jobson.jobs.JobExecutor;
+import com.github.jobson.jobs.LocalJobExecutor;
+import com.github.jobson.jobs.JobManager;
 import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.resources.v1.JobSpecResource;
 import com.github.jobson.resources.v1.UserResource;
@@ -36,8 +36,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
 
+import static com.github.jobson.Constants.WEBSOCKET_STDERR_UPDATES_PATTERN;
+import static com.github.jobson.Constants.WEBSOCKET_STDOUT_UPDATES_PATTERN;
+import static com.github.jobson.Constants.WEBSOCKET_TCP_IDLE_TIMEOUT_IN_MILLISECONDS;
 import static com.github.jobson.Helpers.generateRandomBase36String;
-import static com.github.jobson.api.v1.JobStatus.ABORTED;
+import static com.github.jobson.jobs.JobStatus.ABORTED;
 
 public final class App extends Application<ApplicationConfig> {
 
@@ -117,7 +120,7 @@ public final class App extends Application<ApplicationConfig> {
         log.debug("Creating job executor");
         final JobExecutor jobExecutor = new LocalJobExecutor(
                 workingDirsPath,
-                Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS);
+                Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_SECONDS);
 
         log.debug("Creating job DAO");
         final JobDAO jobDAO = new FilesystemJobsDAO(jobsPath, () -> generateRandomBase36String(10));
@@ -140,18 +143,19 @@ public final class App extends Application<ApplicationConfig> {
 
         log.debug("Enabling websockets");
         final WebSocketUpgradeFilter wsFilter = WebSocketUpgradeFilter.configureContext(environment.getApplicationContext());
+        wsFilter.getFactory().getPolicy().setIdleTimeout(WEBSOCKET_TCP_IDLE_TIMEOUT_IN_MILLISECONDS);
 
         log.debug("Enabling job events (multi-job) websocket endpoint");
         wsFilter.addMapping(Constants.WEBSOCKET_JOB_EVENTS_PATH, new JobEventSocketCreator(jobManager));
 
         log.debug("Enabling job stderr updates websocket endpoint");
         wsFilter.addMapping(
-                new RegexPathSpec(StderrUpdateSocketCreator.URI_PATTERN_REGEXP),
+                new RegexPathSpec(WEBSOCKET_STDERR_UPDATES_PATTERN),
                 new StderrUpdateSocketCreator(jobManager));
 
         log.debug("Enabling job stdout updates websocket endpoint");
         wsFilter.addMapping(
-                new RegexPathSpec(StdoutUpdateSocketCreator.URI_PATTERN_REGEXP),
+                new RegexPathSpec(WEBSOCKET_STDOUT_UPDATES_PATTERN),
                 new StdoutUpdateSocketCreator(jobManager));
 
 

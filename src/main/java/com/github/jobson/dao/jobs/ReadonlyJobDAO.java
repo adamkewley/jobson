@@ -19,8 +19,8 @@
 
 package com.github.jobson.dao.jobs;
 
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobStatus;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.dao.BinaryData;
 import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;

@@ -34,7 +34,7 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.codec.digest.Crypt.crypt;
 
 /**
- * An authenticator that uses the UserDAO to authenticate users (as opposed to
+ * An authenticator that uses a UserDAO to authenticate users (as opposed to
  * an external system like OAuth2)
  */
 public final class BasicAuthenticator implements Authenticator<BasicCredentials, Principal> {

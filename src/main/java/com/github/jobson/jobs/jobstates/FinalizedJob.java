@@ -17,11 +17,11 @@
  * under the License.
  */
 
-package com.github.jobson.jobs.states;
+package com.github.jobson.jobs.jobstates;
 
-import com.github.jobson.api.v1.JobId;
-import com.github.jobson.api.v1.JobStatus;
-import com.github.jobson.api.v1.JobTimestamp;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
@@ -30,7 +30,7 @@ import com.github.jobson.specs.JobSpec;
 import java.util.List;
 import java.util.Map;
 
-public final class FinalizedJob extends PersistedJobRequest {
+public final class FinalizedJob extends PersistedJob {
 
     public static FinalizedJob fromExecutingJob(ExecutingJob executingJob, JobStatus finalStatus) {
         return new FinalizedJob(

@@ -41,6 +41,14 @@ import java.util.Optional;
 import static com.github.jobson.Helpers.readJSON;
 import static java.lang.Thread.currentThread;
 
+/**
+ * Configuration for an authentication configuration that is loaded at runtime.
+ * This top-level config loads the class (or jar) at runtime. That class is then
+ * instantiated with the "properties".
+ *
+ * Allows for configuration-defined authenticators (rather than the ones that come
+ * "in the box" with the system).
+ */
 public final class CustomAuthenticatorConfig implements AuthenticationConfig {
 
     private final AuthenticationConfig loadedConfig;

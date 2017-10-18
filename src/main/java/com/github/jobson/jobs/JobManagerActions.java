@@ -17,14 +17,16 @@
  * under the License.
  */
 
-package com.github.jobson.jobs.execution;
+package com.github.jobson.jobs;
 
-import com.github.jobson.jobs.management.JobEventListeners;
-import com.github.jobson.jobs.states.PersistedJobRequest;
+import com.github.jobson.jobs.jobstates.FinalizedJob;
+import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.utils.CancelablePromise;
+import org.apache.commons.lang3.tuple.Pair;
 
-public interface JobExecutor {
-    CancelablePromise<JobExecutionResult> execute(
-            PersistedJobRequest persistedJobRequest,
-            JobEventListeners jobEventListeners);
+public interface JobManagerActions {
+
+    Pair<JobId, CancelablePromise<FinalizedJob>> submit(ValidJobRequest validJobRequest);
+    Pair<JobId, CancelablePromise<FinalizedJob>> submit(ValidJobRequest validJobRequest, JobEventListeners jobEventListeners);
+    boolean tryAbort(JobId jobId);
 }

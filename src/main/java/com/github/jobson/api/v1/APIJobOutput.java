@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiModel;
 
 import javax.validation.constraints.NotNull;
 
-@ApiModel(description = "Information about a job's output")
+@ApiModel(description = "Details about an output produced by a job")
 public final class APIJobOutput {
 
     @JsonProperty

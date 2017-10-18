@@ -20,7 +20,7 @@
 package com.github.jobson.websockets.v1;
 
 import com.github.jobson.Helpers;
-import com.github.jobson.jobs.management.JobManagerEvents;
+import com.github.jobson.jobs.JobManagerEvents;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;

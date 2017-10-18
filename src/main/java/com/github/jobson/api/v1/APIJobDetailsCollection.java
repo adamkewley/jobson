@@ -28,11 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 @ApiModel(description = "Response to a request for job summaries")
-public final class APIJobsResponse {
+public final class APIJobDetailsCollection {
 
     @ApiModelProperty(value = "The entries returned")
     @JsonProperty
-    private List<APIJobResponse> entries;
+    private List<APIJob> entries;
 
     @ApiModelProperty(value = "Links to related resources and actions")
     @JsonProperty
@@ -43,10 +43,10 @@ public final class APIJobsResponse {
     /**
      * @deprecated Used by JSON deserializer
      */
-    public APIJobsResponse() {}
+    public APIJobDetailsCollection() {}
 
-    public APIJobsResponse(
-            List<APIJobResponse> entries,
+    public APIJobDetailsCollection(
+            List<APIJob> entries,
             Map<String, APIRestLink> _links) {
 
         this.entries = entries;
@@ -55,7 +55,7 @@ public final class APIJobsResponse {
 
 
 
-    public List<APIJobResponse> getEntries() {
+    public List<APIJob> getEntries() {
         return entries;
     }
 
