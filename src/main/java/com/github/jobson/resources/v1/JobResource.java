@@ -19,12 +19,14 @@
 
 package com.github.jobson.resources.v1;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Helpers;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.dao.BinaryData;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.jobs.ReadonlyJobDAO;
 import com.github.jobson.dao.specs.JobSpecConfigurationDAO;
+import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobManagerActions;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
@@ -362,6 +364,26 @@ public final class JobResource {
 
         return jobDAO.getSpecJobWasSubmittedAgainst(jobId)
                 .map(APIJobSpec::fromJobSpec);
+    }
+
+    @GET
+    @Path("/{job-id}/inputs")
+    @ApiOperation(
+            value = "Get the job's inputs",
+            notes = "Get the inputs that were supplied when the job was submitted.")
+    @PermitAll
+    public Optional<Map<JobExpectedInputId, JsonNode>> fetchJobInputs(
+            @Context
+                    SecurityContext context,
+            @ApiParam(value = "ID of the job to get inputs for")
+            @PathParam("job-id")
+            @NotNull
+                    JobId jobId) {
+
+        if (jobId == null)
+            throw new WebApplicationException("Job ID cannot be null", 400);
+
+        return jobDAO.getJobInputs(jobId);
     }
 
     @GET

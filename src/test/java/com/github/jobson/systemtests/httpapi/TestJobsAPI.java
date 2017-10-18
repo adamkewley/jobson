@@ -20,8 +20,11 @@
 package com.github.jobson.systemtests.httpapi;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.config.ApplicationConfig;
+import com.github.jobson.jobinputs.JobExpectedInputId;
+import com.github.jobson.jobinputs.JobInput;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.systemtests.SystemTestHelpers;
@@ -238,5 +241,28 @@ public final class TestJobsAPI {
 
         assertThat(jobOutputsResponse.getStatus()).isEqualTo(OK);
         assertThat(jobOutputsResponse.getHeaderString("Content-Type")).isEqualTo("text/plain");
+    }
+
+    @Test
+    public void testCanGetJobInputs() throws IOException {
+        final APIJobRequest req = REQUEST_AGAINST_FIRST_SPEC;
+
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(req))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
+
+        final Response jobInputsResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/inputs"))
+                .get();
+
+        assertThat(jobInputsResponse.getStatus()).isEqualTo(OK);
+
+        final String responseJson = jobInputsResponse.readEntity(String.class);
+
+        final Map<JobExpectedInputId, JsonNode> inputsReturned =
+                readJSON(responseJson, new TypeReference<Map<JobExpectedInputId, JsonNode>>() {});
+
+        assertThat(inputsReturned).isEqualTo(req.getInputs());
     }
 }

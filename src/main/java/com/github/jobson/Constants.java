@@ -31,6 +31,7 @@ public final class Constants {
     public static final String JOB_DIR_STDERR_FILENAME = "stderr";
     public static final String JOB_DIR_JOB_DETAILS_FILENAME = "request.json";
     public static final String JOB_DIR_JOB_SPEC_FILENAME = "spec.json";
+    public static final String JOB_DIR_JOB_INPUTS_FILENAME = "inputs.json";
     public static final String JOB_DIR_OUTPUTS_DIRNAME = "outputs";
     public static final String JOB_DIR_OUTPUTS_FILENAME = "outputs.json";
 

@@ -19,8 +19,10 @@
 
 package com.github.jobson.dao.jobs;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
+import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobTimestamp;
@@ -43,6 +45,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.github.jobson.Constants.JOB_TIMESTAMP_RESOLUTION_IN_MILLISECONDS;
+import static com.github.jobson.Helpers.mapValues;
 import static com.github.jobson.Helpers.randomKeyIn;
 import static com.github.jobson.Helpers.randomSubstring;
 import static com.github.jobson.TestHelpers.*;
@@ -553,6 +556,27 @@ public abstract class JobsDAOTest {
         assertThat(last).isPresent();
         assertThat(last.get().getMessage().get()).isEqualTo(newStatusMessage);
         assertThat(last.get().getStatus()).isEqualTo(newStatus);
+    }
+
+
+    @Test
+    public void testGetJobInputsReturnsEmptyIfJobDoesNotExist() {
+        final JobDAO dao = getInstance();
+
+        assertThat(dao.getJobInputs(generateJobId())).isNotPresent();
+    }
+
+    @Test
+    public void testGetJobInputsReturnsTheSuppliedInputsIfTheJobDoesExist() {
+        final JobDAO dao = getInstance();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        final Optional<Map<JobExpectedInputId, JsonNode>> maybeInputs =
+                dao.getJobInputs(jobId);
+        final Map<JobExpectedInputId, JsonNode> expectedInptus =
+                mapValues(STANDARD_VALID_REQUEST.getInputs(), Helpers::toJSONNode);
+
+        assertThat(maybeInputs.isPresent());
+        assertThat(maybeInputs.get()).isEqualTo(expectedInptus);
     }
 
 

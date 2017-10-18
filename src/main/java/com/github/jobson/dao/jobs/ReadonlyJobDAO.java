@@ -19,6 +19,8 @@
 
 package com.github.jobson.dao.jobs;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.dao.BinaryData;
@@ -52,4 +54,6 @@ public interface ReadonlyJobDAO {
     Optional<BinaryData> getOutput(JobId jobId, String outputId);
 
     Map<String, JobOutput> getJobOutputs(JobId jobId);
+
+    Optional<Map<JobExpectedInputId, JsonNode>> getJobInputs(JobId jobId);
 }

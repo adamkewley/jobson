@@ -20,7 +20,9 @@
 package com.github.jobson.dao.jobs;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Helpers;
+import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobTimestamp;
@@ -207,6 +209,10 @@ public final class FilesystemJobsDAO implements JobDAO {
             final Path jobDetailsPath = jobDir.resolve(JOB_DIR_JOB_DETAILS_FILENAME);
             writeJSON(jobDetailsPath, fromPersistedJob(persistedJob));
             log.debug(id + ": written job details: " + jobDetailsPath);
+
+            final Path jobInputsPath = jobDir.resolve(JOB_DIR_JOB_INPUTS_FILENAME);
+            writeJSON(jobInputsPath, persistedJob.getInputs());
+            log.debug(id + ": written job inputs: " + jobInputsPath);
         } catch (IOException ex) {
             log.error(id + ": could not setup job directory: " + ex);
             throw new RuntimeException(ex);
@@ -364,6 +370,18 @@ public final class FilesystemJobsDAO implements JobDAO {
                     }
                 })
                 .orElse(new HashMap<>());
+    }
+
+    @Override
+    public Optional<Map<JobExpectedInputId, JsonNode>> getJobInputs(JobId jobId) {
+        return resolveJobFile(jobId, JOB_DIR_JOB_INPUTS_FILENAME)
+                .map(inputsFile -> {
+                    try {
+                        return loadJSON(inputsFile, new TypeReference<Map<JobExpectedInputId, JsonNode>>() {});
+                    } catch (IOException ex) {
+                        throw new RuntimeException(inputsFile + ": cannot deserialize: " + ex);
+                    }
+                });
     }
 
     @Override

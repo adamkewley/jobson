@@ -19,6 +19,7 @@
 
 package com.github.jobson.resources.v1;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Constants;
 import com.github.jobson.HttpStatusCodes;
 import com.github.jobson.TestHelpers;
@@ -60,6 +61,7 @@ import static com.github.jobson.Constants.HTTP_JOBS_PATH;
 import static com.github.jobson.HttpStatusCodes.NOT_FOUND;
 import static com.github.jobson.TestHelpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -911,5 +913,35 @@ public final class JobResourceTest {
                 jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateRandomString());
 
         assertThat(ret.getHeaderString("Content-Type")).isEqualTo(mimeType);
+    }
+
+    @Test
+    public void testFetchJobInputsThrows404IfJobDoesNotExist() {
+        final JobDAO jobDAO = mock(JobDAO.class);
+        when(jobDAO.jobExists(any())).thenReturn(false);
+        when(jobDAO.getJobInputs(any())).thenReturn(Optional.empty());
+
+        final JobResource jobResource = resourceThatUses(jobDAO);
+
+        assertThat(
+                jobResource.fetchJobInputs(generateSecureSecurityContext(), generateJobId())
+        ).isNotPresent();
+    }
+
+    @Test
+    public void testFetchJobInputsReturnsJobInputsFromDAOIfJobExists() {
+        final Map<JobExpectedInputId, JsonNode> inputs = new HashMap<>();
+
+        final JobDAO jobDAO = mock(JobDAO.class);
+        when(jobDAO.jobExists(any())).thenReturn(true);
+        when(jobDAO.getJobInputs(any())).thenReturn(Optional.of(inputs));
+
+        final JobResource jobResource = resourceThatUses(jobDAO);
+
+        final Optional<Map<JobExpectedInputId, JsonNode>> ret =
+                jobResource.fetchJobInputs(generateSecureSecurityContext(), generateJobId());
+
+        assertThat(ret).isPresent();
+        assertThat(ret.get()).isEqualTo(inputs);
     }
 }
