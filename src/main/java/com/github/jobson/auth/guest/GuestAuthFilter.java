@@ -25,14 +25,16 @@ import javax.ws.rs.container.ContainerRequestContext;
 import java.io.IOException;
 import java.security.Principal;
 
-public final class GuestAuthFilter<P extends Principal> extends AuthFilter<Void, P> {
+import static com.github.jobson.Constants.DEFAULT_GUEST_AUTH_REALM;
+
+public final class GuestAuthFilter<P extends Principal> extends AuthFilter<String, P> {
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-        this.authenticate(containerRequestContext, null, "GUEST");
+        this.authenticate(containerRequestContext, "", DEFAULT_GUEST_AUTH_REALM);
     }
 
-    public static class Builder<P extends Principal> extends AuthFilterBuilder<Void, P, GuestAuthFilter<P>> {
+    public static class Builder<P extends Principal> extends AuthFilterBuilder<String, P, GuestAuthFilter<P>> {
         public Builder() {}
 
         @Override

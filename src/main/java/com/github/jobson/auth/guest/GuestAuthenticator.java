@@ -34,7 +34,7 @@ import java.util.Optional;
  * An authenticator that always authenticates, returning a principal with the
  * ctor-supplied username.
  */
-public final class GuestAuthenticator implements Authenticator<Void, Principal> {
+public final class GuestAuthenticator implements Authenticator<String, Principal> {
 
     private final Optional<Principal> p;
 
@@ -43,7 +43,9 @@ public final class GuestAuthenticator implements Authenticator<Void, Principal> 
     }
 
     @Override
-    public Optional<Principal> authenticate(Void aVoid) throws AuthenticationException {
+    public Optional<Principal> authenticate(String ignoredString) throws AuthenticationException {
+        // The redundant string is needed because the dropwizard auth doesn't like
+        // nulls being passed around (even if an arg is Void).
         return p;
     }
 }

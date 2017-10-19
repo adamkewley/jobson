@@ -33,41 +33,25 @@ import javax.ws.rs.core.Response;
 
 import static com.github.jobson.Constants.HTTP_USERS_PATH;
 import static com.github.jobson.HttpStatusCodes.OK;
-import static com.github.jobson.HttpStatusCodes.UNAUTHORIZED;
-import static com.github.jobson.TestHelpers.generateRandomString;
-import static com.github.jobson.systemtests.SystemTestHelpers.*;
+import static com.github.jobson.systemtests.SystemTestHelpers.createStandardRuleWithTemplate;
+import static com.github.jobson.systemtests.SystemTestHelpers.generateRequest;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
-public final class TestCustomAuth {
-
-    private static final String USERNAME_IN_CONFIG_TEMPLATE = "some-username";
-    private static final String PASSWORD_IN_CONFIG_TEMPLATE = "some-password";
+public final class TestGuestAuth {
 
     @ClassRule
     public static final DropwizardAppRule<ApplicationConfig> RULE =
-            createStandardRuleWithTemplate("fixtures/systemtests/auth/custom-auth-config.yml");
-
+            createStandardRuleWithTemplate("fixtures/systemtests/auth/guest-auth-config.yml");
 
     @Test
     public void testBoots() {}
 
     @Test
-    public void testAcceptsCredentialsHardCodedByTheCustomAuthScheme() {
+    public void testCanUseApiToRequestUserId() {
         final Invocation.Builder b = generateRequest(RULE, HTTP_USERS_PATH + "/current");
-        authenticate(b, USERNAME_IN_CONFIG_TEMPLATE, PASSWORD_IN_CONFIG_TEMPLATE);
 
         final Response response = b.get();
 
         assertThat(response.getStatus()).isEqualTo(OK);
-    }
-
-    @Test
-    public void testRejectsRequestsIfTheyDoNotMatchCustomScheme() {
-        final Invocation.Builder b = generateRequest(RULE, HTTP_USERS_PATH + "/current");
-        authenticate(b, USERNAME_IN_CONFIG_TEMPLATE, generateRandomString());
-
-        final Response response = b.get();
-
-        assertThat(response.getStatus()).isEqualTo(UNAUTHORIZED);
     }
 }

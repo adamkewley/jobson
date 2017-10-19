@@ -20,12 +20,16 @@
 package com.github.jobson.auth.guest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.jobson.Constants;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.auth.PermitAllAuthorizer;
 import com.github.jobson.config.AuthenticationConfig;
 import io.dropwizard.auth.AuthFilter;
 
 import java.security.Principal;
+
+import static com.github.jobson.Constants.DEFAULT_GUEST_AUTH_REALM;
+import static com.github.jobson.Constants.DEFAULT_GUEST_USERNAME;
 
 /**
  * An authentication configuration that just lets any connection through to the
@@ -34,14 +38,14 @@ import java.security.Principal;
 public final class GuestAuthenticationConfig implements AuthenticationConfig {
 
     @JsonProperty
-    private String guestUserName = "guest";
+    private String guestUserName = DEFAULT_GUEST_USERNAME;
 
     @Override
     public AuthFilter<?, Principal> createAuthFilter(AuthenticationBootstrap bootstrap) {
         return new GuestAuthFilter.Builder<>()
                 .setAuthenticator(new GuestAuthenticator(guestUserName))
                 .setAuthorizer(new PermitAllAuthorizer())
-                .setRealm("GUEST")
+                .setRealm(DEFAULT_GUEST_AUTH_REALM)
                 .buildAuthFilter();
     }
 }

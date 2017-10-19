@@ -1,0 +1,22 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+
+specs:
+  dir: $jobSpecDir
+
+jobs:
+  dir: $jobDataDir
+
+workingDirs:
+  dir: $workingDirsDir
+
+users:
+  file: $userFile
+
+authentication:
+  type: guest

@@ -28,6 +28,8 @@ import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 
 import java.security.Principal;
 
+import static com.github.jobson.Constants.DEFAULT_BASIC_AUTH_REALM;
+
 /**
  * Configuration for a basic authenticator. Authenticates incoming requests using
  * the HTTP Basic protocol (RFC 2617)
@@ -35,7 +37,7 @@ import java.security.Principal;
 public final class BasicAuthenticatorConfig implements AuthenticationConfig {
 
     @JsonProperty
-    private String realm = "JobsonBasicAuth";
+    private String realm = DEFAULT_BASIC_AUTH_REALM;
 
 
     @Override

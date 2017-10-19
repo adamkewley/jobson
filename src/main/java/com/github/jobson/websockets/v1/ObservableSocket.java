@@ -66,13 +66,12 @@ public abstract class ObservableSocket<T> {
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
-        log.info("Creating websocket: " + session.getRemote().getInetSocketAddress().toString());
+        log.info("Creating websocket: ");
         this.session = session;
     }
 
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
-        log.debug("Closing websocket: reason: " + closeReason + ": session: " + session.getRemote().getInetSocketAddress().toString());
         this.eventsSubscription.dispose();
     }
 }
