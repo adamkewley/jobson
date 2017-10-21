@@ -19,7 +19,6 @@
 
 package com.github.jobson.websockets.v1;
 
-import com.github.jobson.Constants;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobManagerEvents;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;

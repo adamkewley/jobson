@@ -19,9 +19,11 @@
 
 package com.github.jobson.dao.specs;
 
+import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.Constants;
-import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.specs.JobSpecId;
+import com.github.jobson.utils.DiskSpaceHealthCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +34,14 @@ import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import static com.github.jobson.Constants.FILESYSTEM_SPECS_DAO_DISK_SPACE_HEALTHCHECK;
+import static com.github.jobson.Constants.FILESYSTEM_SPECS_DAO_DISK_SPACE_WARNING_THRESHOLD_IN_BYTES;
 import static com.github.jobson.Helpers.listDirectories;
 import static com.github.jobson.Helpers.readYAML;
+import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
@@ -91,6 +97,15 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
         } else {
             return loadJobSpecConfiguration(jobSpecDir);
         }
+    }
+
+    @Override
+    public Map<String, HealthCheck> getHealthChecks() {
+        return singletonMap(
+                FILESYSTEM_SPECS_DAO_DISK_SPACE_HEALTHCHECK,
+                new DiskSpaceHealthCheck(
+                        jobSpecsDir.toFile(),
+                        FILESYSTEM_SPECS_DAO_DISK_SPACE_WARNING_THRESHOLD_IN_BYTES));
     }
 
     @Override

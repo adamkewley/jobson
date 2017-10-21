@@ -20,11 +20,11 @@
 package com.github.jobson.jobs.jobstates;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.jobson.jobs.JobId;
-import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.utils.CancelablePromise;
 import io.reactivex.Observable;

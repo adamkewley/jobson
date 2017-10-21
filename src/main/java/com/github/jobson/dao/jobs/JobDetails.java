@@ -25,10 +25,10 @@
 package com.github.jobson.dao.jobs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobTimestamp;
-import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import io.swagger.annotations.ApiModelProperty;
 

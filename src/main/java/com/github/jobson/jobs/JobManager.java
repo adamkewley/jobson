@@ -19,6 +19,7 @@
 
 package com.github.jobson.jobs;
 
+import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.jobstates.*;
 import com.github.jobson.utils.CancelablePromise;
@@ -37,9 +38,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static com.github.jobson.Constants.JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHCHECK;
+import static com.github.jobson.Constants.JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD;
 import static com.github.jobson.Helpers.now;
 import static com.github.jobson.Helpers.tryGet;
 import static com.github.jobson.jobs.JobStatus.*;
+import static java.lang.String.format;
 
 public final class JobManager implements JobManagerEvents, JobManagerActions {
 
@@ -190,5 +194,24 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
                 FinalizedJob.fromExecutingJob(executingJob, jobExecutionResult.getFinalStatus());
 
         executingJob.getCompletionPromise().complete(finalizedJob);
+    }
+
+    public Map<String, HealthCheck> getHealthChecks() {
+        return Collections.singletonMap(
+                JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHCHECK,
+                new HealthCheck() {
+                    @Override
+                    protected Result check() throws Exception {
+                        final int queueSize = jobQueue.size();
+                        if (queueSize < JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD) {
+                            return Result.healthy(format("Queue contains %s entries", queueSize));
+                        } else {
+                            return Result.unhealthy(format(
+                                    "%s entries in job queue: this exceeds the warning threshold (%s)",
+                                    queueSize,
+                                    JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD));
+                        }
+                    }
+                });
     }
 }

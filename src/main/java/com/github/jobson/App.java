@@ -1,8 +1,6 @@
 package com.github.jobson;
 
-import com.github.jobson.commands.GenerateCommand;
-import com.github.jobson.commands.validators.ValidateSpecCommand;
-import com.github.jobson.jobs.JobStatus;
+import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.commands.*;
 import com.github.jobson.config.ApplicationConfig;
@@ -13,8 +11,9 @@ import com.github.jobson.dao.specs.JobSpecDAO;
 import com.github.jobson.dao.users.FilesystemUserDAO;
 import com.github.jobson.dao.users.UserDAO;
 import com.github.jobson.jobs.JobExecutor;
-import com.github.jobson.jobs.LocalJobExecutor;
 import com.github.jobson.jobs.JobManager;
+import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.jobs.LocalJobExecutor;
 import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.resources.v1.JobSpecResource;
 import com.github.jobson.resources.v1.UserResource;
@@ -37,11 +36,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.util.Map;
 
-import static com.github.jobson.Constants.WEBSOCKET_STDERR_UPDATES_PATTERN;
-import static com.github.jobson.Constants.WEBSOCKET_STDOUT_UPDATES_PATTERN;
-import static com.github.jobson.Constants.WEBSOCKET_TCP_IDLE_TIMEOUT_IN_MILLISECONDS;
+import static com.github.jobson.Constants.*;
 import static com.github.jobson.Helpers.generateRandomBase36String;
+import static com.github.jobson.Helpers.merge;
 import static com.github.jobson.jobs.JobStatus.ABORTED;
 
 public final class App extends Application<ApplicationConfig> {
@@ -96,10 +95,10 @@ public final class App extends Application<ApplicationConfig> {
         log.debug("Loading a JobSpecDAO backed by " + jobSpecsPath.toString());
         final JobSpecDAO jobSpecDAO = new FilesystemJobSpecDAO(jobSpecsPath);
 
+
         log.debug("Registering the job specs API");
         final JobSpecResource jobSpecResource = new JobSpecResource(jobSpecDAO, Constants.DEFAULT_PAGE_SIZE);
         environment.jersey().register(jobSpecResource);
-
 
 
         final Path jobsPath = Paths.get(applicationConfig.getJobDataConfiguration().getDir());
@@ -125,8 +124,10 @@ public final class App extends Application<ApplicationConfig> {
         log.debug("Creating job DAO");
         final JobDAO jobDAO = new FilesystemJobsDAO(jobsPath, () -> generateRandomBase36String(10));
 
+
         log.debug("Creating job manager");
         final JobManager jobManager = new JobManager(jobDAO, jobExecutor, Constants.MAX_RUNNING_JOBS);
+
 
         log.debug("Registering the jobs API");
 
@@ -164,5 +165,14 @@ public final class App extends Application<ApplicationConfig> {
         JobStatus.getAbortableStatuses().stream()
                 .flatMap(s -> jobDAO.getJobsWithStatus(s).stream())
                 .forEach(id -> jobDAO.addNewJobStatus(id, ABORTED, "Aborted as dangling job"));
+
+
+
+        log.debug("Enabling healthchecks");
+        final Map<String, HealthCheck> healthChecks =
+                merge(merge(jobDAO.getHealthChecks(), jobSpecDAO.getHealthChecks()), jobManager.getHealthChecks());
+        for (Map.Entry<String, HealthCheck> healthCheckEntry : healthChecks.entrySet()) {
+            environment.healthChecks().register(healthCheckEntry.getKey(), healthCheckEntry.getValue());
+        }
     }
 }
