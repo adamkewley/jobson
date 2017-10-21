@@ -158,6 +158,17 @@ public final class Helpers {
         }
     }
 
+    public static BinaryData streamBinaryData(Path p, String mimeType) {
+        try {
+            final long size = Files.size(p);
+            final InputStream dataStream = Files.newInputStream(p);
+
+            return new BinaryData(dataStream, size, mimeType);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
 
 
     public static <T> Optional<T> lastElement(List<T> els) {
@@ -349,8 +360,8 @@ public final class Helpers {
         return new Date();
     }
 
-    public static String getMimeTypeFromFilename(String fileName) {
+    public static String getMimeType(InputStream s, String fileName) throws IOException {
         final Tika t = new Tika();
-        return t.detect(fileName);
+        return t.detect(s, fileName);
     }
 }

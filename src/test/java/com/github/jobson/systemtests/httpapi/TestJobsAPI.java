@@ -223,7 +223,7 @@ public final class TestJobsAPI {
         final Map<String, APIJobOutput> parsedResponse =
                 readJSON(jobOutputsResponse.readEntity(String.class), new TypeReference<Map<String, APIJobOutput>>() {});
 
-        assertThat(parsedResponse.get("outFile").getMimeType()).isEqualTo("text/plain");
+        assertThat(parsedResponse.get("outFile").getMimeType().get()).isEqualTo("text/plain");
     }
 
     @Test

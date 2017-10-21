@@ -25,13 +25,10 @@
 package com.github.jobson.specs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.Helpers;
-import org.apache.tika.Tika;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
-import static com.github.jobson.Helpers.getMimeTypeFromFilename;
+import java.util.Optional;
 
 public final class JobOutput {
 
@@ -40,7 +37,7 @@ public final class JobOutput {
     private String path;
 
     @JsonProperty
-    private String mimeType;
+    private Optional<String> mimeType = Optional.empty();
 
 
     /**
@@ -50,7 +47,7 @@ public final class JobOutput {
 
     public JobOutput(String path, String mimeType) {
         this.path = path;
-        this.mimeType = mimeType;
+        this.mimeType = Optional.of(mimeType);
     }
 
 
@@ -58,10 +55,8 @@ public final class JobOutput {
         return path;
     }
 
-    public String getMimeType() {
-        return mimeType != null ?
-                mimeType :
-                getMimeTypeFromFilename(path);
+    public Optional<String> getMimeType() {
+        return mimeType;
     }
 
 

@@ -28,13 +28,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 @ApiModel(description = "Details about an output produced by a job")
 public final class APIJobOutput {
 
     @JsonProperty
     @NotNull
-    private String mimeType;
+    private Optional<String> mimeType;
 
     @JsonProperty
     @NotNull
@@ -47,12 +48,12 @@ public final class APIJobOutput {
     public APIJobOutput() {}
 
     public APIJobOutput(String mimeType, String href) {
-        this.mimeType = mimeType;
+        this.mimeType = Optional.of(mimeType);
         this.href = href;
     }
 
 
-    public String getMimeType() {
+    public Optional<String> getMimeType() {
         return mimeType;
     }
 

@@ -183,9 +183,7 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
         executingJobs.remove(executingJob.getId());
 
         jobExecutionResult.getOutputs().forEach((outputId, data) -> {
-            final String resolvedMimeType = executingJob.getSpec().getOutputs().get(outputId).getMimeType();
-
-            jobDAO.persistOutput(executingJob.getId(), outputId, data.withMimeType(resolvedMimeType));
+            jobDAO.persistOutput(executingJob.getId(), outputId, data);
         });
 
         updateJobStatus(executingJob.getId(), jobExecutionResult.getFinalStatus(), "Execution finished");

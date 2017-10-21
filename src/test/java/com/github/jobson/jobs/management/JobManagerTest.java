@@ -481,7 +481,11 @@ public final class JobManagerTest {
         final Map<String, BinaryData> outputsFromExecutor = new HashMap<>();
 
         for (Map.Entry<String, JobOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
-            outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes));
+            if (output.getValue().getMimeType().isPresent()) {
+                outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes, output.getValue().getMimeType().get()));
+            } else {
+                outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes));
+            }
         }
 
         final JobExecutionResult jobExecutionResult = new JobExecutionResult(FINISHED, outputsFromExecutor);
@@ -496,7 +500,7 @@ public final class JobManagerTest {
             final PersistOutputArgs expectedArgs = new PersistOutputArgs(
                     writingJobDAO.getReturnedPersistedReq().getId(),
                     output.getKey(),
-                    wrap(executorOutputBytes, output.getValue().getMimeType()));
+                    wrap(executorOutputBytes, output.getValue().getMimeType().orElse("application/octet-stream")));
 
             assertThat(writingJobDAO.getPersistOutputCalledWith()).contains(expectedArgs);
         }

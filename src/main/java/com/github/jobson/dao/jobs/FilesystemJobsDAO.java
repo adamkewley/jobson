@@ -365,7 +365,10 @@ public final class FilesystemJobsDAO implements JobDAO {
                 .flatMap(jobOutput ->
                         tryResolveOutput(jobId, jobOutput.getPath())
                                 .map(Helpers::streamBinaryData)
-                                .map(b -> b.withMimeType(jobOutput.getMimeType())));
+                                .map(binaryData -> {
+                                    final String mimeType = jobOutput.getMimeType().orElse(binaryData.getMimeType());
+                                    return binaryData.withMimeType(mimeType);
+                                }));
     }
 
     @Override

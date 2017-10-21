@@ -410,7 +410,7 @@ public final class JobResource {
         for (Map.Entry<String, JobOutput> entry : jobDAO.getJobOutputs(jobId).entrySet()) {
             final String href = HTTP_JOBS_PATH + "/" + jobId + "/outputs/" + entry.getKey();
 
-            ret.put(entry.getKey(), new APIJobOutput(entry.getValue().getMimeType(), href));
+            ret.put(entry.getKey(), new APIJobOutput(entry.getValue().getMimeType().orElse("application/octet-stream"), href));
         }
 
         return ret;
