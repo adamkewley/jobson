@@ -17,9 +17,10 @@
  * under the License.
  */
 
-package com.github.jobson.commands;
+package com.github.jobson.commands.validators;
 
 import com.github.jobson.Constants;
+import com.github.jobson.commands.DefaultedConfiguredCommand;
 import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.specs.ExecutionConfiguration;
@@ -51,7 +52,7 @@ public final class ValidateSpecCommand extends DefaultedConfiguredCommand<Applic
 
 
     public ValidateSpecCommand() {
-        super("validate", "validate job specs");
+        super("spec", "validate a job spec");
     }
 
 

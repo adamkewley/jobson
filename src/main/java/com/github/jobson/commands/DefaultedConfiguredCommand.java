@@ -38,6 +38,8 @@ public abstract class DefaultedConfiguredCommand<T extends Configuration> extend
 
     @Override
     public void configure(Subparser subparser) {
+        subparser.setDefault("file", WORKSPACE_CONFIG_FILENAME);
+
         subparser.addArgument("file")
                 .nargs("?")
                 .setDefault(WORKSPACE_CONFIG_FILENAME)

@@ -22,17 +22,25 @@ package com.github.jobson.commands;
 import com.github.jobson.Constants;
 import io.dropwizard.cli.Command;
 import io.dropwizard.setup.Bootstrap;
+import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.github.jobson.Helpers.loadResourceFileAsString;
+import static com.github.jobson.Constants.DEMO_SPEC_DIRNAME;
+import static com.github.jobson.Constants.SPEC_DIR_SPEC_FILENAME;
+import static com.github.jobson.Helpers.openResourceFile;
+import static org.apache.commons.io.IOUtils.toInputStream;
 
 public final class NewCommand extends Command {
+
+    private static final String DEMO_ARG_NAME = "--demo";
 
     public NewCommand() {
         super("new", "generate a new jobson deployment in the current working directory");
@@ -40,30 +48,30 @@ public final class NewCommand extends Command {
 
 
     @Override
-    public void configure(Subparser subparser) {}
+    public void configure(Subparser subparser) {
+        subparser.addArgument(DEMO_ARG_NAME)
+                .dest(DEMO_ARG_NAME)
+                .action(Arguments.storeConst())
+                .setConst(true)
+                .setDefault(false)
+                .help("Generate application with a demo spec");
+    }
 
     @Override
     public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
-        final String configTemplate;
-
-        try {
-            configTemplate = loadResourceFileAsString("config-template.yml");
-        } catch (IOException ex) {
-            System.err.println(ex.toString());
-            System.err.println("Error loading template files. This should not happen and is not your fault - please report it");
-            System.exit(1);
-            return;
-        }
-
         try {
             final Path configPath = Paths.get(Constants.WORKSPACE_CONFIG_FILENAME);
-            tryWriteFile(configPath, configTemplate.getBytes());
+            tryWriteFile(configPath, openResourceFile("config-template.yml"));
 
             final Path usersPath = Paths.get(Constants.WORKSPACE_USER_FILENAME);
-            tryWriteFile(usersPath, new byte[]{});
+            tryWriteFile(usersPath, toInputStream(""));
 
             final Path specDir = Paths.get(Constants.WORKSPACE_SPECS_DIRNAME);
             tryCreateDir(specDir);
+
+            if (namespace.getBoolean(DEMO_ARG_NAME)) {
+                tryWriteDemoSpec(specDir);
+            }
 
             final Path jobsDir = Paths.get(Constants.WORKSPACE_JOBS_DIRNAME);
             tryCreateDir(jobsDir);
@@ -71,7 +79,7 @@ public final class NewCommand extends Command {
             final Path wdsDir = Paths.get(Constants.WORKSPACE_WDS_DIRNAME);
             tryCreateDir(wdsDir);
 
-            System.out.println("Deployment created. Remember to add users (useradd, passwd), specs (generate), and boot the server (serve)");
+            System.out.println("Deployment created. Remember to add users (`user add`, `user passwd`), specs (`generate spec`), and boot the server (`serve`)");
             System.exit(0);
         } catch (IOException ex) {
             System.err.println(ex.toString());
@@ -82,10 +90,10 @@ public final class NewCommand extends Command {
         }
     }
 
-    private void tryWriteFile(Path path, byte[] content) throws IOException {
+    private void tryWriteFile(Path path, InputStream data) throws IOException {
         if (!path.toFile().exists()) {
             System.err.println("create    " + path);
-            Files.write(path, content);
+            IOUtils.copy(data, Files.newOutputStream(path));
         } else {
             System.err.println("cannot create file '" + path + "': file exists: skipping");
         }
@@ -98,5 +106,14 @@ public final class NewCommand extends Command {
         } else {
             System.err.println("cannot create directory '" + path + "': already exists: skipping");
         }
+    }
+
+    private void tryWriteDemoSpec(Path specsDir) throws IOException {
+        final Path demoDirPath = specsDir.resolve(DEMO_SPEC_DIRNAME);
+        tryCreateDir(demoDirPath);
+
+        tryWriteFile(demoDirPath.resolve(SPEC_DIR_SPEC_FILENAME), openResourceFile("demo-spec.yml"));
+        tryWriteFile(demoDirPath.resolve("demo-script.sh"), openResourceFile("demo-script.sh"));
+        tryWriteFile(demoDirPath.resolve("demo-dependency"), openResourceFile("demo-dependency"));
     }
 }

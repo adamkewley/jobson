@@ -17,11 +17,12 @@
  * under the License.
  */
 
-package com.github.jobson.commands;
+package com.github.jobson.commands.generators;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.javafaker.Faker;
 import com.github.jobson.api.v1.APIJobRequest;
+import com.github.jobson.commands.DefaultedConfiguredCommand;
 import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.jobinputs.JobExpectedInputId;
@@ -45,7 +46,7 @@ public final class GenerateRequestCommand extends DefaultedConfiguredCommand<App
     private static String SPEC_NAME_ARG = "SPEC_ID";
 
     public GenerateRequestCommand() {
-        super("generatereq", "generate a request against a spec");
+        super("request", "generate a request against a spec");
     }
 
     @Override

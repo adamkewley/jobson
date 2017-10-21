@@ -67,4 +67,6 @@ public final class Constants {
     public static final String DEFAULT_BASIC_AUTH_REALM = "JobsonBasicAuth";
     public static final String DEFAULT_GUEST_AUTH_REALM = "GUEST";
     public static final String DEFAULT_GUEST_USERNAME = "guest";
+
+    public static final String DEMO_SPEC_DIRNAME = "demo";
 }

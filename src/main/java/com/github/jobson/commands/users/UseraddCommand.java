@@ -17,10 +17,11 @@
  * under the License.
  */
 
-package com.github.jobson.commands;
+package com.github.jobson.commands.users;
 
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.auth.basic.BasicAuthenticator;
+import com.github.jobson.commands.DefaultedConfiguredCommand;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.dao.users.FilesystemUserDAO;
 import io.dropwizard.setup.Bootstrap;
@@ -30,21 +31,31 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import java.io.File;
 
 import static com.github.jobson.Constants.BASIC_AUTH_NAME;
+import static com.github.jobson.Helpers.generateRandomBase36String;
 import static java.lang.String.format;
 
-public final class PasswdCommand extends DefaultedConfiguredCommand<ApplicationConfig> {
+public final class UseraddCommand extends DefaultedConfiguredCommand<ApplicationConfig> {
 
-    private static final String LOGIN_ARG = "LOGIN";
+    private static String LOGIN_ARG = "LOGIN";
+    private static String PASSWORD_ARG = "-p";
 
-    public PasswdCommand() {
-        super("passwd", "set a user's password");
+    public UseraddCommand() {
+        super("add", "create a new user with a random password");
     }
 
     @Override
     public void configure(Subparser subparser) {
         super.configure(subparser);
 
-        subparser.addArgument(LOGIN_ARG).metavar(LOGIN_ARG).type(String.class).help("username");
+        subparser.addArgument(LOGIN_ARG)
+                .metavar(LOGIN_ARG)
+                .type(String.class)
+                .help("new user's login");
+
+        subparser.addArgument(PASSWORD_ARG, "--password")
+                .dest(PASSWORD_ARG)
+                .type(String.class)
+                .help("the user's password");
     }
 
     @Override
@@ -55,24 +66,22 @@ public final class PasswdCommand extends DefaultedConfiguredCommand<ApplicationC
 
         final boolean userExists = dao.getUserCredentialsById(login).isPresent();
 
-        if (userExists) {
-            System.err.println(format("Changing password for %s.", login));
-            System.err.print("Enter new Jobson password: ");
-            System.err.flush();
-            final String pw = new String(System.console().readPassword());
-            System.err.print("Retype new Jobson password: ");
-            System.err.flush();
-            final String retry = new String(System.console().readPassword());
+        if (!userExists) {
+            final String password = namespace.getString(PASSWORD_ARG) == null ?
+                    generateRandomBase36String(30) :
+                    namespace.getString(PASSWORD_ARG);
 
-            if (pw.equals(retry)) {
-                dao.updateUserAuth(login, BASIC_AUTH_NAME, BasicAuthenticator.createAuthField(pw));
+            final boolean userAdded =
+                    dao.addNewUser(login, BASIC_AUTH_NAME, BasicAuthenticator.createAuthField(password));
+
+            if (userAdded) {
+                System.exit(0);
             } else {
-                System.err.println("Sorry, passwords do not match");
-                System.err.println("password unchanged");
+                System.err.println("encountered an error adding a new user (this shouldn't happen)");
                 System.exit(1);
             }
         } else {
-            System.err.println(format("user '%s' does not exist", login));
+            System.err.println(format("user '%s' already exists, you can set this user's password with `passwd`.", login));
             System.exit(1);
         }
     }

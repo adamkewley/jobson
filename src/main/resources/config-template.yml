@@ -11,7 +11,8 @@ users:
   file: users
 
 authentication:
-  type: basic
+  # Options: guest, basic, custom
+  type: guest
 
 server:
   applicationConnectors:
@@ -21,7 +22,7 @@ server:
     - type: http
       port: 8081
 
-logging: # slf4j
+logging:
   level: INFO
   appenders:
     - type: console

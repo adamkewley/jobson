@@ -17,10 +17,11 @@
  * under the License.
  */
 
-package com.github.jobson.commands;
+package com.github.jobson.commands.generators;
 
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
+import com.github.jobson.commands.DefaultedConfiguredCommand;
 import com.github.jobson.config.ApplicationConfig;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -41,7 +42,7 @@ public final class GenerateSpecsCommand extends DefaultedConfiguredCommand<Appli
 
 
     public GenerateSpecsCommand() {
-        super("generatespec", "generate a default spec in the configured specs folder");
+        super("spec", "generate a default spec in the configured specs folder");
     }
 
 

@@ -1,5 +1,7 @@
 package com.github.jobson;
 
+import com.github.jobson.commands.GenerateCommand;
+import com.github.jobson.commands.validators.ValidateSpecCommand;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.commands.*;
@@ -55,13 +57,11 @@ public final class App extends Application<ApplicationConfig> {
 
 
     public void initialize(Bootstrap<ApplicationConfig> configurationBootstrap) {
-        configurationBootstrap.addCommand(new GenerateSpecsCommand());
         configurationBootstrap.addCommand(new NewCommand());
-        configurationBootstrap.addCommand(new ValidateSpecCommand());
+        configurationBootstrap.addCommand(new GenerateCommand());
+        configurationBootstrap.addCommand(new UsersCommand());
+        configurationBootstrap.addCommand(new ValidateCommand());
         configurationBootstrap.addCommand(new RunCommand());
-        configurationBootstrap.addCommand(new UseraddCommand());
-        configurationBootstrap.addCommand(new PasswdCommand());
-        configurationBootstrap.addCommand(new GenerateRequestCommand());
     }
 
     public void run(ApplicationConfig applicationConfig, Environment environment) throws Exception {

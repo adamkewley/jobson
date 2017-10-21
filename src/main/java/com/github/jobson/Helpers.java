@@ -119,7 +119,15 @@ public final class Helpers {
     }
 
     public static String loadResourceFileAsString(String resourceFileName) throws IOException {
-        return IOUtils.toString(Helpers.class.getClassLoader().getResourceAsStream(resourceFileName));
+        return new String(loadResourceFile(resourceFileName));
+    }
+
+    public static byte[] loadResourceFile(String resourceFileName) throws IOException {
+        return IOUtils.toByteArray(openResourceFile(resourceFileName));
+    }
+
+    public static InputStream openResourceFile(String resourceFileName) {
+        return Helpers.class.getClassLoader().getResourceAsStream(resourceFileName);
     }
 
     public static Optional<Path> tryResolve(Path p, Object s) {

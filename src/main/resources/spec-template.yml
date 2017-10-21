@@ -61,14 +61,8 @@ execution:
   application: echo
 
   arguments:
-  - $request    # Special variable: path to request JSON
-
-#  dependencies:
-#  - source: some-script.py # In the spec dir
-#    target: script.py # Moved to job working dir
-
-
-#outputs:
-#  someOutFile.exe:
-#    path: outfile.exe
-#    mimeType: application/octet-stream
+  - ${toJSON(request)}
+# - ${toFile(toJSON(request))}
+# - ${inputs["string-example"]}
+# - ${toJSON(inputs["sql-example"])}
+# - ${toJSON(inputs

@@ -1,0 +1,63 @@
+name: Demo Job Spec
+
+description: >
+
+  A demo job spec generated when creating a new Jobson deployment. Try it out!
+
+
+expectedInputs:
+
+- id: firstName
+  type: string
+  name: First Name
+  description: Your first name
+  default: Jeff
+
+
+- id: favoriteFoods
+  type: string[]
+  name: Favorite foods
+  description: A list of your favorite foods
+  default:
+  - chocolate ice cream
+  - pizza
+  - kale (not really though)
+
+
+- id: favoriteColor
+  type: select
+  name: Favorite Color
+  description: Your favorite color
+
+  options:
+  - id: red
+    name: Red
+  - id: green
+    name: Green
+    description:  A color that almost noone picks
+  - id: blue
+    name: Blue
+
+  default: blue
+
+
+execution:
+
+  application: bash
+  arguments:
+  - demo-script.sh
+  - ${inputs.firstName}
+  - ${toJSON(inputs.favoriteFoods)}
+  - ${toFile(toJSON(inputs.favoriteFoods))}
+  - ${inputs.favoriteColor}
+
+  dependencies:
+  - source: demo-script.sh
+    target: demo-script.sh
+  - source: demo-dependency
+    target: demo-dependency
+
+outputs:
+  output:
+    path: output
+    mimeType: image/jpeg

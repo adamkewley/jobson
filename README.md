@@ -1,17 +1,28 @@
 # Jobson
 
-Jobson is a webserver that hosts command-line applications by
-abstracing away process forking, HTTP API generation, standard
-IO, and websockets.
+Jobson is a web server that can turn command-line applications into
+a job system that manages:
 
-It uses a high-level spec (YAML) to describe applications:
+- Authentication (guest, HTTP Basic, custom)
+- Input collection
+- Input validation
+- Request IDing
+- Request persistence
+- Request Queueing
+- Request Timestamping
+- Server-side execution (`fork(2)`)
+- Output forwarding (websockets)
+- Output persistence (stdout, stderr, files)
+
+
+All Jobson needs is a YAML file that describes the application:
 
 ```yaml
 name: Trivial Application
 
 description: >
 
-  Echoes client requests
+  Echoes supplied message to stdout
 
 
 expectedInputs:
@@ -29,38 +40,18 @@ execution:
   - ${inputs.message}
 ```
 
-Specs are used by Jobson to:
-
-- Generate a HTTP API (`/v1/jobs`, `/v1/specs`, `/v1/jobs/{id}/stderr`. etc.)
-
-- Generate a dynamic websocket API (`/v1/jobs/events`,
-`/v1/jobs/{id}/stderr/updates`, etc.)
-
-- Handle request validation
-
-- Create a persistence layer (specs, jobs, metadata, outputs)
-
-- Run the application
-
-- Handle application outputs
-
-Jobson and [Jobson UI](https://github.com/adamkewley/jobson-ui) were
-developed for data-centric teams. We were spending a lot of time 
-handling data requests, explaining how to install applications, 
-explaining how to run applications, tracing requests, etc. Attempts 
-to engineer around the problem with bespoke web servers worked, but 
-those systems needed redevelopment every time a new workflow came along. 
-
-Jobson was developed to generate a standard API that is simple, 
+Jobson was developed to generate a standard HTTP API that is simple,
 can be changed *very* easily (via spec files), and contains enough
-information (names, descriptions) for frontends to provide a decent 
+information (names, descriptions) for frontends to provide a decent
 user experience.
+
+[Jobson UI](https://github.com/adamkewley/jobson-ui), a sister project,
+automatically generates a full web frontend from the Jobson API.
 
 
 # Build
 
-The entire project is built with `Maven` and `JDK 1.8+`. From the 
-project directory:
+Built with `Maven` and `JDK 1.8+`. From the project directory:
 
 ```bash
 mvn package
@@ -68,47 +59,83 @@ mvn package
 
 The Jobson fat JAR (`jobson-x.x.x.jar`) and runscript (`jobson`) will be
 packed into `target/`. The remainder of this README assumes those
-files are kept together and available on the `PATH`.
+files are kept together and are on the `PATH`.
 
 
-# Quickstart
+# QuickStart
+
+This generates an **unauthenticated** standard deployment with a demo job spec:
+
+```bash
+jobson new --demo
+jobson serve config.yml
+```
+
+See API documentation (below) to play with the API or, better, host a
+[Jobson UI](https://github.com/adamkewley/jobson-ui) so you can *see* the
+API.
+
+
+# SlowerStart
+
+This generates an authenticated standard deployment with your own spec.
 
 ```bash
 jobson new
 
-jobson useradd exampleuser
+# edit config.yml to use basic auth
 
-# set the password
-jobson passwd exampleuser
+# with basic auth enabled, you need to add a user
+jobson users add -p password exampleuser
 
-# generate a new spec
-jobson generatespec trivialapplication
+jobson generate spec trivial
 
-# (edit specs/trivialapplication/spec.yml accordingly)
+# edit specs/trivial/spec.yml
 
-# (optional)
-jobson validate trivialapplication
+jobson serve config.yml
+```
 
-# (optional): generate a dummy request
-jobson generatereq trivialapplication > dummy-req.json
 
-# (optional): run the request locally
+# SlowestStart
+
+Same as above, but with debugging.
+
+```bash
+jobson new
+
+# edit config.yml to use basic auth
+
+jobson users add -p password exampleuser
+
+jobson generate spec trivial
+
+# edit specs/trivial/spec.yml
+
+# check for basic errors
+jobson validate spec trivial
+
+# generate a request that would be sent to the Jobson API
+jobson generate request trivial > dummy-req.json
+
+# edit dummy-req.json
+
+# run the application locally, as if it were ran by the full Jobson stack
 jobson run dummy-req.json
 
-# boot the server - port configured in config.yml
+# assuming everything looks ok:
 jobson serve config.yml
 ```
 
 
 # Use the API
 
-This early release of Jobson uses HTTP basic authentication to 
-authorize requests.
+With `basic` authentication, Jobson uses HTTP basic authentication (RFC 2617)
+to authorize requests.
 
 ## cURL
 
 ```bash
-# post a job request against a hosted spec
+# The API equivalent of running "jobson run dummy-req.json"
 curl --user exampleuser:password --data @dummy-req.json localhost:8080/v1/jobs
 
 # view/query jobs
@@ -125,7 +152,7 @@ curl --user exampleuser:password localhost:8080/v1/jobs/{id}/stderr
 curl --user exampleuser:password localhost:8080/v1/specs
 curl --user exampleuser:password localhost:8080/v1/specs/trivialapplication
 
-# get current user ID (used by browsers)
+# get current user ID
 curl --user exampleuser:password localhost:8080/v1/users/current
 ```
 
