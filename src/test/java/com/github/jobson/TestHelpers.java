@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.jobson.api.v1.*;
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.specs.JobSpecSummary;
 import com.github.jobson.dao.users.UserCredentials;
@@ -222,12 +222,12 @@ public final class TestHelpers {
         return generateJobDetailsWithStatuses(generateTypicalJobStatusTimestamps());
     }
 
-    public static APIJob generateJobDetailsWithStatus(JobStatus jobStatus) {
+    public static APIJobDetails generateJobDetailsWithStatus(JobStatus jobStatus) {
         return generateJobDetailsWithStatuses(Arrays.asList(JobTimestamp.now(jobStatus)));
     }
 
-    public static APIJob generateJobDetailsWithStatuses(List<JobTimestamp> jobStatuses) {
-        return new APIJob(
+    public static APIJobDetails generateJobDetailsWithStatuses(List<JobTimestamp> jobStatuses) {
+        return new APIJobDetails(
                 generateJobId(),
                 generateUserName(),
                 generateUserId(),

@@ -25,7 +25,7 @@
 package com.github.jobson.jobs.management;
 
 import com.github.jobson.jobs.JobId;
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 
 public final class PersistOutputArgs {
     private final JobId jobId;

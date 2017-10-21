@@ -19,7 +19,7 @@
 
 package com.github.jobson.dao.jobs;
 
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.jobstates.PersistedJob;

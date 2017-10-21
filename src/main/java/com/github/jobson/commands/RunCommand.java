@@ -79,7 +79,8 @@ public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConf
 
     @Override
     protected void run(Bootstrap<ApplicationConfig> bootstrap, Namespace namespace, ApplicationConfig applicationConfig) throws Exception {
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        ch.qos.logback.classic.Logger root =
+                (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         root.setLevel(Level.OFF);
 
         final Path requestPath = Paths.get(namespace.getList(REQUEST_FILE_ARGNAME).get(0).toString());

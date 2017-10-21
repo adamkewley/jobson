@@ -23,7 +23,7 @@ import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.jobs.JobId;
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.IdGenerator;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
@@ -43,7 +43,7 @@ import static com.github.jobson.Constants.JOB_DIR_OUTPUTS_DIRNAME;
 import static com.github.jobson.Helpers.*;
 import static com.github.jobson.Helpers.readJSON;
 import static com.github.jobson.TestHelpers.*;
-import static com.github.jobson.dao.BinaryData.wrap;
+import static com.github.jobson.utils.BinaryData.wrap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class FilesystemJobsDAOTest extends JobsDAOTest {

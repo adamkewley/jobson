@@ -19,7 +19,7 @@
 
 package com.github.jobson.jobs;
 
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.scripting.FreeFunction;
@@ -133,7 +133,6 @@ public final class LocalJobExecutor implements JobExecutor {
 
     @Override
     public CancelablePromise<JobExecutionResult> execute(PersistedJob req, JobEventListeners jobEventListeners) {
-
         final ExecutionConfiguration executionConfiguration = req.getSpec().getExecution();
 
         try {

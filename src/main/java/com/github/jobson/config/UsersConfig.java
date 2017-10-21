@@ -30,7 +30,6 @@ public final class UsersConfig {
     private String file;
 
 
-
     public String getFile() {
         return file;
     }

@@ -24,9 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.jobinputs.JobExpectedInputId;
-import com.github.jobson.jobinputs.JobInput;
 import com.github.jobson.jobs.JobId;
-import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.systemtests.SystemTestHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
@@ -127,7 +125,7 @@ public final class TestJobsAPI {
         final Response detailsResponse = requestForDetailsBuilder.get();
 
         assertThat(detailsResponse.getStatus()).isEqualTo(OK);
-        readJSON(detailsResponse.readEntity(String.class), APIJob.class);
+        readJSON(detailsResponse.readEntity(String.class), APIJobDetails.class);
     }
 
     private String jobResourceSubpath(Object subpath) {
@@ -141,9 +139,9 @@ public final class TestJobsAPI {
 
         final JobId jobId = response.readEntity(APIJobCreatedResponse.class).getId();
 
-        final APIJob APIJobDetails = fetchJobDetails(jobId);
+        final APIJobDetails APIJobDetailsDetails = fetchJobDetails(jobId);
 
-        assertThat(APIJobDetails.latestStatus()).isEqualTo(RUNNING);
+        assertThat(APIJobDetailsDetails.latestStatus()).isEqualTo(RUNNING);
 
         final Invocation.Builder abortionRequest = generateAuthenticatedRequest(
                 RULE, jobResourceSubpath(jobId + "/abort"));
@@ -152,15 +150,15 @@ public final class TestJobsAPI {
 
         assertThat(abortionResponse.getStatus()).isEqualTo(NO_CONTENT);
 
-        final APIJob jobDetailsAfterAbortion = fetchJobDetails(jobId);
+        final com.github.jobson.api.v1.APIJobDetails jobDetailsAfterAbortion = fetchJobDetails(jobId);
 
         assertThat(jobDetailsAfterAbortion.latestStatus()).isEqualTo(ABORTED);
     }
 
-    private APIJob fetchJobDetails(JobId jobId) throws IOException {
+    private APIJobDetails fetchJobDetails(JobId jobId) throws IOException {
         final Invocation.Builder builder = generateRequest(RULE, jobResourceSubpath(jobId));
         authenticate(builder);
-        return readJSON(builder.get().readEntity(String.class), APIJob.class);
+        return readJSON(builder.get().readEntity(String.class), APIJobDetails.class);
     }
 
     @Test

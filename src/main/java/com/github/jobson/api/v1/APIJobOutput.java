@@ -35,11 +35,11 @@ public final class APIJobOutput {
 
     @JsonProperty
     @NotNull
-    private Optional<String> mimeType;
+    private String href;
 
     @JsonProperty
     @NotNull
-    private String href;
+    private Optional<String> mimeType;
 
 
     /**
@@ -47,17 +47,21 @@ public final class APIJobOutput {
      */
     public APIJobOutput() {}
 
-    public APIJobOutput(String mimeType, String href) {
-        this.mimeType = Optional.of(mimeType);
+    public APIJobOutput(String href) {
         this.href = href;
     }
 
-
-    public Optional<String> getMimeType() {
-        return mimeType;
+    public APIJobOutput(String href, String mimeType) {
+        this.href = href;
+        this.mimeType = Optional.of(mimeType);
     }
+
 
     public String getHref() {
         return href;
+    }
+
+    public Optional<String> getMimeType() {
+        return mimeType;
     }
 }

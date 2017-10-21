@@ -34,7 +34,6 @@ public final class Either<T, U> {
     }
 
 
-
     private T l;
     private U r;
 
@@ -43,7 +42,6 @@ public final class Either<T, U> {
         this.l = l;
         this.r = r;
     }
-
 
 
     public <V> V visit(EitherVisitorT<T, U, V> visitor) {

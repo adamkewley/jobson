@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import static com.github.jobson.TestHelpers.readJSONFixture;
 
-public final class APIJobRequestTest {
+public final class APIJobDetailsRequestTest {
 
     @Test
     public void testCanDeserializeAJobRequest() throws IOException {

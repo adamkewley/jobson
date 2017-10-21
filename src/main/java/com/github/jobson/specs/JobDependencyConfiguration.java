@@ -35,7 +35,6 @@ public final class JobDependencyConfiguration {
     private String target;
 
 
-
     /**
      * @deprecated Used by JSON deserializer
      */
@@ -45,7 +44,6 @@ public final class JobDependencyConfiguration {
         this.source = source;
         this.target = target;
     }
-
 
 
     public String getSource() {

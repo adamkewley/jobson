@@ -30,7 +30,6 @@ public final class WorkingDirsConfig {
     private String dir;
 
 
-
     public String getDir() {
         return dir;
     }

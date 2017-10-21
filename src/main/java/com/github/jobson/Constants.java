@@ -76,4 +76,6 @@ public final class Constants {
     public static final long FILESYSTEM_SPECS_DAO_DISK_SPACE_WARNING_THRESHOLD_IN_BYTES = 1024;
     public static final String JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHCHECK = "JobManagerJobQueue";
     public static final long JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD = 10_000;
+
+    public static final String DEFAULT_BINARY_MIME_TYPE = "application/octet-stream";
 }

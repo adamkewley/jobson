@@ -39,7 +39,6 @@ public final class APIJobCreatedResponse {
     private Map<String, APIRestLink> _links;
 
 
-
     /**
      * @deprecated Used by JSON deserializer
      */

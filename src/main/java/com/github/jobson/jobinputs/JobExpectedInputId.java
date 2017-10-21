@@ -27,12 +27,10 @@ public final class JobExpectedInputId {
     private String id;
 
 
-
     @JsonCreator
     public JobExpectedInputId(String id) {
         this.id = id;
     }
-
 
 
     @Override

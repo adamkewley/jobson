@@ -19,7 +19,7 @@
 
 package com.github.jobson.jobs;
 
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 
 import java.util.HashMap;
 import java.util.Map;

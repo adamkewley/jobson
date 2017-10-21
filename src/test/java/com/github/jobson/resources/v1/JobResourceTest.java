@@ -24,7 +24,7 @@ import com.github.jobson.Constants;
 import com.github.jobson.HttpStatusCodes;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.*;
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.JobDAO;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.jobs.ReadonlyJobDAO;
@@ -61,7 +61,6 @@ import static com.github.jobson.Constants.HTTP_JOBS_PATH;
 import static com.github.jobson.HttpStatusCodes.NOT_FOUND;
 import static com.github.jobson.TestHelpers.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -252,7 +251,7 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertHasAJobAbortionRESTLink);
     }
 
-    private void assertHasAJobAbortionRESTLink(APIJob jobSummary) {
+    private void assertHasAJobAbortionRESTLink(APIJobDetails jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("abort")).isTrue();
         assertThat(jobSummary.getLinks().get("abort").getHref().toString())
                 .isEqualTo(HTTP_JOBS_PATH + "/" + jobSummary.getId().toString() + "/abort");
@@ -276,7 +275,7 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertDoesNotHaveAbortionRESTLink);
     }
 
-    private void assertDoesNotHaveAbortionRESTLink(APIJob jobSummary) {
+    private void assertDoesNotHaveAbortionRESTLink(APIJobDetails jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("abort")).isFalse();
     }
 
@@ -299,7 +298,7 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertHasAValidStdoutRESTLink);
     }
 
-    private void assertHasAValidStdoutRESTLink(APIJob jobSummary) {
+    private void assertHasAValidStdoutRESTLink(APIJobDetails jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("stdout")).isTrue();
         assertThat(jobSummary.getLinks().get("stdout").getHref().toString())
                 .isEqualTo(HTTP_JOBS_PATH + "/" + jobSummary.getId().toString() + "/stdout");
@@ -324,7 +323,7 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertDoesNotHaveAnStdoutRESTLink);
     }
 
-    private void assertDoesNotHaveAnStdoutRESTLink(APIJob jobSummary) {
+    private void assertDoesNotHaveAnStdoutRESTLink(APIJobDetails jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("stdout")).isFalse();
     }
 
@@ -347,7 +346,7 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertHasAnStderrRESTLink);
     }
 
-    private void assertHasAnStderrRESTLink(APIJob jobSummary) {
+    private void assertHasAnStderrRESTLink(APIJobDetails jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("stderr")).isTrue();
         assertThat(jobSummary.getLinks().get("stderr").getHref().toString())
                 .isEqualTo(HTTP_JOBS_PATH + "/" + jobSummary.getId().toString() + "/stderr");
@@ -372,7 +371,7 @@ public final class JobResourceTest {
         resp.getEntries().forEach(this::assertDoesNotHaveAnStderrRESTLink);
     }
 
-    private void assertDoesNotHaveAnStderrRESTLink(APIJob jobSummary) {
+    private void assertDoesNotHaveAnStderrRESTLink(APIJobDetails jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("stderr")).isFalse();
     }
 
@@ -411,7 +410,7 @@ public final class JobResourceTest {
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsFromDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final Optional<APIJob> jobDetailsResponse = jobResource.getJobDetailsById(
+        final Optional<APIJobDetails> jobDetailsResponse = jobResource.getJobDetailsById(
                 TestHelpers.generateSecureSecurityContext(),
                 jobDetailsFromDAO.getId());
 
@@ -438,7 +437,7 @@ public final class JobResourceTest {
         final JobResource jobResource = resourceThatUses(jobDAO);
         final JobId jobId = TestHelpers.generateJobId();
 
-        final Optional<APIJob> resp =
+        final Optional<APIJobDetails> resp =
                 jobResource.getJobDetailsById(TestHelpers.generateSecureSecurityContext(), jobId);
 
         assertThat(resp).isEqualTo(Optional.empty());
@@ -454,64 +453,64 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobDetailsByIdSetsAnAbortRESTLinkIfJobIsAbortable() throws IOException {
-        final APIJob jobDetailsReturnedByDAO =
+        final APIJobDetails jobDetailsReturnedByDAO =
                 generateJobDetailsWithStatus(JobStatus.RUNNING);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final APIJob APIJobDetails = jobResource.getJobDetailsById(
+        final APIJobDetails APIJobDetailsDetails = jobResource.getJobDetailsById(
                 TestHelpers.generateSecureSecurityContext(),
                 jobDetailsReturnedByDAO.getId())
                 .get();
 
-        assertHasAnAbortRESTLink(APIJobDetails);
+        assertHasAnAbortRESTLink(APIJobDetailsDetails);
     }
 
-    private void assertHasAnAbortRESTLink(APIJob APIJobDetails) {
-        assertThat(APIJobDetails.getLinks().containsKey("abort")).isTrue();
-        assertThat(APIJobDetails.getLinks().get("abort").getHref().toString())
-                .isEqualTo(HTTP_JOBS_PATH + "/" + APIJobDetails.getId() + "/abort");
+    private void assertHasAnAbortRESTLink(APIJobDetails APIJobDetailsDetails) {
+        assertThat(APIJobDetailsDetails.getLinks().containsKey("abort")).isTrue();
+        assertThat(APIJobDetailsDetails.getLinks().get("abort").getHref().toString())
+                .isEqualTo(HTTP_JOBS_PATH + "/" + APIJobDetailsDetails.getId() + "/abort");
     }
 
     @Test
     public void testFetchJobDetailsByIdDoesNotSetAnAbortRESTLinkIfJobIsNotAbortable() throws IOException {
-        final APIJob jobDetailsReturnedByDAO =
+        final APIJobDetails jobDetailsReturnedByDAO =
                 generateJobDetailsWithStatus(JobStatus.FINISHED);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final APIJob APIJobDetails = jobResource.getJobDetailsById(
+        final APIJobDetails APIJobDetailsDetails = jobResource.getJobDetailsById(
                 TestHelpers.generateSecureSecurityContext(),
                 jobDetailsReturnedByDAO.getId())
                 .get();
 
-        assertDoesNotHaveAnAbortRESTLink(APIJobDetails);
+        assertDoesNotHaveAnAbortRESTLink(APIJobDetailsDetails);
     }
 
-    private void assertDoesNotHaveAnAbortRESTLink(APIJob APIJobDetails) {
-        assertThat(APIJobDetails.getLinks().containsKey("abort")).isFalse();
+    private void assertDoesNotHaveAnAbortRESTLink(APIJobDetails APIJobDetailsDetails) {
+        assertThat(APIJobDetailsDetails.getLinks().containsKey("abort")).isFalse();
     }
 
 
     @Test
     public void testFetchJobDetailsByIdSetsARESTLinkForTheSpec() {
-        final APIJob jobDetailsReturnedByDAO =
+        final APIJobDetails jobDetailsReturnedByDAO =
                 generateJobDetailsWithStatus(JobStatus.FINISHED);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final APIJob apiJobDetails = jobResource.getJobDetailsById(
+        final APIJobDetails apiJobDetailsDetails = jobResource.getJobDetailsById(
                 generateSecureSecurityContext(),
                 jobDetailsReturnedByDAO.getId())
                 .get();
 
-        assertHasASpecRESTLink(apiJobDetails);
+        assertHasASpecRESTLink(apiJobDetailsDetails);
     }
 
-    private void assertHasASpecRESTLink(APIJob apiJobDetails) {
-        assertThat(apiJobDetails.getLinks().containsKey("spec")).isTrue();
-        assertThat(apiJobDetails.getLinks().get("spec").getHref().toString())
-                .isEqualTo(HTTP_JOBS_PATH + "/" + apiJobDetails.getId() + "/spec");
+    private void assertHasASpecRESTLink(APIJobDetails apiJobDetailsDetails) {
+        assertThat(apiJobDetailsDetails.getLinks().containsKey("spec")).isTrue();
+        assertThat(apiJobDetailsDetails.getLinks().get("spec").getHref().toString())
+                .isEqualTo(HTTP_JOBS_PATH + "/" + apiJobDetailsDetails.getId() + "/spec");
     }
 
 

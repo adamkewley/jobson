@@ -30,7 +30,6 @@ public final class SpecsConfig {
     private String dir;
 
 
-
     public String getDir() {
         return dir;
     }

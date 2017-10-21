@@ -17,10 +17,14 @@
  * under the License.
  */
 
-package com.github.jobson.dao;
+package com.github.jobson.utils;
+
+import com.github.jobson.Constants;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
+import static com.github.jobson.Constants.DEFAULT_BINARY_MIME_TYPE;
 
 public final class BinaryData {
 
@@ -40,7 +44,7 @@ public final class BinaryData {
     public BinaryData(InputStream data, long sizeOf) {
         this.data = data;
         this.sizeOf = sizeOf;
-        this.mimeType = "application/octet-stream";
+        this.mimeType = DEFAULT_BINARY_MIME_TYPE;
     }
 
     public BinaryData(InputStream data, long sizeOf, String mimeType) {

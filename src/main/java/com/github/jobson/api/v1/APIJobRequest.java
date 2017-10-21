@@ -48,7 +48,6 @@ public final class APIJobRequest {
     private Map<JobExpectedInputId, JsonNode> inputs;
 
 
-
     /**
      * @deprecated Used by JSON deserializer.
      */
@@ -58,12 +57,10 @@ public final class APIJobRequest {
             JobSpecId spec,
             String name,
             Map<JobExpectedInputId, JsonNode> inputs) {
-
         this.spec = spec;
         this.name = name;
         this.inputs = inputs;
     }
-
 
 
     public JobSpecId getSpec() {

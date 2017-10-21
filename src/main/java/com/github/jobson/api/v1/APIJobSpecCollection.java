@@ -39,7 +39,6 @@ public final class APIJobSpecCollection {
     private Map<String, APIRestLink> _links;
 
 
-
     /**
      * @deprecated Used by JSON deserializer.
      */
@@ -48,11 +47,9 @@ public final class APIJobSpecCollection {
     public APIJobSpecCollection(
             List<APIJobSpecSummary> entries,
             Map<String, APIRestLink> _links) {
-
         this.entries = entries;
         this._links = _links;
     }
-
 
 
     public List<APIJobSpecSummary> getEntries() {

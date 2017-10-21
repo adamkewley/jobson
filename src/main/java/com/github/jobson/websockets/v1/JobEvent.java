@@ -34,7 +34,6 @@ public final class JobEvent {
     private JobStatus newStatus;
 
 
-
     /**
      * @deprecated Used by JSON deserializer.
      */
@@ -46,7 +45,6 @@ public final class JobEvent {
     }
 
 
-
     public JobId getJobId() {
         return jobId;
     }
@@ -54,7 +52,6 @@ public final class JobEvent {
     public JobStatus getNewStatus() {
         return newStatus;
     }
-
 
 
     @Override

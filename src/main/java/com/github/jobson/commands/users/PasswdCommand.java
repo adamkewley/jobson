@@ -45,7 +45,10 @@ public final class PasswdCommand extends DefaultedConfiguredCommand<ApplicationC
     public void configure(Subparser subparser) {
         super.configure(subparser);
 
-        subparser.addArgument(LOGIN_ARG).metavar(LOGIN_ARG).type(String.class).help("username");
+        subparser.addArgument(LOGIN_ARG)
+                .metavar(LOGIN_ARG)
+                .type(String.class)
+                .help("username");
     }
 
     @Override
