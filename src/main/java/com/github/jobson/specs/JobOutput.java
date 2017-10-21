@@ -25,8 +25,13 @@
 package com.github.jobson.specs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.jobson.Helpers;
+import org.apache.tika.Tika;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
+
+import static com.github.jobson.Helpers.getMimeTypeFromFilename;
 
 public final class JobOutput {
 
@@ -35,7 +40,7 @@ public final class JobOutput {
     private String path;
 
     @JsonProperty
-    private String mimeType = "application/octet-string";
+    private String mimeType;
 
 
     /**
@@ -44,7 +49,6 @@ public final class JobOutput {
     public JobOutput() {}
 
     public JobOutput(String path, String mimeType) {
-
         this.path = path;
         this.mimeType = mimeType;
     }
@@ -55,7 +59,9 @@ public final class JobOutput {
     }
 
     public String getMimeType() {
-        return mimeType;
+        return mimeType != null ?
+                mimeType :
+                getMimeTypeFromFilename(path);
     }
 
 

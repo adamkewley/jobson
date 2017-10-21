@@ -62,7 +62,17 @@ execution:
 
   arguments:
   - ${toJSON(request)}
-# - ${toFile(toJSON(request))}
-# - ${inputs["string-example"]}
-# - ${toJSON(inputs["sql-example"])}
-# - ${toJSON(inputs
+#  - a non-special string arg
+#  - ${toFile(toJSON(request))}
+#  - ${inputs["string-example"]}
+#  - ${toJSON(inputs["sql-example"])}
+#  - A combination of text and templates ${inputs["string-example"]}
+
+#  dependencies:
+#    source: some-file-in-spec-dir
+#    target: some-path-in-working-dir
+
+#outputs:
+#  someFile:
+#    path: some-path-in-working-dir
+#    mimeType: application/octet-stream

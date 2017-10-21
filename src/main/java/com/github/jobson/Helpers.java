@@ -29,6 +29,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.jobson.dao.BinaryData;
 import io.reactivex.Observer;
 import org.apache.commons.io.IOUtils;
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -346,5 +347,10 @@ public final class Helpers {
 
     public static Date now() {
         return new Date();
+    }
+
+    public static String getMimeTypeFromFilename(String fileName) {
+        final Tika t = new Tika();
+        return t.detect(fileName);
     }
 }

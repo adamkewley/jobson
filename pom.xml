@@ -107,6 +107,13 @@
             <version>0.13</version>
         </dependency>
 
+        <!-- For automatically detecting MIME types from filenames/data -->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>1.16</version>
+        </dependency>
+
 
         <!-- For parsing + validating SQL inputs -->
         <dependency>
