@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.github.jobson.Constants.HTTP_JOBS_PATH;
+import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
@@ -132,7 +133,7 @@ public final class JobResource {
                 .map(this::toJobResponse)
                 .collect(toList());
 
-        return new APIJobDetailsCollection(apiJobs, new HashMap<>());
+        return new APIJobDetailsCollection(apiJobs, emptyMap());
     }
 
     private APIJob toJobResponse(JobDetails jobDetails) {
@@ -228,7 +229,7 @@ public final class JobResource {
                     public APIJobCreatedResponse whenLeft(ValidJobRequest left) {
                         final JobId jobId = jobManagerActions.submit(left).getLeft();
 
-                        return new APIJobCreatedResponse(jobId, new HashMap<>());
+                        return new APIJobCreatedResponse(jobId, emptyMap());
                     }
 
                     @Override

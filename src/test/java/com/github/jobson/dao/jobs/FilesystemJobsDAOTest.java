@@ -37,6 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import static com.github.jobson.Constants.FILESYSTEM_JOBS_DAO_DISK_SPACE_HEALTHCHECK;
 import static com.github.jobson.Constants.JOB_DIR_JOB_DETAILS_FILENAME;
 import static com.github.jobson.Constants.JOB_DIR_OUTPUTS_DIRNAME;
 import static com.github.jobson.Helpers.*;
@@ -274,5 +275,12 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
         final byte[] outputFileContent = Files.readAllBytes(outputFile);
 
         assertThat(outputFileContent).isEqualTo(secondOutputData);
+    }
+
+    @Test
+    public void testGetHealthChecksReturnsHealthChecksForRemainingDiskSpace() {
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO();
+        assertThat(dao.getHealthChecks()).containsKey(FILESYSTEM_JOBS_DAO_DISK_SPACE_HEALTHCHECK);
+        assertThat(dao.getHealthChecks().get(FILESYSTEM_JOBS_DAO_DISK_SPACE_HEALTHCHECK)).isNotNull();
     }
 }

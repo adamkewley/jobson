@@ -19,7 +19,6 @@
 
 package com.github.jobson.jobs;
 
-import com.github.jobson.jobs.JobId;
 import com.github.jobson.websockets.v1.JobEvent;
 import io.reactivex.Observable;
 

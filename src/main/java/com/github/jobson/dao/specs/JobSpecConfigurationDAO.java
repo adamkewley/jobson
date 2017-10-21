@@ -19,11 +19,14 @@
 
 package com.github.jobson.dao.specs;
 
-import com.github.jobson.specs.JobSpecId;
+import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.specs.JobSpecId;
 
+import java.util.Map;
 import java.util.Optional;
 
 public interface JobSpecConfigurationDAO {
     Optional<JobSpec> getJobSpecById(JobSpecId jobSpecId);
+    Map<String, HealthCheck> getHealthChecks();
 }

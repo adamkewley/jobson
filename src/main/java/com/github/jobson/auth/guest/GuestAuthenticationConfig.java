@@ -20,7 +20,6 @@
 package com.github.jobson.auth.guest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.Constants;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.auth.PermitAllAuthorizer;
 import com.github.jobson.config.AuthenticationConfig;

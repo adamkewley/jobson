@@ -19,19 +19,21 @@
 
 package com.github.jobson.dao.jobs;
 
+import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Helpers;
+import com.github.jobson.dao.BinaryData;
+import com.github.jobson.dao.IdGenerator;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobTimestamp;
-import com.github.jobson.dao.BinaryData;
-import com.github.jobson.dao.IdGenerator;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.JobOutput;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.utils.DiskSpaceHealthCheck;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import org.apache.commons.io.IOUtils;
@@ -44,7 +46,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -53,6 +58,8 @@ import static com.github.jobson.Helpers.*;
 import static com.github.jobson.dao.jobs.JobDetails.fromPersistedJob;
 import static java.lang.String.format;
 import static java.nio.file.Files.createDirectory;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -282,8 +289,10 @@ public final class FilesystemJobsDAO implements JobDAO {
             }
         } else {
             try {
-                final Map<String, JobOutput> outputs = new HashMap<>();
-                outputs.put(outputId, new JobOutput(outputId, data.getMimeType()));
+                final Map<String, JobOutput> outputs = singletonMap(
+                        outputId,
+                        new JobOutput(outputId, data.getMimeType()));
+
                 writeJSON(resolveJobDir(jobId).get().resolve(JOB_DIR_OUTPUTS_FILENAME), outputs);
             } catch (IOException ex) {
                 throw new RuntimeException("Cannot write job outputs file for " + jobId);
@@ -369,7 +378,7 @@ public final class FilesystemJobsDAO implements JobDAO {
                         throw new RuntimeException(outputsFile + ": cannot deserialize: " + ex);
                     }
                 })
-                .orElse(new HashMap<>());
+                .orElse(emptyMap());
     }
 
     @Override
@@ -382,6 +391,15 @@ public final class FilesystemJobsDAO implements JobDAO {
                         throw new RuntimeException(inputsFile + ": cannot deserialize: " + ex);
                     }
                 });
+    }
+
+    @Override
+    public Map<String, HealthCheck> getHealthChecks() {
+        return singletonMap(
+                FILESYSTEM_JOBS_DAO_DISK_SPACE_HEALTHCHECK,
+                new DiskSpaceHealthCheck(
+                        this.jobsDirectory.toFile(),
+                        FILESYSTEM_JOBS_DAO_DISK_SPACE_WARNING_THRESHOLD_IN_BYTES));
     }
 
     @Override

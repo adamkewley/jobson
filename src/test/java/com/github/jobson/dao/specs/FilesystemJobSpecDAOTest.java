@@ -19,7 +19,9 @@
 
 package com.github.jobson.dao.specs;
 
+import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
+import com.github.jobson.dao.jobs.FilesystemJobsDAOTest;
 import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.specs.JobSpec;
 import org.junit.Test;
@@ -33,6 +35,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.jobson.Constants.FILESYSTEM_SPECS_DAO_DISK_SPACE_HEALTHCHECK;
 import static com.github.jobson.Constants.SPEC_DIR_SPEC_FILENAME;
 import static com.github.jobson.Helpers.generateRandomBase36String;
 import static com.github.jobson.TestHelpers.createTmpDir;
@@ -312,5 +315,12 @@ public final class FilesystemJobSpecDAOTest {
                 filesystemJobSpecDAO.getJobSpecSummaries(pageSize, 0);
 
         assertThat(jobSpecSummaries.size()).isEqualTo(pageSize);
+    }
+
+    @Test
+    public void testGetHealthChecksReturnsHealthCheckThatTestsDiskSpace() throws IOException {
+        final FilesystemJobSpecDAO dao = new FilesystemJobSpecDAO(createTmpDir(FilesystemJobsDAOTest.class));
+        assertThat(dao.getHealthChecks()).containsKeys(FILESYSTEM_SPECS_DAO_DISK_SPACE_HEALTHCHECK);
+        assertThat(dao.getHealthChecks().get(FILESYSTEM_SPECS_DAO_DISK_SPACE_HEALTHCHECK)).isNotNull();
     }
 }

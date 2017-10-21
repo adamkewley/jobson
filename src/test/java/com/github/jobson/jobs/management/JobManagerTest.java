@@ -19,6 +19,7 @@
 
 package com.github.jobson.jobs.management;
 
+import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.jobs.*;
@@ -48,6 +49,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.github.jobson.Constants.JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHCHECK;
+import static com.github.jobson.Constants.JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD;
 import static com.github.jobson.TestConstants.DEFAULT_TIMEOUT;
 import static com.github.jobson.TestHelpers.STANDARD_VALID_REQUEST;
 import static com.github.jobson.TestHelpers.generateRandomBytes;
@@ -497,5 +500,27 @@ public final class JobManagerTest {
 
             assertThat(writingJobDAO.getPersistOutputCalledWith()).contains(expectedArgs);
         }
+    }
+
+
+    @Test
+    public void testGetHealthChecksReturnsAHealthCheckForJobQueueOverflowing() {
+        final CancelablePromise<JobExecutionResult> executorPromise = new SimpleCancelablePromise<>();
+        final JobManager jobManager = createManagerWith(MockJobExecutor.thatUses(executorPromise));
+        final Map<String, HealthCheck> healthChecks = jobManager.getHealthChecks();
+
+        assertThat(healthChecks).containsKeys(JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHCHECK);
+        assertThat(healthChecks.get(JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHCHECK)).isNotNull();
+
+        final HealthCheck jobQueueHealthCheck = healthChecks.get(JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHCHECK);
+
+        assertThat(jobQueueHealthCheck.execute().isHealthy());
+
+        for(int i = 0; i < JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD * 2; i++) {
+            // These won't finish because we never resolve the promise
+            jobManager.submit(STANDARD_VALID_REQUEST);
+        }
+
+        assertThat(jobQueueHealthCheck.execute().isHealthy()).isFalse();
     }
 }

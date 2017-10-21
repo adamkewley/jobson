@@ -19,12 +19,12 @@
 
 package com.github.jobson.jobs.jobstates;
 
-import com.github.jobson.jobs.JobId;
-import com.github.jobson.jobs.JobStatus;
-import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
+import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.specs.JobSpec;
 
 import java.util.List;

@@ -33,11 +33,13 @@ import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.github.jobson.Constants.HTTP_SPECS_PATH;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
@@ -106,16 +108,16 @@ public final class JobSpecResource {
         final List<APIJobSpecSummary> apiJobSpecSummaries =
                 jobSummaries.stream().map(summary -> {
                     try {
-                        final HashMap<String, APIRestLink> restLinks = new HashMap<>();
-                        final URI jobDetailsURI = new URI(HTTP_SPECS_PATH + "/" + summary.getId().toString());
-                        restLinks.put("details", new APIRestLink(jobDetailsURI));
+                        final Map<String, APIRestLink> restLinks = singletonMap(
+                                "details",
+                                new APIRestLink(new URI(HTTP_SPECS_PATH + "/" + summary.getId().toString())));
                         return APIJobSpecSummary.fromJobSpecSummary(summary, restLinks);
                     } catch (URISyntaxException ex) {
                         throw new WebApplicationException(ex);
                     }
                 }).collect(toList());
 
-        return new APIJobSpecCollection(apiJobSpecSummaries, new HashMap<>());
+        return new APIJobSpecCollection(apiJobSpecSummaries, emptyMap());
     }
 
     @GET
