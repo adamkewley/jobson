@@ -8,7 +8,7 @@
     <artifactId>jobson</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>jobson</name>
-    <description>Webserver for hosting CLI applications</description>
+    <description>Webify command-line applications</description>
     <url>https://github.com/adamkewley/jobson</url>
     <inceptionYear>2017</inceptionYear>
 
@@ -42,8 +42,6 @@
             </roles>
         </developer>
     </developers>
-
-
 
     <packaging>jar</packaging>
 
@@ -95,12 +93,14 @@
             <version>2.1.0</version>
         </dependency>
 
+        <!-- Basic websocket support for Jetty (the core HTTP server) -->
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-server-impl</artifactId>
             <version>9.4.2.v20170220</version>
         </dependency>
 
+        <!-- Generating Lorem-Ipsum etc. for generator commands -->
         <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
@@ -113,7 +113,6 @@
             <artifactId>tika-core</artifactId>
             <version>1.16</version>
         </dependency>
-
 
         <!-- For parsing + validating SQL inputs -->
         <dependency>
@@ -130,7 +129,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- For template expressions found in job arguments etc. -->
+        <!-- To generate a parser for the template expressions used in job arguments etc. -->
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
@@ -189,7 +188,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Compile ANTLR4 grammar files into java classes -->
+            <!-- Compile custom grammar files into java classes -->
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
@@ -209,32 +208,10 @@
             </plugin>
 
 
-            <!-- Bundle everything into a fat JAR -->
+            <!-- Bundle the entire application into a fat JAR -->
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.1</version>
-                <configuration>
-                    <createDependencyReducedPom>false
-                    </createDependencyReducedPom>
-                    <transformers>
-                        <transformer
-                                implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                        <transformer
-                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>${mainClass}</mainClass>
-                        </transformer>
-                    </transformers>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -242,6 +219,17 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
@@ -255,53 +243,7 @@
                 </executions>
             </plugin>
 
-
-            <!-- Build a bash frontend (hides having to call java in CLI) -->
-            <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>replacer</artifactId>
-                <version>1.5.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <file>src/main/bash/jobson</file>
-                    <outputFile>target/jobson</outputFile>
-                    <replacements>
-                        <replacement>
-                            <token>%PROJECT_VERSION%</token>
-                            <value>${project.version}</value>
-                        </replacement>
-                    </replacements>
-                </configuration>
-            </plugin>
-
-            <!-- Make the bash frontend executable -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>set-execute-on-jobson-script</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <target>
-                                <chmod file="target/jobson" perm="755"/>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
+            <!-- Add implementation entries to the JAR so that the version command works -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -313,6 +255,30 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+
+            <!-- Package the source, binaries, etc. into standard tarballs used in releases -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/binary-tarball.xml</descriptor>
+                    </descriptors>
+                    <descriptorRefs>
+                        <descriptorRef>src</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
