@@ -30,7 +30,6 @@ public final class JobsConfig {
     private String dir;
 
 
-
     public String getDir() {
         return dir;
     }

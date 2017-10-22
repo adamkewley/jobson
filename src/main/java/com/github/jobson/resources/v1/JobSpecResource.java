@@ -64,7 +64,6 @@ public final class JobSpecResource {
     }
 
 
-
     @GET
     @ApiOperation(
             value = "Get summaries of the job specs exposed by the system",

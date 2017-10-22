@@ -31,13 +31,13 @@ import java.util.List;
 import java.util.Map;
 
 @ApiModel(description = "Details of a job on the system")
-public class APIJob extends JobDetails {
+public class APIJobDetails extends JobDetails {
 
-    public static APIJob fromJobDetails(
+    public static APIJobDetails fromJobDetails(
             JobDetails jobDetails,
             Map<String, APIRestLink> restLinks) {
 
-        return new APIJob(
+        return new APIJobDetails(
                 jobDetails.getId(),
                 jobDetails.getName(),
                 jobDetails.getOwner(),
@@ -54,9 +54,9 @@ public class APIJob extends JobDetails {
     /**
      * @deprecated Used by JSON deserializer
      */
-    public APIJob() {}
+    public APIJobDetails() {}
 
-    public APIJob(
+    public APIJobDetails(
             JobId id,
             String name,
             UserId owner,

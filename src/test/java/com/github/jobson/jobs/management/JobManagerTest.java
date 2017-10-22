@@ -23,7 +23,7 @@ import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.jobs.*;
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.jobstates.FinalizedJob;
 import com.github.jobson.specs.JobOutput;
@@ -55,7 +55,7 @@ import static com.github.jobson.TestConstants.DEFAULT_TIMEOUT;
 import static com.github.jobson.TestHelpers.STANDARD_VALID_REQUEST;
 import static com.github.jobson.TestHelpers.generateRandomBytes;
 import static com.github.jobson.jobs.JobStatus.*;
-import static com.github.jobson.dao.BinaryData.wrap;
+import static com.github.jobson.utils.BinaryData.wrap;
 import static com.github.jobson.jobs.JobEventListeners.createNullListeners;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -481,7 +481,11 @@ public final class JobManagerTest {
         final Map<String, BinaryData> outputsFromExecutor = new HashMap<>();
 
         for (Map.Entry<String, JobOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
-            outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes));
+            if (output.getValue().getMimeType().isPresent()) {
+                outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes, output.getValue().getMimeType().get()));
+            } else {
+                outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes));
+            }
         }
 
         final JobExecutionResult jobExecutionResult = new JobExecutionResult(FINISHED, outputsFromExecutor);
@@ -496,7 +500,7 @@ public final class JobManagerTest {
             final PersistOutputArgs expectedArgs = new PersistOutputArgs(
                     writingJobDAO.getReturnedPersistedReq().getId(),
                     output.getKey(),
-                    wrap(executorOutputBytes, output.getValue().getMimeType()));
+                    wrap(executorOutputBytes, output.getValue().getMimeType().orElse("application/octet-stream")));
 
             assertThat(writingJobDAO.getPersistOutputCalledWith()).contains(expectedArgs);
         }

@@ -26,9 +26,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 import io.reactivex.Observer;
 import org.apache.commons.io.IOUtils;
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,6 +153,17 @@ public final class Helpers {
             final InputStream dataStream = Files.newInputStream(p);
 
             return new BinaryData(dataStream, size);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static BinaryData streamBinaryData(Path p, String mimeType) {
+        try {
+            final long size = Files.size(p);
+            final InputStream dataStream = Files.newInputStream(p);
+
+            return new BinaryData(dataStream, size, mimeType);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -346,5 +358,10 @@ public final class Helpers {
 
     public static Date now() {
         return new Date();
+    }
+
+    public static String getMimeType(InputStream s, String fileName) throws IOException {
+        final Tika t = new Tika();
+        return t.detect(s, fileName);
     }
 }

@@ -28,6 +28,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
 
+import java.util.Optional;
+
 public final class JobOutput {
 
     @JsonProperty
@@ -35,7 +37,7 @@ public final class JobOutput {
     private String path;
 
     @JsonProperty
-    private String mimeType = "application/octet-string";
+    private Optional<String> mimeType = Optional.empty();
 
 
     /**
@@ -44,9 +46,8 @@ public final class JobOutput {
     public JobOutput() {}
 
     public JobOutput(String path, String mimeType) {
-
         this.path = path;
-        this.mimeType = mimeType;
+        this.mimeType = Optional.of(mimeType);
     }
 
 
@@ -54,7 +55,7 @@ public final class JobOutput {
         return path;
     }
 
-    public String getMimeType() {
+    public Optional<String> getMimeType() {
         return mimeType;
     }
 

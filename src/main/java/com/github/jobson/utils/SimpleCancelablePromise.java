@@ -34,7 +34,6 @@ public final class SimpleCancelablePromise<T> implements CancelablePromise<T> {
     private boolean isCancelled = false;
 
 
-
     public boolean completeExceptionally(Throwable ex) {
         return internalPromise.completeExceptionally(ex);
     }

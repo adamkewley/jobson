@@ -48,11 +48,9 @@ public final class App extends Application<ApplicationConfig> {
     private static Logger log = LoggerFactory.getLogger(App.class);
 
 
-
     public static void main(String[] args) throws Exception {
         new App().run(args);
     }
-
 
 
     public void initialize(Bootstrap<ApplicationConfig> configurationBootstrap) {

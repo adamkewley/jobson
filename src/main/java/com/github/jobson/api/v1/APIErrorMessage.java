@@ -33,7 +33,6 @@ public final class APIErrorMessage {
     public APIErrorMessage(
             @JsonProperty("message") String message,
             @JsonProperty("code") String httpStatusCode) {
-
         this.message = message;
         this.code = httpStatusCode;
     }

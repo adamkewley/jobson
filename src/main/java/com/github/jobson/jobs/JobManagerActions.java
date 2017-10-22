@@ -25,7 +25,6 @@ import com.github.jobson.utils.CancelablePromise;
 import org.apache.commons.lang3.tuple.Pair;
 
 public interface JobManagerActions {
-
     Pair<JobId, CancelablePromise<FinalizedJob>> submit(ValidJobRequest validJobRequest);
     Pair<JobId, CancelablePromise<FinalizedJob>> submit(ValidJobRequest validJobRequest, JobEventListeners jobEventListeners);
     boolean tryAbort(JobId jobId);

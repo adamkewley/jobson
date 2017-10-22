@@ -33,9 +33,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.github.jobson.Constants.DEMO_SPEC_DIRNAME;
-import static com.github.jobson.Constants.SPEC_DIR_SPEC_FILENAME;
+import static com.github.jobson.Constants.*;
 import static com.github.jobson.Helpers.openResourceFile;
+import static com.google.common.io.ByteStreams.copy;
+import static java.nio.file.Files.newOutputStream;
 import static org.apache.commons.io.IOUtils.toInputStream;
 
 public final class NewCommand extends Command {
@@ -60,23 +61,23 @@ public final class NewCommand extends Command {
     @Override
     public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
         try {
-            final Path configPath = Paths.get(Constants.WORKSPACE_CONFIG_FILENAME);
+            final Path configPath = Paths.get(WORKSPACE_CONFIG_FILENAME);
             tryWriteFile(configPath, openResourceFile("config-template.yml"));
 
-            final Path usersPath = Paths.get(Constants.WORKSPACE_USER_FILENAME);
+            final Path usersPath = Paths.get(WORKSPACE_USER_FILENAME);
             tryWriteFile(usersPath, toInputStream(""));
 
-            final Path specDir = Paths.get(Constants.WORKSPACE_SPECS_DIRNAME);
+            final Path specDir = Paths.get(WORKSPACE_SPECS_DIRNAME);
             tryCreateDir(specDir);
 
             if (namespace.getBoolean(DEMO_ARG_NAME)) {
                 tryWriteDemoSpec(specDir);
             }
 
-            final Path jobsDir = Paths.get(Constants.WORKSPACE_JOBS_DIRNAME);
+            final Path jobsDir = Paths.get(WORKSPACE_JOBS_DIRNAME);
             tryCreateDir(jobsDir);
 
-            final Path wdsDir = Paths.get(Constants.WORKSPACE_WDS_DIRNAME);
+            final Path wdsDir = Paths.get(WORKSPACE_WDS_DIRNAME);
             tryCreateDir(wdsDir);
 
             System.out.println("Deployment created. Remember to add users (`user add`, `user passwd`), specs (`generate spec`), and boot the server (`serve`)");
@@ -93,7 +94,7 @@ public final class NewCommand extends Command {
     private void tryWriteFile(Path path, InputStream data) throws IOException {
         if (!path.toFile().exists()) {
             System.err.println("create    " + path);
-            IOUtils.copy(data, Files.newOutputStream(path));
+            copy(data, newOutputStream(path));
         } else {
             System.err.println("cannot create file '" + path + "': file exists: skipping");
         }

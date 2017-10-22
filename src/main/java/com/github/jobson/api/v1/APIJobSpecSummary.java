@@ -58,7 +58,6 @@ public class APIJobSpecSummary extends JobSpecSummary {
             String name,
             String description,
             Map<String, APIRestLink> _links) {
-
         super(id, name, description);
         this._links = _links;
     }

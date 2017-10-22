@@ -57,7 +57,6 @@ public final class APIJobSpec {
     private List<JobExpectedInput<?>> expectedInputs;
 
 
-
     /**
      * @deprecated Used by JSON deserializer.
      */
@@ -68,13 +67,11 @@ public final class APIJobSpec {
             String name,
             String description,
             List<JobExpectedInput<?>> expectedInputs) {
-
         this.id = id;
         this.name = name;
         this.description = description;
         this.expectedInputs = expectedInputs;
     }
-
 
 
     public JobSpecId getId() {
@@ -92,7 +89,6 @@ public final class APIJobSpec {
     public List<JobExpectedInput<?>> getExpectedInputs() {
         return expectedInputs;
     }
-
 
 
     @Override

@@ -32,12 +32,11 @@ public final class APIJobDetailsCollection {
 
     @ApiModelProperty(value = "The entries returned")
     @JsonProperty
-    private List<APIJob> entries;
+    private List<APIJobDetails> entries;
 
     @ApiModelProperty(value = "Links to related resources and actions")
     @JsonProperty
     private Map<String, APIRestLink> _links;
-
 
 
     /**
@@ -46,16 +45,14 @@ public final class APIJobDetailsCollection {
     public APIJobDetailsCollection() {}
 
     public APIJobDetailsCollection(
-            List<APIJob> entries,
+            List<APIJobDetails> entries,
             Map<String, APIRestLink> _links) {
-
         this.entries = entries;
         this._links = _links;
     }
 
 
-
-    public List<APIJob> getEntries() {
+    public List<APIJobDetails> getEntries() {
         return entries;
     }
 

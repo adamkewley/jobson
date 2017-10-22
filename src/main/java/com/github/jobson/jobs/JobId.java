@@ -29,12 +29,10 @@ public final class JobId {
     private final String jobId;
 
 
-
     @JsonCreator
     public JobId(String jobId) {
         this.jobId = jobId;
     }
-
 
 
     @Override

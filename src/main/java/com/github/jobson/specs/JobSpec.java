@@ -58,7 +58,6 @@ public final class JobSpec {
     private Map<String, JobOutput> outputs = new HashMap<>();
 
 
-
     /**
      * @deprecated Used by JSON serializer
      */

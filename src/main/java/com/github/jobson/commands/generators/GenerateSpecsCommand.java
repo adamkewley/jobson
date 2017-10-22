@@ -33,6 +33,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import static com.github.jobson.Helpers.loadResourceFileAsString;
+
 public final class GenerateSpecsCommand extends DefaultedConfiguredCommand<ApplicationConfig> {
 
     private static String SPEC_NAMES_ARG = "specNames";
@@ -61,7 +63,7 @@ public final class GenerateSpecsCommand extends DefaultedConfiguredCommand<Appli
 
     @Override
     protected void run(Bootstrap<ApplicationConfig> bootstrap, Namespace namespace, ApplicationConfig applicationConfig) throws Exception {
-        specTemplate = Helpers.loadResourceFileAsString("spec-template.yml");
+        specTemplate = loadResourceFileAsString("spec-template.yml");
 
         final ArrayList<String> specNames = namespace.get(SPEC_NAMES_ARG);
         final Path specsDir = Paths.get(applicationConfig.getJobSpecConfiguration().getDir());

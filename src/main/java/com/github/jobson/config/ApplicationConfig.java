@@ -53,7 +53,6 @@ public final class ApplicationConfig extends Configuration {
     private AuthenticationConfig authentication;
 
 
-
     public SpecsConfig getJobSpecConfiguration() {
         return specs;
     }

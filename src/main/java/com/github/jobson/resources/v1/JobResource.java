@@ -22,7 +22,7 @@ package com.github.jobson.resources.v1;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Helpers;
 import com.github.jobson.api.v1.*;
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.jobs.ReadonlyJobDAO;
 import com.github.jobson.dao.specs.JobSpecConfigurationDAO;
@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.github.jobson.Constants.DEFAULT_BINARY_MIME_TYPE;
 import static com.github.jobson.Constants.HTTP_JOBS_PATH;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
@@ -128,17 +129,17 @@ public final class JobResource {
                         jobDAO.getJobs(pageSizeRequested, pageRequested, query.get()) :
                         jobDAO.getJobs(pageSizeRequested, pageRequested);
 
-        final List<APIJob> apiJobs = jobs
+        final List<APIJobDetails> apiJobDetailss = jobs
                 .stream()
                 .map(this::toJobResponse)
                 .collect(toList());
 
-        return new APIJobDetailsCollection(apiJobs, emptyMap());
+        return new APIJobDetailsCollection(apiJobDetailss, emptyMap());
     }
 
-    private APIJob toJobResponse(JobDetails jobDetails) {
+    private APIJobDetails toJobResponse(JobDetails jobDetails) {
         final Map<String, APIRestLink> restLinks = generateRestLinks(jobDetails);
-        return APIJob.fromJobDetails(jobDetails, restLinks);
+        return APIJobDetails.fromJobDetails(jobDetails, restLinks);
     }
 
     private Map<String, APIRestLink> generateRestLinks(JobDetails job) {
@@ -179,12 +180,12 @@ public final class JobResource {
             code = 200,
             notes = "")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Job details found", response = APIJob.class),
+            @ApiResponse(code = 200, message = "Job details found", response = APIJobDetails.class),
             @ApiResponse(code = 404, message = "The job could not be found", response = APIErrorMessage.class),
             @ApiResponse(code = 401, message = "Client not authorized to request job details", response = APIErrorMessage.class)
     })
     @PermitAll
-    public Optional<APIJob> getJobDetailsById(
+    public Optional<APIJobDetails> getJobDetailsById(
             @Context
                     SecurityContext context,
             @ApiParam(value = "The job's ID")
@@ -291,7 +292,7 @@ public final class JobResource {
             notes = "Get a job's standard output, if available. A job that has not yet started will not have a standard output and, " +
                     "therefore, this method will return a 404. There is no guarantee that all running/finished jobs will have standard output " +
                     "data. This is because administrative and cleanup routines may dequeue a job's output in order to save space on the server. ")
-    @Produces("application/octet-stream")
+    @Produces(DEFAULT_BINARY_MIME_TYPE)
     @PermitAll
     public Response fetchJobStdoutById(
             @Context
@@ -329,7 +330,7 @@ public final class JobResource {
                     "therefore, this method will return a 404. There is no guarantee that all running/finished jobs will have standard " +
                     "error data. This is because administrative and cleanup routines may dequeue a job's output in order to save space on " +
                     "the server.")
-    @Produces("application/octet-stream")
+    @Produces(DEFAULT_BINARY_MIME_TYPE)
     @PermitAll
     public Response fetchJobStderrById(
             @Context
@@ -410,7 +411,11 @@ public final class JobResource {
         for (Map.Entry<String, JobOutput> entry : jobDAO.getJobOutputs(jobId).entrySet()) {
             final String href = HTTP_JOBS_PATH + "/" + jobId + "/outputs/" + entry.getKey();
 
-            ret.put(entry.getKey(), new APIJobOutput(entry.getValue().getMimeType(), href));
+            if (entry.getValue().getMimeType().isPresent()) {
+                ret.put(entry.getKey(), new APIJobOutput(href, entry.getValue().getMimeType().get()));
+            } else {
+                ret.put(entry.getKey(), new APIJobOutput(href));
+            }
         }
 
         return ret;

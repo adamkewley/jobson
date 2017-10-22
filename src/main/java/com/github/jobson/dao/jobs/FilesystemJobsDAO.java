@@ -23,7 +23,7 @@ import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Helpers;
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.IdGenerator;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
@@ -324,6 +324,18 @@ public final class FilesystemJobsDAO implements JobDAO {
     }
 
 
+
+    @Override
+    public boolean hasStdout(JobId jobId) {
+        return resolveJobFile(jobId, JOB_DIR_STDOUT_FILENAME).isPresent();
+    }
+
+    @Override
+    public Optional<BinaryData> getStdout(JobId jobId) {
+        return resolveJobFile(jobId, JOB_DIR_STDOUT_FILENAME).map(Helpers::streamBinaryData);
+    }
+
+
     @Override
     public boolean hasStderr(JobId jobId) {
         return resolveJobFile(jobId, JOB_DIR_STDERR_FILENAME).isPresent();
@@ -333,6 +345,7 @@ public final class FilesystemJobsDAO implements JobDAO {
     public Optional<BinaryData> getStderr(JobId jobId) {
         return resolveJobFile(jobId, JOB_DIR_STDERR_FILENAME).map(Helpers::streamBinaryData);
     }
+
 
     @Override
     public Set<JobId> getJobsWithStatus(JobStatus status) {
@@ -365,7 +378,10 @@ public final class FilesystemJobsDAO implements JobDAO {
                 .flatMap(jobOutput ->
                         tryResolveOutput(jobId, jobOutput.getPath())
                                 .map(Helpers::streamBinaryData)
-                                .map(b -> b.withMimeType(jobOutput.getMimeType())));
+                                .map(binaryData -> {
+                                    final String mimeType = jobOutput.getMimeType().orElse(binaryData.getMimeType());
+                                    return binaryData.withMimeType(mimeType);
+                                }));
     }
 
     @Override
@@ -400,15 +416,5 @@ public final class FilesystemJobsDAO implements JobDAO {
                 new DiskSpaceHealthCheck(
                         this.jobsDirectory.toFile(),
                         FILESYSTEM_JOBS_DAO_DISK_SPACE_WARNING_THRESHOLD_IN_BYTES));
-    }
-
-    @Override
-    public boolean hasStdout(JobId jobId) {
-        return resolveJobFile(jobId, JOB_DIR_STDOUT_FILENAME).isPresent();
-    }
-
-    @Override
-    public Optional<BinaryData> getStdout(JobId jobId) {
-        return resolveJobFile(jobId, JOB_DIR_STDOUT_FILENAME).map(Helpers::streamBinaryData);
     }
 }

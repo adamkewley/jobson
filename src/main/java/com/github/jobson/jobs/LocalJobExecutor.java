@@ -19,7 +19,7 @@
 
 package com.github.jobson.jobs;
 
-import com.github.jobson.dao.BinaryData;
+import com.github.jobson.utils.BinaryData;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.scripting.FreeFunction;
@@ -38,10 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.jobson.Helpers.*;
@@ -136,7 +133,6 @@ public final class LocalJobExecutor implements JobExecutor {
 
     @Override
     public CancelablePromise<JobExecutionResult> execute(PersistedJob req, JobEventListeners jobEventListeners) {
-
         final ExecutionConfiguration executionConfiguration = req.getSpec().getExecution();
 
         try {
@@ -200,7 +196,22 @@ public final class LocalJobExecutor implements JobExecutor {
                     workingDir.resolve(expectedOutput.getValue().getPath());
 
             if (expectedOutputFile.toFile().exists()) {
-                ret.put(expectedOutput.getKey(), streamBinaryData(expectedOutputFile));
+                final Optional<String> maybeMimeTypeProvidedInSpec = expectedOutput.getValue().getMimeType();
+
+                if (maybeMimeTypeProvidedInSpec.isPresent()) {
+                    ret.put(expectedOutput.getKey(),
+                            streamBinaryData(expectedOutputFile, maybeMimeTypeProvidedInSpec.get()));
+                } else {
+                    try {
+                        final String mimeType = getMimeType(
+                                Files.newInputStream(expectedOutputFile),
+                                expectedOutput.getValue().getPath());
+                        ret.put(expectedOutput.getKey(), streamBinaryData(expectedOutputFile, mimeType));
+                    } catch (IOException ex) {
+                        log.error("Encountered IO error when determining an output's MIME type. Skipping MIME type detection");
+                        ret.put(expectedOutput.getKey(), streamBinaryData(expectedOutputFile));
+                    }
+                }
             }
         }
 

@@ -52,7 +52,6 @@ public final class TableSchema {
     private List<ColumnSchema> columns;
 
 
-
     /**
      * @deprecated Used by JSON deserializer.
      */
@@ -69,7 +68,6 @@ public final class TableSchema {
         this.description = description;
         this.columns = columns;
     }
-
 
 
     public String getId() {

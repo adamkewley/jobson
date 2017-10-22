@@ -41,7 +41,6 @@ public final class ExecutionConfiguration {
     private Optional<List<JobDependencyConfiguration>> dependencies = Optional.empty();
 
 
-
     /**
      * @deprecated Used by JSON deserializer
      */
@@ -56,7 +55,6 @@ public final class ExecutionConfiguration {
         this.arguments = arguments;
         this.dependencies = dependencies;
     }
-
 
 
     public String getApplication() {
