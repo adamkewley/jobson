@@ -6,7 +6,7 @@
 
     <groupId>com.github.jobson</groupId>
     <artifactId>jobson</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>jobson</name>
     <description>Webify command-line applications</description>
     <url>https://github.com/adamkewley/jobson</url>
