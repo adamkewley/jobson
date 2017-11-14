@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/adamkewley/jobson.svg?branch=master)](https://travis-ci.org/adamkewley/jobson)
 
+Video explanation:
+
+[![Jobson Screencast](https://img.youtube.com/vi/W9yfpqWiyUg/0.jpg)](https://www.youtube.com/watch?v=W9yfpqWiyUg)
+
 Jobson is a web server that can turn command-line applications into
 a job system that manages:
 
