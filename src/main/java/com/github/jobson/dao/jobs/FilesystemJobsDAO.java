@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -161,12 +162,22 @@ public final class FilesystemJobsDAO implements JobDAO {
 
         final Path stdoutPath = resolveJobDir(jobId).get().resolve(jobFilename);
 
-        try {
-            final FileOutputStream outputStream = new FileOutputStream(stdoutPath.toFile());
-            return o.subscribe(outputStream::write, error -> outputStream.close(), outputStream::close);
-        } catch (IOException ex) {
-            throw new RuntimeException(jobId + ": cannot persist stdout: " + ex.toString());
-        }
+        final AtomicReference<FileOutputStream> outputStream =
+                new AtomicReference<>(null);
+        return o.subscribe(
+                bytes -> {
+                    if (outputStream.get() == null)
+                        outputStream.set(new FileOutputStream(stdoutPath.toFile()));
+                    outputStream.get().write(bytes);
+                },
+                error -> {
+                    if (outputStream.get() != null)
+                        outputStream.get().close();
+                },
+                () -> {
+                    if (outputStream.get() != null)
+                        outputStream.get().close();
+                });
     }
 
     @Override
