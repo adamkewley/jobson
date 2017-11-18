@@ -294,4 +294,20 @@ public final class TestJobsAPI {
 
         assertThat(inputsReturned).isEqualTo(req.getInputs());
     }
+
+    @Test
+    public void testGetStderrReturns404IfStderrWasNotWritten() throws InterruptedException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(REQUEST_AGAINST_FIRST_SPEC))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
+
+        sleep(100);
+
+        final Response stderrResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/stderr"))
+                .get();
+
+        assertThat(stderrResponse.getStatus()).isEqualTo(404);
+    }
 }

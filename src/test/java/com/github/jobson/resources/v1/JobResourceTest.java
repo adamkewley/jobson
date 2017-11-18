@@ -354,6 +354,7 @@ public final class JobResourceTest {
                 .isEqualTo(HTTP_JOBS_PATH + "/" + jobSummary.getId().toString() + "/stderr");
     }
 
+
     @Test
     public void testFetchJobSummariesDoesNotContainLinksToStderrIfJobHasNoStderr() throws IOException {
         final List<JobDetails> jobSummaries = generateRandomJobDetails();
@@ -376,27 +377,6 @@ public final class JobResourceTest {
     private void assertDoesNotHaveAnStderrRESTLink(APIJobDetails jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("stderr")).isFalse();
     }
-
-
-    @Test
-    public void testFetchJobSummariesContainsARESTLinkToTheSpec() {
-        final List<JobDetails> jobSummaries = generateRandomJobDetails();
-
-        final JobDAO jobDAO = mock(JobDAO.class);
-        when(jobDAO.getJobs(anyInt(), anyInt())).thenReturn(jobSummaries);
-        when(jobDAO.hasStderr(any())).thenReturn(false);
-
-        final JobResource jobResource = resourceThatUses(jobDAO);
-
-        final APIJobDetailsCollection resp = jobResource.getJobs(
-                TestHelpers.generateSecureSecurityContext(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty());
-
-        resp.getEntries().forEach(this::assertHasASpecRESTLink);
-    }
-
 
 
     @Test(expected = WebApplicationException.class)

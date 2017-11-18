@@ -318,8 +318,7 @@ public final class JobResource {
                     .header("Content-Length", binaryData.getSizeOf())
                     .build();
         } else {
-            final APIErrorMessage APIErrorMessage = new APIErrorMessage(jobId + ": could not be found", "404");
-            return Response.status(404).entity(Entity.json(APIErrorMessage)).build();
+            return Response.status(404).build();
         }
     }
 
