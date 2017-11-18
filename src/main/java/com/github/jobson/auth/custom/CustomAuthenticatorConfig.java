@@ -51,6 +51,53 @@ import static java.lang.Thread.currentThread;
  */
 public final class CustomAuthenticatorConfig implements AuthenticationConfig {
 
+    private static ClassLoader getClassLoader(Optional<String> classPath) {
+        if (classPath.isPresent()) {
+            final File localPath = new File(classPath.get());
+
+            if (!localPath.exists())
+                throw new RuntimeException(classPath.get() +  ": does not exist");
+
+            try {
+                final URL fileURL = localPath.toURI().toURL();
+                return URLClassLoader.newInstance(new URL[] { fileURL });
+            } catch (MalformedURLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else {
+            return currentThread().getContextClassLoader();
+        }
+    }
+
+    private static Class<?> loadClass(ClassLoader classLoader, String className) {
+        try {
+            return classLoader.loadClass(className);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static Class<AuthenticationConfig> toAuthConfigClass(Class<?> klass) {
+        if (!AuthenticationConfig.class.isAssignableFrom(klass))
+            throw new RuntimeException(klass.getName() + " does not implement " + AuthenticationConfig.class.getName());
+
+        return (Class<AuthenticationConfig>)klass;
+    }
+
+    private static AuthenticationConfig loadAuthenticationConfig(
+            Optional<JsonNode> properties,
+            Class<AuthenticationConfig> klass) {
+
+        try {
+            return properties.isPresent() ?
+                    readJSON(properties.get(), klass) :
+                    klass.newInstance();
+        } catch (IOException | IllegalAccessException | InstantiationException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
     private final AuthenticationConfig loadedConfig;
 
 
@@ -68,53 +115,11 @@ public final class CustomAuthenticatorConfig implements AuthenticationConfig {
             @JsonProperty("classPath") Optional<String> classPath,
             @JsonProperty("properties") Optional<JsonNode> properties) {
 
-        final ClassLoader classLoader;
-        if (classPath.isPresent()) {
-            final File localPath = new File(classPath.get());
+        final ClassLoader classLoader = getClassLoader(classPath);
+        final Class<?> klass = loadClass(classLoader, className);
+        final Class<AuthenticationConfig> authConfigClass = toAuthConfigClass(klass);
 
-            if (!localPath.exists())
-                throw new RuntimeException(classPath.get() +  ": does not exist");
-
-            try {
-                final URL fileURL = localPath.toURI().toURL();
-                classLoader = URLClassLoader.newInstance(new URL[] { fileURL });
-            } catch (MalformedURLException ex) {
-                throw new RuntimeException(ex);
-            }
-        } else {
-            classLoader = currentThread().getContextClassLoader();
-        }
-
-        final Class<?> klass;
-        try {
-            klass = classLoader.loadClass(className);
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
-        }
-
-
-        if (!AuthenticationConfig.class.isAssignableFrom(klass))
-            throw new RuntimeException(klass.getName() + " does not implement " + AuthenticationConfig.class.getName());
-
-        final Class<AuthenticationConfig> downcastedClass =
-                (Class<AuthenticationConfig>)klass;
-
-        final AuthenticationConfig loadedConfig;
-        if (properties.isPresent()) {
-            try {
-                loadedConfig = readJSON(properties.get(), downcastedClass);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        } else {
-            try {
-                loadedConfig = downcastedClass.newInstance();
-            } catch (IllegalAccessException | InstantiationException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        this.loadedConfig = loadedConfig;
+        this.loadedConfig = loadAuthenticationConfig(properties, authConfigClass);
     }
 
 

@@ -50,7 +50,7 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
     private static final Logger log = LoggerFactory.getLogger(FilesystemJobSpecDAO.class);
 
 
-    private static Optional<JobSpec> loadJobSpecConfiguration(Path jobSpecDir) {
+    private static Optional<JobSpec> loadJobSpec(Path jobSpecDir) {
         final Path jobSpecPath = jobSpecDir.resolve(Constants.SPEC_DIR_SPEC_FILENAME);
 
         try {
@@ -95,7 +95,7 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
             log.error(jobSpecDir.toString() + ": is not a directory");
             return Optional.empty();
         } else {
-            return loadJobSpecConfiguration(jobSpecDir);
+            return loadJobSpec(jobSpecDir);
         }
     }
 
@@ -129,7 +129,7 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
 
         return listDirectories(jobSpecsDir)
                 .map(File::toPath)
-                .map(path -> loadJobSpecConfiguration(path)
+                .map(path -> loadJobSpec(path)
                         .map(JobSpec::toSummary))
                 .filter(Optional::isPresent)
                 .map(Optional::get)

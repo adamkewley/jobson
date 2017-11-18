@@ -23,10 +23,11 @@ import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.jobs.*;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.jobstates.FinalizedJob;
-import com.github.jobson.specs.JobOutput;
+import com.github.jobson.specs.JobExpectedOutput;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import com.github.jobson.websockets.v1.JobEvent;
@@ -478,13 +479,23 @@ public final class JobManagerTest {
                 createManagerWith(writingJobDAO, MockJobExecutor.thatUses(executorPromise));
 
         final byte[] executorOutputBytes = generateRandomBytes();
-        final Map<String, BinaryData> outputsFromExecutor = new HashMap<>();
+        final List<JobOutput> outputsFromExecutor = new ArrayList<>();
 
-        for (Map.Entry<String, JobOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
+        for (Map.Entry<JobOutputId, JobExpectedOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
             if (output.getValue().getMimeType().isPresent()) {
-                outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes, output.getValue().getMimeType().get()));
+                outputsFromExecutor.add(new JobOutput(
+                        output.getKey(),
+                        wrap(executorOutputBytes, output.getValue().getMimeType().get()),
+                        output.getValue().getName(),
+                        output.getValue().getDescription(),
+                        output.getValue().getMetadata()));
             } else {
-                outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes));
+                outputsFromExecutor.add(new JobOutput(
+                        output.getKey(),
+                        wrap(executorOutputBytes),
+                        output.getValue().getName(),
+                        output.getValue().getDescription(),
+                        output.getValue().getMetadata()));
             }
         }
 
@@ -496,7 +507,7 @@ public final class JobManagerTest {
 
         p.get(DEFAULT_TIMEOUT, MILLISECONDS);
 
-        for (Map.Entry<String, JobOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
+        for (Map.Entry<JobOutputId, JobExpectedOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
             final PersistOutputArgs expectedArgs = new PersistOutputArgs(
                     writingJobDAO.getReturnedPersistedReq().getId(),
                     output.getKey(),

@@ -64,7 +64,6 @@ public class APIJobDetails extends JobDetails {
             Map<String, APIRestLink> _links) {
 
         super(id, name, owner, timestamps);
-
         this._links = _links;
     }
 

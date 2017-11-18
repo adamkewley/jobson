@@ -24,6 +24,7 @@ import com.github.jobson.Constants;
 import com.github.jobson.HttpStatusCodes;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.JobDAO;
 import com.github.jobson.dao.jobs.JobDetails;
@@ -37,7 +38,7 @@ import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobManagerActions;
 import com.github.jobson.jobs.jobstates.FinalizedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
-import com.github.jobson.specs.JobOutput;
+import com.github.jobson.specs.JobExpectedOutput;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.utils.CancelablePromise;
@@ -827,7 +828,7 @@ public final class JobResourceTest {
 
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final Map<String, APIJobOutput> ret =
+        final Map<JobOutputId, APIJobOutput> ret =
                 jobResource.fetchJobOutputs(generateSecureSecurityContext(), generateJobId());
 
         assertThat(ret).isEmpty();
@@ -835,9 +836,9 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobOutputsReturnsMapOfOutputsReturnedFromDAO() {
-        final Map<String, JobOutput> outputsFromDAO = generateRandomMap(
+        final Map<JobOutputId, JobExpectedOutput> outputsFromDAO = generateRandomMap(
                 randomIntBetween(10, 20),
-                TestHelpers::generateRandomString,
+                TestHelpers::generateJobOutputId,
                 TestHelpers::generateJobOutput);
 
         final JobDAO jobDAO = mock(JobDAO.class);
@@ -848,13 +849,13 @@ public final class JobResourceTest {
 
         final JobId jobId = generateJobId();
 
-        final Map<String, APIJobOutput> ret =
+        final Map<JobOutputId, APIJobOutput> ret =
                 jobResource.fetchJobOutputs(generateSecureSecurityContext(), jobId);
 
         assertThat(ret.size()).isEqualTo(outputsFromDAO.size());
         assertThat(ret.keySet()).isEqualTo(outputsFromDAO.keySet());
 
-        for (Map.Entry<String, APIJobOutput> returnedOutput : ret.entrySet()) {
+        for (Map.Entry<JobOutputId, APIJobOutput> returnedOutput : ret.entrySet()) {
             assertThat(returnedOutput.getValue().getMimeType()).isEqualTo(outputsFromDAO.get(returnedOutput.getKey()).getMimeType());
             assertThat(returnedOutput.getValue().getHref()).contains("/jobs/" + jobId + "/outputs/" + returnedOutput.getKey());
         }
@@ -868,7 +869,7 @@ public final class JobResourceTest {
         final JobResource jobResource = resourceThatUses(jobDAO);
 
         final Response ret =
-                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateRandomString());
+                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateJobOutputId());
     }
 
     @Test(expected = WebApplicationException.class)
@@ -880,7 +881,7 @@ public final class JobResourceTest {
         final JobResource jobResource = resourceThatUses(jobDAO);
 
         final Response ret =
-                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateRandomString());
+                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(),  generateJobOutputId());
     }
 
     @Test
@@ -893,7 +894,7 @@ public final class JobResourceTest {
         final JobResource jobResource = resourceThatUses(jobDAO);
 
         final Response ret =
-                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateRandomString());
+                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateJobOutputId());
 
         assertThat(ret.getStatus()).isEqualTo(200);
     }
@@ -909,7 +910,7 @@ public final class JobResourceTest {
         final JobResource jobResource = resourceThatUses(jobDAO);
 
         final Response ret =
-                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateRandomString());
+                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateJobOutputId());
 
         assertThat(ret.getHeaderString("Content-Type")).isEqualTo(mimeType);
     }

@@ -21,16 +21,10 @@ package com.github.jobson.jobs.execution;
 
 import com.github.jobson.TestConstants;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.jobs.JobExecutionResult;
-import com.github.jobson.jobs.JobExecutor;
-import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.jobs.*;
 import com.github.jobson.fixtures.PersistedJobRequestFixture;
-import com.github.jobson.jobs.JobEventListeners;
 import com.github.jobson.jobs.jobstates.PersistedJob;
-import com.github.jobson.specs.ExecutionConfiguration;
-import com.github.jobson.specs.JobOutput;
-import com.github.jobson.specs.JobSpec;
-import com.github.jobson.specs.RawTemplateString;
+import com.github.jobson.specs.*;
 import com.github.jobson.utils.CancelablePromise;
 import com.google.common.primitives.Bytes;
 import io.reactivex.functions.Action;
@@ -99,10 +93,14 @@ public abstract class JobExecutorTest {
     }
 
     private static PersistedJob standardRequestWithCommand(String application, String... args) {
-        return standardRequestWithOutputs(new HashMap<>(), application, args);
+        return standardRequestWithExpectedOutputs(new HashMap<>(), application, args);
     }
 
-    private static PersistedJob standardRequestWithOutputs(Map<String, JobOutput> outputs, String application, String ...args) {
+    private static PersistedJob standardRequestWithExpectedOutputs(
+            Map<JobOutputId, JobExpectedOutput> expectedOutputs,
+            String application,
+            String ...args) {
+
         final JobSpec existingSpec = STANDARD_REQUEST.getSpec();
         final ExecutionConfiguration existingConfig = existingSpec.getExecution();
 
@@ -125,7 +123,7 @@ public abstract class JobExecutorTest {
                         existingSpec.getDescription(),
                         existingSpec.getExpectedInputs(),
                         newConfig,
-                        outputs);
+                        expectedOutputs);
 
         return new PersistedJob(
                 STANDARD_REQUEST.getId(),
@@ -189,14 +187,14 @@ public abstract class JobExecutorTest {
     public void testExecutePromiseResolvesWithTheOutputsWrittenByTheApplication() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
 
-        final String outputId = "outfile";
-        final String outputPath = outputId;
+        final JobOutputId outputId = new JobOutputId("outfile");
+        final String outputPath = outputId.toString();
 
-        final Map<String, JobOutput> outputs = new HashMap<>();
-        outputs.put(outputId, new JobOutput(outputPath, "text/plain"));
+        final Map<JobOutputId, JobExpectedOutput> expectedOutputs = new HashMap<>();
+        expectedOutputs.put(outputId, new JobExpectedOutput(outputPath, "text/plain"));
 
         final PersistedJob req =
-                standardRequestWithOutputs(outputs, "touch", outputPath);
+                standardRequestWithExpectedOutputs(expectedOutputs, "touch", outputPath);
 
         final CancelablePromise<JobExecutionResult> ret =
                 jobExecutor.execute(req, createNullListeners());
@@ -205,8 +203,8 @@ public abstract class JobExecutorTest {
                 ret,
                 result -> {
                     assertThat(result.getOutputs()).isNotEmpty();
-                    assertThat(result.getOutputs().containsKey(outputId)).isTrue();
-                    assertThat(result.getOutputs().get(outputId).getSizeOf()).isEqualTo(0); // touch
+                    assertThat(result.getOutputs().stream().anyMatch(jobOutput -> jobOutput.getId().equals(outputId))).isTrue();
+                    assertThat(result.getOutputs().stream().filter(jobOutput -> jobOutput.getId().equals(outputId)).findFirst().get().getData().getSizeOf()).isEqualTo(0); // touch
                 },
                 () -> {});
     }
@@ -219,14 +217,14 @@ public abstract class JobExecutorTest {
         final Path tmpFile = createTempFile(JobExecutorTest.class.getSimpleName(), "");
         Files.write(tmpFile, randomNoise);
 
-        final String outputId = "out";
-        final String outputPath = outputId;
+        final JobOutputId outputId = new JobOutputId("out");
+        final String outputPath = outputId.toString();
 
-        final Map<String, JobOutput> outputs = new HashMap<>();
-        outputs.put(outputId, new JobOutput(outputPath, "application/octet-stream"));
+        final Map<JobOutputId, JobExpectedOutput> outputs = new HashMap<>();
+        outputs.put(outputId, new JobExpectedOutput(outputPath, "application/octet-stream"));
 
         final PersistedJob jobRequest =
-                standardRequestWithOutputs(
+                standardRequestWithExpectedOutputs(
                         outputs,
                         "cp",
                         tmpFile.toAbsolutePath().toString(),
@@ -239,10 +237,10 @@ public abstract class JobExecutorTest {
                 ret,
                 result -> {
                     assertThat(result.getOutputs()).isNotEmpty();
-                    assertThat(result.getOutputs().containsKey(outputId)).isTrue();
-                    assertThat(result.getOutputs().get(outputId).getSizeOf()).isEqualTo(randomNoise.length);
+                    assertThat(result.getOutputs().stream().anyMatch(jobOutput -> jobOutput.getId().equals(outputId))).isTrue();
+                    assertThat(result.getOutputs().stream().filter(jobOutput -> jobOutput.getId().equals(outputId)).findFirst().get().getData().getSizeOf()).isEqualTo(randomNoise.length);
                     try {
-                        assertThat(IOUtils.toByteArray(result.getOutputs().get(outputId).getData())).isEqualTo(randomNoise);
+                        assertThat(IOUtils.toByteArray(result.getOutputs().stream().filter(jobOutput -> jobOutput.getId().equals(outputId)).findFirst().get().getData().getData())).isEqualTo(randomNoise);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }

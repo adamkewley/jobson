@@ -21,11 +21,12 @@ package com.github.jobson.dao.jobs;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
-import com.github.jobson.specs.JobOutput;
+import com.github.jobson.specs.JobExpectedOutput;
 import com.github.jobson.specs.JobSpec;
 
 import java.util.List;
@@ -51,10 +52,10 @@ public interface ReadonlyJobDAO {
 
     Set<JobId> getJobsWithStatus(JobStatus status);
 
-    boolean hasOutput(JobId jobId, String outputId);
-    Optional<BinaryData> getOutput(JobId jobId, String outputId);
+    boolean hasOutput(JobId jobId, JobOutputId outputId);
+    Optional<BinaryData> getOutput(JobId jobId, JobOutputId outputId);
 
-    Map<String, JobOutput> getJobOutputs(JobId jobId);
+    Map<JobOutputId, JobExpectedOutput> getJobOutputs(JobId jobId);
 
     Optional<Map<JobExpectedInputId, JsonNode>> getJobInputs(JobId jobId);
 

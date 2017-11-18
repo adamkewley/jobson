@@ -55,7 +55,7 @@ public final class JobSpec {
 
     @JsonProperty
     @Valid
-    private Map<String, JobOutput> outputs = new HashMap<>();
+    private Map<JobOutputId, JobExpectedOutput> outputs = new HashMap<>();
 
 
     /**
@@ -83,7 +83,7 @@ public final class JobSpec {
             String description,
             List<JobExpectedInput<?>> expectedInputs,
             ExecutionConfiguration execution,
-            Map<String, JobOutput> outputs) {
+            Map<JobOutputId, JobExpectedOutput> outputs) {
 
         this.id = id;
         this.name = name;
@@ -118,7 +118,7 @@ public final class JobSpec {
         return execution;
     }
 
-    public Map<String, JobOutput> getOutputs() {
+    public Map<JobOutputId, JobExpectedOutput> getOutputs() {
         return outputs;
     }
 

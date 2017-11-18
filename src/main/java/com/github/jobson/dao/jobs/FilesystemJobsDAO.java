@@ -23,15 +23,14 @@ import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Helpers;
+import com.github.jobson.jobs.*;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.IdGenerator;
 import com.github.jobson.jobinputs.JobExpectedInputId;
-import com.github.jobson.jobs.JobId;
-import com.github.jobson.jobs.JobStatus;
-import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
-import com.github.jobson.specs.JobOutput;
+import com.github.jobson.specs.JobExpectedOutput;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.utils.DiskSpaceHealthCheck;
 import io.reactivex.Observable;
@@ -46,10 +45,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -235,68 +231,75 @@ public final class FilesystemJobsDAO implements JobDAO {
             final Optional<Path> maybeJobDetailsPath =
                     resolveJobFile(jobId, JOB_DIR_JOB_DETAILS_FILENAME);
 
-            if (maybeJobDetailsPath.isPresent()) {
-                try {
-                    final Path jobDetailsPath = maybeJobDetailsPath.get();
-                    final JobDetails jobDetails = readJSON(jobDetailsPath, JobDetails.class);
-                    final JobTimestamp newTimestamp = JobTimestamp.now(newStatus, statusMessage);
-                    final JobDetails updatedJobDetails = jobDetails.withStatusChangeTimestamp(newTimestamp);
-                    writeJSON(jobDetailsPath, updatedJobDetails);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            } else {
+            if (maybeJobDetailsPath.isPresent())
+                addJobDetails(newStatus, statusMessage, maybeJobDetailsPath.get());
+            else
                 throw new RuntimeException(jobId + ": cannot add new status: " + JOB_DIR_JOB_DETAILS_FILENAME + " does not exist");
-            }
+        }
+    }
+
+    private void addJobDetails(JobStatus newStatus, String statusMessage, Path jobDetailsPath) {
+        try {
+            final JobDetails jobDetails = readJSON(jobDetailsPath, JobDetails.class);
+            final JobTimestamp newTimestamp = JobTimestamp.now(newStatus, statusMessage);
+            final JobDetails updatedJobDetails = jobDetails.withStatusChangeTimestamp(newTimestamp);
+            writeJSON(jobDetailsPath, updatedJobDetails);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public void persistOutput(JobId jobId, String outputId, BinaryData data) {
+    public void persistOutput(JobId jobId, JobOutput jobOutput) {
         final Optional<Path> maybeJobDir = resolveJobDir(jobId);
 
         if (!maybeJobDir.isPresent())
-            throw new RuntimeException(outputId + ": cannot be persisted to job " + jobId + ": job dir does not exist");
+            throw new RuntimeException(jobOutput.getId() + ": cannot be persisted to job " + jobId + ": job dir does not exist");
 
         final Path outputsDir = maybeJobDir.get().resolve(JOB_DIR_OUTPUTS_DIRNAME);
-        final Path outputPath = outputsDir.resolve(outputId);
+        createIfDoesNotExist(outputsDir);
 
-        if (!outputsDir.toFile().exists()) {
-            try {
-                Files.createDirectory(outputsDir);
-            } catch (IOException ex) {
-                throw new RuntimeException(outputsDir + ": cannot be created: " + ex);
-            }
-        }
+        final Path outputPath = outputsDir.resolve(jobOutput.getId().toString());
+        writeJobOutputToDisk(jobOutput, outputPath);
+
+        final Optional<Path> maybeJobOutputsFile =
+                resolveJobFile(jobId, JOB_DIR_OUTPUTS_FILENAME);
 
         try {
-            IOUtils.copy(data.getData(), new FileOutputStream(outputPath.toFile(), false));
+            final Map<String, JobExpectedOutput> existingJobOutputMetadata =
+                    maybeJobOutputsFile.isPresent() ?
+                            loadJSON(maybeJobOutputsFile.get(),  new TypeReference<Map<String, JobExpectedOutput>>(){}) :
+                            new HashMap<>();
+
+            final JobExpectedOutput jobExpectedOutput = new JobExpectedOutput(
+                    jobOutput.getId().toString(),
+                    jobOutput.getData().getMimeType(),
+                    jobOutput.getName(),
+                    jobOutput.getDescription(),
+                    jobOutput.getMetadata());
+
+            existingJobOutputMetadata.put(jobOutput.getId().toString(), jobExpectedOutput);
+            writeJSON(resolveJobDir(jobId).get().resolve(JOB_DIR_OUTPUTS_FILENAME), existingJobOutputMetadata);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void createIfDoesNotExist(Path p) {
+        if (!p.toFile().exists()) {
+            try {
+                Files.createDirectory(p);
+            } catch (IOException ex) {
+                throw new RuntimeException(p + ": cannot be created: " + ex);
+            }
+        }
+    }
+
+    private void writeJobOutputToDisk(JobOutput jobOutput, Path outputPath) {
+        try {
+            IOUtils.copy(jobOutput.getData().getData(), new FileOutputStream(outputPath.toFile(), false));
         } catch (IOException ex) {
             throw new RuntimeException(outputPath + ": cannot write: " + ex);
-        }
-
-        final Optional<Path> maybeJobOutputsFile = resolveJobFile(jobId, JOB_DIR_OUTPUTS_FILENAME);
-
-        if (maybeJobOutputsFile.isPresent()) {
-            final Path jobOutputsFile = maybeJobOutputsFile.get();
-            try {
-                final Map<String, JobOutput> loadedOutputs =
-                        loadJSON(jobOutputsFile,  new TypeReference<Map<String, JobOutput>>(){});
-                loadedOutputs.put(outputId, new JobOutput(outputId, data.getMimeType()));
-                writeJSON(jobOutputsFile, loadedOutputs);
-            } catch (IOException ex) {
-                throw new RuntimeException(jobOutputsFile + ": cannot write");
-            }
-        } else {
-            try {
-                final Map<String, JobOutput> outputs = singletonMap(
-                        outputId,
-                        new JobOutput(outputId, data.getMimeType()));
-
-                writeJSON(resolveJobDir(jobId).get().resolve(JOB_DIR_OUTPUTS_FILENAME), outputs);
-            } catch (IOException ex) {
-                throw new RuntimeException("Cannot write job outputs file for " + jobId);
-            }
         }
     }
 
@@ -356,8 +359,8 @@ public final class FilesystemJobsDAO implements JobDAO {
     }
 
     @Override
-    public boolean hasOutput(JobId jobId, String outputId) {
-        return tryResolveOutput(jobId, outputId).isPresent();
+    public boolean hasOutput(JobId jobId, JobOutputId outputId) {
+        return tryResolveOutput(jobId, outputId.toString()).isPresent();
     }
 
     private Optional<Path> tryResolveOutput(JobId jobId, String outputId) {
@@ -365,35 +368,34 @@ public final class FilesystemJobsDAO implements JobDAO {
     }
 
     @Override
-    public Optional<BinaryData> getOutput(JobId jobId, String outputId) {
+    public Optional<BinaryData> getOutput(JobId jobId, JobOutputId outputId) {
         return resolveJobFile(jobId, JOB_DIR_OUTPUTS_FILENAME)
-                .map(p -> {
-                    try {
-                        return loadJSON(p, new TypeReference<Map<String, JobOutput>>(){});
-                    } catch (IOException ex) {
-                        throw new RuntimeException(jobId + ": " + JOB_DIR_OUTPUTS_FILENAME + ": cannot parse");
-                    }
-                })
+                .map(this::loadJobOutputsMetadataFile)
                 .flatMap(m -> tryGet(m, outputId))
-                .flatMap(jobOutput ->
-                        tryResolveOutput(jobId, jobOutput.getPath())
-                                .map(Helpers::streamBinaryData)
-                                .map(binaryData -> {
-                                    final String mimeType = jobOutput.getMimeType().orElse(binaryData.getMimeType());
-                                    return binaryData.withMimeType(mimeType);
-                                }));
+                .flatMap(jobOutputMetadata -> tryLoadJobOutputData(jobId, jobOutputMetadata));
+    }
+
+    private Map<JobOutputId, JobExpectedOutput> loadJobOutputsMetadataFile(Path p) {
+        try {
+            return loadJSON(p, new TypeReference<Map<JobOutputId, JobExpectedOutput>>(){});
+        } catch (IOException ex) {
+            throw new RuntimeException(p.toString() + ": " + JOB_DIR_OUTPUTS_FILENAME + ": cannot parse as a job outputs metadata file");
+        }
+    }
+
+    private Optional<BinaryData> tryLoadJobOutputData(JobId jobId, JobExpectedOutput metadata) {
+        return tryResolveOutput(jobId, metadata.getPath())
+                .map(Helpers::streamBinaryData)
+                .map(binaryData -> {
+                    final String mimeType = metadata.getMimeType().orElse(binaryData.getMimeType());
+                    return binaryData.withMimeType(mimeType);
+                });
     }
 
     @Override
-    public Map<String, JobOutput> getJobOutputs(JobId jobId) {
+    public Map<JobOutputId, JobExpectedOutput> getJobOutputs(JobId jobId) {
         return resolveJobFile(jobId, JOB_DIR_OUTPUTS_FILENAME)
-                .map(outputsFile -> {
-                    try {
-                        return loadJSON(outputsFile, new TypeReference<Map<String, JobOutput>>(){});
-                    } catch (IOException ex) {
-                        throw new RuntimeException(outputsFile + ": cannot deserialize: " + ex);
-                    }
-                })
+                .map(this::loadJobOutputsMetadataFile)
                 .orElse(emptyMap());
     }
 

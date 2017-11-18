@@ -22,6 +22,7 @@ package com.github.jobson.resources.v1;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Helpers;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.jobs.ReadonlyJobDAO;
@@ -30,7 +31,7 @@ import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobManagerActions;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
-import com.github.jobson.specs.JobOutput;
+import com.github.jobson.specs.JobExpectedOutput;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.utils.Either;
 import com.github.jobson.utils.EitherVisitorT;
@@ -395,7 +396,7 @@ public final class JobResource {
             notes = "Gets all the outputs produced by the job. If the job has not *written* any outputs (even if specified)" +
                     "then an empty map is returned. If the job does not exist, a 404 is returned")
     @PermitAll
-    public Map<String, APIJobOutput> fetchJobOutputs(
+    public Map<JobOutputId, APIJobOutput> fetchJobOutputs(
             @Context
                     SecurityContext context,
             @ApiParam(value = "ID of the job to get the outputs for")
@@ -406,9 +407,9 @@ public final class JobResource {
         if (!jobDAO.jobExists(jobId))
             throw new WebApplicationException(jobId + ": does not exist", 404);
 
-        final Map<String, APIJobOutput> ret = new HashMap<>();
+        final Map<JobOutputId, APIJobOutput> ret = new HashMap<>();
 
-        for (Map.Entry<String, JobOutput> entry : jobDAO.getJobOutputs(jobId).entrySet()) {
+        for (Map.Entry<JobOutputId, JobExpectedOutput> entry : jobDAO.getJobOutputs(jobId).entrySet()) {
             final String href = HTTP_JOBS_PATH + "/" + jobId + "/outputs/" + entry.getKey();
 
             if (entry.getValue().getMimeType().isPresent()) {
@@ -438,7 +439,7 @@ public final class JobResource {
             @ApiParam(value = "ID of the output")
             @PathParam("output-id")
             @NotNull
-                    String outputId) {
+                    JobOutputId outputId) {
 
         if (!jobDAO.jobExists(jobId))
             throw new WebApplicationException(jobId + ": does not exist", 404);

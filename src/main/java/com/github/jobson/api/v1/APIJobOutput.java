@@ -39,7 +39,13 @@ public final class APIJobOutput {
 
     @JsonProperty
     @NotNull
-    private Optional<String> mimeType;
+    private Optional<String> mimeType = Optional.empty();
+
+    @JsonProperty
+    private Optional<String> name = Optional.empty();
+
+    @JsonProperty
+    private Optional<String> description = Optional.empty();
 
 
     /**
@@ -56,6 +62,17 @@ public final class APIJobOutput {
         this.mimeType = Optional.of(mimeType);
     }
 
+    public APIJobOutput(
+            String href,
+            Optional<String> mimeType,
+            Optional<String> name,
+            Optional<String> description) {
+        this.href = href;
+        this.mimeType = mimeType;
+        this.name = name;
+        this.description = description;
+    }
+
 
     public String getHref() {
         return href;
@@ -63,5 +80,13 @@ public final class APIJobOutput {
 
     public Optional<String> getMimeType() {
         return mimeType;
+    }
+
+    public Optional<String> getName() {
+        return name;
+    }
+
+    public Optional<String> getDescription() {
+        return description;
     }
 }

@@ -22,22 +22,31 @@
  *
  */
 
-package com.github.jobson.jobs.management;
+package com.github.jobson.specs;
 
-import com.github.jobson.jobs.JobId;
-import com.github.jobson.specs.JobOutputId;
-import com.github.jobson.utils.BinaryData;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class PersistOutputArgs {
+public final class JobOutputId {
 
-    private final JobId jobId;
-    private final JobOutputId outputId;
-    private final BinaryData data;
+    private final String jobOutputId;
 
-    public PersistOutputArgs(JobId jobId, JobOutputId outputId, BinaryData data) {
-        this.jobId = jobId;
-        this.outputId = outputId;
-        this.data = data;
+
+    @JsonCreator
+    public JobOutputId(String jobOutputId) {
+        this.jobOutputId = jobOutputId;
+    }
+
+
+    public String getJobOutputId() {
+        return jobOutputId;
+    }
+
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return jobOutputId;
     }
 
     @Override
@@ -45,18 +54,13 @@ public final class PersistOutputArgs {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PersistOutputArgs that = (PersistOutputArgs) o;
+        JobOutputId that = (JobOutputId) o;
 
-        if (jobId != null ? !jobId.equals(that.jobId) : that.jobId != null) return false;
-        if (outputId != null ? !outputId.equals(that.outputId) : that.outputId != null) return false;
-        return data != null ? data.equals(that.data) : that.data == null;
+        return jobOutputId != null ? jobOutputId.equals(that.jobOutputId) : that.jobOutputId == null;
     }
 
     @Override
     public int hashCode() {
-        int result = jobId != null ? jobId.hashCode() : 0;
-        result = 31 * result + (outputId != null ? outputId.hashCode() : 0);
-        result = 31 * result + (data != null ? data.hashCode() : 0);
-        return result;
+        return jobOutputId != null ? jobOutputId.hashCode() : 0;
     }
 }

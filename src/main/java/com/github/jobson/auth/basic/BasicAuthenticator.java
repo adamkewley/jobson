@@ -21,6 +21,7 @@ package com.github.jobson.auth.basic;
 
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.dao.users.ReadonlyUserDAO;
+import com.github.jobson.dao.users.UserCredentials;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.PrincipalImpl;
@@ -43,6 +44,15 @@ public final class BasicAuthenticator implements Authenticator<BasicCredentials,
         return crypt(password);
     }
 
+    private static boolean hasCorrectAuthType(UserCredentials userCredentials) {
+        return userCredentials.getAuthName().equals(BASIC_AUTH_NAME);
+    }
+
+    private static boolean matchesTheCredentialsSuppliedByTheClient(UserCredentials userCredentials, BasicCredentials basicCredentials) {
+        return userCredentials.getAuthField().equals(
+                crypt(basicCredentials.getPassword(), userCredentials.getAuthField()));
+    }
+
 
     private ReadonlyUserDAO readonlyUserDAO;
 
@@ -58,11 +68,12 @@ public final class BasicAuthenticator implements Authenticator<BasicCredentials,
     public Optional<Principal> authenticate(BasicCredentials basicCredentials) throws AuthenticationException {
         final UserId id = new UserId(basicCredentials.getUsername());
 
-        return readonlyUserDAO.getUserCredentialsById(id)
-                .filter(credentials -> credentials.getAuthName().equals(BASIC_AUTH_NAME))
-                .filter(credentials ->
-                        credentials.getAuthField().equals(
-                                crypt(basicCredentials.getPassword(), credentials.getAuthField())))
-                .map(credentials -> new PrincipalImpl(credentials.getId().toString()));
+        return readonlyUserDAO
+                .getUserCredentialsById(id)
+                .filter(BasicAuthenticator::hasCorrectAuthType)
+                .filter(credentials -> matchesTheCredentialsSuppliedByTheClient(credentials, basicCredentials))
+                .map(UserCredentials::getId)
+                .map(UserId::toString)
+                .map(PrincipalImpl::new);
     }
 }

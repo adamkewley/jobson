@@ -24,11 +24,13 @@ import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobOutput;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobTimestamp;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
-import com.github.jobson.specs.JobOutput;
+import com.github.jobson.specs.JobExpectedOutput;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
@@ -605,7 +607,7 @@ public abstract class JobsDAOTest {
         final JobDAO dao = getInstance();
         final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
 
-        assertThat(dao.hasOutput(jobId, generateRandomString())).isFalse();
+        assertThat(dao.hasOutput(jobId, generateJobOutputId())).isFalse();
     }
 
     @Test
@@ -613,14 +615,11 @@ public abstract class JobsDAOTest {
         final JobDAO dao = getInstance();
         final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
 
-        final String outputId = generateRandomString();
+        final JobOutput jobOutput = generateRandomJobOutput();
 
-        dao.persistOutput(
-                jobId,
-                outputId,
-                generateRandomBinaryData());
+        dao.persistOutput(jobId, jobOutput);
 
-        assertThat(dao.hasOutput(jobId, outputId)).isTrue();
+        assertThat(dao.hasOutput(jobId, jobOutput.getId())).isTrue();
     }
 
     @Test
@@ -628,18 +627,18 @@ public abstract class JobsDAOTest {
         final JobDAO dao = getInstance();
         final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
 
-        final String outputId = generateRandomString();
-        final byte[] persistedData = generateRandomBytes();
+        final byte inputData[] = generateRandomBytes();
+        final JobOutput jobOutput = generateRandomJobOutput(inputData);
 
-        dao.persistOutput(jobId, outputId, wrap(persistedData));
+        dao.persistOutput(jobId, jobOutput);
 
-        final Optional<BinaryData> maybeRet = dao.getOutput(jobId, outputId);
+        final Optional<BinaryData> maybeRet = dao.getOutput(jobId, jobOutput.getId());
 
         assertThat(maybeRet).isPresent();
 
         final byte[] returnedData = IOUtils.toByteArray(maybeRet.get().getData());
 
-        assertThat(returnedData).isEqualTo(persistedData);
+        assertThat(returnedData).isEqualTo(inputData);
     }
 
 
@@ -647,7 +646,7 @@ public abstract class JobsDAOTest {
     public void testGetJobOutputsReturnsEmptyListForNonExistentJob() {
         final JobDAO dao = getInstance();
 
-        final Map<String, JobOutput> returnedJobOutputs = dao.getJobOutputs(generateJobId());
+        final Map<JobOutputId, JobExpectedOutput> returnedJobOutputs = dao.getJobOutputs(generateJobId());
 
         assertThat(returnedJobOutputs.size()).isEqualTo(0);
     }
@@ -657,17 +656,16 @@ public abstract class JobsDAOTest {
         final JobDAO dao = getInstance();
         final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
 
-        final Set<String> persistedOutputs = new HashSet<>();
+        final Set<JobOutputId> persistedOutputs = new HashSet<>();
         final int numberOfFilesToPersist = randomIntBetween(5, 15);
 
         for (int i = 0; i < numberOfFilesToPersist; i++) {
-            final String outputId = generateRandomString();
-            final byte[] persistedData = generateRandomBytes();
-            dao.persistOutput(jobId, outputId, wrap(persistedData));
-            persistedOutputs.add(outputId);
+            final JobOutput jobOutput = generateRandomJobOutput();
+            dao.persistOutput(jobId, jobOutput);
+            persistedOutputs.add(jobOutput.getId());
         }
 
-        final Set<String> returnedIds = dao.getJobOutputs(jobId).keySet();
+        final Set<JobOutputId> returnedIds = dao.getJobOutputs(jobId).keySet();
 
         assertThat(returnedIds).isEqualTo(persistedOutputs);
     }

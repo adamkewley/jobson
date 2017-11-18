@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.jobs.JobOutput;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.specs.JobSpecSummary;
@@ -141,6 +142,31 @@ public final class TestHelpers {
         return BinaryData.wrap(generateRandomBytes());
     }
 
+    public static JobOutput generateRandomJobOutput() {
+        return generateRandomJobOutput(generateJobOutputId());
+    }
+
+    public static JobOutput generateRandomJobOutput(JobOutputId jobOutputId) {
+        return generateRandomJobOutput(jobOutputId, generateRandomBytes());
+    }
+
+    public static JobOutput generateRandomJobOutput(byte data[]) {
+        return generateRandomJobOutput(generateJobOutputId(), data);
+    }
+
+    public static JobOutput generateRandomJobOutput(JobOutputId jobOutputId, byte data[]) {
+        return new JobOutput(
+                jobOutputId,
+                BinaryData.wrap(data),
+                Optional.of(generateRandomString()),
+                Optional.of(generateRandomString()),
+                new HashMap<>());
+    }
+
+    public static JobOutputId generateJobOutputId() {
+        return new JobOutputId(generateRandomString());
+    }
+
     public static UserId generateUserId() {
         return new UserId(TestHelpers.generateRandomString());
     }
@@ -181,8 +207,13 @@ public final class TestHelpers {
         return ret;
     }
 
-    public static JobOutput generateJobOutput() {
-        return new JobOutput(generateRandomString(), generateRandomString());
+    public static JobExpectedOutput generateJobOutput() {
+        return new JobExpectedOutput(
+                generateRandomString(),
+                generateRandomString(),
+                Optional.of(generateRandomString()),
+                Optional.of(generateRandomString()),
+                new HashMap<>());
     }
 
     public static <T, U> Map<T, U> generateRandomMap(int numEntries, Supplier<T> keySupplier, Supplier<U> valueSupplier) {

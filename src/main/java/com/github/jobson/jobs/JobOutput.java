@@ -22,59 +22,54 @@
  *
  */
 
-package com.github.jobson.specs;
+package com.github.jobson.jobs;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.jobson.specs.JobOutputId;
+import com.github.jobson.utils.BinaryData;
 
-import javax.validation.constraints.NotNull;
-
+import java.util.Map;
 import java.util.Optional;
 
 public final class JobOutput {
 
-    @JsonProperty
-    @NotNull
-    private String path;
+    private JobOutputId id;
+    private BinaryData data;
+    private Optional<String> name;
+    private Optional<String> description;
+    private Map<String, String> metadata;
 
-    @JsonProperty
-    private Optional<String> mimeType = Optional.empty();
 
-
-    /**
-     * @deprecated Used by JSON deserializer.
-     */
-    public JobOutput() {}
-
-    public JobOutput(String path, String mimeType) {
-        this.path = path;
-        this.mimeType = Optional.of(mimeType);
+    public JobOutput(
+            JobOutputId id,
+            BinaryData data,
+            Optional<String> name,
+            Optional<String> description,
+            Map<String, String> metadata) {
+        this.id = id;
+        this.data = data;
+        this.name = name;
+        this.description = description;
+        this.metadata = metadata;
     }
 
 
-    public String getPath() {
-        return path;
+    public JobOutputId getId() {
+        return id;
     }
 
-    public Optional<String> getMimeType() {
-        return mimeType;
+    public BinaryData getData() {
+        return data;
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        JobOutput jobOutput = (JobOutput) o;
-
-        if (path != null ? !path.equals(jobOutput.path) : jobOutput.path != null) return false;
-        return mimeType != null ? mimeType.equals(jobOutput.mimeType) : jobOutput.mimeType == null;
+    public Optional<String> getName() {
+        return name;
     }
 
-    @Override
-    public int hashCode() {
-        int result = path != null ? path.hashCode() : 0;
-        result = 31 * result + (mimeType != null ? mimeType.hashCode() : 0);
-        return result;
+    public Optional<String> getDescription() {
+        return description;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
     }
 }
