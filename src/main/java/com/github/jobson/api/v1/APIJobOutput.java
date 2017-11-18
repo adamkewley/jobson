@@ -47,6 +47,7 @@ public final class APIJobOutput {
 
         return new APIJobOutput(
                 jobOutputDetails.getId(),
+                jobOutputDetails.getSizeInBytes(),
                 outputsFolderHref,
                 jobOutputDetails.getMimeType(),
                 jobOutputDetails.getName(),
@@ -58,6 +59,9 @@ public final class APIJobOutput {
     @JsonProperty
     @NotNull
     private JobOutputId id;
+
+    @JsonProperty
+    private long sizeInBytes;
 
     @JsonProperty
     @NotNull
@@ -84,12 +88,14 @@ public final class APIJobOutput {
 
     public APIJobOutput(
             JobOutputId id,
+            long sizeInBytes,
             String href,
             Optional<String> mimeType,
             Optional<String> name,
             Optional<String> description,
             Map<String, String> metadata) {
         this.id = id;
+        this.sizeInBytes = sizeInBytes;
         this.href = href;
         this.mimeType = mimeType;
         this.name = name;
@@ -100,6 +106,10 @@ public final class APIJobOutput {
 
     public JobOutputId getId() {
         return this.id;
+    }
+
+    public long getSizeInBytes() {
+        return sizeInBytes;
     }
 
     public String getHref() {

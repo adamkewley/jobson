@@ -232,6 +232,7 @@ public final class TestJobsAPI {
         assertThat(getOutputDetailsById(parsedResponse, "outFile").get().getMimeType().get()).isEqualTo("text/plain");
         assertThat(getOutputDetailsById(parsedResponse, "outFile").get().getName().get()).isEqualTo("Output Name");
         assertThat(getOutputDetailsById(parsedResponse, "outFile").get().getDescription().get()).isEqualTo("Output Description");
+        assertThat(getOutputDetailsById(parsedResponse, "outFile").get().getSizeInBytes()).isEqualTo(0);
     }
 
     private Optional<APIJobOutput> getOutputDetailsById(APIJobOutputCollection apiJobOutputCollection, String id) {
