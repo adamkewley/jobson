@@ -21,13 +21,12 @@ package com.github.jobson.dao.jobs;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jobson.specs.JobOutputId;
-import com.github.jobson.utils.BinaryData;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
-import com.github.jobson.specs.JobExpectedOutput;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.utils.BinaryData;
 
 import java.util.List;
 import java.util.Map;
