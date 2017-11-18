@@ -55,6 +55,7 @@ import static com.github.jobson.Helpers.*;
 import static com.github.jobson.dao.jobs.JobDetails.fromPersistedJob;
 import static java.lang.String.format;
 import static java.nio.file.Files.createDirectory;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
@@ -267,20 +268,20 @@ public final class FilesystemJobsDAO implements JobDAO {
                 resolveJobFile(jobId, JOB_DIR_OUTPUTS_FILENAME);
 
         try {
-            final Map<String, JobExpectedOutput> existingJobOutputMetadata =
+            final List<JobOutputDetails> existingJobOutputMetadata =
                     maybeJobOutputsFile.isPresent() ?
-                            loadJSON(maybeJobOutputsFile.get(),  new TypeReference<Map<String, JobExpectedOutput>>(){}) :
-                            new HashMap<>();
+                            loadJSON(maybeJobOutputsFile.get(),  new TypeReference<List<JobOutputDetails>>(){}) :
+                            new ArrayList<>();
 
-            final JobExpectedOutput jobExpectedOutput = new JobExpectedOutput(
-                    new RawTemplateString(jobOutput.getId().toString()),
-                    jobOutput.getId().toString(),
-                    jobOutput.getData().getMimeType(),
+            final JobOutputDetails jobOutputDetails = new JobOutputDetails(
+                    jobOutput.getId(),
+                    jobOutput.getData().getSizeOf(),
+                    Optional.of(jobOutput.getData().getMimeType()),
                     jobOutput.getName(),
                     jobOutput.getDescription(),
                     jobOutput.getMetadata());
 
-            existingJobOutputMetadata.put(jobOutput.getId().toString(), jobExpectedOutput);
+            existingJobOutputMetadata.add(jobOutputDetails);
             writeJSON(resolveJobDir(jobId).get().resolve(JOB_DIR_OUTPUTS_FILENAME), existingJobOutputMetadata);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -373,20 +374,20 @@ public final class FilesystemJobsDAO implements JobDAO {
     public Optional<BinaryData> getOutput(JobId jobId, JobOutputId outputId) {
         return resolveJobFile(jobId, JOB_DIR_OUTPUTS_FILENAME)
                 .map(this::loadJobOutputsMetadataFile)
-                .flatMap(m -> tryGet(m, outputId))
+                .flatMap(jobOutputs -> jobOutputs.stream().filter(output -> output.getId().equals(outputId)).findFirst())
                 .flatMap(jobOutputMetadata -> tryLoadJobOutputData(jobId, jobOutputMetadata));
     }
 
-    private Map<JobOutputId, JobExpectedOutput> loadJobOutputsMetadataFile(Path p) {
+    private List<JobOutputDetails> loadJobOutputsMetadataFile(Path p) {
         try {
-            return loadJSON(p, new TypeReference<Map<JobOutputId, JobExpectedOutput>>(){});
+            return loadJSON(p, new TypeReference<List<JobOutputDetails>>(){});
         } catch (IOException ex) {
             throw new RuntimeException(p.toString() + ": " + JOB_DIR_OUTPUTS_FILENAME + ": cannot parse as a job outputs metadata file");
         }
     }
 
-    private Optional<BinaryData> tryLoadJobOutputData(JobId jobId, JobExpectedOutput metadata) {
-        return tryResolveOutput(jobId, metadata.getPath())
+    private Optional<BinaryData> tryLoadJobOutputData(JobId jobId, JobOutputDetails metadata) {
+        return tryResolveOutput(jobId, metadata.getId().toString())
                 .map(Helpers::streamBinaryData)
                 .map(binaryData -> {
                     final String mimeType = metadata.getMimeType().orElse(binaryData.getMimeType());
@@ -395,10 +396,10 @@ public final class FilesystemJobsDAO implements JobDAO {
     }
 
     @Override
-    public Map<JobOutputId, JobExpectedOutput> getJobOutputs(JobId jobId) {
+    public List<JobOutputDetails> getJobOutputs(JobId jobId) {
         return resolveJobFile(jobId, JOB_DIR_OUTPUTS_FILENAME)
                 .map(this::loadJobOutputsMetadataFile)
-                .orElse(emptyMap());
+                .orElse(emptyList());
     }
 
     @Override

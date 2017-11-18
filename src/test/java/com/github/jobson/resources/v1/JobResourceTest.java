@@ -24,6 +24,7 @@ import com.github.jobson.Constants;
 import com.github.jobson.HttpStatusCodes;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.dao.jobs.JobOutputDetails;
 import com.github.jobson.jobs.JobOutput;
 import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.utils.BinaryData;
@@ -54,14 +55,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.github.jobson.Constants.HTTP_JOBS_PATH;
 import static com.github.jobson.HttpStatusCodes.NOT_FOUND;
 import static com.github.jobson.TestHelpers.*;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -825,22 +825,22 @@ public final class JobResourceTest {
     public void testFetchJobOutputsReturnsEmptyMapIfDAOReturnsEmptyMap() {
         final JobDAO jobDAO = mock(JobDAO.class);
         when(jobDAO.jobExists(any())).thenReturn(true);
-        when(jobDAO.getJobOutputs(any())).thenReturn(new HashMap<>());
+        when(jobDAO.getJobOutputs(any())).thenReturn(emptyList());
 
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final Map<JobOutputId, APIJobOutput> ret =
+        final APIJobOutputCollection ret =
                 jobResource.fetchJobOutputs(generateSecureSecurityContext(), generateJobId());
 
-        assertThat(ret).isEmpty();
+        assertThat(ret.getEntries()).isEmpty();
     }
 
     @Test
     public void testFetchJobOutputsReturnsMapOfOutputsReturnedFromDAO() {
-        final Map<JobOutputId, JobExpectedOutput> outputsFromDAO = generateRandomMap(
-                randomIntBetween(10, 20),
-                TestHelpers::generateJobOutputId,
-                TestHelpers::generateJobOutput);
+        final List<JobOutputDetails> outputsFromDAO = generateRandomList(
+                10,
+                20,
+                TestHelpers::generateJobOutputDetails);
 
         final JobDAO jobDAO = mock(JobDAO.class);
         when(jobDAO.jobExists(any())).thenReturn(true);
@@ -850,21 +850,26 @@ public final class JobResourceTest {
 
         final JobId jobId = generateJobId();
 
-        final Map<JobOutputId, APIJobOutput> ret =
+        final APIJobOutputCollection ret =
                 jobResource.fetchJobOutputs(generateSecureSecurityContext(), jobId);
 
-        assertThat(ret.size()).isEqualTo(outputsFromDAO.size());
-        assertThat(ret.keySet()).isEqualTo(outputsFromDAO.keySet());
+        assertThat(ret.getEntries().size()).isEqualTo(outputsFromDAO.size());
+        assertThat(ret.getEntries().stream().map(APIJobOutput::getId).collect(Collectors.toList()))
+                .isEqualTo(outputsFromDAO.stream().map(JobOutputDetails::getId).collect(Collectors.toList()));
 
-        for (Map.Entry<JobOutputId, APIJobOutput> returnedOutput : ret.entrySet()) {
-            final APIJobOutput apiJobOutput = returnedOutput.getValue();
-            final JobExpectedOutput outputFromDAO = outputsFromDAO.get(returnedOutput.getKey());
+        for (APIJobOutput returnedOutput : ret.getEntries()) {
+            final JobOutputDetails outputFromDAO =
+                    outputsFromDAO
+                            .stream()
+                            .filter(jobOutput -> jobOutput.getId().equals(returnedOutput.getId()))
+                            .findFirst()
+                            .get();
 
-            assertThat(apiJobOutput.getMimeType()).isEqualTo(outputFromDAO.getMimeType());
-            assertThat(apiJobOutput.getName()).isEqualTo(outputFromDAO.getName());
-            assertThat(apiJobOutput.getDescription()).isEqualTo(outputFromDAO.getDescription());
-            assertThat(apiJobOutput.getMetadata()).isEqualTo(outputFromDAO.getMetadata());
-            assertThat(apiJobOutput.getHref()).contains("/jobs/" + jobId + "/outputs/" + returnedOutput.getKey());
+            assertThat(returnedOutput.getMimeType()).isEqualTo(outputFromDAO.getMimeType());
+            assertThat(returnedOutput.getName()).isEqualTo(outputFromDAO.getName());
+            assertThat(returnedOutput.getDescription()).isEqualTo(outputFromDAO.getDescription());
+            assertThat(returnedOutput.getMetadata()).isEqualTo(outputFromDAO.getMetadata());
+            assertThat(returnedOutput.getHref()).contains("/jobs/" + jobId + "/outputs/" + returnedOutput.getId());
         }
     }
 

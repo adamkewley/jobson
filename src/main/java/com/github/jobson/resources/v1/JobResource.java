@@ -31,7 +31,6 @@ import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobManagerActions;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
-import com.github.jobson.specs.JobExpectedOutput;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.utils.Either;
 import com.github.jobson.utils.EitherVisitorT;
@@ -54,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.github.jobson.Constants.DEFAULT_BINARY_MIME_TYPE;
 import static com.github.jobson.Constants.HTTP_JOBS_PATH;
@@ -396,7 +396,7 @@ public final class JobResource {
             notes = "Gets all the outputs produced by the job. If the job has not *written* any outputs (even if specified)" +
                     "then an empty map is returned. If the job does not exist, a 404 is returned")
     @PermitAll
-    public Map<JobOutputId, APIJobOutput> fetchJobOutputs(
+    public APIJobOutputCollection fetchJobOutputs(
             @Context
                     SecurityContext context,
             @ApiParam(value = "ID of the job to get the outputs for")
@@ -407,14 +407,16 @@ public final class JobResource {
         if (!jobDAO.jobExists(jobId))
             throw new WebApplicationException(jobId + ": does not exist", 404);
 
-        final Map<JobOutputId, APIJobOutput> ret = new HashMap<>();
+        final List<APIJobOutput> entries =  jobDAO
+                .getJobOutputs(jobId)
+                .stream()
+                .map(jobOutput -> {
+                    final String href = HTTP_JOBS_PATH + "/" + jobId + "/outputs/" + jobOutput.getId().toString();
+                    return APIJobOutput.fromJobOutput(href, jobOutput);
+                })
+                .collect(Collectors.toList());
 
-        for (Map.Entry<JobOutputId, JobExpectedOutput> entry : jobDAO.getJobOutputs(jobId).entrySet()) {
-            final String href = HTTP_JOBS_PATH + "/" + jobId + "/outputs/" + entry.getKey();
-            ret.put(entry.getKey(), APIJobOutput.fromJobOutput(href, entry.getValue()));
-        }
-
-        return ret;
+        return new APIJobOutputCollection(entries);
     }
 
     @GET

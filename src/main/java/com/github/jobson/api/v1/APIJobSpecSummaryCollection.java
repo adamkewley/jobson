@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @ApiModel(description = "A collection of job spec summaries")
-public final class APIJobSpecCollection {
+public final class APIJobSpecSummaryCollection {
 
     @ApiModelProperty(value = "The summaries")
     @JsonProperty
@@ -42,9 +42,9 @@ public final class APIJobSpecCollection {
     /**
      * @deprecated Used by JSON deserializer.
      */
-    public APIJobSpecCollection() {}
+    public APIJobSpecSummaryCollection() {}
 
-    public APIJobSpecCollection(
+    public APIJobSpecSummaryCollection(
             List<APIJobSpecSummary> entries,
             Map<String, APIRestLink> _links) {
         this.entries = entries;

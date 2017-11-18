@@ -646,7 +646,7 @@ public abstract class JobsDAOTest {
     public void testGetJobOutputsReturnsEmptyListForNonExistentJob() {
         final JobDAO dao = getInstance();
 
-        final Map<JobOutputId, JobExpectedOutput> returnedJobOutputs = dao.getJobOutputs(generateJobId());
+        final List<JobOutputDetails> returnedJobOutputs = dao.getJobOutputs(generateJobId());
 
         assertThat(returnedJobOutputs.size()).isEqualTo(0);
     }
@@ -665,7 +665,8 @@ public abstract class JobsDAOTest {
             persistedOutputs.add(jobOutput.getId());
         }
 
-        final Set<JobOutputId> returnedIds = dao.getJobOutputs(jobId).keySet();
+        final Set<JobOutputId> returnedIds =
+                dao.getJobOutputs(jobId).stream().map(JobOutputDetails::getId).collect(Collectors.toSet());
 
         assertThat(returnedIds).isEqualTo(persistedOutputs);
     }

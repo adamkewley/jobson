@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.dao.jobs.JobOutputDetails;
 import com.github.jobson.jobs.JobOutput;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.JobDetails;
@@ -59,6 +60,7 @@ import java.util.stream.Stream;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static java.nio.file.Files.createTempDirectory;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
@@ -542,4 +544,13 @@ public final class TestHelpers {
         return createTempDirectory(testClass.getSimpleName());
     }
 
+    public static JobOutputDetails generateJobOutputDetails() {
+        return new JobOutputDetails(
+                generateJobOutputId(),
+                randomIntBetween(50, 100),
+                Optional.of(generateRandomString()),
+                Optional.of(generateRandomString()),
+                Optional.of(generateRandomString()),
+                emptyMap());
+    }
 }

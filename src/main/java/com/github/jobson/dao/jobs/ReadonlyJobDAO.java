@@ -55,7 +55,7 @@ public interface ReadonlyJobDAO {
     boolean hasOutput(JobId jobId, JobOutputId outputId);
     Optional<BinaryData> getOutput(JobId jobId, JobOutputId outputId);
 
-    Map<JobOutputId, JobExpectedOutput> getJobOutputs(JobId jobId);
+    List<JobOutputDetails> getJobOutputs(JobId jobId);
 
     Optional<Map<JobExpectedInputId, JsonNode>> getJobInputs(JobId jobId);
 
