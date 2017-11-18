@@ -97,7 +97,7 @@ public abstract class JobExecutorTest {
     }
 
     private static PersistedJob standardRequestWithExpectedOutputs(
-            Map<JobOutputId, JobExpectedOutput> expectedOutputs,
+            Map<RawTemplateString, JobExpectedOutput> expectedOutputs,
             String application,
             String ...args) {
 
@@ -187,10 +187,10 @@ public abstract class JobExecutorTest {
     public void testExecutePromiseResolvesWithTheOutputsWrittenByTheApplication() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
 
-        final JobOutputId outputId = new JobOutputId("outfile");
+        final RawTemplateString outputId = new RawTemplateString("outfile");
         final String outputPath = outputId.toString();
 
-        final Map<JobOutputId, JobExpectedOutput> expectedOutputs = new HashMap<>();
+        final Map<RawTemplateString, JobExpectedOutput> expectedOutputs = new HashMap<>();
         final JobExpectedOutput expectedOutput = generateJobOutput(outputPath, "text/plain");
         expectedOutputs.put(outputId, expectedOutput);
 
@@ -204,7 +204,7 @@ public abstract class JobExecutorTest {
                 result -> {
                     assertThat(result.getOutputs()).isNotEmpty();
 
-                    final Optional<JobOutput> maybeJobOutput = getJobOutputById(result.getOutputs(), outputId);
+                    final Optional<JobOutput> maybeJobOutput = getJobOutputById(result.getOutputs(), new JobOutputId(outputId.toString()));
                     assertThat(maybeJobOutput).isPresent();
 
                     final JobOutput jobOutput = maybeJobOutput.get();
@@ -227,15 +227,16 @@ public abstract class JobExecutorTest {
         final Path tmpFile = createTempFile(JobExecutorTest.class.getSimpleName(), "");
         Files.write(tmpFile, randomNoise);
 
+        final RawTemplateString outputIdTemplateString = new RawTemplateString("out");
         final JobOutputId outputId = new JobOutputId("out");
         final String outputPath = outputId.toString();
 
-        final Map<JobOutputId, JobExpectedOutput> outputs = new HashMap<>();
-        outputs.put(outputId, new JobExpectedOutput(outputPath, "application/octet-stream"));
+        final Map<RawTemplateString, JobExpectedOutput> expectedOutputs = new HashMap<>();
+        expectedOutputs.put(outputIdTemplateString, new JobExpectedOutput(outputPath, "application/octet-stream"));
 
         final PersistedJob jobRequest =
                 standardRequestWithExpectedOutputs(
-                        outputs,
+                        expectedOutputs,
                         "cp",
                         tmpFile.toAbsolutePath().toString(),
                         outputPath);
@@ -430,5 +431,31 @@ public abstract class JobExecutorTest {
         final String loadedJson = new String(Files.readAllBytes(p));
 
         assertThat(loadedJson).isEqualTo(toJSON(STANDARD_VALID_REQUEST.getInputs()));
+    }
+
+    @Test
+    public void testExecuteEvaluatesTemplateStringsInTheExpectedOutputs() throws Throwable {
+        final JobExecutor jobExecutor = getInstance();
+
+        final Map<RawTemplateString, JobExpectedOutput> expectedOutputs = new HashMap<>();
+        final RawTemplateString rawTemplateString = new RawTemplateString("${request.id}");
+        final JobExpectedOutput jobExpectedOutput = new JobExpectedOutput("foo", "application/octet-stream");
+        expectedOutputs.put(rawTemplateString, jobExpectedOutput);
+
+        final PersistedJob req =
+                standardRequestWithExpectedOutputs(expectedOutputs, "touch", "foo");
+
+        final JobEventListeners listeners = createNullListeners();
+
+        promiseAssert(
+                jobExecutor.execute(req, listeners),
+                result -> {
+                    assertThat(result.getOutputs()).isNotEmpty();
+
+                    final JobOutputId expectedOutputIdAfterEvaluation =
+                            new JobOutputId(STANDARD_REQUEST.getId().toString());
+
+                    assertThat(getJobOutputById(result.getOutputs(), expectedOutputIdAfterEvaluation)).isPresent();
+                });
     }
 }

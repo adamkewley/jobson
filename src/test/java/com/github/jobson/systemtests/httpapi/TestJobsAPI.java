@@ -51,10 +51,12 @@ public final class TestJobsAPI {
 
     @ClassRule
     public static final DropwizardAppRule<ApplicationConfig> RULE = SystemTestHelpers.createStandardRule();
+
     private static final APIJobRequest REQUEST_AGAINST_FIRST_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_SECOND_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_THIRD_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_FOUTH_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_FITH_SPEC;
 
     static {
         REQUEST_AGAINST_FIRST_SPEC = readJSONFixture(
@@ -68,6 +70,9 @@ public final class TestJobsAPI {
                 APIJobRequest.class);
         REQUEST_AGAINST_FOUTH_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-fourth-spec.json",
+                APIJobRequest.class);
+        REQUEST_AGAINST_FITH_SPEC = readJSONFixture(
+                "fixtures/systemtests/request-against-fith-spec.json",
                 APIJobRequest.class);
     }
 
@@ -238,6 +243,22 @@ public final class TestJobsAPI {
 
         final Response jobOutputsResponse =
                 generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/outputs/outFile")).get();
+
+        assertThat(jobOutputsResponse.getStatus()).isEqualTo(OK);
+        assertThat(jobOutputsResponse.getHeaderString("Content-Type")).isEqualTo("text/plain");
+    }
+
+    @Test
+    public void testCanGetTemplatedJobOutput() throws InterruptedException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(REQUEST_AGAINST_FITH_SPEC))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
+
+        sleep(100);
+
+        final Response jobOutputsResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/outputs/" + jobId)).get();
 
         assertThat(jobOutputsResponse.getStatus()).isEqualTo(OK);
         assertThat(jobOutputsResponse.getHeaderString("Content-Type")).isEqualTo("text/plain");

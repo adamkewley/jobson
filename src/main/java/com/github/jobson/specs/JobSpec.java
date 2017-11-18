@@ -26,6 +26,7 @@ import com.github.jobson.jobinputs.JobExpectedInput;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public final class JobSpec {
     @JsonProperty
     @NotNull
     @Valid
-    private List<JobExpectedInput<?>> expectedInputs;
+    private List<JobExpectedInput<?>> expectedInputs = new ArrayList<>();
 
     @JsonProperty
     @NotNull
@@ -55,7 +56,7 @@ public final class JobSpec {
 
     @JsonProperty
     @Valid
-    private Map<JobOutputId, JobExpectedOutput> outputs = new HashMap<>();
+    private Map<RawTemplateString, JobExpectedOutput> outputs = new HashMap<>();
 
 
     /**
@@ -83,7 +84,7 @@ public final class JobSpec {
             String description,
             List<JobExpectedInput<?>> expectedInputs,
             ExecutionConfiguration execution,
-            Map<JobOutputId, JobExpectedOutput> outputs) {
+            Map<RawTemplateString, JobExpectedOutput> outputs) {
 
         this.id = id;
         this.name = name;
@@ -118,7 +119,7 @@ public final class JobSpec {
         return execution;
     }
 
-    public Map<JobOutputId, JobExpectedOutput> getOutputs() {
+    public Map<RawTemplateString, JobExpectedOutput> getOutputs() {
         return outputs;
     }
 
