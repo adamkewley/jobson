@@ -24,6 +24,7 @@ import com.github.jobson.Constants;
 import com.github.jobson.HttpStatusCodes;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.jobs.JobOutput;
 import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.JobDAO;
@@ -856,8 +857,14 @@ public final class JobResourceTest {
         assertThat(ret.keySet()).isEqualTo(outputsFromDAO.keySet());
 
         for (Map.Entry<JobOutputId, APIJobOutput> returnedOutput : ret.entrySet()) {
-            assertThat(returnedOutput.getValue().getMimeType()).isEqualTo(outputsFromDAO.get(returnedOutput.getKey()).getMimeType());
-            assertThat(returnedOutput.getValue().getHref()).contains("/jobs/" + jobId + "/outputs/" + returnedOutput.getKey());
+            final APIJobOutput apiJobOutput = returnedOutput.getValue();
+            final JobExpectedOutput outputFromDAO = outputsFromDAO.get(returnedOutput.getKey());
+
+            assertThat(apiJobOutput.getMimeType()).isEqualTo(outputFromDAO.getMimeType());
+            assertThat(apiJobOutput.getName()).isEqualTo(outputFromDAO.getName());
+            assertThat(apiJobOutput.getDescription()).isEqualTo(outputFromDAO.getDescription());
+            assertThat(apiJobOutput.getMetadata()).isEqualTo(outputFromDAO.getMetadata());
+            assertThat(apiJobOutput.getHref()).contains("/jobs/" + jobId + "/outputs/" + returnedOutput.getKey());
         }
     }
 

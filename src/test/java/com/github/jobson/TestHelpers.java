@@ -208,9 +208,13 @@ public final class TestHelpers {
     }
 
     public static JobExpectedOutput generateJobOutput() {
+        return generateJobOutput(generateRandomString(), generateRandomString());
+    }
+
+    public static JobExpectedOutput generateJobOutput(String path, String mimeType) {
         return new JobExpectedOutput(
-                generateRandomString(),
-                generateRandomString(),
+                path,
+                mimeType,
                 Optional.of(generateRandomString()),
                 Optional.of(generateRandomString()),
                 new HashMap<>());

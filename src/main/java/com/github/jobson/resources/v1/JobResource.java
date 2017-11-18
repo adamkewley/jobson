@@ -411,12 +411,7 @@ public final class JobResource {
 
         for (Map.Entry<JobOutputId, JobExpectedOutput> entry : jobDAO.getJobOutputs(jobId).entrySet()) {
             final String href = HTTP_JOBS_PATH + "/" + jobId + "/outputs/" + entry.getKey();
-
-            if (entry.getValue().getMimeType().isPresent()) {
-                ret.put(entry.getKey(), new APIJobOutput(href, entry.getValue().getMimeType().get()));
-            } else {
-                ret.put(entry.getKey(), new APIJobOutput(href));
-            }
+            ret.put(entry.getKey(), APIJobOutput.fromJobOutput(href, entry.getValue()));
         }
 
         return ret;

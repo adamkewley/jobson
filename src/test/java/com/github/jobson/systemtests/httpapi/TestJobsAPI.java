@@ -222,6 +222,8 @@ public final class TestJobsAPI {
                 readJSON(jobOutputsResponse.readEntity(String.class), new TypeReference<Map<String, APIJobOutput>>() {});
 
         assertThat(parsedResponse.get("outFile").getMimeType().get()).isEqualTo("text/plain");
+        assertThat(parsedResponse.get("outFile").getName().get()).isEqualTo("Output Name");
+        assertThat(parsedResponse.get("outFile").getDescription().get()).isEqualTo("Output Description");
     }
 
     @Test

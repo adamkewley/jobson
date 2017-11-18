@@ -191,22 +191,32 @@ public abstract class JobExecutorTest {
         final String outputPath = outputId.toString();
 
         final Map<JobOutputId, JobExpectedOutput> expectedOutputs = new HashMap<>();
-        expectedOutputs.put(outputId, new JobExpectedOutput(outputPath, "text/plain"));
+        final JobExpectedOutput expectedOutput = generateJobOutput(outputPath, "text/plain");
+        expectedOutputs.put(outputId, expectedOutput);
 
         final PersistedJob req =
                 standardRequestWithExpectedOutputs(expectedOutputs, "touch", outputPath);
 
-        final CancelablePromise<JobExecutionResult> ret =
-                jobExecutor.execute(req, createNullListeners());
+        final CancelablePromise<JobExecutionResult> ret = jobExecutor.execute(req, createNullListeners());
 
         promiseAssert(
                 ret,
                 result -> {
                     assertThat(result.getOutputs()).isNotEmpty();
-                    assertThat(result.getOutputs().stream().anyMatch(jobOutput -> jobOutput.getId().equals(outputId))).isTrue();
-                    assertThat(result.getOutputs().stream().filter(jobOutput -> jobOutput.getId().equals(outputId)).findFirst().get().getData().getSizeOf()).isEqualTo(0); // touch
+
+                    final Optional<JobOutput> maybeJobOutput = getJobOutputById(result.getOutputs(), outputId);
+                    assertThat(maybeJobOutput).isPresent();
+
+                    final JobOutput jobOutput = maybeJobOutput.get();
+                    assertThat(jobOutput.getData().getSizeOf()).isEqualTo(0);
+                    assertThat(jobOutput.getDescription()).isEqualTo(expectedOutput.getDescription());
+                    assertThat(jobOutput.getName()).isEqualTo(expectedOutput.getName());
                 },
                 () -> {});
+    }
+
+    private Optional<JobOutput> getJobOutputById(List<JobOutput> jobOutputs, JobOutputId jobOutputId) {
+        return jobOutputs.stream().filter(jobOutput -> jobOutput.getId().equals(jobOutputId)).findFirst();
     }
 
     @Test

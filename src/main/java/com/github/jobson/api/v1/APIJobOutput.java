@@ -25,13 +25,33 @@
 package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.jobson.jobs.JobOutput;
+import com.github.jobson.specs.JobExpectedOutput;
+import com.github.jobson.specs.JobOutputId;
 import io.swagger.annotations.ApiModel;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+
+import static com.github.jobson.Constants.HTTP_JOBS_PATH;
 
 @ApiModel(description = "Details about an output produced by a job")
 public final class APIJobOutput {
+
+    public static APIJobOutput fromJobOutput(
+            String outputsFolderHref,
+            JobExpectedOutput jobExpectedOutput) {
+
+        return new APIJobOutput(
+                outputsFolderHref,
+                jobExpectedOutput.getMimeType(),
+                jobExpectedOutput.getName(),
+                jobExpectedOutput.getDescription(),
+                jobExpectedOutput.getMetadata());
+    }
+
 
     @JsonProperty
     @NotNull
@@ -47,30 +67,26 @@ public final class APIJobOutput {
     @JsonProperty
     private Optional<String> description = Optional.empty();
 
+    @JsonProperty
+    private Map<String, String> metadata = new HashMap<>();
+
 
     /**
      * @deprecated Used by JSON deserializer.
      */
     public APIJobOutput() {}
 
-    public APIJobOutput(String href) {
-        this.href = href;
-    }
-
-    public APIJobOutput(String href, String mimeType) {
-        this.href = href;
-        this.mimeType = Optional.of(mimeType);
-    }
-
     public APIJobOutput(
             String href,
             Optional<String> mimeType,
             Optional<String> name,
-            Optional<String> description) {
+            Optional<String> description,
+            Map<String, String> metadata) {
         this.href = href;
         this.mimeType = mimeType;
         this.name = name;
         this.description = description;
+        this.metadata = metadata;
     }
 
 
@@ -88,5 +104,9 @@ public final class APIJobOutput {
 
     public Optional<String> getDescription() {
         return description;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
     }
 }

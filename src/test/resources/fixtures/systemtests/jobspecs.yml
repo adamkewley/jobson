@@ -84,5 +84,7 @@
     - outfile
   outputs:
     outFile:
+      name: Output Name
+      description: Output Description
       path: outfile
       mimeType: text/plain
