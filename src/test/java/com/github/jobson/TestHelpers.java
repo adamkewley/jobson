@@ -208,11 +208,15 @@ public final class TestHelpers {
     }
 
     public static JobExpectedOutput generateJobOutput() {
-        return generateJobOutput(generateRandomString(), generateRandomString());
+        return generateJobOutput(
+                new RawTemplateString(generateRandomString()),
+                generateRandomString(),
+                generateRandomString());
     }
 
-    public static JobExpectedOutput generateJobOutput(String path, String mimeType) {
+    public static JobExpectedOutput generateJobOutput(RawTemplateString id, String path, String mimeType) {
         return new JobExpectedOutput(
+                id,
                 path,
                 mimeType,
                 Optional.of(generateRandomString()),

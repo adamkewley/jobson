@@ -65,12 +65,12 @@ execution:
       target: libs
 
 
-outputs:
+expectedOutputs:
 
-  compiledLib:
-    path: compiledlib
-    mimeType: application/octet-string
+- id: compiledLib
+  path: compiledLib
+  mimeType: application/octet-string
 
-  generatedImage:
-    path: image.jpg
-    mimeType: image/png
+- id: generatedImage
+  path: image.jpg
+  mimeType: image/png

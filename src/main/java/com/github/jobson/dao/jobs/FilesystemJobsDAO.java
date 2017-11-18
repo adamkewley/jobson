@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Helpers;
 import com.github.jobson.jobs.*;
 import com.github.jobson.specs.JobOutputId;
+import com.github.jobson.specs.RawTemplateString;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.IdGenerator;
 import com.github.jobson.jobinputs.JobExpectedInputId;
@@ -272,6 +273,7 @@ public final class FilesystemJobsDAO implements JobDAO {
                             new HashMap<>();
 
             final JobExpectedOutput jobExpectedOutput = new JobExpectedOutput(
+                    new RawTemplateString(jobOutput.getId().toString()),
                     jobOutput.getId().toString(),
                     jobOutput.getData().getMimeType(),
                     jobOutput.getName(),

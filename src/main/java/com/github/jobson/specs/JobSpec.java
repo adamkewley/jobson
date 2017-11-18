@@ -34,6 +34,7 @@ import java.util.Map;
 public final class JobSpec {
 
     @JsonProperty
+    @NotNull
     private JobSpecId id;
 
     @JsonProperty
@@ -45,7 +46,6 @@ public final class JobSpec {
     private String description;
 
     @JsonProperty
-    @NotNull
     @Valid
     private List<JobExpectedInput<?>> expectedInputs = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public final class JobSpec {
 
     @JsonProperty
     @Valid
-    private Map<RawTemplateString, JobExpectedOutput> outputs = new HashMap<>();
+    private List<JobExpectedOutput> expectedOutputs = new ArrayList<>();
 
 
     /**
@@ -84,14 +84,14 @@ public final class JobSpec {
             String description,
             List<JobExpectedInput<?>> expectedInputs,
             ExecutionConfiguration execution,
-            Map<RawTemplateString, JobExpectedOutput> outputs) {
+            List<JobExpectedOutput> expectedOutputs) {
 
         this.id = id;
         this.name = name;
         this.description = description;
         this.expectedInputs = expectedInputs;
         this.execution = execution;
-        this.outputs = outputs;
+        this.expectedOutputs = expectedOutputs;
     }
 
 
@@ -119,8 +119,8 @@ public final class JobSpec {
         return execution;
     }
 
-    public Map<RawTemplateString, JobExpectedOutput> getOutputs() {
-        return outputs;
+    public List<JobExpectedOutput> getExpectedOutputs() {
+        return expectedOutputs;
     }
 
 
@@ -135,9 +135,8 @@ public final class JobSpec {
                 description,
                 expectedInputs,
                 execution.withDependenciesResolvedRelativeTo(p),
-                outputs);
+                expectedOutputs);
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -152,7 +151,7 @@ public final class JobSpec {
         if (expectedInputs != null ? !expectedInputs.equals(jobSpec.expectedInputs) : jobSpec.expectedInputs != null)
             return false;
         if (execution != null ? !execution.equals(jobSpec.execution) : jobSpec.execution != null) return false;
-        return outputs != null ? outputs.equals(jobSpec.outputs) : jobSpec.outputs == null;
+        return expectedOutputs != null ? expectedOutputs.equals(jobSpec.expectedOutputs) : jobSpec.expectedOutputs == null;
     }
 
     @Override
@@ -162,7 +161,7 @@ public final class JobSpec {
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (expectedInputs != null ? expectedInputs.hashCode() : 0);
         result = 31 * result + (execution != null ? execution.hashCode() : 0);
-        result = 31 * result + (outputs != null ? outputs.hashCode() : 0);
+        result = 31 * result + (expectedOutputs != null ? expectedOutputs.hashCode() : 0);
         return result;
     }
 }

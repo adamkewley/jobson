@@ -25,7 +25,6 @@ import com.github.jobson.TestHelpers;
 import com.github.jobson.jobs.*;
 import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.specs.RawTemplateString;
-import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.jobstates.FinalizedJob;
 import com.github.jobson.specs.JobExpectedOutput;
@@ -43,7 +42,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -482,21 +480,21 @@ public final class JobManagerTest {
         final byte[] executorOutputBytes = generateRandomBytes();
         final List<JobOutput> outputsFromExecutor = new ArrayList<>();
 
-        for (Map.Entry<RawTemplateString, JobExpectedOutput> expectedOutput : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
-            if (expectedOutput.getValue().getMimeType().isPresent()) {
+        for (JobExpectedOutput expectedOutput : STANDARD_VALID_REQUEST.getSpec().getExpectedOutputs()) {
+            if (expectedOutput.getMimeType().isPresent()) {
                 outputsFromExecutor.add(new JobOutput(
-                        new JobOutputId(expectedOutput.getKey().toString()),
-                        wrap(executorOutputBytes, expectedOutput.getValue().getMimeType().get()),
-                        expectedOutput.getValue().getName(),
-                        expectedOutput.getValue().getDescription(),
-                        expectedOutput.getValue().getMetadata()));
+                        new JobOutputId(expectedOutput.getId().toString()),
+                        wrap(executorOutputBytes, expectedOutput.getMimeType().get()),
+                        expectedOutput.getName(),
+                        expectedOutput.getDescription(),
+                        expectedOutput.getMetadata()));
             } else {
                 outputsFromExecutor.add(new JobOutput(
-                        new JobOutputId(expectedOutput.getKey().toString()),
+                        new JobOutputId(expectedOutput.getId().toString()),
                         wrap(executorOutputBytes),
-                        expectedOutput.getValue().getName(),
-                        expectedOutput.getValue().getDescription(),
-                        expectedOutput.getValue().getMetadata()));
+                        expectedOutput.getName(),
+                        expectedOutput.getDescription(),
+                        expectedOutput.getMetadata()));
             }
         }
 
@@ -508,11 +506,11 @@ public final class JobManagerTest {
 
         p.get(DEFAULT_TIMEOUT, MILLISECONDS);
 
-        for (Map.Entry<RawTemplateString, JobExpectedOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
+        for (JobExpectedOutput output : STANDARD_VALID_REQUEST.getSpec().getExpectedOutputs()) {
             final PersistOutputArgs expectedArgs = new PersistOutputArgs(
                     writingJobDAO.getReturnedPersistedReq().getId(),
-                    new JobOutputId(output.getKey().toString()),
-                    wrap(executorOutputBytes, output.getValue().getMimeType().orElse("application/octet-stream")));
+                    new JobOutputId(output.getId().toString()),
+                    wrap(executorOutputBytes, output.getMimeType().orElse("application/octet-stream")));
 
             assertThat(writingJobDAO.getPersistOutputCalledWith()).contains(expectedArgs);
         }

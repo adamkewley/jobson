@@ -82,12 +82,12 @@
     application: touch
     arguments:
     - outfile
-  outputs:
-    outFile:
-      name: Output Name
-      description: Output Description
-      path: outfile
-      mimeType: text/plain
+  expectedOutputs:
+  - id: outFile
+    name: Output Name
+    description: Output Description
+    path: outfile
+    mimeType: text/plain
 
 - id: fith-spec
   name: Spec that creates an output with a dynamically assigned ID
@@ -97,9 +97,9 @@
     application: touch
     arguments:
     - outfile
-  outputs:
-    ${request.id}:
-      name: Output Name
-      description: Output Description
-      path: outfile
-      mimeType: text/plain
+  expectedOutputs:
+  - id: ${request.id}
+    name: Output Name
+    description: Output Description
+    path: outfile
+    mimeType: text/plain

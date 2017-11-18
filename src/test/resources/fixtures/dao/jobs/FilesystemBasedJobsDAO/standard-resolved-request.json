@@ -56,11 +56,12 @@
         "arg2"
       ]
     },
-    "outputs": {
-      "outfile": {
+    "expectedOutputs": [
+      {
+        "id": "outfile",
         "path": "outfile",
         "mimeType": "text/plain"
       }
-    }
+    ]
   }
 }

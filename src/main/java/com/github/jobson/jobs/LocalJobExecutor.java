@@ -162,7 +162,7 @@ public final class LocalJobExecutor implements JobExecutor {
 
         final JobExecutionResult jobExecutionResult;
         if (exitStatus == FINISHED) {
-            final List<JobOutput> outputs = tryResolveJobOutputs(req, workingDir, req.getSpec().getOutputs());
+            final List<JobOutput> outputs = tryResolveJobOutputs(req, workingDir, req.getSpec().getExpectedOutputs());
 
             jobExecutionResult = new JobExecutionResult(exitStatus, outputs);
         } else {
@@ -175,14 +175,13 @@ public final class LocalJobExecutor implements JobExecutor {
     private List<JobOutput> tryResolveJobOutputs(
             PersistedJob req,
             Path workingDir,
-            Map<RawTemplateString, JobExpectedOutput> expectedOutputs) {
+            List<JobExpectedOutput> expectedOutputs) {
 
         return expectedOutputs
-                .entrySet()
                 .stream()
                 .map(e -> {
-                    final JobOutputId jobOutputId = new JobOutputId(resolveArg(req, workingDir, e.getKey()));
-                    return tryGetJobOutput(workingDir, jobOutputId, e.getValue());
+                    final JobOutputId jobOutputId = new JobOutputId(resolveArg(req, workingDir, e.getId()));
+                    return tryGetJobOutput(workingDir, jobOutputId, e);
                 })
                 .filter(Optional::isPresent)
                 .map(Optional::get)

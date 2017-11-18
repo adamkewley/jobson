@@ -93,11 +93,11 @@ public abstract class JobExecutorTest {
     }
 
     private static PersistedJob standardRequestWithCommand(String application, String... args) {
-        return standardRequestWithExpectedOutputs(new HashMap<>(), application, args);
+        return standardRequestWithExpectedOutputs(new ArrayList<>(), application, args);
     }
 
     private static PersistedJob standardRequestWithExpectedOutputs(
-            Map<RawTemplateString, JobExpectedOutput> expectedOutputs,
+            List<JobExpectedOutput> expectedOutputs,
             String application,
             String ...args) {
 
@@ -190,9 +190,9 @@ public abstract class JobExecutorTest {
         final RawTemplateString outputId = new RawTemplateString("outfile");
         final String outputPath = outputId.toString();
 
-        final Map<RawTemplateString, JobExpectedOutput> expectedOutputs = new HashMap<>();
-        final JobExpectedOutput expectedOutput = generateJobOutput(outputPath, "text/plain");
-        expectedOutputs.put(outputId, expectedOutput);
+
+        final JobExpectedOutput expectedOutput = generateJobOutput(outputId, outputPath, "text/plain");
+        final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(expectedOutput);
 
         final PersistedJob req =
                 standardRequestWithExpectedOutputs(expectedOutputs, "touch", outputPath);
@@ -228,11 +228,11 @@ public abstract class JobExecutorTest {
         Files.write(tmpFile, randomNoise);
 
         final RawTemplateString outputIdTemplateString = new RawTemplateString("out");
-        final JobOutputId outputId = new JobOutputId("out");
+        final JobOutputId outputId = new JobOutputId(outputIdTemplateString.toString());
         final String outputPath = outputId.toString();
 
-        final Map<RawTemplateString, JobExpectedOutput> expectedOutputs = new HashMap<>();
-        expectedOutputs.put(outputIdTemplateString, new JobExpectedOutput(outputPath, "application/octet-stream"));
+        final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(
+                new JobExpectedOutput(outputIdTemplateString, outputPath, "application/octet-stream"));
 
         final PersistedJob jobRequest =
                 standardRequestWithExpectedOutputs(
@@ -437,10 +437,10 @@ public abstract class JobExecutorTest {
     public void testExecuteEvaluatesTemplateStringsInTheExpectedOutputs() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
 
-        final Map<RawTemplateString, JobExpectedOutput> expectedOutputs = new HashMap<>();
+
         final RawTemplateString rawTemplateString = new RawTemplateString("${request.id}");
-        final JobExpectedOutput jobExpectedOutput = new JobExpectedOutput("foo", "application/octet-stream");
-        expectedOutputs.put(rawTemplateString, jobExpectedOutput);
+        final JobExpectedOutput jobExpectedOutput = new JobExpectedOutput(rawTemplateString, "foo", "application/octet-stream");
+        final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(jobExpectedOutput);
 
         final PersistedJob req =
                 standardRequestWithExpectedOutputs(expectedOutputs, "touch", "foo");
