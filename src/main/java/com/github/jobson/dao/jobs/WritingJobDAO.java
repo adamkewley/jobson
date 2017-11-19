@@ -19,8 +19,8 @@
 
 package com.github.jobson.dao.jobs;
 
-import com.github.jobson.utils.BinaryData;
 import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobOutput;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
@@ -35,5 +35,5 @@ public interface WritingJobDAO {
 
     void addNewJobStatus(JobId jobId, JobStatus newStatus, String statusMessage);
 
-    void persistOutput(JobId jobId, String outputId, BinaryData data);
+    void persistOutput(JobId jobId, JobOutput jobOutput);
 }

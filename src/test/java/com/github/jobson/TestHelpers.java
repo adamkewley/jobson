@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.dao.jobs.JobOutputDetails;
+import com.github.jobson.jobs.JobOutput;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.specs.JobSpecSummary;
@@ -58,6 +60,7 @@ import java.util.stream.Stream;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static java.nio.file.Files.createTempDirectory;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
@@ -141,6 +144,31 @@ public final class TestHelpers {
         return BinaryData.wrap(generateRandomBytes());
     }
 
+    public static JobOutput generateRandomJobOutput() {
+        return generateRandomJobOutput(generateJobOutputId());
+    }
+
+    public static JobOutput generateRandomJobOutput(JobOutputId jobOutputId) {
+        return generateRandomJobOutput(jobOutputId, generateRandomBytes());
+    }
+
+    public static JobOutput generateRandomJobOutput(byte data[]) {
+        return generateRandomJobOutput(generateJobOutputId(), data);
+    }
+
+    public static JobOutput generateRandomJobOutput(JobOutputId jobOutputId, byte data[]) {
+        return new JobOutput(
+                jobOutputId,
+                BinaryData.wrap(data),
+                Optional.of(generateRandomString()),
+                Optional.of(generateRandomString()),
+                new HashMap<>());
+    }
+
+    public static JobOutputId generateJobOutputId() {
+        return new JobOutputId(generateRandomString());
+    }
+
     public static UserId generateUserId() {
         return new UserId(TestHelpers.generateRandomString());
     }
@@ -181,30 +209,14 @@ public final class TestHelpers {
         return ret;
     }
 
-    public static JobOutput generateJobOutput() {
-        return new JobOutput(generateRandomString(), generateRandomString());
-    }
-
-    public static <T, U> Map<T, U> generateRandomMap(int numEntries, Supplier<T> keySupplier, Supplier<U> valueSupplier) {
-        final Map<T, U> ret = new HashMap<T, U>();
-
-        for (int i = 0; i < numEntries; i++) {
-            ret.put(keySupplier.get(), valueSupplier.get());
-        }
-
-        return ret;
-    }
-
-    public static List<String> generateTypicalTags() {
-        final List<String> ret = new ArrayList<>();
-
-        final int numEntries = rng.nextInt(5) + 1;
-
-        for (int i = 0; i < numEntries; i++) {
-            ret.add(generateRandomString());
-        }
-
-        return ret;
+    public static JobExpectedOutput generateJobOutput(RawTemplateString id, String path, String mimeType) {
+        return new JobExpectedOutput(
+                id,
+                path,
+                mimeType,
+                Optional.of(generateRandomString()),
+                Optional.of(generateRandomString()),
+                new HashMap<>());
     }
 
     public static List<JobDetails> generateRandomJobDetails() {
@@ -233,10 +245,6 @@ public final class TestHelpers {
                 generateUserId(),
                 jobStatuses,
                 new HashMap<>());
-    }
-
-    public static JobEvent generateJobStatusChange() {
-        return new JobEvent(generateJobId(), JobStatus.FINISHED);
     }
 
     public static SecurityContext generateSecureSecurityContext() {
@@ -328,14 +336,6 @@ public final class TestHelpers {
         return "select a, b, c from table where a < b and b > c;";
     }
 
-    public static APIJobCreatedResponse generateJobSubmissionResponse() {
-        return new APIJobCreatedResponse(generateJobId(), new HashMap<>());
-    }
-
-    public static APIUserDetails generateUserSummary() {
-        return new APIUserDetails(generateUserId());
-    }
-
     public static List<JobSpecSummary> generateNJobSpecSummaries(int n) {
         return generateListContainingNElements(n, TestHelpers::generateJobSpecSummary);
     }
@@ -348,10 +348,6 @@ public final class TestHelpers {
         }
 
         return ret;
-    }
-
-    public static APIJobSpec generateJobSpecDetails() {
-        return new APIJobSpec(generateJobSpecId(), generateRandomString(), generateRandomString(), generateRandomJobInputSchemas());
     }
 
 
@@ -503,4 +499,13 @@ public final class TestHelpers {
         return createTempDirectory(testClass.getSimpleName());
     }
 
+    public static JobOutputDetails generateJobOutputDetails() {
+        return new JobOutputDetails(
+                generateJobOutputId(),
+                randomIntBetween(50, 100),
+                Optional.of(generateRandomString()),
+                Optional.of(generateRandomString()),
+                Optional.of(generateRandomString()),
+                emptyMap());
+    }
 }

@@ -78,7 +78,7 @@ public final class JobSpecResource {
             @ApiResponse(code = 200, message = "Job summaries returned")
     })
     @PermitAll
-    public APIJobSpecCollection fetchJobSpecSummaries(
+    public APIJobSpecSummaryCollection fetchJobSpecSummaries(
             @Context
                     SecurityContext context,
             @ApiParam(value = "The page number (0-indexed)")
@@ -116,7 +116,7 @@ public final class JobSpecResource {
                     }
                 }).collect(toList());
 
-        return new APIJobSpecCollection(apiJobSpecSummaries, emptyMap());
+        return new APIJobSpecSummaryCollection(apiJobSpecSummaries, emptyMap());
     }
 
     @GET

@@ -17,49 +17,24 @@
  * under the License.
  */
 
-package com.github.jobson.api.v1;
+package com.github.jobson.dao.jobs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.dao.jobs.JobOutputDetails;
 import com.github.jobson.specs.JobOutputId;
-import io.swagger.annotations.ApiModel;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@ApiModel(description = "Details about an output produced by a job")
-public final class APIJobOutput {
-
-    public static APIJobOutput fromJobOutput(
-            String outputsFolderHref,
-            JobOutputDetails jobOutputDetails) {
-
-        return new APIJobOutput(
-                jobOutputDetails.getId(),
-                jobOutputDetails.getSizeInBytes(),
-                outputsFolderHref,
-                jobOutputDetails.getMimeType(),
-                jobOutputDetails.getName(),
-                jobOutputDetails.getDescription(),
-                jobOutputDetails.getMetadata());
-    }
-
+public final class JobOutputDetails {
 
     @JsonProperty
-    @NotNull
     private JobOutputId id;
 
     @JsonProperty
     private long sizeInBytes;
 
     @JsonProperty
-    @NotNull
-    private String href;
-
-    @JsonProperty
-    @NotNull
     private Optional<String> mimeType = Optional.empty();
 
     @JsonProperty
@@ -75,19 +50,17 @@ public final class APIJobOutput {
     /**
      * @deprecated Used by JSON deserializer.
      */
-    public APIJobOutput() {}
+    public JobOutputDetails() {}
 
-    public APIJobOutput(
+    public JobOutputDetails(
             JobOutputId id,
             long sizeInBytes,
-            String href,
             Optional<String> mimeType,
             Optional<String> name,
             Optional<String> description,
             Map<String, String> metadata) {
         this.id = id;
         this.sizeInBytes = sizeInBytes;
-        this.href = href;
         this.mimeType = mimeType;
         this.name = name;
         this.description = description;
@@ -96,15 +69,11 @@ public final class APIJobOutput {
 
 
     public JobOutputId getId() {
-        return this.id;
+        return id;
     }
 
     public long getSizeInBytes() {
         return sizeInBytes;
-    }
-
-    public String getHref() {
-        return href;
     }
 
     public Optional<String> getMimeType() {

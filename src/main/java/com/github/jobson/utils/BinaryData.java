@@ -19,8 +19,6 @@
 
 package com.github.jobson.utils;
 
-import com.github.jobson.Constants;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 

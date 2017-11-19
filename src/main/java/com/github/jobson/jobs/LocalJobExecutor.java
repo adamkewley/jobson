@@ -19,14 +19,14 @@
 
 package com.github.jobson.jobs;
 
-import com.github.jobson.utils.BinaryData;
+import com.github.jobson.Constants;
+import com.github.jobson.Helpers;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.jobstates.PersistedJob;
-import com.github.jobson.scripting.FreeFunction;
-import com.github.jobson.specs.ExecutionConfiguration;
-import com.github.jobson.specs.JobDependencyConfiguration;
-import com.github.jobson.specs.JobOutput;
-import com.github.jobson.specs.RawTemplateString;
+import com.github.jobson.scripting.functions.ToFileFunction;
+import com.github.jobson.scripting.functions.ToJSONFunction;
+import com.github.jobson.specs.*;
+import com.github.jobson.utils.BinaryData;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import org.apache.commons.io.FileUtils;
@@ -40,10 +40,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.github.jobson.Helpers.*;
 import static com.github.jobson.jobs.JobStatus.FINISHED;
-import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -56,40 +56,11 @@ public final class LocalJobExecutor implements JobExecutor {
 
     private static String resolveArg(PersistedJob persistedJob, Path jobWorkingDir, RawTemplateString arg) {
         final Map<String, Object> environment = new HashMap<>();
+
+        environment.put("toJSON", new ToJSONFunction());
+        environment.put("toFile", new ToFileFunction(jobWorkingDir));
         environment.put("request", persistedJob);
         environment.put("inputs", mapKeys(persistedJob.getInputs(), JobExpectedInputId::toString));
-
-        environment.put("toJSON", new FreeFunction() {
-            @Override
-            public Object call(Object... args) {
-                if (args.length != 1)
-                    throw new RuntimeException(format("toJSON called with %s args (expects 1)", args.length));
-                return toJSON(args[0]);
-            }
-        });
-
-        environment.put("toFile", new FreeFunction() {
-            @Override
-            public Object call(Object... args) {
-                if (args.length != 1) {
-                    throw new RuntimeException(format("asFile called with %s args (expects 1)", args.length));
-                } else if (!(args[0] instanceof String)) {
-                    throw new RuntimeException(format(
-                            "asFile called with %s, should be called with a string (try using toJSON?)",
-                            args[0].getClass().getSimpleName()));
-                } else {
-                    try {
-                        final String fileContent = (String)args[0];
-                        final Path path = Files.createTempFile(jobWorkingDir, "request", "");
-                        Files.write(path, fileContent.getBytes());
-                        return path.toAbsolutePath().toString();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(
-                                format("Could not create an input file (needed in '%s').", arg), ex);
-                    }
-                }
-            }
-        });
 
         return arg.tryEvaluate(environment);
     }
@@ -171,14 +142,7 @@ public final class LocalJobExecutor implements JobExecutor {
                     runningProcess,
                     jobEventListeners.getOnStdoutListener(),
                     jobEventListeners.getOnStderrListener(),
-                    exitCode -> {
-                        final JobStatus exitStatus = JobStatus.fromExitCode(exitCode);
-                        if (exitStatus == FINISHED) {
-                            final Map<String, JobOutput> expectedOutputs = req.getSpec().getOutputs();
-                            final Map<String, BinaryData> outputs = getJobOutputs(workingDir, expectedOutputs);
-                            ret.complete(new JobExecutionResult(exitStatus, outputs));
-                        } else ret.complete(new JobExecutionResult(exitStatus));
-                    });
+                    exitCode -> onProcessExit(req, workingDir, ret, exitCode));
 
             return ret;
 
@@ -188,34 +152,72 @@ public final class LocalJobExecutor implements JobExecutor {
         }
     }
 
-    private Map<String, BinaryData> getJobOutputs(Path workingDir, Map<String, JobOutput> expectedOutputs) {
-        final Map<String, BinaryData> ret = new HashMap<>();
+    private void onProcessExit(
+            PersistedJob req,
+            Path workingDir,
+            SimpleCancelablePromise<JobExecutionResult> promise,
+            int exitCode) {
 
-        for (Map.Entry<String, JobOutput> expectedOutput : expectedOutputs.entrySet()) {
-            final Path expectedOutputFile =
-                    workingDir.resolve(expectedOutput.getValue().getPath());
+        final JobStatus exitStatus = JobStatus.fromExitCode(exitCode);
 
-            if (expectedOutputFile.toFile().exists()) {
-                final Optional<String> maybeMimeTypeProvidedInSpec = expectedOutput.getValue().getMimeType();
+        final JobExecutionResult jobExecutionResult;
+        if (exitStatus == FINISHED) {
+            final List<JobOutput> outputs = tryResolveJobOutputs(req, workingDir, req.getSpec().getExpectedOutputs());
 
-                if (maybeMimeTypeProvidedInSpec.isPresent()) {
-                    ret.put(expectedOutput.getKey(),
-                            streamBinaryData(expectedOutputFile, maybeMimeTypeProvidedInSpec.get()));
-                } else {
-                    try {
-                        final String mimeType = getMimeType(
-                                Files.newInputStream(expectedOutputFile),
-                                expectedOutput.getValue().getPath());
-                        ret.put(expectedOutput.getKey(), streamBinaryData(expectedOutputFile, mimeType));
-                    } catch (IOException ex) {
-                        log.error("Encountered IO error when determining an output's MIME type. Skipping MIME type detection");
-                        ret.put(expectedOutput.getKey(), streamBinaryData(expectedOutputFile));
-                    }
-                }
-            }
+            jobExecutionResult = new JobExecutionResult(exitStatus, outputs);
+        } else {
+            jobExecutionResult = new JobExecutionResult(exitStatus);
         }
 
-        return ret;
+        promise.complete(jobExecutionResult);
+    }
+
+    private List<JobOutput> tryResolveJobOutputs(
+            PersistedJob req,
+            Path workingDir,
+            List<JobExpectedOutput> expectedOutputs) {
+
+        return expectedOutputs
+                .stream()
+                .map(e -> {
+                    final JobOutputId jobOutputId = new JobOutputId(resolveArg(req, workingDir, e.getId()));
+                    return tryGetJobOutput(workingDir, jobOutputId, e);
+                })
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    private Optional<JobOutput> tryGetJobOutput(Path workingDir, JobOutputId outputId, JobExpectedOutput expectedOutput) {
+        final Path expectedOutputFile = workingDir.resolve(expectedOutput.getPath());
+
+        if (expectedOutputFile.toFile().exists()) {
+            final String mimeType = establishMimeType(expectedOutput, expectedOutputFile);
+            final BinaryData data = streamBinaryData(expectedOutputFile, mimeType);
+            final JobOutput output =
+                    new JobOutput(
+                            outputId,
+                            data,
+                            expectedOutput.getName(),
+                            expectedOutput.getDescription(),
+                            expectedOutput.getMetadata());
+            return Optional.of(output);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private String establishMimeType(JobExpectedOutput jobExpectedOutput, Path p) {
+        if (jobExpectedOutput.getMimeType().isPresent()) {
+            return jobExpectedOutput.getMimeType().get();
+        } else {
+            try {
+                return Helpers.getMimeType(Files.newInputStream(p), jobExpectedOutput.getPath());
+            } catch (IOException ex) {
+                log.warn("Encountered IO error when determining an output's MIME type. Skipping MIME type detection");
+                return Constants.DEFAULT_BINARY_MIME_TYPE;
+            }
+        }
     }
 
     private void abort(Process process) {

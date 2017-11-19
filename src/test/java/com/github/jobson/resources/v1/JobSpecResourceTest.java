@@ -22,7 +22,7 @@ package com.github.jobson.resources.v1;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.APIJobSpec;
 import com.github.jobson.api.v1.APIJobSpecSummary;
-import com.github.jobson.api.v1.APIJobSpecCollection;
+import com.github.jobson.api.v1.APIJobSpecSummaryCollection;
 import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.dao.specs.JobSpecDAO;
 import com.github.jobson.dao.specs.JobSpecSummary;
@@ -75,12 +75,12 @@ public final class JobSpecResourceTest {
 
         final SecurityContext securityContext = generateSecureSecurityContext();
 
-        final APIJobSpecCollection apiJobSpecCollection =
+        final APIJobSpecSummaryCollection apiJobSpecSummaryCollection =
                 jobSpecResource.fetchJobSpecSummaries(securityContext, Optional.empty(), Optional.empty(), Optional.empty());
 
-        assertThat(apiJobSpecCollection).isNotNull();
+        assertThat(apiJobSpecSummaryCollection).isNotNull();
         assertThat(
-                apiJobSpecCollection.getEntries().stream().map(APIJobSpecSummary::toJobSpecSummary).collect(toList()))
+                apiJobSpecSummaryCollection.getEntries().stream().map(APIJobSpecSummary::toJobSpecSummary).collect(toList()))
                 .isEqualTo(jobSpecSummariesReturnedByDAO);
     }
 
@@ -96,7 +96,7 @@ public final class JobSpecResourceTest {
         final SecurityContext securityContext = generateSecureSecurityContext();
 
         // Should throw
-        final APIJobSpecCollection APIJobSpecCollection =
+        final APIJobSpecSummaryCollection APIJobSpecSummaryCollection =
                 jobSpecResource.fetchJobSpecSummaries(securityContext, Optional.empty(), Optional.of(-1), Optional.empty());
     }
 
@@ -196,10 +196,10 @@ public final class JobSpecResourceTest {
 
         final SecurityContext securityContext = generateSecureSecurityContext();
 
-        final APIJobSpecCollection APIJobSpecCollection =
+        final APIJobSpecSummaryCollection APIJobSpecSummaryCollection =
                 jobSpecResource.fetchJobSpecSummaries(securityContext, Optional.empty(), Optional.empty(), Optional.empty());
 
-        for (APIJobSpecSummary APIJobSpecSummary : APIJobSpecCollection.getEntries()) {
+        for (APIJobSpecSummary APIJobSpecSummary : APIJobSpecSummaryCollection.getEntries()) {
             assertThat(APIJobSpecSummary.getLinks().containsKey("details")).isTrue();
             assertThat(APIJobSpecSummary.getLinks().get("details").getHref().toString())
                     .contains(HTTP_SPECS_PATH + "/" + APIJobSpecSummary.getId().toString());

@@ -24,6 +24,9 @@ import com.github.jobson.Constants;
 import com.github.jobson.HttpStatusCodes;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.dao.jobs.JobOutputDetails;
+import com.github.jobson.jobs.JobOutput;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.JobDAO;
 import com.github.jobson.dao.jobs.JobDetails;
@@ -37,7 +40,7 @@ import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobManagerActions;
 import com.github.jobson.jobs.jobstates.FinalizedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
-import com.github.jobson.specs.JobOutput;
+import com.github.jobson.specs.JobExpectedOutput;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.utils.CancelablePromise;
@@ -52,14 +55,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.github.jobson.Constants.HTTP_JOBS_PATH;
 import static com.github.jobson.HttpStatusCodes.NOT_FOUND;
 import static com.github.jobson.TestHelpers.*;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -352,6 +354,7 @@ public final class JobResourceTest {
                 .isEqualTo(HTTP_JOBS_PATH + "/" + jobSummary.getId().toString() + "/stderr");
     }
 
+
     @Test
     public void testFetchJobSummariesDoesNotContainLinksToStderrIfJobHasNoStderr() throws IOException {
         final List<JobDetails> jobSummaries = generateRandomJobDetails();
@@ -374,27 +377,6 @@ public final class JobResourceTest {
     private void assertDoesNotHaveAnStderrRESTLink(APIJobDetails jobSummary) {
         assertThat(jobSummary.getLinks().containsKey("stderr")).isFalse();
     }
-
-
-    @Test
-    public void testFetchJobSummariesContainsARESTLinkToTheSpec() {
-        final List<JobDetails> jobSummaries = generateRandomJobDetails();
-
-        final JobDAO jobDAO = mock(JobDAO.class);
-        when(jobDAO.getJobs(anyInt(), anyInt())).thenReturn(jobSummaries);
-        when(jobDAO.hasStderr(any())).thenReturn(false);
-
-        final JobResource jobResource = resourceThatUses(jobDAO);
-
-        final APIJobDetailsCollection resp = jobResource.getJobs(
-                TestHelpers.generateSecureSecurityContext(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty());
-
-        resp.getEntries().forEach(this::assertHasASpecRESTLink);
-    }
-
 
 
     @Test(expected = WebApplicationException.class)
@@ -823,22 +805,22 @@ public final class JobResourceTest {
     public void testFetchJobOutputsReturnsEmptyMapIfDAOReturnsEmptyMap() {
         final JobDAO jobDAO = mock(JobDAO.class);
         when(jobDAO.jobExists(any())).thenReturn(true);
-        when(jobDAO.getJobOutputs(any())).thenReturn(new HashMap<>());
+        when(jobDAO.getJobOutputs(any())).thenReturn(emptyList());
 
         final JobResource jobResource = resourceThatUses(jobDAO);
 
-        final Map<String, APIJobOutput> ret =
+        final APIJobOutputCollection ret =
                 jobResource.fetchJobOutputs(generateSecureSecurityContext(), generateJobId());
 
-        assertThat(ret).isEmpty();
+        assertThat(ret.getEntries()).isEmpty();
     }
 
     @Test
     public void testFetchJobOutputsReturnsMapOfOutputsReturnedFromDAO() {
-        final Map<String, JobOutput> outputsFromDAO = generateRandomMap(
-                randomIntBetween(10, 20),
-                TestHelpers::generateRandomString,
-                TestHelpers::generateJobOutput);
+        final List<JobOutputDetails> outputsFromDAO = generateRandomList(
+                10,
+                20,
+                TestHelpers::generateJobOutputDetails);
 
         final JobDAO jobDAO = mock(JobDAO.class);
         when(jobDAO.jobExists(any())).thenReturn(true);
@@ -848,15 +830,26 @@ public final class JobResourceTest {
 
         final JobId jobId = generateJobId();
 
-        final Map<String, APIJobOutput> ret =
+        final APIJobOutputCollection ret =
                 jobResource.fetchJobOutputs(generateSecureSecurityContext(), jobId);
 
-        assertThat(ret.size()).isEqualTo(outputsFromDAO.size());
-        assertThat(ret.keySet()).isEqualTo(outputsFromDAO.keySet());
+        assertThat(ret.getEntries().size()).isEqualTo(outputsFromDAO.size());
+        assertThat(ret.getEntries().stream().map(APIJobOutput::getId).collect(Collectors.toList()))
+                .isEqualTo(outputsFromDAO.stream().map(JobOutputDetails::getId).collect(Collectors.toList()));
 
-        for (Map.Entry<String, APIJobOutput> returnedOutput : ret.entrySet()) {
-            assertThat(returnedOutput.getValue().getMimeType()).isEqualTo(outputsFromDAO.get(returnedOutput.getKey()).getMimeType());
-            assertThat(returnedOutput.getValue().getHref()).contains("/jobs/" + jobId + "/outputs/" + returnedOutput.getKey());
+        for (APIJobOutput returnedOutput : ret.getEntries()) {
+            final JobOutputDetails outputFromDAO =
+                    outputsFromDAO
+                            .stream()
+                            .filter(jobOutput -> jobOutput.getId().equals(returnedOutput.getId()))
+                            .findFirst()
+                            .get();
+
+            assertThat(returnedOutput.getMimeType()).isEqualTo(outputFromDAO.getMimeType());
+            assertThat(returnedOutput.getName()).isEqualTo(outputFromDAO.getName());
+            assertThat(returnedOutput.getDescription()).isEqualTo(outputFromDAO.getDescription());
+            assertThat(returnedOutput.getMetadata()).isEqualTo(outputFromDAO.getMetadata());
+            assertThat(returnedOutput.getHref()).contains("/jobs/" + jobId + "/outputs/" + returnedOutput.getId());
         }
     }
 
@@ -868,7 +861,7 @@ public final class JobResourceTest {
         final JobResource jobResource = resourceThatUses(jobDAO);
 
         final Response ret =
-                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateRandomString());
+                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateJobOutputId());
     }
 
     @Test(expected = WebApplicationException.class)
@@ -880,7 +873,7 @@ public final class JobResourceTest {
         final JobResource jobResource = resourceThatUses(jobDAO);
 
         final Response ret =
-                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateRandomString());
+                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(),  generateJobOutputId());
     }
 
     @Test
@@ -893,7 +886,7 @@ public final class JobResourceTest {
         final JobResource jobResource = resourceThatUses(jobDAO);
 
         final Response ret =
-                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateRandomString());
+                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateJobOutputId());
 
         assertThat(ret.getStatus()).isEqualTo(200);
     }
@@ -909,7 +902,7 @@ public final class JobResourceTest {
         final JobResource jobResource = resourceThatUses(jobDAO);
 
         final Response ret =
-                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateRandomString());
+                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateJobOutputId());
 
         assertThat(ret.getHeaderString("Content-Type")).isEqualTo(mimeType);
     }

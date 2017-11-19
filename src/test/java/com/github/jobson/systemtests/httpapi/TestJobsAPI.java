@@ -23,8 +23,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.config.ApplicationConfig;
+import com.github.jobson.dao.jobs.JobOutputDetails;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.systemtests.SystemTestHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
@@ -34,6 +36,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.github.jobson.Constants.HTTP_JOBS_PATH;
 import static com.github.jobson.Helpers.readJSON;
@@ -51,10 +54,12 @@ public final class TestJobsAPI {
 
     @ClassRule
     public static final DropwizardAppRule<ApplicationConfig> RULE = SystemTestHelpers.createStandardRule();
+
     private static final APIJobRequest REQUEST_AGAINST_FIRST_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_SECOND_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_THIRD_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_FOUTH_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_FITH_SPEC;
 
     static {
         REQUEST_AGAINST_FIRST_SPEC = readJSONFixture(
@@ -68,6 +73,9 @@ public final class TestJobsAPI {
                 APIJobRequest.class);
         REQUEST_AGAINST_FOUTH_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-fourth-spec.json",
+                APIJobRequest.class);
+        REQUEST_AGAINST_FITH_SPEC = readJSONFixture(
+                "fixtures/systemtests/request-against-fith-spec.json",
                 APIJobRequest.class);
     }
 
@@ -218,10 +226,17 @@ public final class TestJobsAPI {
 
         assertThat(jobOutputsResponse.getStatus()).isEqualTo(OK);
 
-        final Map<String, APIJobOutput> parsedResponse =
-                readJSON(jobOutputsResponse.readEntity(String.class), new TypeReference<Map<String, APIJobOutput>>() {});
+        final APIJobOutputCollection parsedResponse =
+                readJSON(jobOutputsResponse.readEntity(String.class), APIJobOutputCollection.class);
 
-        assertThat(parsedResponse.get("outFile").getMimeType().get()).isEqualTo("text/plain");
+        assertThat(getOutputDetailsById(parsedResponse, "outFile").get().getMimeType().get()).isEqualTo("text/plain");
+        assertThat(getOutputDetailsById(parsedResponse, "outFile").get().getName().get()).isEqualTo("Output Name");
+        assertThat(getOutputDetailsById(parsedResponse, "outFile").get().getDescription().get()).isEqualTo("Output Description");
+        assertThat(getOutputDetailsById(parsedResponse, "outFile").get().getSizeInBytes()).isEqualTo(0);
+    }
+
+    private Optional<APIJobOutput> getOutputDetailsById(APIJobOutputCollection apiJobOutputCollection, String id) {
+        return apiJobOutputCollection.getEntries().stream().filter(entry -> entry.getId().equals(new JobOutputId(id))).findFirst();
     }
 
     @Test
@@ -236,6 +251,22 @@ public final class TestJobsAPI {
 
         final Response jobOutputsResponse =
                 generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/outputs/outFile")).get();
+
+        assertThat(jobOutputsResponse.getStatus()).isEqualTo(OK);
+        assertThat(jobOutputsResponse.getHeaderString("Content-Type")).isEqualTo("text/plain");
+    }
+
+    @Test
+    public void testCanGetTemplatedJobOutput() throws InterruptedException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(REQUEST_AGAINST_FITH_SPEC))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
+
+        sleep(100);
+
+        final Response jobOutputsResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/outputs/" + jobId)).get();
 
         assertThat(jobOutputsResponse.getStatus()).isEqualTo(OK);
         assertThat(jobOutputsResponse.getHeaderString("Content-Type")).isEqualTo("text/plain");
@@ -262,5 +293,21 @@ public final class TestJobsAPI {
                 readJSON(responseJson, new TypeReference<Map<JobExpectedInputId, JsonNode>>() {});
 
         assertThat(inputsReturned).isEqualTo(req.getInputs());
+    }
+
+    @Test
+    public void testGetStderrReturns404IfStderrWasNotWritten() throws InterruptedException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(REQUEST_AGAINST_FIRST_SPEC))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
+
+        sleep(100);
+
+        final Response stderrResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/stderr"))
+                .get();
+
+        assertThat(stderrResponse.getStatus()).isEqualTo(404);
     }
 }

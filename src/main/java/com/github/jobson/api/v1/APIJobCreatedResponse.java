@@ -44,7 +44,9 @@ public final class APIJobCreatedResponse {
      */
     public APIJobCreatedResponse() {}
 
-    public APIJobCreatedResponse(JobId id, Map<String, APIRestLink> _links) {
+    public APIJobCreatedResponse(
+            JobId id,
+            Map<String, APIRestLink> _links) {
         this.id = id;
         this._links = _links;
     }

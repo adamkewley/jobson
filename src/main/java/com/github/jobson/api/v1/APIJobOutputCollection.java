@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,45 +19,31 @@
 
 package com.github.jobson.api.v1;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
-import java.util.Map;
 
-@ApiModel(description = "A collection of job spec summaries")
-public final class APIJobSpecCollection {
+@ApiModel(description = "Response to a request for job summaries")
+public final class APIJobOutputCollection {
 
-    @ApiModelProperty(value = "The summaries")
+    @ApiModelProperty(value = "The entries returned")
     @JsonProperty
-    private List<APIJobSpecSummary> entries;
-
-    @ApiModelProperty(value = "Links to related resources and actions")
-    @JsonProperty
-    private Map<String, APIRestLink> _links;
+    private List<APIJobOutput> entries;
 
 
     /**
      * @deprecated Used by JSON deserializer.
      */
-    public APIJobSpecCollection() {}
+    public APIJobOutputCollection() {}
 
-    public APIJobSpecCollection(
-            List<APIJobSpecSummary> entries,
-            Map<String, APIRestLink> _links) {
+    public APIJobOutputCollection(List<APIJobOutput> entries) {
         this.entries = entries;
-        this._links = _links;
     }
 
 
-    public List<APIJobSpecSummary> getEntries() {
+    public List<APIJobOutput> getEntries() {
         return entries;
-    }
-
-    @JsonIgnore
-    public Map<String, APIRestLink> getLinks() {
-        return _links;
     }
 }

@@ -21,16 +21,10 @@ package com.github.jobson.jobs.execution;
 
 import com.github.jobson.TestConstants;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.jobs.JobExecutionResult;
-import com.github.jobson.jobs.JobExecutor;
-import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.jobs.*;
 import com.github.jobson.fixtures.PersistedJobRequestFixture;
-import com.github.jobson.jobs.JobEventListeners;
 import com.github.jobson.jobs.jobstates.PersistedJob;
-import com.github.jobson.specs.ExecutionConfiguration;
-import com.github.jobson.specs.JobOutput;
-import com.github.jobson.specs.JobSpec;
-import com.github.jobson.specs.RawTemplateString;
+import com.github.jobson.specs.*;
 import com.github.jobson.utils.CancelablePromise;
 import com.google.common.primitives.Bytes;
 import io.reactivex.functions.Action;
@@ -99,10 +93,14 @@ public abstract class JobExecutorTest {
     }
 
     private static PersistedJob standardRequestWithCommand(String application, String... args) {
-        return standardRequestWithOutputs(new HashMap<>(), application, args);
+        return standardRequestWithExpectedOutputs(new ArrayList<>(), application, args);
     }
 
-    private static PersistedJob standardRequestWithOutputs(Map<String, JobOutput> outputs, String application, String ...args) {
+    private static PersistedJob standardRequestWithExpectedOutputs(
+            List<JobExpectedOutput> expectedOutputs,
+            String application,
+            String ...args) {
+
         final JobSpec existingSpec = STANDARD_REQUEST.getSpec();
         final ExecutionConfiguration existingConfig = existingSpec.getExecution();
 
@@ -125,7 +123,7 @@ public abstract class JobExecutorTest {
                         existingSpec.getDescription(),
                         existingSpec.getExpectedInputs(),
                         newConfig,
-                        outputs);
+                        expectedOutputs);
 
         return new PersistedJob(
                 STANDARD_REQUEST.getId(),
@@ -189,26 +187,36 @@ public abstract class JobExecutorTest {
     public void testExecutePromiseResolvesWithTheOutputsWrittenByTheApplication() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
 
-        final String outputId = "outfile";
-        final String outputPath = outputId;
+        final RawTemplateString outputId = new RawTemplateString("outfile");
+        final String outputPath = outputId.toString();
 
-        final Map<String, JobOutput> outputs = new HashMap<>();
-        outputs.put(outputId, new JobOutput(outputPath, "text/plain"));
+
+        final JobExpectedOutput expectedOutput = generateJobOutput(outputId, outputPath, "text/plain");
+        final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(expectedOutput);
 
         final PersistedJob req =
-                standardRequestWithOutputs(outputs, "touch", outputPath);
+                standardRequestWithExpectedOutputs(expectedOutputs, "touch", outputPath);
 
-        final CancelablePromise<JobExecutionResult> ret =
-                jobExecutor.execute(req, createNullListeners());
+        final CancelablePromise<JobExecutionResult> ret = jobExecutor.execute(req, createNullListeners());
 
         promiseAssert(
                 ret,
                 result -> {
                     assertThat(result.getOutputs()).isNotEmpty();
-                    assertThat(result.getOutputs().containsKey(outputId)).isTrue();
-                    assertThat(result.getOutputs().get(outputId).getSizeOf()).isEqualTo(0); // touch
+
+                    final Optional<JobOutput> maybeJobOutput = getJobOutputById(result.getOutputs(), new JobOutputId(outputId.toString()));
+                    assertThat(maybeJobOutput).isPresent();
+
+                    final JobOutput jobOutput = maybeJobOutput.get();
+                    assertThat(jobOutput.getData().getSizeOf()).isEqualTo(0);
+                    assertThat(jobOutput.getDescription()).isEqualTo(expectedOutput.getDescription());
+                    assertThat(jobOutput.getName()).isEqualTo(expectedOutput.getName());
                 },
                 () -> {});
+    }
+
+    private Optional<JobOutput> getJobOutputById(List<JobOutput> jobOutputs, JobOutputId jobOutputId) {
+        return jobOutputs.stream().filter(jobOutput -> jobOutput.getId().equals(jobOutputId)).findFirst();
     }
 
     @Test
@@ -219,15 +227,16 @@ public abstract class JobExecutorTest {
         final Path tmpFile = createTempFile(JobExecutorTest.class.getSimpleName(), "");
         Files.write(tmpFile, randomNoise);
 
-        final String outputId = "out";
-        final String outputPath = outputId;
+        final RawTemplateString outputIdTemplateString = new RawTemplateString("out");
+        final JobOutputId outputId = new JobOutputId(outputIdTemplateString.toString());
+        final String outputPath = outputId.toString();
 
-        final Map<String, JobOutput> outputs = new HashMap<>();
-        outputs.put(outputId, new JobOutput(outputPath, "application/octet-stream"));
+        final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(
+                new JobExpectedOutput(outputIdTemplateString, outputPath, "application/octet-stream"));
 
         final PersistedJob jobRequest =
-                standardRequestWithOutputs(
-                        outputs,
+                standardRequestWithExpectedOutputs(
+                        expectedOutputs,
                         "cp",
                         tmpFile.toAbsolutePath().toString(),
                         outputPath);
@@ -239,10 +248,10 @@ public abstract class JobExecutorTest {
                 ret,
                 result -> {
                     assertThat(result.getOutputs()).isNotEmpty();
-                    assertThat(result.getOutputs().containsKey(outputId)).isTrue();
-                    assertThat(result.getOutputs().get(outputId).getSizeOf()).isEqualTo(randomNoise.length);
+                    assertThat(result.getOutputs().stream().anyMatch(jobOutput -> jobOutput.getId().equals(outputId))).isTrue();
+                    assertThat(result.getOutputs().stream().filter(jobOutput -> jobOutput.getId().equals(outputId)).findFirst().get().getData().getSizeOf()).isEqualTo(randomNoise.length);
                     try {
-                        assertThat(IOUtils.toByteArray(result.getOutputs().get(outputId).getData())).isEqualTo(randomNoise);
+                        assertThat(IOUtils.toByteArray(result.getOutputs().stream().filter(jobOutput -> jobOutput.getId().equals(outputId)).findFirst().get().getData().getData())).isEqualTo(randomNoise);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -422,5 +431,31 @@ public abstract class JobExecutorTest {
         final String loadedJson = new String(Files.readAllBytes(p));
 
         assertThat(loadedJson).isEqualTo(toJSON(STANDARD_VALID_REQUEST.getInputs()));
+    }
+
+    @Test
+    public void testExecuteEvaluatesTemplateStringsInTheExpectedOutputs() throws Throwable {
+        final JobExecutor jobExecutor = getInstance();
+
+
+        final RawTemplateString rawTemplateString = new RawTemplateString("${request.id}");
+        final JobExpectedOutput jobExpectedOutput = new JobExpectedOutput(rawTemplateString, "foo", "application/octet-stream");
+        final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(jobExpectedOutput);
+
+        final PersistedJob req =
+                standardRequestWithExpectedOutputs(expectedOutputs, "touch", "foo");
+
+        final JobEventListeners listeners = createNullListeners();
+
+        promiseAssert(
+                jobExecutor.execute(req, listeners),
+                result -> {
+                    assertThat(result.getOutputs()).isNotEmpty();
+
+                    final JobOutputId expectedOutputIdAfterEvaluation =
+                            new JobOutputId(STANDARD_REQUEST.getId().toString());
+
+                    assertThat(getJobOutputById(result.getOutputs(), expectedOutputIdAfterEvaluation)).isPresent();
+                });
     }
 }

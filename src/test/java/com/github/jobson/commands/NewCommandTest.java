@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,15 +17,19 @@
  * under the License.
  */
 
-package com.github.jobson.jobs;
+package com.github.jobson.commands;
 
-import com.github.jobson.websockets.v1.JobEvent;
-import io.reactivex.Observable;
+import com.github.jobson.Helpers;
+import com.github.jobson.specs.JobSpec;
+import org.junit.Test;
 
-import java.util.Optional;
+import java.io.IOException;
 
-public interface JobManagerEvents {
-    Observable<JobEvent> allJobStatusChanges();
-    Optional<Observable<byte[]>> stdoutUpdates(JobId jobId);
-    Optional<Observable<byte[]>> stderrUpdates(JobId jobId);
+public final class NewCommandTest {
+
+    @Test
+    public void testDemoSpecIsAValidJobSpecFile() throws IOException {
+        final String specYAML = Helpers.loadResourceFileAsString("demo-spec.yml");
+        Helpers.readYAML(specYAML, JobSpec.class);
+    }
 }

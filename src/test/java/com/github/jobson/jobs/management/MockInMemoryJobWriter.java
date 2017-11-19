@@ -20,6 +20,7 @@
 package com.github.jobson.jobs.management;
 
 import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobOutput;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.jobs.WritingJobDAO;
@@ -92,8 +93,8 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
     public void addNewJobStatus(JobId jobId, JobStatus newStatus, String statusMessage) {}
 
     @Override
-    public void persistOutput(JobId jobId, String outputId, BinaryData data) {
-        persistOutputCalledWith.add(new PersistOutputArgs(jobId, outputId, data));
+    public void persistOutput(JobId jobId, JobOutput jobOutput) {
+        persistOutputCalledWith.add(new PersistOutputArgs(jobId, jobOutput.getId(), jobOutput.getData()));
     }
 
 

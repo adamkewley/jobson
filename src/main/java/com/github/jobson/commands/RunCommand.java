@@ -127,7 +127,17 @@ public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConf
 
         final JobManager jobManager = new JobManager(filesystemJobsDAO, jobExecutor, Constants.MAX_RUNNING_JOBS);
 
-        final JobEventListeners listeners = JobEventListeners.create(
+        final JobEventListeners listeners = createJobEventListeners();
+
+        final UserId userId = new UserId("jobson-run-command");
+        log.debug("Submitting job request");
+
+        validateAPIRequest(jobSubmissionRequest, filesystemJobSpecDAO, userId)
+                .visit(createResultVisitor(jobManager, listeners));
+    }
+
+    private JobEventListeners createJobEventListeners() {
+        return JobEventListeners.create(
                 new Observer<byte[]>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable disposable) {}
@@ -176,11 +186,13 @@ public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConf
                         System.exit(0);
                     }
                 });
+    }
 
-        final UserId userId = new UserId("jobson-run-command");
-        log.debug("Submitting job request");
+    private EitherVisitor<ValidJobRequest, List<ValidationError>> createResultVisitor(
+            JobManager jobManager,
+            JobEventListeners listeners) {
 
-        validateAPIRequest(jobSubmissionRequest, filesystemJobSpecDAO, userId).visit(new EitherVisitor<ValidJobRequest, List<ValidationError>>() {
+        return new EitherVisitor<ValidJobRequest, List<ValidationError>>() {
             @Override
             public void whenLeft(ValidJobRequest left) {
                 try {
@@ -207,6 +219,6 @@ public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConf
                 System.err.println("Invalid request: " + commaSeparatedList(right));
                 System.exit(1);
             }
-        });
+        };
     }
 }
