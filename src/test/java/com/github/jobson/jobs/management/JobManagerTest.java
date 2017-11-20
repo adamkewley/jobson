@@ -23,10 +23,11 @@ import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.jobs.*;
-import com.github.jobson.utils.BinaryData;
+import com.github.jobson.specs.JobOutputId;
+import com.github.jobson.specs.RawTemplateString;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.jobstates.FinalizedJob;
-import com.github.jobson.specs.JobOutput;
+import com.github.jobson.specs.JobExpectedOutput;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import com.github.jobson.websockets.v1.JobEvent;
@@ -41,7 +42,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -478,13 +478,23 @@ public final class JobManagerTest {
                 createManagerWith(writingJobDAO, MockJobExecutor.thatUses(executorPromise));
 
         final byte[] executorOutputBytes = generateRandomBytes();
-        final Map<String, BinaryData> outputsFromExecutor = new HashMap<>();
+        final List<JobOutput> outputsFromExecutor = new ArrayList<>();
 
-        for (Map.Entry<String, JobOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
-            if (output.getValue().getMimeType().isPresent()) {
-                outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes, output.getValue().getMimeType().get()));
+        for (JobExpectedOutput expectedOutput : STANDARD_VALID_REQUEST.getSpec().getExpectedOutputs()) {
+            if (expectedOutput.getMimeType().isPresent()) {
+                outputsFromExecutor.add(new JobOutput(
+                        new JobOutputId(expectedOutput.getId().toString()),
+                        wrap(executorOutputBytes, expectedOutput.getMimeType().get()),
+                        expectedOutput.getName(),
+                        expectedOutput.getDescription(),
+                        expectedOutput.getMetadata()));
             } else {
-                outputsFromExecutor.put(output.getKey(), wrap(executorOutputBytes));
+                outputsFromExecutor.add(new JobOutput(
+                        new JobOutputId(expectedOutput.getId().toString()),
+                        wrap(executorOutputBytes),
+                        expectedOutput.getName(),
+                        expectedOutput.getDescription(),
+                        expectedOutput.getMetadata()));
             }
         }
 
@@ -496,11 +506,11 @@ public final class JobManagerTest {
 
         p.get(DEFAULT_TIMEOUT, MILLISECONDS);
 
-        for (Map.Entry<String, JobOutput> output : STANDARD_VALID_REQUEST.getSpec().getOutputs().entrySet()) {
+        for (JobExpectedOutput output : STANDARD_VALID_REQUEST.getSpec().getExpectedOutputs()) {
             final PersistOutputArgs expectedArgs = new PersistOutputArgs(
                     writingJobDAO.getReturnedPersistedReq().getId(),
-                    output.getKey(),
-                    wrap(executorOutputBytes, output.getValue().getMimeType().orElse("application/octet-stream")));
+                    new JobOutputId(output.getId().toString()),
+                    wrap(executorOutputBytes, output.getMimeType().orElse("application/octet-stream")));
 
             assertThat(writingJobDAO.getPersistOutputCalledWith()).contains(expectedArgs);
         }

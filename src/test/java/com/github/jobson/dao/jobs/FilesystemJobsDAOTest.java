@@ -23,11 +23,14 @@ import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobOutput;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.dao.IdGenerator;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.JobSpec;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -44,6 +47,7 @@ import static com.github.jobson.Helpers.*;
 import static com.github.jobson.Helpers.readJSON;
 import static com.github.jobson.TestHelpers.*;
 import static com.github.jobson.utils.BinaryData.wrap;
+import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class FilesystemJobsDAOTest extends JobsDAOTest {
@@ -215,11 +219,7 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
         final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
 
-        final String jobOutputId = generateRandomString();
-        final byte[] jobOutputData = generateRandomBytes();
-        final BinaryData binaryData = wrap(jobOutputData);
-
-        dao.persistOutput(generateJobId(), jobOutputId, binaryData);
+        dao.persistOutput(generateJobId(), generateRandomJobOutput());
     }
 
     @Test
@@ -229,22 +229,22 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
 
         final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
 
-        final String jobOutputId = generateRandomString();
-        final byte[] jobOutputData = generateRandomBytes();
+        final byte[] data = generateRandomBytes();
+        final JobOutput jobOutput = generateRandomJobOutput(data);
 
-        dao.persistOutput(jobId, jobOutputId, wrap(jobOutputData));
+        dao.persistOutput(jobId, jobOutput);
 
         final Path outputsDir = jobsDir.resolve(jobId.toString()).resolve(JOB_DIR_OUTPUTS_DIRNAME);
 
         assertThat(outputsDir.toFile()).exists();
 
-        final Path outputFile = outputsDir.resolve(jobOutputId);
+        final Path outputFile = outputsDir.resolve(jobOutput.getId().toString());
 
         assertThat(outputFile).exists();
 
         final byte[] outputFileContent = Files.readAllBytes(outputFile);
 
-        assertThat(outputFileContent).isEqualTo(jobOutputData);
+        assertThat(outputFileContent).isEqualTo(data);
     }
 
     @Test
@@ -254,27 +254,27 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
 
         final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
 
-        final String jobOutputId = generateRandomString();
-        final byte[] jobOutputData = generateRandomBytes();
-        final BinaryData binaryData = wrap(jobOutputData);
+        final JobOutput firstJobOutput = generateRandomJobOutput();
+        final JobOutputId outputId = firstJobOutput.getId();
 
-        dao.persistOutput(jobId, jobOutputId, binaryData);
+        dao.persistOutput(jobId, firstJobOutput);
 
-        final byte[] secondOutputData = generateRandomBytes();
+        final byte secondJobData[] = generateRandomBytes();
+        final JobOutput secondJobOutput = generateRandomJobOutput(firstJobOutput.getId(), secondJobData);
 
-        dao.persistOutput(jobId, jobOutputId, wrap(secondOutputData));
+        dao.persistOutput(jobId, secondJobOutput);
 
         final Path outputsDir = jobsDir.resolve(jobId.toString()).resolve(JOB_DIR_OUTPUTS_DIRNAME);
 
         assertThat(outputsDir.toFile()).exists();
 
-        final Path outputFile = outputsDir.resolve(jobOutputId);
+        final Path outputFile = outputsDir.resolve(outputId.toString());
 
         assertThat(outputFile).exists();
 
         final byte[] outputFileContent = Files.readAllBytes(outputFile);
 
-        assertThat(outputFileContent).isEqualTo(secondOutputData);
+        assertThat(outputFileContent).isEqualTo(secondJobData);
     }
 
     @Test

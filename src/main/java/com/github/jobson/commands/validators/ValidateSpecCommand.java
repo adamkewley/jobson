@@ -19,7 +19,6 @@
 
 package com.github.jobson.commands.validators;
 
-import com.github.jobson.Constants;
 import com.github.jobson.commands.DefaultedConfiguredCommand;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.specs.ExecutionConfiguration;
@@ -76,11 +75,7 @@ public final class ValidateSpecCommand extends DefaultedConfiguredCommand<Applic
 
         final Map<JobSpecId, List<String>> allErrors =
                 specIds.stream()
-                        .map(specId -> {
-                            final JobSpecId id = new JobSpecId(specId);
-                            final List<String> specErrors = validate(jobSpecsDir, id);
-                            return new AbstractMap.SimpleEntry<>(id, specErrors);
-                        })
+                        .map(specId -> getSpecErrors(jobSpecsDir, specId))
                         .filter(entry -> entry.getValue().size() > 0)
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
@@ -88,6 +83,12 @@ public final class ValidateSpecCommand extends DefaultedConfiguredCommand<Applic
             allErrors.forEach(this::printErrors);
             System.exit(1);
         } else System.exit(0);
+    }
+
+    private Map.Entry<JobSpecId, List<String>> getSpecErrors(Path jobSpecsDir, String specId) {
+        final JobSpecId id = new JobSpecId(specId);
+        final List<String> specErrors = validate(jobSpecsDir, id);
+        return new AbstractMap.SimpleEntry<>(id, specErrors);
     }
 
     private List<String> validate(Path jobSpecsDir, JobSpecId jobSpecId) {
@@ -123,9 +124,7 @@ public final class ValidateSpecCommand extends DefaultedConfiguredCommand<Applic
 
     private void printErrors(JobSpecId jobSpecId, List<String> errors) {
         System.err.println(errors.size() + " errors found in " + jobSpecId + ": ");
-        errors.forEach(error -> {
-            System.err.println("    " + error);
-        });
+        errors.forEach(error -> System.err.println("    " + error));
     }
 
     private List<String> validateApplicationExecution(Path jobSpecDir, ExecutionConfiguration execConfig) {

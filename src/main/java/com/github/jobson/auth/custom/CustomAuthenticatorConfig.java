@@ -1,24 +1,20 @@
 /*
- * Gaia CU5 SUEDE
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * (c) 2005-2020 Gaia Data Processing and Analysis Consortium
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *
- * CU5 SUEDE software is free software; you can redistribute
- * it and/or modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * CU5 SUEDE software is distributed in the hope that it will
- * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
- * General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this CU5 software; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- *-----------------------------------------------------------------------------
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.github.jobson.auth.custom;
@@ -51,6 +47,53 @@ import static java.lang.Thread.currentThread;
  */
 public final class CustomAuthenticatorConfig implements AuthenticationConfig {
 
+    private static ClassLoader getClassLoader(Optional<String> classPath) {
+        if (classPath.isPresent()) {
+            final File localPath = new File(classPath.get());
+
+            if (!localPath.exists())
+                throw new RuntimeException(classPath.get() +  ": does not exist");
+
+            try {
+                final URL fileURL = localPath.toURI().toURL();
+                return URLClassLoader.newInstance(new URL[] { fileURL });
+            } catch (MalformedURLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else {
+            return currentThread().getContextClassLoader();
+        }
+    }
+
+    private static Class<?> loadClass(ClassLoader classLoader, String className) {
+        try {
+            return classLoader.loadClass(className);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static Class<AuthenticationConfig> toAuthConfigClass(Class<?> klass) {
+        if (!AuthenticationConfig.class.isAssignableFrom(klass))
+            throw new RuntimeException(klass.getName() + " does not implement " + AuthenticationConfig.class.getName());
+
+        return (Class<AuthenticationConfig>)klass;
+    }
+
+    private static AuthenticationConfig loadAuthenticationConfig(
+            Optional<JsonNode> properties,
+            Class<AuthenticationConfig> klass) {
+
+        try {
+            return properties.isPresent() ?
+                    readJSON(properties.get(), klass) :
+                    klass.newInstance();
+        } catch (IOException | IllegalAccessException | InstantiationException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+
     private final AuthenticationConfig loadedConfig;
 
 
@@ -68,53 +111,11 @@ public final class CustomAuthenticatorConfig implements AuthenticationConfig {
             @JsonProperty("classPath") Optional<String> classPath,
             @JsonProperty("properties") Optional<JsonNode> properties) {
 
-        final ClassLoader classLoader;
-        if (classPath.isPresent()) {
-            final File localPath = new File(classPath.get());
+        final ClassLoader classLoader = getClassLoader(classPath);
+        final Class<?> klass = loadClass(classLoader, className);
+        final Class<AuthenticationConfig> authConfigClass = toAuthConfigClass(klass);
 
-            if (!localPath.exists())
-                throw new RuntimeException(classPath.get() +  ": does not exist");
-
-            try {
-                final URL fileURL = localPath.toURI().toURL();
-                classLoader = URLClassLoader.newInstance(new URL[] { fileURL });
-            } catch (MalformedURLException ex) {
-                throw new RuntimeException(ex);
-            }
-        } else {
-            classLoader = currentThread().getContextClassLoader();
-        }
-
-        final Class<?> klass;
-        try {
-            klass = classLoader.loadClass(className);
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
-        }
-
-
-        if (!AuthenticationConfig.class.isAssignableFrom(klass))
-            throw new RuntimeException(klass.getName() + " does not implement " + AuthenticationConfig.class.getName());
-
-        final Class<AuthenticationConfig> downcastedClass =
-                (Class<AuthenticationConfig>)klass;
-
-        final AuthenticationConfig loadedConfig;
-        if (properties.isPresent()) {
-            try {
-                loadedConfig = readJSON(properties.get(), downcastedClass);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        } else {
-            try {
-                loadedConfig = downcastedClass.newInstance();
-            } catch (IllegalAccessException | InstantiationException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        this.loadedConfig = loadedConfig;
+        this.loadedConfig = loadAuthenticationConfig(properties, authConfigClass);
     }
 
 

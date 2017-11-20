@@ -97,8 +97,8 @@ public final class FilesystemUserDAO implements UserDAO {
                 // TODO: Clean up
                 final UserCredentials newUserCredentials = new UserCredentials(id, authName, authField);
                 final Stream<UserCredentials> otherCredentials = allCredentials.stream().filter(c -> !c.getId().equals(id));
-                final Stream<UserCredentials> upatedCredentials = Stream.concat(otherCredentials, Stream.of(newUserCredentials));
-                final String fileContent = String.join("", upatedCredentials.map(c -> c + System.lineSeparator()).collect(Collectors.toList()));
+                final Stream<UserCredentials> upd = Stream.concat(otherCredentials, Stream.of(newUserCredentials));
+                final String fileContent = String.join("", upd.map(c -> c + System.lineSeparator()).collect(Collectors.toList()));
                 Files.write(usersFile.toPath(), fileContent.getBytes());
                 return true;
             } else return false;

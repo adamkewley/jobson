@@ -182,8 +182,8 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
     private void onExecutionFinished(ExecutingJob executingJob, JobExecutionResult jobExecutionResult) {
         executingJobs.remove(executingJob.getId());
 
-        jobExecutionResult.getOutputs().forEach((outputId, data) -> {
-            jobDAO.persistOutput(executingJob.getId(), outputId, data);
+        jobExecutionResult.getOutputs().forEach(jobOutput -> {
+            jobDAO.persistOutput(executingJob.getId(), jobOutput);
         });
 
         updateJobStatus(executingJob.getId(), jobExecutionResult.getFinalStatus(), "Execution finished");

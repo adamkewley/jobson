@@ -19,10 +19,8 @@
 
 package com.github.jobson.jobs;
 
-import com.github.jobson.utils.BinaryData;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class JobExecutionResult {
 
@@ -32,17 +30,17 @@ public final class JobExecutionResult {
 
 
     private final JobStatus finalStatus;
-    private final Map<String, BinaryData> outputs;
+    private final List<JobOutput> outputs;
 
 
     public JobExecutionResult(JobStatus finalStatus) {
         this.finalStatus = finalStatus;
-        this.outputs = new HashMap<>();
+        this.outputs = new ArrayList<>();
     }
 
     public JobExecutionResult(
             JobStatus finalStatus,
-            Map<String, BinaryData> outputs) {
+            List<JobOutput> outputs) {
 
         this.finalStatus = finalStatus;
         this.outputs = outputs;
@@ -53,7 +51,7 @@ public final class JobExecutionResult {
         return finalStatus;
     }
 
-    public Map<String, BinaryData> getOutputs() {
+    public List<JobOutput> getOutputs() {
         return outputs;
     }
 }

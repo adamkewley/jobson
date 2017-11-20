@@ -17,49 +17,26 @@
  * under the License.
  */
 
-package com.github.jobson.api.v1;
+package com.github.jobson.specs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.dao.jobs.JobOutputDetails;
-import com.github.jobson.specs.JobOutputId;
-import io.swagger.annotations.ApiModel;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@ApiModel(description = "Details about an output produced by a job")
-public final class APIJobOutput {
-
-    public static APIJobOutput fromJobOutput(
-            String outputsFolderHref,
-            JobOutputDetails jobOutputDetails) {
-
-        return new APIJobOutput(
-                jobOutputDetails.getId(),
-                jobOutputDetails.getSizeInBytes(),
-                outputsFolderHref,
-                jobOutputDetails.getMimeType(),
-                jobOutputDetails.getName(),
-                jobOutputDetails.getDescription(),
-                jobOutputDetails.getMetadata());
-    }
-
+public final class JobExpectedOutput {
 
     @JsonProperty
     @NotNull
-    private JobOutputId id;
-
-    @JsonProperty
-    private long sizeInBytes;
+    private RawTemplateString id;
 
     @JsonProperty
     @NotNull
-    private String href;
+    private String path;
 
     @JsonProperty
-    @NotNull
     private Optional<String> mimeType = Optional.empty();
 
     @JsonProperty
@@ -75,36 +52,39 @@ public final class APIJobOutput {
     /**
      * @deprecated Used by JSON deserializer.
      */
-    public APIJobOutput() {}
+    public JobExpectedOutput() {}
 
-    public APIJobOutput(
-            JobOutputId id,
-            long sizeInBytes,
-            String href,
-            Optional<String> mimeType,
+    public JobExpectedOutput(
+            RawTemplateString id,
+            String path,
+            String mimeType) {
+        this.id = id;
+        this.path = path;
+        this.mimeType = Optional.of(mimeType);
+    }
+
+    public JobExpectedOutput(
+            RawTemplateString id,
+            String path,
+            String mimeType,
             Optional<String> name,
             Optional<String> description,
             Map<String, String> metadata) {
         this.id = id;
-        this.sizeInBytes = sizeInBytes;
-        this.href = href;
-        this.mimeType = mimeType;
+        this.path = path;
+        this.mimeType = Optional.of(mimeType);
         this.name = name;
         this.description = description;
         this.metadata = metadata;
     }
 
 
-    public JobOutputId getId() {
-        return this.id;
+    public RawTemplateString getId() {
+        return id;
     }
 
-    public long getSizeInBytes() {
-        return sizeInBytes;
-    }
-
-    public String getHref() {
-        return href;
+    public String getPath() {
+        return path;
     }
 
     public Optional<String> getMimeType() {
@@ -121,5 +101,31 @@ public final class APIJobOutput {
 
     public Map<String, String> getMetadata() {
         return metadata;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        JobExpectedOutput jobExpectedOutput = (JobExpectedOutput) o;
+
+        if (path != null ? !path.equals(jobExpectedOutput.path) : jobExpectedOutput.path != null) return false;
+        if (mimeType != null ? !mimeType.equals(jobExpectedOutput.mimeType) : jobExpectedOutput.mimeType != null) return false;
+        if (name != null ? !name.equals(jobExpectedOutput.name) : jobExpectedOutput.name != null) return false;
+        if (description != null ? !description.equals(jobExpectedOutput.description) : jobExpectedOutput.description != null)
+            return false;
+        return metadata != null ? metadata.equals(jobExpectedOutput.metadata) : jobExpectedOutput.metadata == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = path != null ? path.hashCode() : 0;
+        result = 31 * result + (mimeType != null ? mimeType.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (metadata != null ? metadata.hashCode() : 0);
+        return result;
     }
 }

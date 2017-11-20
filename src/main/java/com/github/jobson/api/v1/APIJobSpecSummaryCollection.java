@@ -21,30 +21,18 @@ package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.dao.jobs.JobDetails;
-import com.github.jobson.jobs.JobId;
-import com.github.jobson.jobs.JobTimestamp;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 import java.util.Map;
 
-@ApiModel(description = "Details of a job on the system")
-public class APIJobDetails extends JobDetails {
+@ApiModel(description = "A collection of job spec summaries")
+public final class APIJobSpecSummaryCollection {
 
-    public static APIJobDetails fromJobDetails(
-            JobDetails jobDetails,
-            Map<String, APIRestLink> restLinks) {
-
-        return new APIJobDetails(
-                jobDetails.getId(),
-                jobDetails.getName(),
-                jobDetails.getOwner(),
-                jobDetails.getTimestamps(),
-                restLinks);
-    }
-
+    @ApiModelProperty(value = "The summaries")
+    @JsonProperty
+    private List<APIJobSpecSummary> entries;
 
     @ApiModelProperty(value = "Links to related resources and actions")
     @JsonProperty
@@ -52,21 +40,21 @@ public class APIJobDetails extends JobDetails {
 
 
     /**
-     * @deprecated Used by JSON deserializer
+     * @deprecated Used by JSON deserializer.
      */
-    public APIJobDetails() {}
+    public APIJobSpecSummaryCollection() {}
 
-    public APIJobDetails(
-            JobId id,
-            String name,
-            UserId owner,
-            List<JobTimestamp> timestamps,
+    public APIJobSpecSummaryCollection(
+            List<APIJobSpecSummary> entries,
             Map<String, APIRestLink> _links) {
-
-        super(id, name, owner, timestamps);
+        this.entries = entries;
         this._links = _links;
     }
 
+
+    public List<APIJobSpecSummary> getEntries() {
+        return entries;
+    }
 
     @JsonIgnore
     public Map<String, APIRestLink> getLinks() {
