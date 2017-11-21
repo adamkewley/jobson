@@ -63,7 +63,7 @@ sudo apt-get install default-jre
 - Download a [release](https://github.com/adamkewley/jobson/releases) of Jobson
 - If a package is available for your platform (e.g. `jobson-x.x.x.deb` on debian distros), 
   install that.
-- Otherwise, [manually install](manual-install) Jobson
+- Otherwise, [manually install](#manual-install) Jobson
 
 
 # Boot the Server
@@ -75,10 +75,10 @@ jobson new --demo
 jobson serve config.yml
 ```
 
-See [API examples](using-the-api) to play with the HTTP API or, better, host a
+See [API examples](#using-the-api) to play with the HTTP API or, better, host a
 [Jobson UI](https://github.com/adamkewley/jobson-ui) so you can *see* the
 API. If you want something more comprehensive then see 
-[more jobson deployment examples](more-jobson-deployment-examples).
+[more jobson deployment examples](#more-jobson-deployment-examples).
 
 
 # Add Job Specs
