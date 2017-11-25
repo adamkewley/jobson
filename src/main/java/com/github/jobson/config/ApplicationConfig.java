@@ -20,6 +20,7 @@
 package com.github.jobson.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.jobson.Constants;
 import io.dropwizard.Configuration;
 
 import javax.validation.Valid;
@@ -52,6 +53,10 @@ public final class ApplicationConfig extends Configuration {
     @Valid
     private AuthenticationConfig authentication;
 
+    @JsonProperty
+    @Valid
+    private JobManagerConfig jobManagement = new JobManagerConfig();
+
 
     public SpecsConfig getJobSpecConfiguration() {
         return specs;
@@ -71,5 +76,9 @@ public final class ApplicationConfig extends Configuration {
 
     public WorkingDirsConfig getWorkingDirs() {
         return workingDirs;
+    }
+
+    public JobManagerConfig getJobManagement() {
+        return jobManagement;
     }
 }

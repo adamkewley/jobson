@@ -143,7 +143,7 @@ public final class App extends Application<ApplicationConfig> {
 
 
         log.debug("Creating job manager");
-        final JobManager jobManager = new JobManager(jobDAO, jobExecutor, Constants.MAX_RUNNING_JOBS);
+        final JobManager jobManager = new JobManager(jobDAO, jobExecutor, applicationConfig.getJobManagement().getMaxRunningJobs());
 
 
         log.debug("Registering the jobs API");
