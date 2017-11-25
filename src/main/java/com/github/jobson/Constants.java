@@ -39,8 +39,8 @@ public final class Constants {
 
 
     public static final int DEFAULT_PAGE_SIZE = 50;
-    public static final int MAX_RUNNING_JOBS = 10;
-    public static final int DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_SECONDS = 10;
+    public static final int MAX_CONCURRENT_JOBS = 10;
+    public static final int DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_MILLISECONDS = 10000;
     public static final int MAX_JOB_ID_GENERATION_ATTEMPTS = 100;
     public static final int STDIO_BUFFER_LEN_IN_BYTES = 256;
 
@@ -78,4 +78,6 @@ public final class Constants {
     public static final long JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD = 10_000;
 
     public static final String DEFAULT_BINARY_MIME_TYPE = "application/octet-stream";
+
+    public static final int MAX_JOB_OUTPUT_SIZE_IN_BYTES_BEFORE_DISABLING_COMPRESSION = 52430000;  // 50 MiB
 }

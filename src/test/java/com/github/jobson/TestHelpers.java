@@ -137,7 +137,13 @@ public final class TestHelpers {
     }
 
     public static byte[] generateRandomBytes() {
-        return generateRandomString().getBytes();
+        return generateRandomBytes(randomIntBetween(64, 1024));
+    }
+
+    public static byte[] generateRandomBytes(int numBytes) {
+        final byte[] b = new byte[numBytes];
+        rng.nextBytes(b);
+        return b;
     }
 
     public static BinaryData generateRandomBinaryData() {

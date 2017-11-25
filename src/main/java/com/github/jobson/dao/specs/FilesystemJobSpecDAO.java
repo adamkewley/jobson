@@ -135,6 +135,11 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
                 .map(Optional::get)
                 .skip(page * pageSize)
                 .limit(pageSize)
+                .sorted(FilesystemJobSpecDAO::bySpecName)
                 .collect(toList());
+    }
+
+    private static int bySpecName(JobSpecSummary a, JobSpecSummary b) {
+        return a.getName().compareTo(b.getName());
     }
 }
