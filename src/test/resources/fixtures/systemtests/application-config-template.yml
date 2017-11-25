@@ -20,3 +20,6 @@ users:
 
 authentication:
   type: basic
+
+jobManagement:
+  maxRunningJobs: 10

@@ -14,6 +14,9 @@ authentication:
   # Options: guest, basic, custom
   type: guest
 
+jobManagement:
+  maxRunningJobs: 10
+
 server:
   applicationConnectors:
     - type: http
