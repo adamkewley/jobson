@@ -136,14 +136,14 @@ public final class App extends Application<ApplicationConfig> {
         log.debug("Creating job executor");
         final JobExecutor jobExecutor = new LocalJobExecutor(
                 workingDirsPath,
-                Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_SECONDS);
+                applicationConfig.getExecution().getDelayBeforeForciblyKillingJobs().toMillis());
 
         log.debug("Creating job DAO");
         final JobDAO jobDAO = new FilesystemJobsDAO(jobsPath, () -> generateRandomBase36String(10));
 
 
         log.debug("Creating job manager");
-        final JobManager jobManager = new JobManager(jobDAO, jobExecutor, applicationConfig.getJobManagement().getMaxRunningJobs());
+        final JobManager jobManager = new JobManager(jobDAO, jobExecutor, applicationConfig.getExecution().getMaxConcurrentJobs());
 
 
         log.debug("Registering the jobs API");

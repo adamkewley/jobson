@@ -85,11 +85,11 @@ public final class LocalJobExecutor implements JobExecutor {
 
 
     private final Path workingDirs;
-    private final int delayBeforeForciblyKillingJobs;
+    private final long delayBeforeForciblyKillingJobs;
 
 
 
-    public LocalJobExecutor(Path workingDirs, int delayBeforeForciblyKillingJobs) throws FileNotFoundException {
+    public LocalJobExecutor(Path workingDirs, long delayBeforeForciblyKillingJobs) throws FileNotFoundException {
         requireNonNull(workingDirs);
         if (!workingDirs.toFile().exists())
             throw new FileNotFoundException(workingDirs + ": does not exist");
@@ -224,7 +224,7 @@ public final class LocalJobExecutor implements JobExecutor {
         log.debug("Aborting process: " + process);
         process.destroy();
         try {
-            final boolean terminated = process.waitFor(delayBeforeForciblyKillingJobs, TimeUnit.SECONDS);
+            final boolean terminated = process.waitFor(delayBeforeForciblyKillingJobs, TimeUnit.MILLISECONDS);
             if (!terminated) {
                 log.warn(process + " did not abort within " + delayBeforeForciblyKillingJobs + " seconds, aborting forcibly (SIGKILL)");
                 process.destroyForcibly();

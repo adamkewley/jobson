@@ -24,7 +24,6 @@ import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.jobs.*;
 import com.github.jobson.specs.JobOutputId;
-import com.github.jobson.specs.RawTemplateString;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.jobstates.FinalizedJob;
 import com.github.jobson.specs.JobExpectedOutput;
@@ -80,7 +79,7 @@ public final class JobManagerTest {
     }
 
     private static JobManager createManagerWith(WritingJobDAO dao, JobExecutor executor) {
-        return new JobManager(dao, executor, Constants.MAX_RUNNING_JOBS);
+        return new JobManager(dao, executor, Constants.MAX_CONCURRENT_JOBS);
     }
 
 

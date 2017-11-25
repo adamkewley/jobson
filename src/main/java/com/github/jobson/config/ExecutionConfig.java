@@ -23,16 +23,25 @@ package com.github.jobson.config;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.Constants;
 
-public final class JobManagerConfig {
+import java.time.Duration;
+
+public final class ExecutionConfig {
 
     @JsonProperty
-    private int maxRunningJobs = Constants.MAX_CONCURRENT_JOBS;
+    private int maxConcurrentJobs = Constants.MAX_CONCURRENT_JOBS;
+
+    @JsonProperty
+    private Duration delayBeforeForciblyKillingJobs = Duration.ofMillis(Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_MILLISECONDS);
 
 
-    public JobManagerConfig() {}
+    public ExecutionConfig() {}
 
 
-    public int getMaxRunningJobs() {
-        return maxRunningJobs;
+    public Duration getDelayBeforeForciblyKillingJobs() {
+        return delayBeforeForciblyKillingJobs;
+    }
+
+    public int getMaxConcurrentJobs() {
+        return maxConcurrentJobs;
     }
 }

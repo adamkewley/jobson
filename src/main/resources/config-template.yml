@@ -11,11 +11,11 @@ users:
   file: users
 
 authentication:
-  # Options: guest, basic, custom
-  type: guest
+  type: guest  # guest/basic/custom
 
-jobManagement:
-  maxRunningJobs: 10
+execution:
+  maxConcurrentJobs: 10
+  delayBeforeForciblyKillingJobs: PT3S  # ISO 8601 duration
 
 server:
   applicationConnectors:
