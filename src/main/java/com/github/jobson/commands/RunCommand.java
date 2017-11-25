@@ -121,11 +121,11 @@ public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConf
 
         log.info("Creating temporary directory for job working dirs");
         final Path jobWorkingDirs = Files.createTempDirectory("wds");
-        final JobExecutor jobExecutor = new LocalJobExecutor(jobWorkingDirs, Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_SECONDS);
+        final JobExecutor jobExecutor = new LocalJobExecutor(jobWorkingDirs, Constants.DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_MILLISECONDS);
 
         final FilesystemJobsDAO filesystemJobsDAO = new FilesystemJobsDAO(tmpDir, () -> Helpers.generateRandomBase36String(10));
 
-        final JobManager jobManager = new JobManager(filesystemJobsDAO, jobExecutor, Constants.MAX_RUNNING_JOBS);
+        final JobManager jobManager = new JobManager(filesystemJobsDAO, jobExecutor, Constants.MAX_CONCURRENT_JOBS);
 
         final JobEventListeners listeners = createJobEventListeners();
 

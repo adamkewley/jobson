@@ -52,6 +52,10 @@ public final class ApplicationConfig extends Configuration {
     @Valid
     private AuthenticationConfig authentication;
 
+    @JsonProperty
+    @Valid
+    private ExecutionConfig execution = new ExecutionConfig();
+
 
     public SpecsConfig getJobSpecConfiguration() {
         return specs;
@@ -71,5 +75,9 @@ public final class ApplicationConfig extends Configuration {
 
     public WorkingDirsConfig getWorkingDirs() {
         return workingDirs;
+    }
+
+    public ExecutionConfig getExecution() {
+        return execution;
     }
 }

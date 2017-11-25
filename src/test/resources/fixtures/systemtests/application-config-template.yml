@@ -20,3 +20,8 @@ users:
 
 authentication:
   type: basic
+
+
+execution:
+  maxConcurrentJobs: 10
+  delayBeforeForciblyKillingJobs: PT3S  # ISO 8601

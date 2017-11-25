@@ -299,7 +299,11 @@ public abstract class JobExecutorTest {
                 jobExecutor.execute(STANDARD_REQUEST, listeners);
 
         promiseAssert(ret, result -> {
-            assertThat(completedCalled.get()).isTrue();
+            try {
+                // The stdout thread can race with the exit thread
+                Thread.sleep(50);
+                assertThat(completedCalled.get()).isTrue();
+            } catch (InterruptedException ignored) {}
         });
     }
 
@@ -342,7 +346,13 @@ public abstract class JobExecutorTest {
         final CancelablePromise<JobExecutionResult> ret =
                 jobExecutor.execute(STANDARD_REQUEST, listeners);
 
-        promiseAssert(ret, result -> assertThat(completedCalled.get()).isTrue());
+        promiseAssert(ret, result -> {
+            try {
+                // The stderr thread can race with the exit thread
+                Thread.sleep(50);
+                assertThat(completedCalled.get()).isTrue();
+            } catch (InterruptedException ignored) {}
+        });
     }
 
     @Test
