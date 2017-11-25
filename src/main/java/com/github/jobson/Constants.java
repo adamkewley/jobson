@@ -78,4 +78,6 @@ public final class Constants {
     public static final long JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD = 10_000;
 
     public static final String DEFAULT_BINARY_MIME_TYPE = "application/octet-stream";
+
+    public static final int MAX_JOB_OUTPUT_SIZE_IN_BYTES_BEFORE_DISABLING_COMPRESSION = 52430000;  // 50 MiB
 }

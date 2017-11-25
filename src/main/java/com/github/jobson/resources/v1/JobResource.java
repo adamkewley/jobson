@@ -20,6 +20,7 @@
 package com.github.jobson.resources.v1;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.dao.jobs.JobDetails;
@@ -313,9 +314,14 @@ public final class JobResource {
 
             final StreamingOutput body = outputStream -> IOUtils.copy(binaryData.getData(), outputStream);
 
-            return Response.ok(body, binaryData.getMimeType())
-                    .header("Content-Length", binaryData.getSizeOf())
-                    .build();
+            final Response.ResponseBuilder b =
+                    Response.ok(body, binaryData.getMimeType())
+                            .header("Content-Length", binaryData.getSizeOf());
+
+            if (binaryData.getSizeOf() > Constants.MAX_JOB_OUTPUT_SIZE_IN_BYTES_BEFORE_DISABLING_COMPRESSION)
+                b.header("Content-Encoding", "identity");
+
+            return b.build();
         } else {
             return Response.status(404).build();
         }

@@ -908,6 +908,26 @@ public final class JobResourceTest {
     }
 
     @Test
+    public void testFetchJobOutputSetsContentEncodingToIdentityIfAboveBreakpoint() {
+        // *Large* job outputs (i.e. bigger than a breakpoint) should not be
+        // compressed on the fly. It is known to cause huge CPU and memory spikes
+        // in the server, which might be unpredictable for devs.
+        final JobDAO jobDAO = mock(JobDAO.class);
+        when(jobDAO.jobExists(any())).thenReturn(true);
+        final int breakpoint = Constants.MAX_JOB_OUTPUT_SIZE_IN_BYTES_BEFORE_DISABLING_COMPRESSION;
+        final byte data[] = TestHelpers.generateRandomBytes(breakpoint + 1);
+        final BinaryData bd = BinaryData.wrap(data);
+        when(jobDAO.getOutput(any(), any())).thenReturn(Optional.of(bd));
+
+        final JobResource jobResource = resourceThatUses(jobDAO);
+
+        final Response ret =
+                jobResource.fetchJobOutput(generateSecureSecurityContext(), generateJobId(), generateJobOutputId());
+
+        assertThat(ret.getHeaderString("Content-Encoding")).isEqualTo("identity");
+    }
+
+    @Test
     public void testFetchJobInputsThrows404IfJobDoesNotExist() {
         final JobDAO jobDAO = mock(JobDAO.class);
         when(jobDAO.jobExists(any())).thenReturn(false);
