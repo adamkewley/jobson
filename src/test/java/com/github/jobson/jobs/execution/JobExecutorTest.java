@@ -21,8 +21,8 @@ package com.github.jobson.jobs.execution;
 
 import com.github.jobson.TestConstants;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.jobs.*;
 import com.github.jobson.fixtures.PersistedJobRequestFixture;
+import com.github.jobson.jobs.*;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.specs.*;
 import com.github.jobson.utils.CancelablePromise;

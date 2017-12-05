@@ -23,10 +23,10 @@ import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.APIJobSpec;
 import com.github.jobson.api.v1.APIJobSpecSummary;
 import com.github.jobson.api.v1.APIJobSpecSummaryCollection;
-import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.dao.specs.JobSpecDAO;
 import com.github.jobson.dao.specs.JobSpecSummary;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.specs.JobSpecId;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;

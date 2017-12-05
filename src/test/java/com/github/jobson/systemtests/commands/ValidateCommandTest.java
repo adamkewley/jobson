@@ -20,6 +20,7 @@
 
 package com.github.jobson.systemtests.commands;
 
+import com.github.jobson.TestHelpers;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -33,5 +34,19 @@ public final class ValidateCommandTest {
         final int exitCode = CliHelpers.run("validate", "--help");
 
         assertThat(exitCode).isEqualTo(0);
+    }
+
+    @Test
+    public void testCallingValidateSpecHelpCommandHelpReturnsExitCode0() throws IOException, InterruptedException {
+        final int exitCode = CliHelpers.run("validate", "spec", "--help");
+
+        assertThat(exitCode).isEqualTo(0);
+    }
+
+    @Test
+    public void testCallingInvalidValidateSubcommandWithHelpReturnsNonzeroExitCode() throws IOException, InterruptedException {
+        final int exitCode = CliHelpers.run("validate", TestHelpers.generateRandomString(), "--help");
+
+        assertThat(exitCode).isNotEqualTo(0);
     }
 }
