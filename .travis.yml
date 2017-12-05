@@ -1,4 +1,27 @@
 language: java
+
 branches:
   only:
   - master
+  - dev
+  - /\d+.\d+.\d+/  # tagged versions
+  - /\d+.\d+.\d+-staging/  # staging area for tagged releases
+
+before_deploy: 
+- gem install fpm  # install gem for creating OS packages
+- bash packaging/make-deb-pkg.sh $TRAVIS_TAG  # build OS packages
+
+deploy:
+  provider: releases
+  api_key:
+    secure: SI69iJp/8r8DhGxHmh7rqCpqDPbtPfQr26Zvk9cDDswVgIcziwUAD1M0oBCFT7TxERupg5N7Nf11vYN5g7TXPhIP6UXwGNnM2nGqTQp6K4vnvgrJk5ZdtKti97eVTDYlxZj363sZ9Mmn+pPYiiuQzqk7NzfjW2f0P2DXhWgIjgAioMopYF1cMxUN2pQ6NEH6UzNK0sT064A0JpYulIOi9EWhWgAiagsvk2mxvjcvQfyvJooSYU+DPEoDQN8Ly7Xe2PXXNnDeWFgTczcEoIGaAzJtVK6DFfbGq17BIcHh3e8Dy5Qjf4mAWUxY0BmVV4ZIDR5/v08rSGS4Su/vlg/LxNt0cWj1KPXPlWSqzyVGSZV1qDfXGqf7/KE8xM+WQpZLZUSgV3LNsitAjJ3X/0wepdPHniwJXj+vcCfoRd4KZcsKT5wLkSAQwh3smxZ6qEBIumFp6WHNs2nEL/T0cCx9Uw7hFSAMIe9ObSaEK3WecMF9rbX1opYqdPveQsNM4SSQ6k2f4lGOjX0bOWcBZlnkcrXOkEHxP/G40ng/V75wQEP9N2r4EMgcLMp+64pG2zg8suDZtx0nXxWQfD9PRcvuFtgpxNQ80DxgLkq53ju/afVsepeAInPL+NcFJPZPYgTjhBf4GIjuCTZFXk2rpraueYGk++brCPvJtnehdQjIkio=
+
+  skip_cleanup: true
+
+  file: 
+  - target/jobson_${TRAVIS_TAG}_amd64.deb
+  - target/jobson-${TRAVIS_TAG}-bin.tar.gz
+
+  on:
+    tags: true
+
