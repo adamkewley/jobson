@@ -22,15 +22,13 @@ package com.github.jobson.dao.jobs;
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
+import com.github.jobson.dao.IdGenerator;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobOutput;
-import com.github.jobson.specs.JobOutputId;
-import com.github.jobson.utils.BinaryData;
-import com.github.jobson.dao.IdGenerator;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
+import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.specs.JobSpec;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -40,14 +38,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.github.jobson.Constants.FILESYSTEM_JOBS_DAO_DISK_SPACE_HEALTHCHECK;
-import static com.github.jobson.Constants.JOB_DIR_JOB_DETAILS_FILENAME;
-import static com.github.jobson.Constants.JOB_DIR_OUTPUTS_DIRNAME;
+import static com.github.jobson.Constants.*;
 import static com.github.jobson.Helpers.*;
 import static com.github.jobson.Helpers.readJSON;
 import static com.github.jobson.TestHelpers.*;
-import static com.github.jobson.utils.BinaryData.wrap;
-import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class FilesystemJobsDAOTest extends JobsDAOTest {

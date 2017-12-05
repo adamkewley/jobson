@@ -19,11 +19,10 @@
 
 package com.github.jobson.jobs.management;
 
+import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobOutput;
 import com.github.jobson.jobs.JobStatus;
-import com.github.jobson.utils.BinaryData;
-import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import io.reactivex.Observable;

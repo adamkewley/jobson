@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.config.ApplicationConfig;
-import com.github.jobson.dao.jobs.JobOutputDetails;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.specs.JobOutputId;

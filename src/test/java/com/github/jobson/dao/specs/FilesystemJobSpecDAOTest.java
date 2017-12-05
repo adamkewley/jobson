@@ -19,11 +19,10 @@
 
 package com.github.jobson.dao.specs;
 
-import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.dao.jobs.FilesystemJobsDAOTest;
-import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.specs.JobSpecId;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
