@@ -38,13 +38,13 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.jobson.Constants.SPEC_DIR_SPEC_FILENAME;
 import static com.github.jobson.Helpers.readYAML;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public final class ValidateSpecCommand extends DefaultedConfiguredCommand<ApplicationConfig> {
 
@@ -77,7 +77,7 @@ public final class ValidateSpecCommand extends DefaultedConfiguredCommand<Applic
                 specIds.stream()
                         .map(specId -> getSpecErrors(jobSpecsDir, specId))
                         .filter(entry -> entry.getValue().size() > 0)
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                        .collect(toMap(e -> e.getKey(), e -> e.getValue()));
 
         if (allErrors.size() > 0) {
             allErrors.forEach(this::printErrors);

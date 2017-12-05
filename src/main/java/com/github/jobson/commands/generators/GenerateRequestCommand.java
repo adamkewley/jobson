@@ -24,6 +24,7 @@ import com.github.javafaker.Faker;
 import com.github.jobson.api.v1.APIJobRequest;
 import com.github.jobson.commands.DefaultedConfiguredCommand;
 import com.github.jobson.config.ApplicationConfig;
+import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
 import com.github.jobson.specs.JobSpec;
@@ -34,7 +35,6 @@ import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.AbstractMap;
 import java.util.Map;
 
 import static com.github.jobson.Constants.SPEC_DIR_SPEC_FILENAME;
@@ -82,12 +82,15 @@ public final class GenerateRequestCommand extends DefaultedConfiguredCommand<App
     }
 
     private Map<JobExpectedInputId, JsonNode> generateInputs(JobSpec jobSpec) {
-        return jobSpec.getExpectedInputs().stream().map(expectedInput -> {
-            final JobExpectedInputId id = expectedInput.getId();
-            final JobInput generatedInput = expectedInput.getDefault().isPresent() ?
-                    expectedInput.getDefault().get() : expectedInput.generateExampleInput();
-            final JsonNode inputAsNode = toJSONNode(generatedInput);
-            return new AbstractMap.SimpleEntry<>(id, inputAsNode);
-        }).collect(toMap(e -> e.getKey(), e -> e.getValue()));
+        return jobSpec
+                .getExpectedInputs()
+                .stream()
+                .collect(toMap(JobExpectedInput::getId, this::generateInput));
+    }
+
+    private JsonNode generateInput(JobExpectedInput<?> expectedInput) {
+        final JobInput generatedInput = expectedInput.getDefault().isPresent() ?
+                expectedInput.getDefault().get() : expectedInput.generateExampleInput();
+        return toJSONNode(generatedInput);
     }
 }
