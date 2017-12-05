@@ -67,21 +67,25 @@ public final class UseraddCommand extends DefaultedConfiguredCommand<Application
         final boolean userExists = dao.getUserCredentialsById(login).isPresent();
 
         if (!userExists) {
-            final String password = namespace.getString(PASSWORD_ARG) == null ?
-                    generateRandomBase36String(30) :
-                    namespace.getString(PASSWORD_ARG);
-
-            final boolean userAdded =
-                    dao.addNewUser(login, BASIC_AUTH_NAME, BasicAuthenticator.createAuthField(password));
-
-            if (userAdded) {
-                System.exit(0);
-            } else {
-                System.err.println("encountered an error adding a new user (this shouldn't happen)");
-                System.exit(1);
-            }
+            addNewUser(namespace, dao, login);
         } else {
             System.err.println(format("user '%s' already exists, you can set this user's password with `passwd`.", login));
+            System.exit(1);
+        }
+    }
+
+    private void addNewUser(Namespace namespace, FilesystemUserDAO dao, UserId login) {
+        final String password = namespace.getString(PASSWORD_ARG) == null ?
+                generateRandomBase36String(30) :
+                namespace.getString(PASSWORD_ARG);
+
+        final boolean userAdded =
+                dao.addNewUser(login, BASIC_AUTH_NAME, BasicAuthenticator.createAuthField(password));
+
+        if (userAdded) {
+            System.exit(0);
+        } else {
+            System.err.println("encountered an error adding a new user (this shouldn't happen)");
             System.exit(1);
         }
     }
