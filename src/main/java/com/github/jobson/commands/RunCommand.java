@@ -197,17 +197,7 @@ public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConf
             public void whenLeft(ValidJobRequest left) {
                 try {
                     final FinalizedJob f = jobManager.submit(left, listeners).getRight().get();
-
-                    switch (f.getFinalStatus()) {
-                        case ABORTED:
-                            System.exit(112);
-                        case FATAL_ERROR:
-                            System.exit(1);
-                        case FINISHED:
-                            System.exit(0);
-                        default:
-                            System.exit(1);
-                    }
+                    System.exit(f.getFinalStatus().toExitCode());
                 } catch (Exception ex) {
                     System.err.println("Error encountered: " + ex.toString());
                     System.exit(1);

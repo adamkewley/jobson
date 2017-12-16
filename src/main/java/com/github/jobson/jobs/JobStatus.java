@@ -62,4 +62,17 @@ public enum JobStatus {
     public boolean isAbortable() {
         return getAbortableStatuses().contains(this);
     }
+
+    public int toExitCode() {
+        switch (this) {
+            case ABORTED:
+                return 112;
+            case FATAL_ERROR:
+                return 1;
+            case FINISHED:
+                return 0;
+            default:
+                return 1;
+        }
+    }
 }

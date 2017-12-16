@@ -20,9 +20,9 @@
 package com.github.jobson.jobs.management;
 
 import com.github.jobson.jobs.JobEventListeners;
-import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobExecutionResult;
 import com.github.jobson.jobs.JobExecutor;
+import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;

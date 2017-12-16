@@ -21,7 +21,6 @@ package com.github.jobson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.api.v1.APIJobRequest;
-import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
@@ -31,6 +30,7 @@ import com.github.jobson.jobinputs.stringarray.StringArrayExpectedInput;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.ExecutionConfiguration;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.specs.JobSpecId;
 import com.github.jobson.utils.Either;
 import com.github.jobson.utils.ValidationError;
 import org.junit.Test;

@@ -1,0 +1,9 @@
+name: A trivial spec
+description: This should be easy to run
+expectedInputs:
+- id: inputA
+  type: string
+execution:
+  application: echo
+  arguments:
+  - ${inputs.inputA}

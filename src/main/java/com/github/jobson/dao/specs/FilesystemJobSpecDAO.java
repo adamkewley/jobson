@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 import java.util.List;
@@ -55,8 +54,7 @@ public final class FilesystemJobSpecDAO implements JobSpecDAO {
 
         try {
             if (jobSpecPath.toFile().exists()) {
-                final String jobSpecYAML = new String(Files.readAllBytes(jobSpecPath));
-                final JobSpec jobSpec = readYAML(jobSpecYAML, JobSpec.class);
+                final JobSpec jobSpec = readYAML(jobSpecPath.toFile(), JobSpec.class);
                 jobSpec.setId(new JobSpecId(jobSpecDir.toFile().getName()));
 
                 final JobSpec resolvedJobSpec = jobSpec.withDependenciesResolvedRelativeTo(jobSpecDir);

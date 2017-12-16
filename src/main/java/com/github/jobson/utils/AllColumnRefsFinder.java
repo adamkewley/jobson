@@ -25,10 +25,7 @@ import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.SetStatement;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.StatementVisitor;
-import net.sf.jsqlparser.statement.Statements;
+import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.create.index.CreateIndex;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
@@ -43,6 +40,7 @@ import net.sf.jsqlparser.statement.replace.Replace;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
+import net.sf.jsqlparser.statement.upsert.Upsert;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -221,6 +219,11 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
 
     public void visit(WithItem withItem) {
         throw new UnsupportedSQLFeatureException("Feature WithItem not supported");
+    }
+
+    @Override
+    public void visit(Commit commit) {
+        throw new UnsupportedSQLFeatureException("Feature Commit not supported");
     }
 
     public void visit(Delete delete) {
@@ -407,5 +410,10 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
     @Override
     public void visit(NotExpression notExpression) {
         throw new UnsupportedSQLFeatureException("Feature NotExpression not supported");
+    }
+
+    @Override
+    public void visit(Upsert upsert) {
+        throw new UnsupportedSQLFeatureException("Feature Upsert not supported");
     }
 }
