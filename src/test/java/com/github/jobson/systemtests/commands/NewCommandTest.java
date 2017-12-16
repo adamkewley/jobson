@@ -21,6 +21,7 @@
 package com.github.jobson.systemtests.commands;
 
 import com.github.jobson.Constants;
+import com.github.jobson.commands.NewCommand;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -63,5 +64,30 @@ public final class NewCommandTest {
         final int validationExitCode = CliHelpers.run(pwd.toFile(), "validate", "spec", Constants.DEMO_SPEC_DIRNAME);
 
         assertThat(validationExitCode).isEqualTo(0);
+    }
+
+    @Test
+    public void testGeneratingARequestForTheDemoSpecWorks() throws IOException, InterruptedException {
+        final Path pwd = Files.createTempDirectory(NewCommandTest.class.getSimpleName());
+        CliHelpers.run(pwd.toFile(), "new", "--demo");
+        final int requestGenerationWorks = CliHelpers.run(pwd.toFile(), "generate", "request", Constants.DEMO_SPEC_DIRNAME);
+
+        assertThat(requestGenerationWorks).isEqualTo(0);
+    }
+
+    @Test
+    public void testRunningTheGeneratedRequestLocallyForTheDemoSpecWorks() throws IOException, InterruptedException {
+        final Path pwd = Files.createTempDirectory(NewCommandTest.class.getSimpleName());
+        CliHelpers.run(pwd.toFile(), "new", "--demo");
+        final CliOutputs outputs =
+                CliHelpers.runAndGetOutputs(pwd.toFile(), "generate", "request", Constants.DEMO_SPEC_DIRNAME);
+
+        final byte generatedRequestJson[] = outputs.getStdout();
+        final Path generatedRequestPath = Files.createTempFile(NewCommand.class.getSimpleName(), "generatedReq");
+        Files.write(generatedRequestPath, generatedRequestJson);
+
+        final int localRunExitCode = CliHelpers.run(pwd.toFile(), "run", generatedRequestPath.toString());
+
+        assertThat(localRunExitCode).isEqualTo(0);
     }
 }

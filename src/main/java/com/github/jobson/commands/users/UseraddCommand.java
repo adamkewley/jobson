@@ -40,7 +40,7 @@ public final class UseraddCommand extends DefaultedConfiguredCommand<Application
     private static String PASSWORD_ARG = "-p";
 
     public UseraddCommand() {
-        super("add", "create a new user with a random password");
+        super("add", "create a new user with a random password. Assumes basic auth.");
     }
 
     @Override
