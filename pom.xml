@@ -211,7 +211,7 @@
             <!-- Bundle the entire application into a fat JAR -->
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
