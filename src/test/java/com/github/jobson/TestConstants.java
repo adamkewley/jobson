@@ -21,4 +21,5 @@ package com.github.jobson;
 
 public final class TestConstants {
     public static final int DEFAULT_TIMEOUT = 1000;
+    public static final int NUMBER_OF_BURN_IN_API_CALLS = 10_000;
 }

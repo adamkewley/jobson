@@ -45,8 +45,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import static com.github.jobson.Constants.JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHCHECK;
 import static com.github.jobson.Constants.JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD;
@@ -74,12 +77,20 @@ public final class JobManagerTest {
         return createManagerWith(new MockInMemoryJobWriter(), jobExecutor);
     }
 
+    private static JobManager createManagerWith(JobExecutor jobExecutor, int maxRunningJobs) {
+        return createManagerWith(new MockInMemoryJobWriter(), jobExecutor, maxRunningJobs);
+    }
+
     private static JobManager createManagerWith(WritingJobDAO dao) {
         return createManagerWith(dao, MockJobExecutor.thatResolvesWith(new JobExecutionResult(FINISHED)));
     }
 
     private static JobManager createManagerWith(WritingJobDAO dao, JobExecutor executor) {
-        return new JobManager(dao, executor, Constants.MAX_CONCURRENT_JOBS);
+        return createManagerWith(dao, executor, Constants.MAX_CONCURRENT_JOBS);
+    }
+
+    private static JobManager createManagerWith(WritingJobDAO dao, JobExecutor executor, int maxRunningJobs) {
+        return new JobManager(dao, executor, maxRunningJobs);
     }
 
 
@@ -535,5 +546,30 @@ public final class JobManagerTest {
         }
 
         assertThat(jobQueueHealthCheck.execute().isHealthy()).isFalse();
+    }
+
+    @Test
+    public void testJobManagerAdvancesJobQueueOnceAJobFinishesExecuting() throws InterruptedException, ExecutionException, TimeoutException {
+        final AtomicBoolean isFirst = new AtomicBoolean(true);
+        final SimpleCancelablePromise<JobExecutionResult> firstExcutionPromise = new SimpleCancelablePromise<>();
+        final SimpleCancelablePromise<JobExecutionResult> secondExecutionPromise = new SimpleCancelablePromise<>();
+
+        final Supplier<CancelablePromise<JobExecutionResult>> promiseSupplier = () ->
+                isFirst.getAndSet(false) ? firstExcutionPromise : secondExecutionPromise;
+
+        final MockJobExecutor mockJobExecutor = MockJobExecutor.thatUses(promiseSupplier);
+
+        final int maxRunningJobs = 1;
+
+        final JobManager jobManager = createManagerWith(mockJobExecutor, maxRunningJobs);
+
+        final CancelablePromise<FinalizedJob> firstJobPromise = jobManager.submit(STANDARD_VALID_REQUEST).getRight();
+        final CancelablePromise<FinalizedJob> secondJobPromise = jobManager.submit(STANDARD_VALID_REQUEST).getRight();
+
+        firstExcutionPromise.complete(new JobExecutionResult(FINISHED));
+        firstJobPromise.get(1, TimeUnit.SECONDS);
+
+        secondExecutionPromise.complete(new JobExecutionResult(FINISHED));
+        secondJobPromise.get(1, TimeUnit.SECONDS);
     }
 }

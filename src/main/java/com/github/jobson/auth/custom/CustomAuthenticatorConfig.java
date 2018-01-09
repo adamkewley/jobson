@@ -93,8 +93,9 @@ public final class CustomAuthenticatorConfig implements AuthenticationConfig {
         }
     }
 
-
-    private final AuthenticationConfig loadedConfig;
+    private final String className;
+    private final Optional<String> classPath;
+    private final Optional<JsonNode> properties;
 
 
     public CustomAuthenticatorConfig(String className) {
@@ -110,21 +111,19 @@ public final class CustomAuthenticatorConfig implements AuthenticationConfig {
             @JsonProperty("className") String className,
             @JsonProperty("classPath") Optional<String> classPath,
             @JsonProperty("properties") Optional<JsonNode> properties) {
-
-        final ClassLoader classLoader = getClassLoader(classPath);
-        final Class<?> klass = loadClass(classLoader, className);
-        final Class<AuthenticationConfig> authConfigClass = toAuthConfigClass(klass);
-
-        this.loadedConfig = loadAuthenticationConfig(properties, authConfigClass);
-    }
-
-
-    public AuthenticationConfig getLoadedConfig() {
-        return loadedConfig;
+        this.className = className;
+        this.classPath = classPath;
+        this.properties = properties;
     }
 
     @Override
     public AuthFilter<?, Principal> createAuthFilter(AuthenticationBootstrap bootstrap) {
+        final ClassLoader classLoader = getClassLoader(classPath);
+        final Class<?> klass = loadClass(classLoader, className);
+        final Class<AuthenticationConfig> authConfigClass = toAuthConfigClass(klass);
+
+        final AuthenticationConfig loadedConfig = loadAuthenticationConfig(properties, authConfigClass);
+
         return loadedConfig.createAuthFilter(bootstrap);
     }
 }

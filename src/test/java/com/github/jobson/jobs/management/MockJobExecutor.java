@@ -27,6 +27,10 @@ import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
+
+import java.util.function.Supplier;
 
 import static com.github.jobson.TestHelpers.generateRandomBytes;
 
@@ -39,7 +43,7 @@ public final class MockJobExecutor implements JobExecutor {
     public static MockJobExecutor thatResolvesWith(JobExecutionResult result, byte[] stdout, byte[] stderr) {
         final CancelablePromise<JobExecutionResult> ret = new SimpleCancelablePromise<>();
         ret.complete(result);
-        return new MockJobExecutor(ret, Observable.just(stdout), Observable.just(stderr));
+        return new MockJobExecutor(() -> ret, Observable.just(stdout), Observable.just(stderr));
     }
 
     public static MockJobExecutor thatUses(CancelablePromise<JobExecutionResult> promise) {
@@ -49,25 +53,30 @@ public final class MockJobExecutor implements JobExecutor {
     public static MockJobExecutor thatUses(Observable<byte[]> stdout, Observable<byte[]> stderr) {
         final CancelablePromise<JobExecutionResult> p = new SimpleCancelablePromise<>();
         p.complete(new JobExecutionResult(JobStatus.FINISHED));
-        return new MockJobExecutor(p, stdout, stderr);
+        return new MockJobExecutor(() -> p, stdout, stderr);
     }
 
     public static MockJobExecutor thatUses(CancelablePromise<JobExecutionResult> promise, Observable<byte[]> stdout, Observable<byte[]> stderr) {
-        return new MockJobExecutor(promise, stdout, stderr);
+        return new MockJobExecutor(() -> promise, stdout, stderr);
+    }
+
+    public static MockJobExecutor thatUses(Supplier<CancelablePromise<JobExecutionResult>> promiseSupplier) {
+        return new MockJobExecutor(promiseSupplier, Observable.just(generateRandomBytes()), Observable.just(generateRandomBytes()));
     }
 
 
-    private final CancelablePromise<JobExecutionResult> ret;
+    private final Subject<PersistedJob> executionCalls = PublishSubject.create();
+    private final Supplier<CancelablePromise<JobExecutionResult>> promiseSupplier;
     private final Observable<byte[]> stdout;
     private final Observable<byte[]> stderr;
 
 
     public MockJobExecutor(
-            CancelablePromise<JobExecutionResult> ret,
+            Supplier<CancelablePromise<JobExecutionResult>> promiseSupplier,
             Observable<byte[]> stdout,
             Observable<byte[]> stderr) {
 
-        this.ret = ret;
+        this.promiseSupplier = promiseSupplier;
         this.stdout = stdout;
         this.stderr = stderr;
     }
@@ -76,6 +85,11 @@ public final class MockJobExecutor implements JobExecutor {
     public CancelablePromise<JobExecutionResult> execute(PersistedJob persistedJob, JobEventListeners jobEventListeners) {
         stdout.subscribe(jobEventListeners.getOnStdoutListener());
         stderr.subscribe(jobEventListeners.getOnStderrListener());
-        return ret;
+        this.executionCalls.onNext(persistedJob);
+        return this.promiseSupplier.get();
+    }
+
+    public Observable<PersistedJob> getExecutionCalls() {
+        return this.executionCalls;
     }
 }

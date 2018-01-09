@@ -311,7 +311,8 @@ public final class FilesystemJobsDAO implements JobDAO {
 
     private void writeJobOutputToDisk(JobOutput jobOutput, Path outputPath) {
         try {
-            IOUtils.copy(jobOutput.getData().getData(), new FileOutputStream(outputPath.toFile(), false));
+            IOUtils.copyLarge(jobOutput.getData().getData(), new FileOutputStream(outputPath.toFile(), false));
+            jobOutput.getData().getData().close();
         } catch (IOException ex) {
             throw new RuntimeException(outputPath + ": cannot write: " + ex);
         }
