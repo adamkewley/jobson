@@ -140,8 +140,11 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
     }
 
     private void tryAdvancingJobQueue() {
-        if (executingJobs.size() >= maxRunningJobs) return;
+        while (jobQueue.size() > 0 && executingJobs.size() < maxRunningJobs)
+            advanceJobQueue();
+    }
 
+    private void advanceJobQueue() {
         final QueuedJob queuedJob = jobQueue.poll();
 
         if (queuedJob == null) return;
