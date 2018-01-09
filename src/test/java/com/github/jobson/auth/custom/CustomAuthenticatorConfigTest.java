@@ -19,7 +19,6 @@
 
 package com.github.jobson.auth.custom;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.dao.users.UserDAO;
 import io.dropwizard.jersey.DropwizardResourceConfig;
@@ -30,11 +29,8 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.junit.Test;
 
 import javax.servlet.Servlet;
-import java.io.IOException;
 
-import static com.github.jobson.Helpers.readJSON;
 import static com.github.jobson.TestHelpers.generateClassName;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
 public final class CustomAuthenticatorConfigTest {
