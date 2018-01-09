@@ -192,6 +192,7 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
                 FinalizedJob.fromExecutingJob(executingJob, jobExecutionResult.getFinalStatus());
 
         executingJob.getCompletionPromise().complete(finalizedJob);
+        tryAdvancingJobQueue();
     }
 
     public Map<String, HealthCheck> getHealthChecks() {

@@ -312,7 +312,10 @@ public final class JobResource {
         if (maybeBinaryData.isPresent()) {
             final BinaryData binaryData = maybeBinaryData.get();
 
-            final StreamingOutput body = outputStream -> IOUtils.copy(binaryData.getData(), outputStream);
+            final StreamingOutput body = outputStream -> {
+                IOUtils.copyLarge(binaryData.getData(), outputStream);
+                binaryData.getData().close();
+            };
 
             final Response.ResponseBuilder b =
                     Response.ok(body, binaryData.getMimeType())

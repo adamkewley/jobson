@@ -24,6 +24,7 @@ import io.reactivex.disposables.Disposable;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,18 +49,18 @@ public abstract class ObservableSocket<T> {
 
         this.eventsSubscription = events.subscribe(
                 this::onMessage,
-                this::onStderrError,
-                this::onStderrClosed);
+                this::onObservableError,
+                this::onObservableClosed);
     }
 
     protected abstract void onMessage(T messageData) throws IOException;
 
-    private void onStderrError(Throwable ex) {
+    private void onObservableError(Throwable ex) {
         log.debug("Closing websocket because an error was thrown by the observable. Error: " + ex);
         this.session.close(SERVER_UNEXPECTED_CONDITION_STATUS, "Internal server error");
     }
 
-    private void onStderrClosed() {
+    private void onObservableClosed() {
         log.debug("Closing websocket because observable closed");
         this.session.close(NORMAL_SOCKET_CLOSURE_STATUS, "Sever event stream ended");
     }
@@ -73,5 +74,12 @@ public abstract class ObservableSocket<T> {
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
         this.eventsSubscription.dispose();
+    }
+
+    @OnWebSocketError
+    public void onWebSocketError(Session session, Throwable ex) {
+        log.error(ex.getMessage());
+        this.eventsSubscription.dispose();
+        session.close();
     }
 }

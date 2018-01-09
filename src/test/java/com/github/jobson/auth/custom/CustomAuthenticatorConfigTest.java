@@ -50,41 +50,30 @@ public final class CustomAuthenticatorConfigTest {
 
 
     @Test(expected = NullPointerException.class)
-    public void testCtorThrowsIfClassNameWasNull() {
+    public void testCreateAuthFilterThrowsIfClassNameIsNull() {
         final CustomAuthenticatorConfig config =
                 new CustomAuthenticatorConfig(null);
+        config.createAuthFilter(createTypicalAuthBootstrap());
     }
 
     @Test(expected = RuntimeException.class)
-    public void testCtorThrowsIfClassNameDoesNotExistOnClassPath() {
+    public void testCreateAuthFilterIfClassNameDoesNotExistOnClassPath() {
         final CustomAuthenticatorConfig config =
                 new CustomAuthenticatorConfig(generateClassName());
+        config.createAuthFilter(createTypicalAuthBootstrap());
     }
 
     @Test(expected = RuntimeException.class)
-    public void testCtorThrowsIfClassDoesNotDeriveFromAuthenticationConfig() {
+    public void testCreateAuthFilterIfClassDoesNotDeriveFromAuthenticationConfig() {
         final CustomAuthenticatorConfig config =
                 new CustomAuthenticatorConfig(Object.class.getName());
+        config.createAuthFilter(createTypicalAuthBootstrap());
     }
 
     @Test
-    public void testCtorDoesNotThrowIfClassDoesDeriveFromAuthenticationConfig() {
+    public void testCreateAuthFilterDoesNotThrowIfClassDoesDeriveFromAuthenticationConfig() {
         final CustomAuthenticatorConfig config =
                 new CustomAuthenticatorConfig(NullCustomAuthConfig.class.getName());
-    }
-
-    @Test
-    public void testEnableWithPropertiesPutsThePropetiesOnTheLoadedCustomConfig() throws IOException {
-        final JsonNode n =
-                readJSON("{ \"prop1\": \"val1\", \"prop2\": \"val2\" }", JsonNode.class);
-
-        final CustomAuthenticatorConfig config =
-                new CustomAuthenticatorConfig(CustomAuthConfigWithProperties.class.getName(), n);
-
-        final CustomAuthConfigWithProperties createdConfig =
-                (CustomAuthConfigWithProperties)config.getLoadedConfig();
-
-        assertThat(createdConfig.getProp1()).isEqualTo("val1");
-        assertThat(createdConfig.getProp2()).isEqualTo("val2");
+        config.createAuthFilter(createTypicalAuthBootstrap());
     }
 }
