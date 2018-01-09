@@ -6,7 +6,7 @@
 
     <groupId>com.github.jobson</groupId>
     <artifactId>jobson</artifactId>
-    <version>0.0.6-dev</version>
+    <version>0.0.6</version>
     <name>jobson</name>
     <description>
         A web server that can turn command-line applications into a job system.
