@@ -128,6 +128,10 @@ curl localhost:8080/v1/specs/{spec-id}
 
 # get current user ID
 curl --user someuser:somepassword localhost:8080/v1/users/current
+
+# generate + post a job request
+jobson generate request spec-name > req.json
+curl --user someuser:somepassword --data @req.json -H 'Content-Type: application/json' localhost:8080/v1/jobs
 ```
 
 
