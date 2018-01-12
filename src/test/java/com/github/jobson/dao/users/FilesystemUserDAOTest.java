@@ -84,4 +84,21 @@ public final class FilesystemUserDAOTest {
         assertThat(maybeCredentials).isNotEmpty();
         assertThat(maybeCredentials.get()).isEqualTo(userCredentials);
     }
+
+    @Test
+    public void testGetUserDetailsByIdReturnsUserDetailsEvenWhenFileContainsBlankLines() throws IOException {
+        final UserCredentials userCredentials = generateUserDetails();
+
+        final File usersFile = tmpFile();
+        final String userLine = userCredentials.toUserFileLine();
+        final String fileContent = "#somecomment\n\n\n" + userLine + "\n#anothercomment\n";
+        Files.write(usersFile.toPath(), fileContent.getBytes());
+
+        final FilesystemUserDAO dao = new FilesystemUserDAO(usersFile);
+
+        final Optional<UserCredentials> maybeCredentials = dao.getUserCredentialsById(userCredentials.getId());
+
+        assertThat(maybeCredentials).isNotEmpty();
+        assertThat(maybeCredentials.get()).isEqualTo(userCredentials);
+    }
 }
