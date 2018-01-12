@@ -65,7 +65,7 @@ public final class FilesystemUserDAO implements UserDAO {
         return Files.readAllLines(usersFile.toPath())
                 .stream()
                 .map(String::trim)
-                .filter(l -> !l.startsWith("#")) // comment line
+                .filter(l -> l.length() > 0 && !l.startsWith("#")) // comment line
                 .map(UserCredentials::fromUserFileLine);
     }
 
