@@ -67,13 +67,14 @@ public abstract class ObservableSocket<T> {
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
-        log.info("Creating websocket: ");
         this.session = session;
     }
 
     @OnWebSocketClose
     public void onWebSocketClose(Session session, int closeCode, String closeReason) {
+        log.debug("Closing websocket");
         this.eventsSubscription.dispose();
+        session.close(closeCode, closeReason);
     }
 
     @OnWebSocketError
