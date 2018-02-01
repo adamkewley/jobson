@@ -43,6 +43,7 @@ IdentifierPart
     | '0'..'9'
     | '_';
 
-StringLiteral :   '"' ( Escape | ~('"' | '\\' ) )+ '"';
-fragment Escape : '\\' ( '"' | '\\' );
+StringLiteral :   ('"' ( EscapeDoubleQuotedString | ~('"' | '\\' ) )+ '"') | ('\'' ( EscapeSingleQuotedString | ~('\'' | '\\' ) )+ '\'');
+fragment EscapeDoubleQuotedString : '\\' ( '"' | '\\' );
+fragment EscapeSingleQuotedString : '\\' ( '\'' | '\\' );
 WS: (' ' | '\t' | '\r' | '\n') -> skip;

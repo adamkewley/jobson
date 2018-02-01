@@ -109,6 +109,14 @@ public final class TemplateStringEvaluatorTest {
     }
 
     @Test
+    public void testEscapesSingleQuotedStringLiteralsCorrectly() {
+        final String str = "Hello ${'wo\\'rld'}";
+        final String ret = evaluate(str, EMPTY_ENVIRONMENT);
+
+        assertThat(ret).isEqualTo("Hello wo\\'rld");
+    }
+
+    @Test
     public void testMemberDotExpressionExpandsObjectMembers() {
         final String root = "x";
         final String memberName = "y";
@@ -154,6 +162,28 @@ public final class TemplateStringEvaluatorTest {
 
         final String functionArg = generateAlphanumStr();
         final String templateString = format("${%s(\"%s\")}", functionName, functionArg);
+
+        final Map<String, Object> environment = singletonEnvironment(functionName, f);
+
+        final String ret = evaluate(templateString, environment);
+
+        assertThat(ret).isEqualTo(functionArg + suffixAddedByFunction);
+    }
+
+    @Test
+    public void testBasicFunctionCallCallsTheFunctionWithSingleQuotedString() {
+        final String functionName = "f";
+        final String suffixAddedByFunction = generateAlphanumStr();
+
+        final FreeFunction f = new FreeFunction() {
+            @Override
+            public Object call(Object... args) {
+                return args[0].toString() + suffixAddedByFunction;
+            }
+        };
+
+        final String functionArg = generateAlphanumStr();
+        final String templateString = format("${%s('%s')}", functionName, functionArg);
 
         final Map<String, Object> environment = singletonEnvironment(functionName, f);
 
@@ -211,6 +241,24 @@ public final class TemplateStringEvaluatorTest {
                 singletonEnvironment(mapName, map);
 
         final String templateString = format("${%s[\"%s\"]}", mapName, mapKey);
+
+        final String ret = evaluate(templateString, environment);
+
+        assertThat(ret).isEqualTo(mapValue);
+    }
+
+    @Test
+    public void testMemberIndexExpressionEvaluatesMapsByGettingAMapByKeyWithSingleQuotedString() {
+        final String mapName = generateClassName();
+        final String mapKey = generateClassName();
+        final String mapValue = generateRandomString();
+        final Map<String, Object> map = new HashMap<>();
+        map.put(mapKey, mapValue);
+
+        final Map<String, Object> environment =
+                singletonEnvironment(mapName, map);
+
+        final String templateString = format("${%s['%s']}", mapName, mapKey);
 
         final String ret = evaluate(templateString, environment);
 

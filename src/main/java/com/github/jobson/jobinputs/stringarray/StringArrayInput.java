@@ -59,4 +59,9 @@ public final class StringArrayInput implements JobInput {
     public int hashCode() {
         return values != null ? values.hashCode() : 0;
     }
+
+    @Override
+    public String toString() {
+        return String.join(",", values);
+    }
 }

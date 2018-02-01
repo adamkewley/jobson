@@ -59,6 +59,7 @@ public final class TestJobsAPI {
     private static final APIJobRequest REQUEST_AGAINST_THIRD_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_FOUTH_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_FITH_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_SIXTH_SPEC;
 
     static {
         REQUEST_AGAINST_FIRST_SPEC = readJSONFixture(
@@ -75,6 +76,9 @@ public final class TestJobsAPI {
                 APIJobRequest.class);
         REQUEST_AGAINST_FITH_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-fith-spec.json",
+                APIJobRequest.class);
+        REQUEST_AGAINST_SIXTH_SPEC = readJSONFixture(
+                "fixtures/systemtests/request-against-sixth-spec.json",
                 APIJobRequest.class);
     }
 
@@ -195,9 +199,7 @@ public final class TestJobsAPI {
                 .readEntity(APIJobCreatedResponse.class)
                 .getId();
 
-        // Give the job a chance to spin up and write to stdout
-        // TODO: Websocket hook this instead.
-        sleep(100);
+        waitUntilJobTerminates(jobId);
 
         final Response stdoutResponse =
                 generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/stdout"))
@@ -210,6 +212,31 @@ public final class TestJobsAPI {
         assertThat(stdoutBytes).isEqualTo("hello world\n".getBytes()); // From the spec execution
     }
 
+    private void waitUntilJobTerminates(JobId jobId) throws InterruptedException {
+        // TODO: Use websocket hooks instead?
+        sleep(100);
+    }
+
+    @Test
+    public void testStdoutFromAJoinJobIsAsExpected() throws InterruptedException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(REQUEST_AGAINST_SIXTH_SPEC))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
+
+        waitUntilJobTerminates(jobId);
+
+        final Response stdoutResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/stdout"))
+                        .get();
+
+        assertThat(stdoutResponse.getStatus()).isEqualTo(OK);
+
+        final byte[] stdoutBytes = stdoutResponse.readEntity(byte[].class);
+
+        assertThat(stdoutBytes).isEqualTo("first,second,third,fourth\n".getBytes()); // From the spec execution
+    }
+
     @Test
     public void testCanListJobOutputs() throws InterruptedException, IOException {
         final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
@@ -217,8 +244,7 @@ public final class TestJobsAPI {
                 .readEntity(APIJobCreatedResponse.class)
                 .getId();
 
-        // TODO: Websocket hook this instead.
-        sleep(100);
+        waitUntilJobTerminates(jobId);
 
         final Response jobOutputsResponse =
                 generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/outputs")).get();
@@ -245,8 +271,7 @@ public final class TestJobsAPI {
                 .readEntity(APIJobCreatedResponse.class)
                 .getId();
 
-        // TODO: Websocket hook this instead.
-        sleep(100);
+        waitUntilJobTerminates(jobId);
 
         final Response jobOutputsResponse =
                 generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/outputs/outFile")).get();
@@ -262,7 +287,7 @@ public final class TestJobsAPI {
                 .readEntity(APIJobCreatedResponse.class)
                 .getId();
 
-        sleep(100);
+        waitUntilJobTerminates(jobId);
 
         final Response jobOutputsResponse =
                 generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/outputs/" + jobId)).get();
@@ -301,7 +326,7 @@ public final class TestJobsAPI {
                 .readEntity(APIJobCreatedResponse.class)
                 .getId();
 
-        sleep(100);
+        waitUntilJobTerminates(jobId);
 
         final Response stderrResponse =
                 generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/stderr"))
