@@ -1,0 +1,12 @@
+{
+  "name": "fourth job",
+  "spec": "sixth-spec",
+  "inputs": {
+    "stringArray": [
+      "first",
+      "second",
+      "third",
+      "fourth"
+    ]
+  }
+}

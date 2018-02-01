@@ -5,7 +5,8 @@
 
   "inputs": {
     "sql-input-schema": "select column_1_A from table_1 where column_1_A = 5;",
-    "foo": "a"
+    "foo": "a",
+    "someList": ["a", "b", "c", "d"]
   },
 
   "spec": {
@@ -48,6 +49,13 @@
           { "id": "b", "name": "Option B" }
         ],
         "default": "a"
+      },
+      {
+        "id": "someList",
+        "name": "A string array",
+        "description": "A string array input",
+        "type": "string[]",
+        "default": ["default"]
       }
     ],
     "execution": {

@@ -63,6 +63,7 @@ import static java.nio.file.Files.createTempDirectory;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public final class TestHelpers {
 
@@ -513,5 +514,9 @@ public final class TestHelpers {
                 Optional.of(generateRandomString()),
                 Optional.of(generateRandomString()),
                 emptyMap());
+    }
+
+    public static void assertJSONEqual(String s1, String s2) throws IOException {
+        assertThat(JSON_MAPPER.readTree(s1)).isEqualTo(JSON_MAPPER.readTree(s2));
     }
 }

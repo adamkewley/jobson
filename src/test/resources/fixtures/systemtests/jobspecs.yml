@@ -103,3 +103,17 @@
     description: Output Description
     path: outfile
     mimeType: text/plain
+
+- id: sixth-spec
+  name: Spec that joins inputs to echo
+  description: A spec that joins a string array inpuit
+  expectedInputs:
+  - id: stringArray
+    name: Some array of strings
+    type: string[]
+    description: Some array of strings, to ensure the join function works
+    default: ['a', 'b']
+  execution:
+    application: echo
+    arguments:
+    - ${join(",", inputs.stringArray)}
