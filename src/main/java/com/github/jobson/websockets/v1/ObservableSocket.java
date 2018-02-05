@@ -67,6 +67,7 @@ public abstract class ObservableSocket<T> {
 
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
+        log.debug("Opening websocket");
         this.session = session;
     }
 
@@ -79,8 +80,7 @@ public abstract class ObservableSocket<T> {
 
     @OnWebSocketError
     public void onWebSocketError(Session session, Throwable ex) {
-        log.error(ex.getMessage());
+        log.debug(ex.getMessage());
         this.eventsSubscription.dispose();
-        session.close();
     }
 }
