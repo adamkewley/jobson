@@ -280,19 +280,6 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
     }
 
     @Test
-    public void testHasJobInputsReturnsFalseIfJobDoesNotExist() {
-        final FilesystemJobsDAO dao = createStandardFilesystemDAO();
-        assertThat(dao.hasJobInputs(generateJobId())).isFalse();
-    }
-
-    @Test
-    public void testHasJobInputsReturnsTrueIfJobExists() {
-        final FilesystemJobsDAO dao = createStandardFilesystemDAO();
-        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
-        assertThat(dao.hasJobInputs(jobId)).isTrue();
-    }
-
-    @Test
     public void testHasJobInputsReturnsFalseIfJobExistsButInputsWereDeleted() throws IOException {
         final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
         final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);

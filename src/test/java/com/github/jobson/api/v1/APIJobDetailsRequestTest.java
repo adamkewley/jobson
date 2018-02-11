@@ -21,16 +21,12 @@ package com.github.jobson.api.v1;
 
 import org.junit.Test;
 
-import java.io.IOException;
-
 import static com.github.jobson.TestHelpers.readJSONFixture;
 
 public final class APIJobDetailsRequestTest {
 
     @Test
-    public void testCanDeserializeAJobRequest() throws IOException {
-        readJSONFixture(
-                "fixtures/api/v1/APIJobSubmissionRequest/job-request.json",
-                APIJobRequest.class);
+    public void testCanDeserializeAJobRequest() {
+        readJSONFixture("fixtures/api/v1/APIJobSubmissionRequest/job-request.json", APIJobRequest.class);
     }
 }
