@@ -47,6 +47,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
@@ -412,6 +413,11 @@ public final class FilesystemJobsDAO implements JobDAO {
         return resolveJobFile(jobId, JOB_DIR_OUTPUTS_FILENAME)
                 .map(this::loadJobOutputsMetadataFile)
                 .orElse(emptyList());
+    }
+
+    @Override
+    public boolean hasJobInputs(JobId jobId) {
+        return resolveJobFile(jobId, JOB_DIR_JOB_INPUTS_FILENAME).isPresent();
     }
 
     @Override

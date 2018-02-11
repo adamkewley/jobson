@@ -29,6 +29,7 @@ import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.specs.JobSpec;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -276,5 +277,31 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
         final FilesystemJobsDAO dao = createStandardFilesystemDAO();
         assertThat(dao.getHealthChecks()).containsKey(FILESYSTEM_JOBS_DAO_DISK_SPACE_HEALTHCHECK);
         assertThat(dao.getHealthChecks().get(FILESYSTEM_JOBS_DAO_DISK_SPACE_HEALTHCHECK)).isNotNull();
+    }
+
+    @Test
+    public void testHasJobInputsReturnsFalseIfJobDoesNotExist() {
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO();
+        assertThat(dao.hasJobInputs(generateJobId())).isFalse();
+    }
+
+    @Test
+    public void testHasJobInputsReturnsTrueIfJobExists() {
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        assertThat(dao.hasJobInputs(jobId)).isTrue();
+    }
+
+    @Test
+    public void testHasJobInputsReturnsFalseIfJobExistsButInputsWereDeleted() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+
+        final Path pathToInputsJSONFile = jobsDir.resolve(jobId.toString()).resolve(Constants.JOB_DIR_JOB_INPUTS_FILENAME);
+
+        Files.delete(pathToInputsJSONFile);
+
+        assertThat(dao.hasJobInputs(jobId)).isFalse();
     }
 }

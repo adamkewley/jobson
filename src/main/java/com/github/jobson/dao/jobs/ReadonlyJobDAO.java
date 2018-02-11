@@ -56,6 +56,7 @@ public interface ReadonlyJobDAO {
 
     List<JobOutputDetails> getJobOutputs(JobId jobId);
 
+    boolean hasJobInputs(JobId jobId);
     Optional<Map<JobExpectedInputId, JsonNode>> getJobInputs(JobId jobId);
 
     Map<String, HealthCheck> getHealthChecks();

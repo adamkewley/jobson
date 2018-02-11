@@ -25,6 +25,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.github.jobson.api.v1.APIJobDetails;
 import com.github.jobson.api.v1.APIJobRequest;
+import com.github.jobson.api.v1.APIRestLink;
 import com.github.jobson.api.v1.UserId;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.jobs.JobOutputDetails;
@@ -518,5 +519,10 @@ public final class TestHelpers {
 
     public static void assertJSONEqual(String s1, String s2) throws IOException {
         assertThat(JSON_MAPPER.readTree(s1)).isEqualTo(JSON_MAPPER.readTree(s2));
+    }
+
+    public static void assertHasKeyWithValue(Map<String, APIRestLink> m, String expectedKey, String expectedHref) {
+        assertThat(m.containsKey(expectedKey)).isTrue();
+        assertThat(m.get(expectedKey).getHref().toString()).isEqualTo(expectedHref);
     }
 }
