@@ -17,7 +17,6 @@
  * under the License.
  */
 
-
 package com.github.jobson.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
