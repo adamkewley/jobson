@@ -29,7 +29,6 @@ import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.specs.JobSpec;
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
