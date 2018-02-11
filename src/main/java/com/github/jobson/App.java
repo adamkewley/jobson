@@ -35,6 +35,7 @@ import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.LocalJobExecutor;
 import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.resources.v1.JobSpecResource;
+import com.github.jobson.resources.v1.RootResource;
 import com.github.jobson.resources.v1.UserResource;
 import com.github.jobson.websockets.v1.JobEventSocketCreator;
 import com.github.jobson.websockets.v1.StderrUpdateSocketCreator;
@@ -111,6 +112,11 @@ public final class App extends Application<ApplicationConfig> {
 
         log.debug("Loading a JobSpecDAO backed by " + jobSpecsPath.toString());
         final JobSpecDAO jobSpecDAO = new FilesystemJobSpecDAO(jobSpecsPath);
+
+
+        log.debug("Registering root API");
+        final RootResource rootResource = new RootResource();
+        environment.jersey().register(rootResource);
 
 
         log.debug("Registering the job specs API");

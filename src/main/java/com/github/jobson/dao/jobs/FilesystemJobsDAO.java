@@ -63,7 +63,6 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-
 /**
  * Persists all job data (query, spec, dependencies, stdout, stderr etc.)
  * in a directory on the filesystem.
@@ -412,6 +411,11 @@ public final class FilesystemJobsDAO implements JobDAO {
         return resolveJobFile(jobId, JOB_DIR_OUTPUTS_FILENAME)
                 .map(this::loadJobOutputsMetadataFile)
                 .orElse(emptyList());
+    }
+
+    @Override
+    public boolean hasJobInputs(JobId jobId) {
+        return resolveJobFile(jobId, JOB_DIR_JOB_INPUTS_FILENAME).isPresent();
     }
 
     @Override

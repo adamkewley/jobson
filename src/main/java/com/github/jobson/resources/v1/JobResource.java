@@ -145,26 +145,42 @@ public final class JobResource {
 
     private Map<String, APIRestLink> generateRestLinks(JobDetails job) {
         try {
-            final HashMap<String, APIRestLink> ret = new HashMap<>();
-
-            final URI jobDetailsURI = new URI(HTTP_JOBS_PATH + "/" + job.getId().toString());
-            ret.put("details", new APIRestLink(jobDetailsURI));
-
-            final URI jobSpecURI = new URI(HTTP_JOBS_PATH + "/" + job.getId().toString() + "/spec");
-            ret.put("spec", new APIRestLink(jobSpecURI));
-
+            final Map<String, APIRestLink> ret = generateRestLinks(job.getId());
             if (job.latestStatus().isAbortable()) {
                 final URI abortJobURI = new URI(HTTP_JOBS_PATH + "/" + job.getId().toString() + "/abort");
                 ret.put("abort", new APIRestLink(abortJobURI));
             }
+            return ret;
+        } catch (URISyntaxException ex) {
+            throw new WebApplicationException(ex);
+        }
+    }
 
-            if (jobDAO.hasStderr(job.getId())) {
-                final URI jobStderrURI = new URI(HTTP_JOBS_PATH + "/" + job.getId().toString() + "/stderr");
+    private Map<String, APIRestLink> generateRestLinks(JobId jobId) {
+        try {
+            final HashMap<String, APIRestLink> ret = new HashMap<>();
+
+            final URI jobDetailsURI = new URI(HTTP_JOBS_PATH + "/" + jobId.toString());
+            ret.put("self", new APIRestLink(jobDetailsURI));
+
+            final URI jobSpecURI = new URI(HTTP_JOBS_PATH + "/" + jobId.toString() + "/spec");
+            ret.put("spec", new APIRestLink(jobSpecURI));
+
+            if (jobDAO.hasJobInputs(jobId)) {
+                final URI jobInputsURI =  new URI(HTTP_JOBS_PATH + "/" + jobId.toString() + "/inputs");
+                ret.put("inputs", new APIRestLink(jobInputsURI));
+            }
+
+            final URI jobOutputsURI = new URI(HTTP_JOBS_PATH + "/" + jobId.toString() + "/outputs");
+            ret.put("outputs", new APIRestLink(jobOutputsURI));
+
+            if (jobDAO.hasStderr(jobId)) {
+                final URI jobStderrURI = new URI(HTTP_JOBS_PATH + "/" + jobId.toString() + "/stderr");
                 ret.put("stderr", new APIRestLink(jobStderrURI));
             }
 
-            if (jobDAO.hasStdout(job.getId())) {
-                final URI jobStdoutURI = new URI(HTTP_JOBS_PATH + "/" + job.getId().toString() + "/stdout");
+            if (jobDAO.hasStdout(jobId)) {
+                final URI jobStdoutURI = new URI(HTTP_JOBS_PATH + "/" + jobId.toString() + "/stdout");
                 ret.put("stdout", new APIRestLink(jobStdoutURI));
             }
 
@@ -231,7 +247,7 @@ public final class JobResource {
                     public APIJobCreatedResponse whenLeft(ValidJobRequest left) {
                         final JobId jobId = jobManagerActions.submit(left).getLeft();
 
-                        return new APIJobCreatedResponse(jobId, emptyMap());
+                        return new APIJobCreatedResponse(jobId, generateRestLinks(jobId));
                     }
 
                     @Override

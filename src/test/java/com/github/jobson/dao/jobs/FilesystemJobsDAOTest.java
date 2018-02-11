@@ -277,4 +277,17 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
         assertThat(dao.getHealthChecks()).containsKey(FILESYSTEM_JOBS_DAO_DISK_SPACE_HEALTHCHECK);
         assertThat(dao.getHealthChecks().get(FILESYSTEM_JOBS_DAO_DISK_SPACE_HEALTHCHECK)).isNotNull();
     }
+
+    @Test
+    public void testHasJobInputsReturnsFalseIfJobExistsButInputsWereDeleted() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+
+        final Path pathToInputsJSONFile = jobsDir.resolve(jobId.toString()).resolve(Constants.JOB_DIR_JOB_INPUTS_FILENAME);
+
+        Files.delete(pathToInputsJSONFile);
+
+        assertThat(dao.hasJobInputs(jobId)).isFalse();
+    }
 }

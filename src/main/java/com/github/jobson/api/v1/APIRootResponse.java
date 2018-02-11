@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,14 +19,31 @@
 
 package com.github.jobson.api.v1;
 
-import org.junit.Test;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
-import static com.github.jobson.TestHelpers.readJSONFixture;
+import java.util.Map;
 
-public final class APIJobDetailsRequestTest {
+@ApiModel(description = "A root response, which describes sub-resources")
+public final class APIRootResponse {
 
-    @Test
-    public void testCanDeserializeAJobRequest() {
-        readJSONFixture("fixtures/api/v1/APIJobSubmissionRequest/job-request.json", APIJobRequest.class);
+    @ApiModelProperty(value = "Links to related resources and actions")
+    @JsonProperty
+    private Map<String, APIRestLink> _links;
+
+    /**
+     * @deprecated Used by JSON deserializer
+     */
+    public APIRootResponse() {}
+
+    public APIRootResponse(Map<String, APIRestLink> _links) {
+        this._links = _links;
+    }
+
+    @JsonIgnore
+    public Map<String, APIRestLink> getLinks() {
+        return _links;
     }
 }

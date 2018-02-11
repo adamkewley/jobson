@@ -57,29 +57,4 @@ public final class LocalJobExecutorTest extends JobExecutorTest {
     public void testCtorThrowsIfDelayIsNegative() throws IOException {
         new LocalJobExecutor(createTmpDir(LocalJobExecutorTest.class), -1);
     }
-
-    /**
-    @Test
-    public void testQueryVariableApplicationArgumentIsResolvedToQueryPath() throws IOException, InterruptedException {
-        final Path jobsDir = createTemporaryDirectory();
-        final FilesystemJobsDAO dao = createStandardFilesystemBasedJobsDAO(jobsDir);
-
-        final ValidJobRequest validJobRequest = readResolvedSubmissionReq(
-                "fixtures/dao/FilesystemBasedJobsDAO/request-with-query-template-variable.json");
-
-        final JobId jobId = dao.persist(validJobRequest).get();
-
-        // Give the child process a chance to init, echo to stderr, then exit
-        Thread.sleep(PROCESS_WAIT_TIME_IN_MILLISECONDS);
-
-        final Path stdout = dao.getStdout(jobId)
-                .map(TestHelpers::toUtf8String)
-                .map(String::trim)
-                .map(s -> Paths.get(s))
-                .get();
-
-        assertThat(Files.exists(stdout));
-        assertThat(readJSON(stdout, Object.class));
-    }
-    **/
 }

@@ -27,8 +27,6 @@ public final class APIJobDetailsSpecTest {
 
     @Test
     public void testCanDeserializeJSONRepresentation() {
-        readJSONFixture(
-                "fixtures/api/v1/APIJobSpecResponseTest/spec-response.json",
-                APIJobSpec.class);
+        readJSONFixture("fixtures/api/v1/APIJobSpecResponseTest/spec-response.json", APIJobSpec.class);
     }
 }

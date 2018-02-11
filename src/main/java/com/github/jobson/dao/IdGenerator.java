@@ -20,6 +20,5 @@
 package com.github.jobson.dao;
 
 public interface IdGenerator {
-
     String generate();
 }

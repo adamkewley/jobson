@@ -666,4 +666,17 @@ public abstract class JobsDAOTest {
 
         assertThat(returnedIds).isEqualTo(persistedOutputs);
     }
+
+    @Test
+    public void testHasJobInputsReturnsFalseIfJobDoesNotExist() {
+        final JobDAO dao = getInstance();
+        assertThat(dao.hasJobInputs(generateJobId())).isFalse();
+    }
+
+    @Test
+    public void testHasJobInputsReturnsTrueIfJobExists() {
+        final JobDAO dao = getInstance();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        assertThat(dao.hasJobInputs(jobId)).isTrue();
+    }
 }
