@@ -27,10 +27,12 @@ import com.github.jobson.api.v1.APIJobDetails;
 import com.github.jobson.api.v1.APIJobRequest;
 import com.github.jobson.api.v1.APIRestLink;
 import com.github.jobson.api.v1.UserId;
+import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.jobs.JobOutputDetails;
 import com.github.jobson.dao.specs.JobSpecSummary;
 import com.github.jobson.dao.users.UserCredentials;
+import com.github.jobson.dao.users.UserDAO;
 import com.github.jobson.fixtures.ValidJobRequestFixture;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
@@ -49,9 +51,15 @@ import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.*;
 import com.github.jobson.utils.BinaryData;
+import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.setup.JerseyContainerHolder;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.reactivex.Observable;
+import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.internal.util.Producer;
+import org.glassfish.jersey.servlet.ServletContainer;
 
+import javax.servlet.Servlet;
 import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -65,6 +73,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.mock;
 
 public final class TestHelpers {
 
@@ -524,5 +533,19 @@ public final class TestHelpers {
     public static void assertHasKeyWithValue(Map<String, APIRestLink> m, String expectedKey, String expectedHref) {
         assertThat(m.containsKey(expectedKey)).isTrue();
         assertThat(m.get(expectedKey).getHref().toString()).isEqualTo(expectedHref);
+    }
+
+    public static AuthenticationBootstrap createTypicalAuthBootstrap() {
+        final UserDAO userDAO = mock(UserDAO.class);
+        final Server s = new Server(0);
+        final Servlet se = new ServletContainer();
+        final JerseyEnvironment env = new JerseyEnvironment(new JerseyContainerHolder(se), new DropwizardResourceConfig());
+
+        return new AuthenticationBootstrap(env, userDAO);
+    }
+
+    public static String generateBase64SecretKey() {
+        final byte[] keyData = generateRandomBytes(256);
+        return new String(Base64.getEncoder().encode(keyData));
     }
 }

@@ -6,7 +6,7 @@
 
     <groupId>com.github.jobson</groupId>
     <artifactId>jobson</artifactId>
-    <version>0.0.10</version>
+    <version>0.0.11</version>
     <name>jobson</name>
     <description>
         A web server that can turn command-line applications into a job system.
@@ -137,6 +137,20 @@
             <artifactId>antlr4-runtime</artifactId>
             <version>4.7.1</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- Json Web Token auth support -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.test-framework</groupId>
+            <artifactId>jersey-test-framework-util</artifactId>
+            <scope>test</scope>
+            <version>2.26</version>
         </dependency>
 
 
