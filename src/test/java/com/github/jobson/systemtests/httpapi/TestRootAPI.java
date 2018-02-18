@@ -27,7 +27,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 import static com.github.jobson.Constants.HTTP_ROOT;
 import static com.github.jobson.HttpStatusCodes.OK;

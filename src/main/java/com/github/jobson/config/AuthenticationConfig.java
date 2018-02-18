@@ -21,7 +21,6 @@ package com.github.jobson.config;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.github.jobson.Constants;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.auth.basic.BasicAuthenticatorConfig;
 import com.github.jobson.auth.custom.CustomAuthenticatorConfig;

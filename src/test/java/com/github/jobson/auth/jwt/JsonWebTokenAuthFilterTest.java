@@ -1,7 +1,10 @@
 package com.github.jobson.auth.jwt;
 
 import com.github.jobson.TestHelpers;
-import io.dropwizard.auth.*;
+import io.dropwizard.auth.AuthenticationException;
+import io.dropwizard.auth.Authenticator;
+import io.dropwizard.auth.Authorizer;
+import io.dropwizard.auth.PrincipalImpl;
 import org.glassfish.jersey.test.util.server.ContainerRequestBuilder;
 import org.junit.Test;
 
