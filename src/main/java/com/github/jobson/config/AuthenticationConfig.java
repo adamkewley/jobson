@@ -21,10 +21,12 @@ package com.github.jobson.config;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.github.jobson.Constants;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.auth.basic.BasicAuthenticatorConfig;
 import com.github.jobson.auth.custom.CustomAuthenticatorConfig;
 import com.github.jobson.auth.guest.GuestAuthenticationConfig;
+import com.github.jobson.auth.jwt.JsonWebTokenConfig;
 import io.dropwizard.auth.AuthFilter;
 
 import static com.github.jobson.Constants.*;
@@ -33,7 +35,8 @@ import static com.github.jobson.Constants.*;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = BasicAuthenticatorConfig.class, name = BASIC_AUTH_NAME),
         @JsonSubTypes.Type(value = GuestAuthenticationConfig.class, name = GUEST_AUTH_NAME),
-        @JsonSubTypes.Type(value = CustomAuthenticatorConfig.class, name = CUSTOM_AUTH_NAME)
+        @JsonSubTypes.Type(value = CustomAuthenticatorConfig.class, name = CUSTOM_AUTH_NAME),
+        @JsonSubTypes.Type(value = JsonWebTokenConfig.class, name = JWT_AUTH_NAME),
 })
 public interface AuthenticationConfig {
     AuthFilter createAuthFilter(AuthenticationBootstrap bootstrap);

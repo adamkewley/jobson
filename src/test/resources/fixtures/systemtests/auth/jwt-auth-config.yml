@@ -1,0 +1,23 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+
+specs:
+  dir: $jobSpecDir
+
+jobs:
+  dir: $jobDataDir
+
+workingDirs:
+  dir: $workingDirsDir
+
+users:
+  file: $userFile
+
+authentication:
+  type: jwt
+  secretKey: +LY2OXK7FbAGgh4dRzGdo6+hrO+QRtc/3KeG4niESli/IIpuBrXMHRzOlSWgfR1MmwYIBzJ34BYYF1vcDp43wvhVDEIBhUczLQEmT8P6NlXisYrcp+LnuTOdGPbI7rIp8aaeP4dhDQoRkTyqBXdLekOOD5LR460nybFkzm+aUCI562KEg2xTAcFWOpWTpNdZquGKvSrjTHcOQj9t39QWGgpM85exKyy9s2Kc/xP2E7nYJM9yYhNdEY4uJQfCgiads8dEGsrJZ+mmNjNSr8XsjxSLzp1NR2l2dUSx19NLwf9V0gQBnIthdbw7RCSLMaD/kcc8/skkNNxpVlST7ZplN31W29pGQMakkbJe9esTgnzh5jd5PTi5aR1pUi9M0osg/3W8EL3gd0ag6n++gYefB2VLSuzt+4oVO++6on/Pr88HJQYVDWUOQdr7CcNxr2j9XnlSsa+OKA9OGKDgiotmMvwbTA/lJ3BZi8nUayQOkfkVEic8npko8crRukIUZIfd1jALY9EzTP8GT5cbIRaAKm5YoQaq3CSnQKvdpOb+MHUyJyiyUUSDtxvMwtH6hbqDXVGdkT3WkG/3LJ9Q6x224dC7viOOI+6M9CuvZpMI9ZulxOmSC1hAlir3hdXKua9G5tBj5jmvFbDIy8kHkCcOtAmvfm6KLGXKyIc+ffThaFDD9FxZoZBbLuTu6a5bN4VugzvrbVTGPySpfpVwEHn//UmDFe6zRK5h6nq8dBw0KIw3i4xrXBrd1gqbyB+eIAVv0qMjHr4FqzmXCZXWZgcHA8e2CrGUBH+i+IYRqgfHL909R9Fc7dCsjs3e6HoNyxb9XSvmICXi18DeYTmTsXTC3qdEul/H3aZs4yYJH0wwGcLApUsgv2VuizqXl+FggOvUY9p6OzZNPAITeCAEFSxc2p9wpMcNPeEj000TlmyQInGNfW6TyCQOhSkopeAQMwT1NiEVno6nlsxduXut+yhvmcfNMT7D0uCfkC3xOU/LFt+Os2izDEpB7Lt4Q7/nlYpl5QWO5QZGWKfdqDnQ3fQICMhIwsBkIbj26bOw15gh+ZrpbWK11TV9EqCtV5+eQMGvQsxY1Cw9oNN/5A/FIkg96mvw7DUOV8a4xZXuRvunIT6b1sI6HDjclNx1jg0OQGb16gnH/pF6Dyv/hToq4iffkwHelCeTyO1BE4kDll2upYoNpG+W+tGiE9VI9xUUmHSbrVpuwkIXRjIOZh8zWtT5U0qp6xFpQXvOubV/Tu1EGJ3+mAG97DM2EkfbVZ9Qb1pfgD90dAKES4Kxn541R32qS+l2yKsgRS+fXAs1PvbVPWbmq3FWFTv4opLd2amIyqgMpqgzkyFcjEIzpNhfpsCMuQ==

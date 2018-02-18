@@ -19,31 +19,12 @@
 
 package com.github.jobson.auth.custom;
 
-import com.github.jobson.auth.AuthenticationBootstrap;
-import com.github.jobson.dao.users.UserDAO;
-import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.jersey.setup.JerseyContainerHolder;
-import io.dropwizard.jersey.setup.JerseyEnvironment;
-import org.eclipse.jetty.server.Server;
-import org.glassfish.jersey.servlet.ServletContainer;
 import org.junit.Test;
 
-import javax.servlet.Servlet;
-
+import static com.github.jobson.TestHelpers.createTypicalAuthBootstrap;
 import static com.github.jobson.TestHelpers.generateClassName;
-import static org.mockito.Mockito.mock;
 
 public final class CustomAuthenticatorConfigTest {
-
-    private static AuthenticationBootstrap createTypicalAuthBootstrap() {
-        final UserDAO userDAO = mock(UserDAO.class);
-        final Server s = new Server(0);
-        final Servlet se = new ServletContainer();
-        final JerseyEnvironment env = new JerseyEnvironment(new JerseyContainerHolder(se), new DropwizardResourceConfig());
-
-        return new AuthenticationBootstrap(env, userDAO);
-    }
-
 
     @Test(expected = NullPointerException.class)
     public void testCreateAuthFilterThrowsIfClassNameIsNull() {
