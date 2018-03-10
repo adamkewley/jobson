@@ -350,7 +350,7 @@ public final class JobResource {
     @Path("/{job-id}/stderr")
     @ApiOperation(
             value = "Get the job's standard error",
-            notes = "Get the job's standard error, if available. A job that has not yet starrted will not have a standard error and, " +
+            notes = "Get the job's standard error, if available. A job that has not yet started will not have a standard error and, " +
                     "therefore, this method will return a 404. There is no guarantee that all running/finished jobs will have standard " +
                     "error data. This is because administrative and cleanup routines may dequeue a job's output in order to save space on " +
                     "the server.")
@@ -374,8 +374,8 @@ public final class JobResource {
     @Path("/{job-id}/spec")
     @ApiOperation(
             value = "Get the spec the job was submitted against",
-            notes = "Get the spec the job was submitted against. Note: This returns the exact spec the job was submitted" +
-                    " against. Any updates to the spec will not be reflected.")
+            notes = "Get the spec the job was submitted against. Note: This returns the spec as it was when the " +
+                    "job was submitted. Any subsequent updates to the spec will not be in the spec returned by this API call.")
     @PermitAll
     public Optional<APIJobSpec> fetchJobSpecJobWasSubmittedAgainst(
             @Context
@@ -416,7 +416,7 @@ public final class JobResource {
     @Path("/{job-id}/outputs")
     @ApiOperation(
             value = "Get the outputs produced by the job",
-            notes = "Gets all the outputs produced by the job. If the job has not *written* any outputs (even if specified)" +
+            notes = "Gets all the outputs produced by the job. If the job has not *written* any outputs (even if specified) " +
                     "then an empty map is returned. If the job does not exist, a 404 is returned")
     @PermitAll
     public APIJobOutputCollection fetchJobOutputs(

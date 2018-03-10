@@ -1,8 +1,10 @@
 # Jobson
 
+[Documentation](https://adamkewley.github.io/jobson)
+
 [![Build Status](https://travis-ci.org/adamkewley/jobson.svg?branch=master)](https://travis-ci.org/adamkewley/jobson)
 
-Jobson is a web server that can turn command-line applications into
+Jobson is a web server that turns command-line applications into
 a job system that manages:
 
 - Authentication (guest, HTTP Basic, custom)
@@ -11,11 +13,6 @@ a job system that manages:
 - Server-side execution (`fork(2)`)
 - Realtime output forwarding (via websockets)
 - Output persistence (stdout, stderr, files)
-
-
-Video explanation:
-
-[![Jobson Screencast](https://img.youtube.com/vi/W9yfpqWiyUg/0.jpg)](https://www.youtube.com/watch?v=W9yfpqWiyUg)
 
 
 All Jobson needs is a YAML file that describes the application:
@@ -42,11 +39,6 @@ execution:
   arguments:
   - ${inputs.message}
 ```
-
-Jobson was developed to generate a standard HTTP API that is simple,
-can be changed *very* easily (via spec files), and contains enough
-information (names, descriptions) for frontends to provide a decent
-user experience.
 
 [Jobson UI](https://github.com/adamkewley/jobson-ui), a sister project,
 automatically generates a full web frontend from the Jobson API.
