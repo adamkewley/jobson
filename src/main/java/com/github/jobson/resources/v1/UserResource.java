@@ -22,6 +22,7 @@ package com.github.jobson.resources.v1;
 import com.github.jobson.api.v1.APIUserDetails;
 import com.github.jobson.api.v1.UserId;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
@@ -39,6 +40,13 @@ public final class UserResource {
     @GET
     @Path("current")
     @PermitAll
+    @ApiOperation(
+            value = "Get the current user",
+            code = 200,
+            notes = "Returns the current user that Jobson believes is calling the API. This entrypoint *always* returns " +
+                    "*something*. If authentication is disabled (e.g. guest auth is enabled) then the client's ID is" +
+                    " handled as the guest username (usually, 'guest'). All other auth types have an associated username " +
+                    "that jobson will extract and return via this entrypoint")
     public APIUserDetails fetchCurrentUserDetails(@Context SecurityContext context) {
         return new APIUserDetails(new UserId(context.getUserPrincipal().getName()));
     }
