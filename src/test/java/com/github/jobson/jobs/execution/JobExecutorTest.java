@@ -471,6 +471,33 @@ public abstract class JobExecutorTest {
     }
 
     @Test
+    public void testExecuteEvaluatesToStringAsExpected() throws InterruptedException {
+        final JobExecutor jobExecutor = getInstance();
+        final PersistedJob req =
+                standardRequestWithCommand("echo", "${toString(inputs.someString)}");
+        final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
+        final Subject<byte[]> stdoutSubject = PublishSubject.create();
+        stdoutSubject.subscribe(bytes ->
+                bytesEchoedToStdout.getAndUpdate(existingBytes ->
+                        Bytes.concat(existingBytes, bytes)));
+
+        final Semaphore s = new Semaphore(1);
+        s.acquire();
+        stdoutSubject.doOnComplete(s::release).subscribe();
+
+        final JobEventListeners listeners =
+                createStdoutListener(stdoutSubject);
+
+        jobExecutor.execute(req, listeners);
+
+        s.tryAcquire(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+
+        final String stringFromStdout = new String(bytesEchoedToStdout.get()).trim();
+
+        assertThat(stringFromStdout).isEqualTo("hello, world!"); // from input fixture
+    }
+
+    @Test
     public void testExecuteEvaluatesTemplateStringsInTheExpectedOutputs() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
 
