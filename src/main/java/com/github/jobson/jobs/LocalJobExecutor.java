@@ -26,6 +26,7 @@ import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.scripting.functions.JoinFunction;
 import com.github.jobson.scripting.functions.ToFileFunction;
 import com.github.jobson.scripting.functions.ToJSONFunction;
+import com.github.jobson.scripting.functions.ToStringFunction;
 import com.github.jobson.specs.*;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.utils.CancelablePromise;
@@ -61,6 +62,7 @@ public final class LocalJobExecutor implements JobExecutor {
         environment.put("toJSON", new ToJSONFunction());
         environment.put("toFile", new ToFileFunction(jobWorkingDir));
         environment.put("join", new JoinFunction());
+        environment.put("toString", new ToStringFunction());
         environment.put("request", persistedJob);
         environment.put("inputs", mapKeys(persistedJob.getInputs(), JobExpectedInputId::toString));
 
