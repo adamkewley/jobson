@@ -34,9 +34,10 @@ import com.github.jobson.jobs.JobExecutor;
 import com.github.jobson.jobs.JobManager;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.LocalJobExecutor;
+import com.github.jobson.resources.RootResource;
 import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.resources.v1.JobSpecResource;
-import com.github.jobson.resources.v1.RootResource;
+import com.github.jobson.resources.v1.V1RootResource;
 import com.github.jobson.resources.v1.UserResource;
 import com.github.jobson.websockets.v1.JobEventSocketCreator;
 import com.github.jobson.websockets.v1.StderrUpdateSocketCreator;
@@ -129,8 +130,11 @@ public final class App extends Application<ApplicationConfig> {
 
 
         log.debug("Registering root API");
-        final RootResource rootResource = new RootResource();
-        environment.jersey().register(rootResource);
+        environment.jersey().register(new RootResource());
+
+        log.debug("Registering root v1 API");
+        final V1RootResource v1RootResource = new V1RootResource();
+        environment.jersey().register(v1RootResource);
 
 
         log.debug("Registering the job specs API");

@@ -56,10 +56,11 @@ public final class Constants {
     public static final String WEBSOCKET_STDERR_UPDATES_PATTERN = "/v1/jobs/(.+?)/stderr/updates";
     public static final long WEBSOCKET_TCP_IDLE_TIMEOUT_IN_MILLISECONDS = 1000 * 60 * 10; // 10 min.
 
-    public static final String HTTP_ROOT = "/v1";
-    public static final String HTTP_USERS_PATH = "/v1/users";
-    public static final String HTTP_SPECS_PATH = "/v1/specs";
-    public static final String HTTP_JOBS_PATH = "/v1/jobs";
+    public static final String HTTP_ROOT = "/";
+    public static final String HTTP_V1_ROOT = HTTP_ROOT + "v1/";
+    public static final String HTTP_USERS_PATH = HTTP_V1_ROOT + "users";
+    public static final String HTTP_SPECS_PATH = HTTP_V1_ROOT + "specs";
+    public static final String HTTP_JOBS_PATH = HTTP_V1_ROOT + "jobs";
 
 
     public static final String BASIC_AUTH_NAME = "basic";
