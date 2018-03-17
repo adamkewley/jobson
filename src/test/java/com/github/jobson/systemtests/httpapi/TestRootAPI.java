@@ -83,4 +83,11 @@ public final class TestRootAPI {
         final APIRootResponse parsedResp = TestHelpers.readJSON(json, APIRootResponse.class);
         assertThat(parsedResp.getLinks().containsKey("current-user")).isTrue();
     }
+
+    @Test
+    public void testApiEmitsPrettifiedJson() {
+        final Response resp = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
+        final String json = resp.readEntity(String.class);
+        assertThat(json.split(System.lineSeparator()).length).isGreaterThan(1);
+    }
 }
