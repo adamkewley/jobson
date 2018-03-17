@@ -20,6 +20,7 @@
 package com.github.jobson;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.commands.*;
 import com.github.jobson.config.ApplicationConfig;
@@ -95,6 +96,7 @@ public final class App extends Application<ApplicationConfig> {
 
     public void run(ApplicationConfig applicationConfig, Environment environment) throws Exception {
         environment.jersey().register(new JsonProcessingExceptionMapper(true));
+        environment.getObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, Constants.API_PRETTIFY_JSON_OUTPUT);
 
 
         final Path userFilePath = Paths.get(applicationConfig.getUsersConfiguration().getFile());

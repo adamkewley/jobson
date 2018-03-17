@@ -48,6 +48,7 @@ public final class Constants {
     public static final String API_VISIBLE_TIMESTAMPS_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSS'Z'";
     public static final int JOB_TIMESTAMP_RESOLUTION_IN_MILLISECONDS = 1;
     public static final String API_VISIBLE_TIMESTAMPS_TIMEZONE = "UTC";
+    public static final boolean API_PRETTIFY_JSON_OUTPUT = true;
 
 
     public static final String WEBSOCKET_JOB_EVENTS_PATH = "/v1/jobs/events";
