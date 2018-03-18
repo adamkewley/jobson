@@ -122,4 +122,30 @@ public final class LocalJobExecutorTest extends JobExecutorTest {
 
         assertThat(fileAfterCopy.canExecute()).isTrue();
     }
+
+    @Test
+    public void testSoftlinkedFileDependencyIsSoftLinkedFromTheDestinationToTheSource() throws IOException, InterruptedException, ExecutionException, TimeoutException {
+        final Path sourceDir = Files.createTempDirectory(JobExecutorTest.class.getSimpleName());
+        final Path sourceFile = Files.createFile(sourceDir.resolve(generateAlphanumStr()));
+
+        final Path workingDir = Files.createTempDirectory(LocalJobExecutorTest.class.getSimpleName());
+        final Path destination = workingDir.resolve(generateAlphanumStr());
+
+        final JobDependencyConfiguration dep = new JobDependencyConfiguration(
+                sourceFile.toString(),
+                destination.toString(),
+                true);
+
+        final PersistedJob job = createStandardRequestWithDependency(dep);
+
+        final LocalJobExecutor jobExecutor = new LocalJobExecutor(workingDir, DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_MILLISECONDS);
+
+        final CancelablePromise<JobExecutionResult> p =
+                jobExecutor.execute(job, JobEventListeners.createNullListeners());
+
+        p.get();
+
+        assertThat(Files.isSymbolicLink(destination)).isTrue();
+        assertThat(Files.readSymbolicLink(destination)).isEqualTo(sourceFile);
+    }
 }

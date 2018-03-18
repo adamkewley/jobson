@@ -67,13 +67,30 @@ public final class LocalJobExecutor implements JobExecutor {
         return arg.tryEvaluate(environment);
     }
 
-    private static void copyJobDependency(JobDependencyConfiguration jobDependencyConfiguration, Path workingDir) {
+    private static void handleJobDependency(JobDependencyConfiguration jobDependencyConfiguration, Path workingDir) {
         final Path source = Paths.get(jobDependencyConfiguration.getSource());
         final Path target = workingDir.resolve(Paths.get(jobDependencyConfiguration.getTarget()));
 
-        log.debug("copy dependency: " + source.toString() + " -> " + target.toString());
+        if (jobDependencyConfiguration.isSoftLink()) {
+            softLinkJobDependency(source, target);
+        } else {
+            copyJobDependency(source, target);
+        }
+    }
+
+    private static void softLinkJobDependency(Path source, Path destination) {
+        log.debug("softlink dependency: " + source.toString() + " -> " + destination.toString());
         try {
-            Helpers.copyPath(source, target);
+            Files.createSymbolicLink(destination, source);
+        } catch (UnsupportedOperationException | IOException ex) {
+            log.error(source.toString() + ": cannot create soft link: " + ex.toString());
+        }
+    }
+
+    private static void copyJobDependency(Path source, Path destination) {
+        log.debug("copy dependency: " + source.toString() + " -> " + destination.toString());
+        try {
+            Helpers.copyPath(source, destination);
         } catch (IOException ex) {
             log.error(source.toString() + ": cannot copy: " + ex.toString());
             throw new RuntimeException(ex);
@@ -109,7 +126,7 @@ public final class LocalJobExecutor implements JobExecutor {
             log.debug(req.getId() + ": created working directory: " + workingDir.toString());
 
             executionConfiguration.getDependencies()
-                    .ifPresent(deps -> deps.forEach(dep -> copyJobDependency(dep, workingDir)));
+                    .ifPresent(deps -> deps.forEach(dep -> handleJobDependency(dep, workingDir)));
 
             final String application = executionConfiguration.getApplication();
             final List<String> argList = new ArrayList<>();

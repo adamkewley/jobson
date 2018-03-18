@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public final class JobDependencyConfiguration {
 
@@ -33,6 +34,9 @@ public final class JobDependencyConfiguration {
     @JsonProperty
     @NotNull
     private String target;
+
+    @JsonProperty
+    private boolean softLink = false;
 
 
     /**
@@ -45,6 +49,12 @@ public final class JobDependencyConfiguration {
         this.target = target;
     }
 
+    public JobDependencyConfiguration(String source, String target, boolean softLink) {
+        this.source = source;
+        this.target = target;
+        this.softLink = softLink;
+    }
+
 
     public String getSource() {
         return source;
@@ -54,29 +64,28 @@ public final class JobDependencyConfiguration {
         return target;
     }
 
+    public boolean isSoftLink() {
+        return softLink;
+    }
 
     public JobDependencyConfiguration withSourceResolvedRelativeTo(Path p) {
         return new JobDependencyConfiguration(p.resolve(source).toString(), target);
     }
 
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         JobDependencyConfiguration that = (JobDependencyConfiguration) o;
-
-        if (source != null ? !source.equals(that.source) : that.source != null) return false;
-        return target != null ? target.equals(that.target) : that.target == null;
-
+        return softLink == that.softLink &&
+                Objects.equals(source, that.source) &&
+                Objects.equals(target, that.target);
     }
 
     @Override
     public int hashCode() {
-        int result = source != null ? source.hashCode() : 0;
-        result = 31 * result + (target != null ? target.hashCode() : 0);
-        return result;
+
+        return Objects.hash(source, target, softLink);
     }
 }
