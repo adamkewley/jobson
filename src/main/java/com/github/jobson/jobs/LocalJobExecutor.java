@@ -31,7 +31,6 @@ import com.github.jobson.specs.*;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;
@@ -39,7 +38,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -73,14 +71,9 @@ public final class LocalJobExecutor implements JobExecutor {
         final Path source = Paths.get(jobDependencyConfiguration.getSource());
         final Path target = workingDir.resolve(Paths.get(jobDependencyConfiguration.getTarget()));
 
+        log.debug("copy dependency: " + source.toString() + " -> " + target.toString());
         try {
-            if (source.toFile().isDirectory()) {
-                log.debug("copy dependency: " + source.toString() + " -> " + target.toString());
-                FileUtils.copyDirectory(source.toFile(), target.toFile());
-            } else {
-                log.debug("copy dependency: " + source.toString() + " -> " + target.toString());
-                Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-            }
+            Helpers.copyPath(source, target);
         } catch (IOException ex) {
             log.error(source.toString() + ": cannot copy: " + ex.toString());
             throw new RuntimeException(ex);
