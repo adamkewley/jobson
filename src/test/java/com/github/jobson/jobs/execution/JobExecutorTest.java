@@ -21,6 +21,7 @@ package com.github.jobson.jobs.execution;
 
 import com.github.jobson.TestConstants;
 import com.github.jobson.TestHelpers;
+import com.github.jobson.config.ExecutionConfig;
 import com.github.jobson.fixtures.PersistedJobRequestFixture;
 import com.github.jobson.jobs.*;
 import com.github.jobson.jobs.jobstates.PersistedJob;
@@ -125,13 +126,16 @@ public abstract class JobExecutorTest {
                         newConfig,
                         expectedOutputs);
 
-        return new PersistedJob(
-                STANDARD_REQUEST.getId(),
-                STANDARD_REQUEST.getOwner(),
-                STANDARD_REQUEST.getName(),
-                STANDARD_REQUEST.getInputs(),
-                STANDARD_REQUEST.getTimestamps(),
-                newSpec);
+        return STANDARD_REQUEST.withSpec(newSpec);
+    }
+
+    protected static PersistedJob createStandardRequestWithDependency(JobDependencyConfiguration dependency) {
+        final JobSpec existingSpec = STANDARD_REQUEST.getSpec();
+        final ExecutionConfiguration newExecutionConfig =
+                existingSpec.getExecution().withDependencies(Collections.singletonList(dependency));
+
+        return STANDARD_REQUEST
+                .withSpec(existingSpec.withExecutionConfiguration(newExecutionConfig));
     }
 
 

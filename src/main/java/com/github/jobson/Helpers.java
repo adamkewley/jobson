@@ -36,8 +36,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -48,6 +48,7 @@ import java.util.stream.StreamSupport;
 
 import static com.github.jobson.Constants.STDIO_BUFFER_LEN_IN_BYTES;
 import static java.lang.System.arraycopy;
+import static java.nio.file.FileVisitResult.CONTINUE;
 
 public final class Helpers {
 
@@ -363,5 +364,30 @@ public final class Helpers {
     public static String getMimeType(InputStream s, String fileName) throws IOException {
         final Tika t = new Tika();
         return t.detect(s, fileName);
+    }
+
+    public static void copyPath(Path source, Path destination) throws IOException {
+        Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+                    throws IOException
+            {
+                Path destinationDir = destination.resolve(source.relativize(dir));
+                try {
+                    Files.copy(dir, destinationDir);
+                } catch (FileAlreadyExistsException e) {
+                    if (!Files.isDirectory(destinationDir))
+                        throw e;
+                }
+                return CONTINUE;
+            }
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                    throws IOException
+            {
+                Files.copy(file, destination.resolve(source.relativize(file)));
+                return CONTINUE;
+            }
+        });
     }
 }

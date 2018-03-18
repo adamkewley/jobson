@@ -136,6 +136,10 @@ public final class JobSpec {
                 expectedOutputs);
     }
 
+    public JobSpec withExecutionConfiguration(ExecutionConfiguration executionConfig) {
+        return new JobSpec(id, name, description, expectedInputs, executionConfig, expectedOutputs);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
