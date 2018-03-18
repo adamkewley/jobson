@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class JobExpectedOutput {
@@ -47,6 +48,9 @@ public final class JobExpectedOutput {
 
     @JsonProperty
     private Map<String, String> metadata = new HashMap<>();
+
+    @JsonProperty
+    private boolean required = false;
 
 
     /**
@@ -78,6 +82,22 @@ public final class JobExpectedOutput {
         this.metadata = metadata;
     }
 
+    public JobExpectedOutput(
+            RawTemplateString id,
+            String path,
+            Optional<String> mimeType,
+            Optional<String> name,
+            Optional<String> description,
+            Map<String, String> metadata,
+            boolean required) {
+        this.id = id;
+        this.path = path;
+        this.mimeType = mimeType;
+        this.name = name;
+        this.description = description;
+        this.metadata = metadata;
+        this.required = required;
+    }
 
     public RawTemplateString getId() {
         return id;
@@ -103,29 +123,26 @@ public final class JobExpectedOutput {
         return metadata;
     }
 
+    public boolean isRequired() {
+        return required;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        JobExpectedOutput jobExpectedOutput = (JobExpectedOutput) o;
-
-        if (path != null ? !path.equals(jobExpectedOutput.path) : jobExpectedOutput.path != null) return false;
-        if (mimeType != null ? !mimeType.equals(jobExpectedOutput.mimeType) : jobExpectedOutput.mimeType != null) return false;
-        if (name != null ? !name.equals(jobExpectedOutput.name) : jobExpectedOutput.name != null) return false;
-        if (description != null ? !description.equals(jobExpectedOutput.description) : jobExpectedOutput.description != null)
-            return false;
-        return metadata != null ? metadata.equals(jobExpectedOutput.metadata) : jobExpectedOutput.metadata == null;
+        JobExpectedOutput that = (JobExpectedOutput) o;
+        return required == that.required &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(path, that.path) &&
+                Objects.equals(mimeType, that.mimeType) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(metadata, that.metadata);
     }
 
     @Override
     public int hashCode() {
-        int result = path != null ? path.hashCode() : 0;
-        result = 31 * result + (mimeType != null ? mimeType.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (metadata != null ? metadata.hashCode() : 0);
-        return result;
+        return Objects.hash(id, path, mimeType, name, description, metadata, required);
     }
 }
