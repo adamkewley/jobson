@@ -236,6 +236,17 @@ public final class TestHelpers {
                 new HashMap<>());
     }
 
+    public static JobExpectedOutput generateRequiredJobOutput(RawTemplateString id, String path, String mimeType) {
+        return new JobExpectedOutput(
+                id,
+                path,
+                Optional.of(mimeType),
+                Optional.of(generateRandomString()),
+                Optional.of(generateRandomString()),
+                new HashMap<>(),
+                true);
+    }
+
     public static List<JobDetails> generateRandomJobDetails() {
         return Stream.generate(TestHelpers::generateValidJobDetails)
                 .limit(randomIntBetween(5, 20))

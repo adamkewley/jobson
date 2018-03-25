@@ -32,7 +32,7 @@ import java.util.Map;
 
 public final class FinalizedJob extends PersistedJob {
 
-    public static FinalizedJob fromExecutingJob(ExecutingJob executingJob, JobStatus finalStatus) {
+    public static FinalizedJob fromExecutingJob(ExecutingJob executingJob, JobStatus finalStatus, String finalMessage) {
         return new FinalizedJob(
                 executingJob.getId(),
                 executingJob.getOwner(),
@@ -40,11 +40,14 @@ public final class FinalizedJob extends PersistedJob {
                 executingJob.getInputs(),
                 executingJob.getTimestamps(),
                 executingJob.getSpec(),
-                finalStatus);
+                finalStatus,
+                finalMessage);
     }
 
 
     private final JobStatus finalStatus;
+
+    private final String finalMessage;
 
     public FinalizedJob(
             JobId id,
@@ -53,13 +56,19 @@ public final class FinalizedJob extends PersistedJob {
             Map<JobExpectedInputId, JobInput> inputs,
             List<JobTimestamp> timestamps,
             JobSpec spec,
-            JobStatus finalStatus) {
+            JobStatus finalStatus,
+            String finalMessage) {
 
         super(id, owner, name, inputs, timestamps, spec);
         this.finalStatus = finalStatus;
+        this.finalMessage = finalMessage;
     }
 
     public JobStatus getFinalStatus() {
         return finalStatus;
+    }
+
+    public String getFinalMessage() {
+        return finalMessage;
     }
 }

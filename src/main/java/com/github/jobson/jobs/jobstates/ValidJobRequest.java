@@ -283,4 +283,9 @@ public class ValidJobRequest {
     public JobSpec getSpec() {
         return spec;
     }
+
+
+    public ValidJobRequest withSpec(JobSpec spec) {
+        return new ValidJobRequest(owner, name, inputs, spec);
+    }
 }

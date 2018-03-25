@@ -39,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -219,8 +220,76 @@ public abstract class JobExecutorTest {
                 () -> {});
     }
 
-    private Optional<JobOutput> getJobOutputById(List<JobOutput> jobOutputs, JobOutputId jobOutputId) {
-        return jobOutputs.stream().filter(jobOutput -> jobOutput.getId().equals(jobOutputId)).findFirst();
+    private Optional<JobOutput> getJobOutputById(List<JobOutputResult> jobOutputs, JobOutputId jobOutputId) {
+        final JobOutputResultVisitorT<Optional<JobOutput>> visitor = new JobOutputResultVisitorT<Optional<JobOutput>>() {
+            @Override
+            public Optional<JobOutput> visit(MissingOutput missingOutput) {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<JobOutput> visit(JobOutput jobOutput) {
+                return Optional.of(jobOutput);
+            }
+        };
+
+        return jobOutputs.stream()
+                .map(jobOutputResult -> jobOutputResult.accept(visitor))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(jobOutput -> jobOutput.getId().equals(jobOutputId))
+                .findFirst();
+    }
+
+    @Test
+    public void testExecutePromiseResolvesWithMissingOutputs() throws InterruptedException, ExecutionException, TimeoutException {
+        final String firstId = "should-exist";
+        final JobExpectedOutput expectedOutputThatShouldExist =
+                generateJobOutput(new RawTemplateString(firstId), firstId, "text/plain");
+        final String secondId = "shouldnt-exist";
+        final JobExpectedOutput expectedOutputThatIsMissing =
+                generateJobOutput(new RawTemplateString(secondId), secondId, "text/plain");
+        final String thirdId = "shouldnt-exist-and-required";
+        final JobExpectedOutput expectedOutputThatIsMissingAndRequired =
+                generateRequiredJobOutput(new RawTemplateString(thirdId), secondId, "text/plain");
+
+
+        final PersistedJob req =
+                standardRequestWithExpectedOutputs(
+                        Arrays.asList(
+                                expectedOutputThatShouldExist,
+                                expectedOutputThatIsMissing,
+                                expectedOutputThatIsMissingAndRequired),
+                        "touch",
+                        firstId);
+
+        final JobExecutor executor = getInstance();
+
+
+        final JobExecutionResult ret = executor.execute(req, createNullListeners()).get();
+
+        assertThat(ret.getFinalStatus()).isEqualTo(JobStatus.FINISHED);
+        assertThat(ret.getOutputs()).hasSize(3);
+
+        final JobOutputResult first = ret.getOutputs().get(0);
+
+        assertThat(first).isInstanceOf(JobOutput.class);
+        assertThat(((JobOutput)first).getId().toString()).isEqualTo(firstId);
+
+
+
+        final JobOutputResult second = ret.getOutputs().get(1);
+
+        assertThat(second).isInstanceOf(MissingOutput.class);
+        assertThat(((MissingOutput)second).getId().toString()).isEqualTo(secondId);
+        assertThat(((MissingOutput)second).isRequired()).isFalse();
+
+
+        final JobOutputResult third = ret.getOutputs().get(2);
+
+        assertThat(third).isInstanceOf(MissingOutput.class);
+        assertThat(((MissingOutput)third).getId().toString()).isEqualTo(thirdId);
+        assertThat(((MissingOutput)third).isRequired()).isTrue();
     }
 
     @Test
@@ -252,10 +321,10 @@ public abstract class JobExecutorTest {
                 ret,
                 result -> {
                     assertThat(result.getOutputs()).isNotEmpty();
-                    assertThat(result.getOutputs().stream().anyMatch(jobOutput -> jobOutput.getId().equals(outputId))).isTrue();
-                    assertThat(result.getOutputs().stream().filter(jobOutput -> jobOutput.getId().equals(outputId)).findFirst().get().getData().getSizeOf()).isEqualTo(randomNoise.length);
+                    assertThat(getJobOutputById(result.getOutputs(), outputId)).isPresent();
+                    assertThat(getJobOutputById(result.getOutputs(), outputId).get().getData().getSizeOf()).isEqualTo(randomNoise.length);
                     try {
-                        assertThat(IOUtils.toByteArray(result.getOutputs().stream().filter(jobOutput -> jobOutput.getId().equals(outputId)).findFirst().get().getData().getData())).isEqualTo(randomNoise);
+                        assertThat(IOUtils.toByteArray(getJobOutputById(result.getOutputs(), outputId).get().getData().getData())).isEqualTo(randomNoise);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
