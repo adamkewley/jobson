@@ -489,7 +489,7 @@ public final class JobManagerTest {
                 createManagerWith(writingJobDAO, MockJobExecutor.thatUses(executorPromise));
 
         final byte[] executorOutputBytes = generateRandomBytes();
-        final List<JobOutput> outputsFromExecutor = new ArrayList<>();
+        final List<JobOutputResult> outputsFromExecutor = new ArrayList<>();
 
         for (JobExpectedOutput expectedOutput : STANDARD_VALID_REQUEST.getSpec().getExpectedOutputs()) {
             if (expectedOutput.getMimeType().isPresent()) {
@@ -533,9 +533,12 @@ public final class JobManagerTest {
         final MockInMemoryJobWriter writingJobDAO = new MockInMemoryJobWriter();
         final JobManager jobManager = createManagerWith(writingJobDAO, MockJobExecutor.thatUses(executorPromise));
 
+        final String jobOutputId = "some-id";
+        final String jobOutputPath = "some-non-existent-path";
+
         final JobExpectedOutput expectedOutput = new JobExpectedOutput(
-                new RawTemplateString("some-id"),
-                "some-non-existient-path",
+                new RawTemplateString(jobOutputId),
+                "some-non-existent-path",
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
@@ -547,7 +550,13 @@ public final class JobManagerTest {
         final ValidJobRequest jobRequest = STANDARD_VALID_REQUEST.withSpec(jobSpec);
 
 
-        final JobExecutionResult result = new JobExecutionResult(JobStatus.FINISHED);
+        final JobExecutionResult result = new JobExecutionResult(
+                JobStatus.FINISHED,
+                Collections.singletonList(new MissingOutput(
+                        new JobOutputId(jobOutputId),
+                        true,
+                        jobOutputPath
+                )));
         final Pair<JobId, CancelablePromise<FinalizedJob>> submissionReturn = jobManager.submit(jobRequest);
         final JobId jobId = submissionReturn.getLeft();
         final CancelablePromise<FinalizedJob> p = submissionReturn.getRight();

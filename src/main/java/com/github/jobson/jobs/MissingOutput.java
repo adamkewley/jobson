@@ -16,56 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package com.github.jobson.jobs;
 
 import com.github.jobson.specs.JobOutputId;
-import com.github.jobson.utils.BinaryData;
 
-import java.util.Map;
-import java.util.Optional;
-
-public final class JobOutput implements JobOutputResult {
+public final class MissingOutput implements JobOutputResult {
 
     private JobOutputId id;
-    private BinaryData data;
-    private Optional<String> name;
-    private Optional<String> description;
-    private Map<String, String> metadata;
+    private boolean required;
+    private String expectedLocation;
 
-
-    public JobOutput(
-            JobOutputId id,
-            BinaryData data,
-            Optional<String> name,
-            Optional<String> description,
-            Map<String, String> metadata) {
+    public MissingOutput(JobOutputId id, boolean required, String expectedLocation) {
         this.id = id;
-        this.data = data;
-        this.name = name;
-        this.description = description;
-        this.metadata = metadata;
+        this.required = required;
+        this.expectedLocation = expectedLocation;
     }
-
 
     public JobOutputId getId() {
         return id;
     }
 
-    public BinaryData getData() {
-        return data;
+    public boolean isRequired() {
+        return required;
     }
 
-    public Optional<String> getName() {
-        return name;
-    }
-
-    public Optional<String> getDescription() {
-        return description;
-    }
-
-    public Map<String, String> getMetadata() {
-        return metadata;
+    public String getExpectedLocation() {
+        return expectedLocation;
     }
 
     @Override

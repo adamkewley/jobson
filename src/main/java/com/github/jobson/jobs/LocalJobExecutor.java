@@ -176,8 +176,7 @@ public final class LocalJobExecutor implements JobExecutor {
 
         final JobExecutionResult jobExecutionResult;
         if (exitStatus == FINISHED) {
-            final List<JobOutput> outputs = tryResolveJobOutputs(req, workingDir, req.getSpec().getExpectedOutputs());
-
+            final List<JobOutputResult> outputs = tryResolveJobOutputs(req, workingDir, req.getSpec().getExpectedOutputs());
             jobExecutionResult = new JobExecutionResult(exitStatus, outputs);
         } else {
             jobExecutionResult = new JobExecutionResult(exitStatus);
@@ -186,7 +185,7 @@ public final class LocalJobExecutor implements JobExecutor {
         promise.complete(jobExecutionResult);
     }
 
-    private List<JobOutput> tryResolveJobOutputs(
+    private List<JobOutputResult> tryResolveJobOutputs(
             PersistedJob req,
             Path workingDir,
             List<JobExpectedOutput> expectedOutputs) {
@@ -197,27 +196,26 @@ public final class LocalJobExecutor implements JobExecutor {
                     final JobOutputId jobOutputId = new JobOutputId(resolveArg(req, workingDir, e.getId()));
                     return tryGetJobOutput(workingDir, jobOutputId, e);
                 })
-                .filter(Optional::isPresent)
-                .map(Optional::get)
                 .collect(Collectors.toList());
     }
 
-    private Optional<JobOutput> tryGetJobOutput(Path workingDir, JobOutputId outputId, JobExpectedOutput expectedOutput) {
+    private JobOutputResult tryGetJobOutput(Path workingDir, JobOutputId outputId, JobExpectedOutput expectedOutput) {
         final Path expectedOutputFile = workingDir.resolve(expectedOutput.getPath());
 
         if (expectedOutputFile.toFile().exists()) {
             final String mimeType = establishMimeType(expectedOutput, expectedOutputFile);
             final BinaryData data = streamBinaryData(expectedOutputFile, mimeType);
-            final JobOutput output =
-                    new JobOutput(
-                            outputId,
-                            data,
-                            expectedOutput.getName(),
-                            expectedOutput.getDescription(),
-                            expectedOutput.getMetadata());
-            return Optional.of(output);
+            return new JobOutput(
+                    outputId,
+                    data,
+                    expectedOutput.getName(),
+                    expectedOutput.getDescription(),
+                    expectedOutput.getMetadata());
         } else {
-            return Optional.empty();
+            return new MissingOutput(
+                    outputId,
+                    expectedOutput.isRequired(),
+                    expectedOutputFile.relativize(workingDir).toString());
         }
     }
 
