@@ -18,6 +18,7 @@
  */
 package com.github.jobson.systemtests.commands;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -34,6 +35,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public final class ServeCommandTest {
 
     @Test
+    @Ignore
     public void testRunningServeWithStandardConfigBootsOkAndOpensRelevantPorts() throws IOException, InterruptedException {
         final Path pwd = Files.createTempDirectory(ServeCommandTest.class.getSimpleName());
 
