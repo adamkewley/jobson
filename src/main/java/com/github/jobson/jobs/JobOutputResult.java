@@ -16,34 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package com.github.jobson.jobs;
 
-package com.github.jobson.api.v1;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
-import java.util.Map;
-
-@ApiModel(description = "A root response, which describes sub-resources")
-public final class APIRootResponse {
-
-    @ApiModelProperty(value = "Links to related resources and actions")
-    @JsonProperty
-    private Map<String, APIRestLink> _links;
-
-    /**
-     * @deprecated Used by JSON deserializer
-     */
-    public APIRootResponse() {}
-
-    public APIRootResponse(Map<String, APIRestLink> _links) {
-        this._links = _links;
-    }
-
-    @JsonIgnore
-    public Map<String, APIRestLink> getLinks() {
-        return _links;
-    }
+public interface JobOutputResult {
+    <T> T accept(JobOutputResultVisitorT<T> visitor);
 }

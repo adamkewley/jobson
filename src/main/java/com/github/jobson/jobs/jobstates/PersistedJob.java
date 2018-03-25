@@ -87,4 +87,15 @@ public class PersistedJob extends ValidJobRequest {
     public List<JobTimestamp> getTimestamps() {
         return timestamps;
     }
+
+
+    public PersistedJob withSpec(JobSpec spec) {
+        return new PersistedJob(
+                this.getId(),
+                this.getOwner(),
+                this.getName(),
+                this.getInputs(),
+                this.getTimestamps(),
+                spec);
+    }
 }

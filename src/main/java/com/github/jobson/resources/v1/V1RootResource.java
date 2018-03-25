@@ -20,7 +20,7 @@
 package com.github.jobson.resources.v1;
 
 import com.github.jobson.api.v1.APIRestLink;
-import com.github.jobson.api.v1.APIRootResponse;
+import com.github.jobson.api.v1.APIV1RootResponse;
 import io.swagger.annotations.Api;
 
 import javax.annotation.security.PermitAll;
@@ -36,20 +36,20 @@ import java.util.Map;
 
 import static com.github.jobson.Constants.*;
 
-@Api(description = "Top-level resource, which exposes sub-resources (jobs, specs, etc.)")
-@Path(HTTP_ROOT)
+@Api(description = "Top-level resource for v1 API, which exposes sub-resources (jobs, specs, etc.)")
+@Path(HTTP_V1_ROOT)
 @Produces("application/json")
-public final class RootResource {
+public final class V1RootResource {
 
     @GET
     @PermitAll
-    public APIRootResponse get(@Context SecurityContext context) {
+    public APIV1RootResponse get(@Context SecurityContext context) {
         Map<String, APIRestLink> links = new HashMap<>();
         try {
             links.put("jobs", new APIRestLink(new URI(HTTP_JOBS_PATH)));
             links.put("current-user", new APIRestLink(new URI(HTTP_USERS_PATH + "/current")));
             links.put("specs", new APIRestLink(new URI(HTTP_SPECS_PATH)));
-            return new APIRootResponse(links);
+            return new APIV1RootResponse(links);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

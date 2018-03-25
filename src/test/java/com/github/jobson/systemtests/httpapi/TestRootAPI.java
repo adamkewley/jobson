@@ -19,8 +19,10 @@
 
 package com.github.jobson.systemtests.httpapi;
 
+import com.github.jobson.Constants;
+import com.github.jobson.TestConstants;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIRootResponse;
+import com.github.jobson.api.APIRootResponse;
 import com.github.jobson.config.ApplicationConfig;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
@@ -29,9 +31,11 @@ import org.junit.Test;
 import javax.ws.rs.core.Response;
 
 import static com.github.jobson.Constants.HTTP_ROOT;
-import static com.github.jobson.HttpStatusCodes.OK;
 import static com.github.jobson.HttpStatusCodes.UNAUTHORIZED;
-import static com.github.jobson.systemtests.SystemTestHelpers.*;
+import static com.github.jobson.TestHelpers.assertHasKeyWithValue;
+import static com.github.jobson.systemtests.SystemTestHelpers.createStandardRule;
+import static com.github.jobson.systemtests.SystemTestHelpers.generateAuthenticatedRequest;
+import static com.github.jobson.systemtests.SystemTestHelpers.generateRequest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public final class TestRootAPI {
@@ -41,46 +45,34 @@ public final class TestRootAPI {
 
 
     @Test
-    public void testUnauthorizedIfGETSummariesWithoutCredentials() {
+    public void testUnauthorizedIfGETRootWithoutCredentials() {
         final Response response = generateRequest(RULE, HTTP_ROOT).get();
         assertThat(response.getStatus()).isEqualTo(UNAUTHORIZED);
     }
 
     @Test
-    public void testOKIfGETSummariesWithCredentials() {
-        final Response resp = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
-        assertThat(resp.getStatus()).isEqualTo(OK);
+    public void testAuthorizedRequestReturns200() {
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
+        assertThat(response.getStatus()).isEqualTo(200);
     }
 
     @Test
-    public void testResponseParsesToAnAPIRootResponse() {
-        final Response resp = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
-        final String json = resp.readEntity(String.class);
-        final APIRootResponse parsedResp = TestHelpers.readJSON(json, APIRootResponse.class);
-        assertThat(parsedResp).isNotNull();
+    public void testGetRootAPIReturnsAnRootAPIResponse() {
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
+
+        final String json = response.readEntity(String.class);
+        final APIRootResponse parsedResponse = TestHelpers.readJSON(json, APIRootResponse.class);
+
+        assertThat(parsedResponse).isNotNull();
     }
 
     @Test
-    public void testResponseContainsJobsLinks() {
-        final Response resp = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
-        final String json = resp.readEntity(String.class);
-        final APIRootResponse parsedResp = TestHelpers.readJSON(json, APIRootResponse.class);
-        assertThat(parsedResp.getLinks().containsKey("jobs")).isTrue();
-    }
+    public void testGetRootAPIContainsLinkToV1API() {
+        final Response response = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
 
-    @Test
-    public void testResponseContainsSpecsLinks() {
-        final Response resp = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
-        final String json = resp.readEntity(String.class);
-        final APIRootResponse parsedResp = TestHelpers.readJSON(json, APIRootResponse.class);
-        assertThat(parsedResp.getLinks().containsKey("specs")).isTrue();
-    }
+        final String json = response.readEntity(String.class);
+        final APIRootResponse parsedResponse = TestHelpers.readJSON(json, APIRootResponse.class);
 
-    @Test
-    public void testResponseContainsCurrentUserLinks() {
-        final Response resp = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
-        final String json = resp.readEntity(String.class);
-        final APIRootResponse parsedResp = TestHelpers.readJSON(json, APIRootResponse.class);
-        assertThat(parsedResp.getLinks().containsKey("current-user")).isTrue();
+        assertHasKeyWithValue(parsedResponse.getLinks(), "v1", Constants.HTTP_V1_ROOT);
     }
 }

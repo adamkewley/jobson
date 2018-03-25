@@ -80,6 +80,10 @@ public final class ExecutionConfiguration {
         return new ExecutionConfiguration(application, arguments, resolvedJobDependencies);
     }
 
+    public ExecutionConfiguration withDependencies(List<JobDependencyConfiguration> dependencies) {
+        return new ExecutionConfiguration(this.application, this.arguments, Optional.of(dependencies));
+    }
+
 
 
     @Override

@@ -62,7 +62,7 @@ public final class CliHelpers {
         return new CliOutputs(stdout, stderr, exitCode);
     }
 
-    private static List<String> getAllArgs(List<String> extraArgs) {
+    public static List<String> getAllArgs(List<String> extraArgs) {
         final List<String> processArgs = new ArrayList<>();
 
         processArgs.add(System.getProperty("java.home") + "/bin/java");

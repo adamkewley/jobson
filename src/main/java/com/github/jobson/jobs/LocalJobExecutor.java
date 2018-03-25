@@ -31,7 +31,6 @@ import com.github.jobson.specs.*;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;
@@ -39,7 +38,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -69,18 +67,30 @@ public final class LocalJobExecutor implements JobExecutor {
         return arg.tryEvaluate(environment);
     }
 
-    private static void copyJobDependency(JobDependencyConfiguration jobDependencyConfiguration, Path workingDir) {
+    private static void handleJobDependency(JobDependencyConfiguration jobDependencyConfiguration, Path workingDir) {
         final Path source = Paths.get(jobDependencyConfiguration.getSource());
         final Path target = workingDir.resolve(Paths.get(jobDependencyConfiguration.getTarget()));
 
+        if (jobDependencyConfiguration.isSoftLink()) {
+            softLinkJobDependency(source, target);
+        } else {
+            copyJobDependency(source, target);
+        }
+    }
+
+    private static void softLinkJobDependency(Path source, Path destination) {
+        log.debug("softlink dependency: " + source.toString() + " -> " + destination.toString());
         try {
-            if (source.toFile().isDirectory()) {
-                log.debug("copy dependency: " + source.toString() + " -> " + target.toString());
-                FileUtils.copyDirectory(source.toFile(), target.toFile());
-            } else {
-                log.debug("copy dependency: " + source.toString() + " -> " + target.toString());
-                Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-            }
+            Files.createSymbolicLink(destination, source);
+        } catch (UnsupportedOperationException | IOException ex) {
+            log.error(source.toString() + ": cannot create soft link: " + ex.toString());
+        }
+    }
+
+    private static void copyJobDependency(Path source, Path destination) {
+        log.debug("copy dependency: " + source.toString() + " -> " + destination.toString());
+        try {
+            Helpers.copyPath(source, destination);
         } catch (IOException ex) {
             log.error(source.toString() + ": cannot copy: " + ex.toString());
             throw new RuntimeException(ex);
@@ -116,7 +126,7 @@ public final class LocalJobExecutor implements JobExecutor {
             log.debug(req.getId() + ": created working directory: " + workingDir.toString());
 
             executionConfiguration.getDependencies()
-                    .ifPresent(deps -> deps.forEach(dep -> copyJobDependency(dep, workingDir)));
+                    .ifPresent(deps -> deps.forEach(dep -> handleJobDependency(dep, workingDir)));
 
             final String application = executionConfiguration.getApplication();
             final List<String> argList = new ArrayList<>();
@@ -166,8 +176,7 @@ public final class LocalJobExecutor implements JobExecutor {
 
         final JobExecutionResult jobExecutionResult;
         if (exitStatus == FINISHED) {
-            final List<JobOutput> outputs = tryResolveJobOutputs(req, workingDir, req.getSpec().getExpectedOutputs());
-
+            final List<JobOutputResult> outputs = tryResolveJobOutputs(req, workingDir, req.getSpec().getExpectedOutputs());
             jobExecutionResult = new JobExecutionResult(exitStatus, outputs);
         } else {
             jobExecutionResult = new JobExecutionResult(exitStatus);
@@ -176,7 +185,7 @@ public final class LocalJobExecutor implements JobExecutor {
         promise.complete(jobExecutionResult);
     }
 
-    private List<JobOutput> tryResolveJobOutputs(
+    private List<JobOutputResult> tryResolveJobOutputs(
             PersistedJob req,
             Path workingDir,
             List<JobExpectedOutput> expectedOutputs) {
@@ -187,27 +196,26 @@ public final class LocalJobExecutor implements JobExecutor {
                     final JobOutputId jobOutputId = new JobOutputId(resolveArg(req, workingDir, e.getId()));
                     return tryGetJobOutput(workingDir, jobOutputId, e);
                 })
-                .filter(Optional::isPresent)
-                .map(Optional::get)
                 .collect(Collectors.toList());
     }
 
-    private Optional<JobOutput> tryGetJobOutput(Path workingDir, JobOutputId outputId, JobExpectedOutput expectedOutput) {
+    private JobOutputResult tryGetJobOutput(Path workingDir, JobOutputId outputId, JobExpectedOutput expectedOutput) {
         final Path expectedOutputFile = workingDir.resolve(expectedOutput.getPath());
 
         if (expectedOutputFile.toFile().exists()) {
             final String mimeType = establishMimeType(expectedOutput, expectedOutputFile);
             final BinaryData data = streamBinaryData(expectedOutputFile, mimeType);
-            final JobOutput output =
-                    new JobOutput(
-                            outputId,
-                            data,
-                            expectedOutput.getName(),
-                            expectedOutput.getDescription(),
-                            expectedOutput.getMetadata());
-            return Optional.of(output);
+            return new JobOutput(
+                    outputId,
+                    data,
+                    expectedOutput.getName(),
+                    expectedOutput.getDescription(),
+                    expectedOutput.getMetadata());
         } else {
-            return Optional.empty();
+            return new MissingOutput(
+                    outputId,
+                    expectedOutput.isRequired(),
+                    expectedOutputFile.relativize(workingDir).toString());
         }
     }
 

@@ -6,7 +6,7 @@
 
     <groupId>com.github.jobson</groupId>
     <artifactId>jobson</artifactId>
-    <version>0.0.13</version>
+    <version>0.0.14</version>
     <name>jobson</name>
     <description>
         A web server that can turn command-line applications into a job system.
@@ -77,10 +77,34 @@
             <artifactId>dropwizard-auth</artifactId>
         </dependency>
 
+        <!-- This reflections is for the dropwizard-swagger: it
+             will throw exceptions in logs due to mis-managed
+             dependency: https://github.com/smoketurner/dropwizard-swagger/issues/85 -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>com.smoketurner</groupId>
             <artifactId>dropwizard-swagger</artifactId>
             <version>1.2.4-2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.reflections</groupId>
+                    <artifactId>reflections</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

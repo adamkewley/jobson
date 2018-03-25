@@ -20,6 +20,7 @@
 package com.github.jobson;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.commands.*;
 import com.github.jobson.config.ApplicationConfig;
@@ -33,10 +34,11 @@ import com.github.jobson.jobs.JobExecutor;
 import com.github.jobson.jobs.JobManager;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.LocalJobExecutor;
+import com.github.jobson.resources.RootResource;
 import com.github.jobson.resources.v1.JobResource;
 import com.github.jobson.resources.v1.JobSpecResource;
-import com.github.jobson.resources.v1.RootResource;
 import com.github.jobson.resources.v1.UserResource;
+import com.github.jobson.resources.v1.V1RootResource;
 import com.github.jobson.websockets.v1.JobEventSocketCreator;
 import com.github.jobson.websockets.v1.StderrUpdateSocketCreator;
 import com.github.jobson.websockets.v1.StdoutUpdateSocketCreator;
@@ -95,6 +97,7 @@ public final class App extends Application<ApplicationConfig> {
 
     public void run(ApplicationConfig applicationConfig, Environment environment) throws Exception {
         environment.jersey().register(new JsonProcessingExceptionMapper(true));
+        environment.getObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, Constants.API_PRETTIFY_JSON_OUTPUT);
 
 
         final Path userFilePath = Paths.get(applicationConfig.getUsersConfiguration().getFile());
@@ -127,8 +130,11 @@ public final class App extends Application<ApplicationConfig> {
 
 
         log.debug("Registering root API");
-        final RootResource rootResource = new RootResource();
-        environment.jersey().register(rootResource);
+        environment.jersey().register(new RootResource());
+
+        log.debug("Registering root v1 API");
+        final V1RootResource v1RootResource = new V1RootResource();
+        environment.jersey().register(v1RootResource);
 
 
         log.debug("Registering the job specs API");
