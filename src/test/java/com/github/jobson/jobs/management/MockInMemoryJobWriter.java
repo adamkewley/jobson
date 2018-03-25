@@ -47,6 +47,7 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
     private Optional<ValidJobRequest> persistCalledWith = Optional.empty();
     private PersistedJob returnedPersistedReq;
     private List<PersistOutputArgs> persistOutputCalledWith = new ArrayList<>();
+    private List<AddNewJobStatusArgs> addNewJobStatusArgsCalledWith = new ArrayList<>();
 
 
     @Override
@@ -89,7 +90,9 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
     }
 
     @Override
-    public void addNewJobStatus(JobId jobId, JobStatus newStatus, String statusMessage) {}
+    public void addNewJobStatus(JobId jobId, JobStatus newStatus, String statusMessage) {
+        addNewJobStatusArgsCalledWith.add(new AddNewJobStatusArgs(jobId, newStatus, statusMessage));
+    }
 
     @Override
     public void persistOutput(JobId jobId, JobOutput jobOutput) {
@@ -123,5 +126,9 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
 
     public List<PersistOutputArgs> getPersistOutputCalledWith() {
         return persistOutputCalledWith;
+    }
+
+    public List<AddNewJobStatusArgs> getAddNewJobStatusArgsCalledWith() {
+        return addNewJobStatusArgsCalledWith;
     }
 }

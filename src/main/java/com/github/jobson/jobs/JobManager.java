@@ -22,6 +22,7 @@ package com.github.jobson.jobs;
 import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.jobstates.*;
+import com.github.jobson.specs.JobExpectedOutput;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import com.github.jobson.websockets.v1.JobEvent;
@@ -32,10 +33,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.github.jobson.Constants.JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHCHECK;
@@ -185,17 +183,36 @@ public final class JobManager implements JobManagerEvents, JobManagerActions {
     private void onExecutionFinished(ExecutingJob executingJob, JobExecutionResult jobExecutionResult) {
         executingJobs.remove(executingJob.getId());
 
-        jobExecutionResult.getOutputs().forEach(jobOutput -> {
-            jobDAO.persistOutput(executingJob.getId(), jobOutput);
-        });
+        final JobStatus finalStatus = jobExecutionResult.getFinalStatus();
 
-        updateJobStatus(executingJob.getId(), jobExecutionResult.getFinalStatus(), "Execution finished");
+        if (finalStatus.equals(JobStatus.FINISHED)) {
+            final Optional<String> maybeOutputErorr = handleOutputPersistence(executingJob, jobExecutionResult);
 
-        final FinalizedJob finalizedJob =
-                FinalizedJob.fromExecutingJob(executingJob, jobExecutionResult.getFinalStatus());
+            if (maybeOutputErorr.isPresent()) {
+                updateJobStatus(
+                        executingJob.getId(),
+                        JobStatus.FATAL_ERROR,
+                        "Job executed successfully, but there was an error handling the outputs: " + maybeOutputErorr.get());
+            } else {
+                updateJobStatus(executingJob.getId(), finalStatus, "Execution finished");
+            }
+        } else {
+            updateJobStatus(executingJob.getId(), finalStatus, "Execution did not finish successfully");
+        }
+
+        final FinalizedJob finalizedJob = FinalizedJob.fromExecutingJob(executingJob, finalStatus);
 
         executingJob.getCompletionPromise().complete(finalizedJob);
         tryAdvancingJobQueue();
+    }
+
+    private Optional<String> handleOutputPersistence(ExecutingJob executingJob, JobExecutionResult jobExecutionResult) {
+        jobExecutionResult.getOutputs()
+                .forEach(jobOutput -> {
+                    jobDAO.persistOutput(executingJob.getId(), jobOutput);
+                });
+
+        return Optional.empty(); // TODO: Handle them properly
     }
 
     public Map<String, HealthCheck> getHealthChecks() {

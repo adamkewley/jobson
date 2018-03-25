@@ -25,8 +25,11 @@ import com.github.jobson.TestHelpers;
 import com.github.jobson.dao.jobs.WritingJobDAO;
 import com.github.jobson.jobs.*;
 import com.github.jobson.jobs.jobstates.FinalizedJob;
+import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.JobExpectedOutput;
 import com.github.jobson.specs.JobOutputId;
+import com.github.jobson.specs.JobSpec;
+import com.github.jobson.specs.RawTemplateString;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
 import com.github.jobson.websockets.v1.JobEvent;
@@ -40,9 +43,7 @@ import io.reactivex.subjects.Subject;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -526,6 +527,45 @@ public final class JobManagerTest {
         }
     }
 
+    @Test
+    public void testFailsIfARequiredOutputDoesNotExistInExecutionResult() throws InterruptedException, ExecutionException, TimeoutException {
+        final CancelablePromise<JobExecutionResult> executorPromise = new SimpleCancelablePromise<>();
+        final MockInMemoryJobWriter writingJobDAO = new MockInMemoryJobWriter();
+        final JobManager jobManager = createManagerWith(writingJobDAO, MockJobExecutor.thatUses(executorPromise));
+
+        final JobExpectedOutput expectedOutput = new JobExpectedOutput(
+                new RawTemplateString("some-id"),
+                "some-non-existient-path",
+                Optional.empty(),
+                Optional.empty(),
+                Optional.empty(),
+                Collections.emptyMap(),
+                true);
+
+        final JobSpec jobSpec = STANDARD_VALID_REQUEST.getSpec().
+                withExpectedOutputs(Collections.singletonList(expectedOutput));
+        final ValidJobRequest jobRequest = STANDARD_VALID_REQUEST.withSpec(jobSpec);
+
+
+        final JobExecutionResult result = new JobExecutionResult(JobStatus.FINISHED);
+        final Pair<JobId, CancelablePromise<FinalizedJob>> submissionReturn = jobManager.submit(jobRequest);
+        final JobId jobId = submissionReturn.getLeft();
+        final CancelablePromise<FinalizedJob> p = submissionReturn.getRight();
+        executorPromise.complete(result);
+
+
+        final FinalizedJob finalJobState = p.get();
+        final List<AddNewJobStatusArgs> addNewJobStatusArgs = writingJobDAO.getAddNewJobStatusArgsCalledWith();
+
+        assertThat(finalJobState.getFinalStatus()).isEqualTo(JobStatus.FATAL_ERROR);
+
+        final boolean anyStatusUpdateContainsMissingOutput =
+                addNewJobStatusArgs.stream()
+                        .map(AddNewJobStatusArgs::getStatusMessage)
+                        .anyMatch(msg -> msg.toLowerCase().contains("missing required output"));
+
+        assertThat(anyStatusUpdateContainsMissingOutput);
+    }
 
     @Test
     public void testGetHealthChecksReturnsAHealthCheckForJobQueueOverflowing() {
