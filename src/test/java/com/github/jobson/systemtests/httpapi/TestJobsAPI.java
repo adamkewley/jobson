@@ -60,6 +60,7 @@ public final class TestJobsAPI {
     private static final APIJobRequest REQUEST_AGAINST_FOUTH_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_FITH_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_SIXTH_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_SEVENTH_SPEC;
 
     static {
         REQUEST_AGAINST_FIRST_SPEC = readJSONFixture(
@@ -79,6 +80,9 @@ public final class TestJobsAPI {
                 APIJobRequest.class);
         REQUEST_AGAINST_SIXTH_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-sixth-spec.json",
+                APIJobRequest.class);
+        REQUEST_AGAINST_SEVENTH_SPEC = readJSONFixture(
+                "fixtures/systemtests/request-against-seventh-spec.json",
                 APIJobRequest.class);
     }
 
@@ -214,7 +218,7 @@ public final class TestJobsAPI {
 
     private void waitUntilJobTerminates(JobId jobId) throws InterruptedException {
         // TODO: Use websocket hooks instead?
-        sleep(100);
+        sleep(200);
     }
 
     @Test
@@ -294,6 +298,21 @@ public final class TestJobsAPI {
 
         assertThat(jobOutputsResponse.getStatus()).isEqualTo(OK);
         assertThat(jobOutputsResponse.getHeaderString("Content-Type")).isEqualTo("text/plain");
+    }
+
+    @Test
+    public void testCanGetTemplatedPathOutput() throws InterruptedException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(REQUEST_AGAINST_SEVENTH_SPEC))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
+
+        waitUntilJobTerminates(jobId);
+
+        final Response jobOutputsResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/outputs/bar")).get();
+
+        assertThat(jobOutputsResponse.getStatus()).isEqualTo(OK);
     }
 
     @Test

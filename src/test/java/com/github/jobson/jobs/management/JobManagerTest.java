@@ -538,7 +538,7 @@ public final class JobManagerTest {
 
         final JobExpectedOutput expectedOutput = new JobExpectedOutput(
                 new RawTemplateString(jobOutputId),
-                "some-non-existent-path",
+                new RawTemplateString("some-non-existent-path"),
                 Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),

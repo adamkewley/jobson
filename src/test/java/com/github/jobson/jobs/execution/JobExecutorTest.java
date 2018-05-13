@@ -32,6 +32,7 @@ import io.reactivex.functions.Action;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -193,14 +194,14 @@ public abstract class JobExecutorTest {
         final JobExecutor jobExecutor = getInstance();
 
         final RawTemplateString outputId = new RawTemplateString("outfile");
-        final String outputPath = outputId.toString();
+        final RawTemplateString outputPath = outputId;
 
 
         final JobExpectedOutput expectedOutput = generateJobOutput(outputId, outputPath, "text/plain");
         final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(expectedOutput);
 
         final PersistedJob req =
-                standardRequestWithExpectedOutputs(expectedOutputs, "touch", outputPath);
+                standardRequestWithExpectedOutputs(expectedOutputs, "touch", outputPath.toString());
 
         final CancelablePromise<JobExecutionResult> ret = jobExecutor.execute(req, createNullListeners());
 
@@ -245,13 +246,13 @@ public abstract class JobExecutorTest {
     public void testExecutePromiseResolvesWithMissingOutputs() throws InterruptedException, ExecutionException, TimeoutException {
         final String firstId = "should-exist";
         final JobExpectedOutput expectedOutputThatShouldExist =
-                generateJobOutput(new RawTemplateString(firstId), firstId, "text/plain");
+                generateJobOutput(new RawTemplateString(firstId), new RawTemplateString(firstId), "text/plain");
         final String secondId = "shouldnt-exist";
         final JobExpectedOutput expectedOutputThatIsMissing =
-                generateJobOutput(new RawTemplateString(secondId), secondId, "text/plain");
+                generateJobOutput(new RawTemplateString(secondId), new RawTemplateString(secondId), "text/plain");
         final String thirdId = "shouldnt-exist-and-required";
         final JobExpectedOutput expectedOutputThatIsMissingAndRequired =
-                generateRequiredJobOutput(new RawTemplateString(thirdId), secondId, "text/plain");
+                generateRequiredJobOutput(new RawTemplateString(thirdId), new RawTemplateString(secondId), "text/plain");
 
 
         final PersistedJob req =
@@ -302,7 +303,7 @@ public abstract class JobExecutorTest {
 
         final RawTemplateString outputIdTemplateString = new RawTemplateString("out");
         final JobOutputId outputId = new JobOutputId(outputIdTemplateString.toString());
-        final String outputPath = outputId.toString();
+        final RawTemplateString outputPath = new RawTemplateString(outputId.toString());
 
         final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(
                 new JobExpectedOutput(outputIdTemplateString, outputPath, "application/octet-stream"));
@@ -312,7 +313,7 @@ public abstract class JobExecutorTest {
                         expectedOutputs,
                         "cp",
                         tmpFile.toAbsolutePath().toString(),
-                        outputPath);
+                        outputPath.toString());
 
         final CancelablePromise<JobExecutionResult> ret =
                 jobExecutor.execute(jobRequest, createNullListeners());
@@ -574,9 +575,9 @@ public abstract class JobExecutorTest {
     public void testExecuteEvaluatesTemplateStringsInTheExpectedOutputs() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
 
-
-        final RawTemplateString rawTemplateString = new RawTemplateString("${request.id}");
-        final JobExpectedOutput jobExpectedOutput = new JobExpectedOutput(rawTemplateString, "foo", "application/octet-stream");
+        final RawTemplateString rawTemplateIdStr = new RawTemplateString("${request.id}");
+        final RawTemplateString rawTemplatePathStr = new RawTemplateString("${toString('foo')}");
+        final JobExpectedOutput jobExpectedOutput = new JobExpectedOutput(rawTemplateIdStr, rawTemplatePathStr, "application/octet-stream");
         final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(jobExpectedOutput);
 
         final PersistedJob req =
@@ -592,7 +593,14 @@ public abstract class JobExecutorTest {
                     final JobOutputId expectedOutputIdAfterEvaluation =
                             new JobOutputId(STANDARD_REQUEST.getId().toString());
 
-                    assertThat(getJobOutputById(result.getOutputs(), expectedOutputIdAfterEvaluation)).isPresent();
+                    final Optional<JobOutput> maybeJobOutput =
+                            getJobOutputById(result.getOutputs(), expectedOutputIdAfterEvaluation);
+
+                    assertThat(maybeJobOutput).isPresent();
+
+                    final JobOutput jobOutput = maybeJobOutput.get();
+
+                    assertThat(jobOutput.getId().toString()).isEqualTo(req.getId().toString());
                 });
     }
 }

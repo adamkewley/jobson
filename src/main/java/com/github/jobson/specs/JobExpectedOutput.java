@@ -35,7 +35,7 @@ public final class JobExpectedOutput {
 
     @JsonProperty
     @NotNull
-    private String path;
+    private RawTemplateString path;
 
     @JsonProperty
     private Optional<String> mimeType = Optional.empty();
@@ -60,7 +60,7 @@ public final class JobExpectedOutput {
 
     public JobExpectedOutput(
             RawTemplateString id,
-            String path,
+            RawTemplateString path,
             String mimeType) {
         this.id = id;
         this.path = path;
@@ -69,7 +69,7 @@ public final class JobExpectedOutput {
 
     public JobExpectedOutput(
             RawTemplateString id,
-            String path,
+            RawTemplateString path,
             String mimeType,
             Optional<String> name,
             Optional<String> description,
@@ -84,7 +84,7 @@ public final class JobExpectedOutput {
 
     public JobExpectedOutput(
             RawTemplateString id,
-            String path,
+            RawTemplateString path,
             Optional<String> mimeType,
             Optional<String> name,
             Optional<String> description,
@@ -103,7 +103,7 @@ public final class JobExpectedOutput {
         return id;
     }
 
-    public String getPath() {
+    public RawTemplateString getPath() {
         return path;
     }
 

@@ -117,3 +117,14 @@
     application: echo
     arguments:
     - ${join(",", inputs.stringArray)}
+
+- id: seventh-spec
+  name: Spec that templates the output path
+  expectedInputs: []
+  execution:
+    application: touch
+    arguments:
+    - foo
+  expectedOutputs:
+  - id: bar
+    path: ${toString("foo")}

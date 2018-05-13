@@ -226,7 +226,7 @@ public final class TestHelpers {
         return ret;
     }
 
-    public static JobExpectedOutput generateJobOutput(RawTemplateString id, String path, String mimeType) {
+    public static JobExpectedOutput generateJobOutput(RawTemplateString id, RawTemplateString path, String mimeType) {
         return new JobExpectedOutput(
                 id,
                 path,
@@ -236,7 +236,7 @@ public final class TestHelpers {
                 new HashMap<>());
     }
 
-    public static JobExpectedOutput generateRequiredJobOutput(RawTemplateString id, String path, String mimeType) {
+    public static JobExpectedOutput generateRequiredJobOutput(RawTemplateString id, RawTemplateString path, String mimeType) {
         return new JobExpectedOutput(
                 id,
                 path,

@@ -194,13 +194,13 @@ public final class LocalJobExecutor implements JobExecutor {
                 .stream()
                 .map(e -> {
                     final JobOutputId jobOutputId = new JobOutputId(resolveArg(req, workingDir, e.getId()));
-                    return tryGetJobOutput(workingDir, jobOutputId, e);
+                    return tryGetJobOutput(workingDir, req, jobOutputId, e);
                 })
                 .collect(Collectors.toList());
     }
 
-    private JobOutputResult tryGetJobOutput(Path workingDir, JobOutputId outputId, JobExpectedOutput expectedOutput) {
-        final Path expectedOutputFile = workingDir.resolve(expectedOutput.getPath());
+    private JobOutputResult tryGetJobOutput(Path workingDir, PersistedJob job, JobOutputId outputId, JobExpectedOutput expectedOutput) {
+        final Path expectedOutputFile = workingDir.resolve(resolveArg(job, workingDir, expectedOutput.getPath()));
 
         if (expectedOutputFile.toFile().exists()) {
             final String mimeType = establishMimeType(expectedOutput, expectedOutputFile);
@@ -224,7 +224,7 @@ public final class LocalJobExecutor implements JobExecutor {
             return jobExpectedOutput.getMimeType().get();
         } else {
             try {
-                return Helpers.getMimeType(Files.newInputStream(p), jobExpectedOutput.getPath());
+                return Helpers.getMimeType(Files.newInputStream(p), p.toString());
             } catch (IOException ex) {
                 log.warn("Encountered IO error when determining an output's MIME type. Skipping MIME type detection");
                 return Constants.DEFAULT_BINARY_MIME_TYPE;
