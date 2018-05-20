@@ -56,7 +56,7 @@ public final class JobTimestamp {
 
     @ApiModelProperty(value = "(optional) A message associated with the status change")
     @JsonProperty
-    private Optional<String> message = Optional.empty();
+    private String message = null;
 
 
 
@@ -69,7 +69,7 @@ public final class JobTimestamp {
     public JobTimestamp(JobStatus status, Date time, Optional<String> message) {
         this.status = status;
         this.time = time;
-        this.message = message;
+        this.message = message.orElse(null);
     }
 
 
@@ -83,6 +83,6 @@ public final class JobTimestamp {
     }
 
     public Optional<String> getMessage() {
-        return message;
+        return message != null ? Optional.of(message) : Optional.empty();
     }
 }

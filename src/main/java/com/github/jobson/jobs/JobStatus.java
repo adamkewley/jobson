@@ -63,6 +63,10 @@ public enum JobStatus {
         return getAbortableStatuses().contains(this);
     }
 
+    public boolean isFinal() {
+        return !(this.equals(SUBMITTED) || this.equals(RUNNING));
+    }
+
     public int toExitCode() {
         switch (this) {
             case ABORTED:

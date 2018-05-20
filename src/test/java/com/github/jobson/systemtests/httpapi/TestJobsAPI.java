@@ -25,6 +25,7 @@ import com.github.jobson.api.v1.*;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.systemtests.SystemTestHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -197,7 +198,7 @@ public final class TestJobsAPI {
     }
 
     @Test
-    public void testCanGETStdout() throws IOException, InterruptedException {
+    public void testCanGETStdout() throws InterruptedException {
         final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                 .post(json(REQUEST_AGAINST_FIRST_SPEC))
                 .readEntity(APIJobCreatedResponse.class)
@@ -217,8 +218,17 @@ public final class TestJobsAPI {
     }
 
     private void waitUntilJobTerminates(JobId jobId) throws InterruptedException {
-        // TODO: Use websocket hooks instead?
-        sleep(200);
+        int maxAttempts = 50;
+        while (maxAttempts-- > 0) {
+            final APIJobDetails resp =
+                    generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId)).get().readEntity(APIJobDetails.class);
+            if (resp.latestStatus().isFinal()) {
+                break;
+            } else {
+                sleep(50);
+            }
+        }
+
     }
 
     @Test
