@@ -24,7 +24,7 @@ microservices.
 - [HTTP API](#http-api)
 
 
-# <a name="why-jobson"></a> Why Jobson?
+# <a name="why-jobson"></a> Why Jobson
 
 This scenario is all too familiar:
 

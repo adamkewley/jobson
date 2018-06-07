@@ -1,10 +1,10 @@
 #!/bin/bash
 
+set -e
+
 VERSION=$1
 
 cd target
-
-tar -xf jobson-$VERSION-bin.tar.gz
 
 cat <<EOF > jobson
 #!/bin/bash
@@ -25,5 +25,6 @@ fpm \
     --url "https://github.com/adamkewley/jobson" \
     --description "A web server that can turn command-line applications into a job system." \
     --license "Apache-2.0" \
-    jobson-$VERSION/jobson-$VERSION.jar=/usr/share/java/jobson-$VERSION.jar \
+    --architecture 'all' \
+    jobson-$VERSION.jar=/usr/share/java/jobson-$VERSION.jar \
     ./jobson=/usr/bin/jobson

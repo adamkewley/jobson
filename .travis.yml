@@ -7,21 +7,46 @@ branches:
   - /\d+.\d+.\d+/  # tagged versions
   - /\d+.\d+.\d+-staging/  # staging area for tagged releases
 
-before_deploy: 
-- gem install fpm  # install gem for creating OS packages
-- bash packaging/make-deb-pkg.sh $TRAVIS_TAG  # build OS packages
+before_install:
+- gem install fpm --version 1.10.0  # for creating OS packages
+
+env:
+  global:
+    # GH_TOKEN=...
+    secure: "Y1TAIbGjkgL9VAuVfCMepY3JvpkLzhqJ0yVQOsRZohN3Tm/6W3uc0c+AkAzmfrH8yuMtzT51NPytETc5xyIwNTWrFZsCxcu2mpiLhufQpmajWmq/pZ08jvnamsyrO8L33IYiz+mYTJiYdEXvCH657HdhVaXWtGhwyEXPEDxN6NxiX6gNxi+hDi30eJoljro3wfld2Me5sYQSkICF1W/gg7z/knG0am4NpIJJoJLnp3lVwFubLvBTOHq1lq/INctOmFSs46mM0QXqqfVTXuFjfzER+vf4zsS9/DQkYEQzsYrbb6YcdVI/m8llci8MphOZnmq/0e0X5rEu43s5WTEl2XaH5pgtGPPAKk5h6NgwuZWxBOfrjE5GLOJ81ZXhrtu4cjMb77U+I+L0xVDSXXJPBP5FhUyBO9wMwrJpW8Gmz6gIrPF1q+DC5BNm7c/2InTev0T6IotdlWM0JjpbSjtVsLlcAL7M7IaFP3PoEs+ruX2DCLLTKFPszphNvWfiDSCGf9pOcF3EXhmJN0UDBl5feves5xkOZ/2gHHuoZMk/4pVvmMpappMkBqVSI37oHu9C1WsMrv9awfBnEb8gj1/d9yM8oXMWXtgxyfdDo/4Of5BfFghsgMPq+7LXg3HYs8fCwb5ew4/qqWVesWAgInOwN0zT0X+G/SbAnj7LZxZ/mjg="
 
 deploy:
   provider: releases
   api_key:
-    secure: SI69iJp/8r8DhGxHmh7rqCpqDPbtPfQr26Zvk9cDDswVgIcziwUAD1M0oBCFT7TxERupg5N7Nf11vYN5g7TXPhIP6UXwGNnM2nGqTQp6K4vnvgrJk5ZdtKti97eVTDYlxZj363sZ9Mmn+pPYiiuQzqk7NzfjW2f0P2DXhWgIjgAioMopYF1cMxUN2pQ6NEH6UzNK0sT064A0JpYulIOi9EWhWgAiagsvk2mxvjcvQfyvJooSYU+DPEoDQN8Ly7Xe2PXXNnDeWFgTczcEoIGaAzJtVK6DFfbGq17BIcHh3e8Dy5Qjf4mAWUxY0BmVV4ZIDR5/v08rSGS4Su/vlg/LxNt0cWj1KPXPlWSqzyVGSZV1qDfXGqf7/KE8xM+WQpZLZUSgV3LNsitAjJ3X/0wepdPHniwJXj+vcCfoRd4KZcsKT5wLkSAQwh3smxZ6qEBIumFp6WHNs2nEL/T0cCx9Uw7hFSAMIe9ObSaEK3WecMF9rbX1opYqdPveQsNM4SSQ6k2f4lGOjX0bOWcBZlnkcrXOkEHxP/G40ng/V75wQEP9N2r4EMgcLMp+64pG2zg8suDZtx0nXxWQfD9PRcvuFtgpxNQ80DxgLkq53ju/afVsepeAInPL+NcFJPZPYgTjhBf4GIjuCTZFXk2rpraueYGk++brCPvJtnehdQjIkio=
+    secure: "IuTc3Q/ihO3BTSS9nCK3QLFC/24Oxm57TwLypftTsj8m/Npre5w35OzgGLWGcvxXNEEhDL3W/cQ2seidcCKFdrxjv9QySEkK9WtJ1kz8MzYzhV2bXlFqgKi0vVMkeEjc08H2CGPX9x3dlkHY3HBeixOY08RVhb1JEf1/igW9cjV9LG+W4zFVqlmp/3hSB2XRXezof0ezDWJtlMR7t0yOGQ25GvQq2XULm/bz8jf/quEO3I7Gr0cwPk6gw7qD7sdXLZ6qCnawVjQXnxd6aJAg66hkEsFC68R/+r0eitZKa9n1U7dWRkf8QB72NVUgPcCWmFW4iIld/bZFsN5o6CcvRMbRxoT9bDzZG6qUAaggt1WcffjpE9CGnz/kM5uvzDV7gPFdf7yKwoe1cuanrxk3HWpUPK5cEKpaFexjTzMHowo7iRuOIuXpK26zPNKf70KTa6fILCa4TQ27vjnWw3mEkoC8dYq1t4pmdvGR7u7UjrNm8HI2dOoEtktiDXhehkk9PFT+yvo6XR1h7vKjiEA2s8tXCsgfCgmAELqSIHT+Tba4smCjEKhItU56V8QzxAdLVHD65yQ5zK7w+3HAeoPd2CdZvgvRkvttV/l31zKrb9BeIadgqaVtNtfrZbwJh9fmaRcgpODI+wrFdCRrHZH58C/L5owYg2KpaWMfG+Y9WVA="
 
   skip_cleanup: true
 
-  file: 
-  - target/jobson_${TRAVIS_TAG}_amd64.deb
-  - target/jobson-${TRAVIS_TAG}-bin.tar.gz
+  file:
+  - jobson/target/jobson-${TRAVIS_TAG}.jar
+  - jobson-deb/target/jobson_${TRAVIS_TAG}_all.deb
+  - jobson-nix/target/jobson-nix-${TRAVIS_TAG}.tar.gz
+  - jobson-docs/target/jobson-docs-${TRAVIS_TAG}.tar.gz
 
   on:
     tags: true
 
+# Update documentation site
+after_deploy: |
+  set -e
+
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
+
+  git fetch origin gh-pages:gh-pages
+  git worktree add gh-pages gh-pages
+
+  rm -rf gh-pages/*
+  tar xfz jobson-docs/target/jobson-docs-${TRAVIS_TAG}.tar.gz
+  mv jobson-docs-${TRAVIS_TAG}/* gh-pages
+
+  cd gh-pages
+  git add -A
+  git commit -m "Updated docs for ${TRAVIS_TAG}"
+  git remote add origin-pages https://${GH_TOKEN}@github.com/adamkewley/jobsond.git > /dev/null 2>&1
+  git push origin-pages gh-pages

@@ -9,7 +9,7 @@
     <files>
         <!-- This is produced by maven-shade (fat jar) -->
         <file>
-            <source>${build.directory}/${artifactId}-${version}.jar</source>
+            <source>../jobson/target/jobson-${version}.jar</source>
             <outputDirectory>/</outputDirectory>
         </file>
 
