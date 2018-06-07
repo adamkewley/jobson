@@ -151,10 +151,6 @@ public final class TestJobsAPI {
 
         final JobId jobId = response.readEntity(APIJobCreatedResponse.class).getId();
 
-        final APIJobDetails APIJobDetailsDetails = fetchJobDetails(jobId);
-
-        assertThat(APIJobDetailsDetails.latestStatus()).isEqualTo(RUNNING);
-
         final Invocation.Builder abortionRequest = generateAuthenticatedRequest(
                 RULE, jobResourceSubpath(jobId + "/abort"));
 
