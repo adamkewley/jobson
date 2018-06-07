@@ -21,6 +21,7 @@ package com.github.jobson.jobs;
 
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
+import com.github.jobson.config.RemoveAfterExecutionConfig;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.scripting.functions.JoinFunction;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
 
 import static com.github.jobson.Helpers.*;
 import static com.github.jobson.jobs.JobStatus.FINISHED;
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -100,10 +102,17 @@ public final class LocalJobExecutor implements JobExecutor {
 
     private final Path workingDirs;
     private final long delayBeforeForciblyKillingJobs;
+    private final boolean deleteWdAfterExecution;
 
 
 
     public LocalJobExecutor(Path workingDirs, long delayBeforeForciblyKillingJobs) throws FileNotFoundException {
+        this(workingDirs, delayBeforeForciblyKillingJobs, new RemoveAfterExecutionConfig());
+    }
+
+    public LocalJobExecutor(Path workingDirs,
+                            long delayBeforeForciblyKillingJobs,
+                            RemoveAfterExecutionConfig wdRemovalConfig) throws FileNotFoundException {
         requireNonNull(workingDirs);
         if (!workingDirs.toFile().exists())
             throw new FileNotFoundException(workingDirs + ": does not exist");
@@ -112,6 +121,7 @@ public final class LocalJobExecutor implements JobExecutor {
 
         this.workingDirs = workingDirs;
         this.delayBeforeForciblyKillingJobs = delayBeforeForciblyKillingJobs;
+        this.deleteWdAfterExecution = wdRemovalConfig.isEnabled();
     }
 
 
@@ -180,6 +190,14 @@ public final class LocalJobExecutor implements JobExecutor {
             jobExecutionResult = new JobExecutionResult(exitStatus, outputs);
         } else {
             jobExecutionResult = new JobExecutionResult(exitStatus);
+        }
+
+        if (this.deleteWdAfterExecution) {
+            try {
+                Files.delete(workingDir);
+            } catch (IOException e) {
+                log.warn(format("Tried to remove a working directory, %s, but couldn't: %s", workingDir, e.getMessage()));
+            }
         }
 
         promise.complete(jobExecutionResult);

@@ -160,7 +160,8 @@ public final class App extends Application<ApplicationConfig> {
         log.debug("Creating job executor");
         final JobExecutor jobExecutor = new LocalJobExecutor(
                 workingDirsPath,
-                applicationConfig.getExecution().getDelayBeforeForciblyKillingJobs().toMillis());
+                applicationConfig.getExecution().getDelayBeforeForciblyKillingJobs().toMillis(),
+                applicationConfig.getWorkingDirs().getRemoveAfterExecutionConfig());
 
         log.debug("Creating job DAO");
         final JobDAO jobDAO = new FilesystemJobsDAO(jobsPath, () -> generateRandomBase36String(10));

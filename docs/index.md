@@ -507,10 +507,26 @@ standard YAML file.
 | Key | Default | Description |
 | `specs:` | `specs/` | Path to the job specs directory |
 | `jobs:` | `jobs/` | Path to the jobs directory |
-| `workingDirs:` | `wds/` | Path to the temporary working directories |
+| `workingDirs:` | (see below) | Path to the temporary working directories |
 | `users:` | (see below) | An object containing the users configuration |
 | `authentication:` | (see below) | An object containing the authentication configuration |
 | `execution:` | (see below) | An object containing the execution configuration |
+
+
+## `workingDirs`: Working Directory Configuration
+
+Configuration for working directories. Each process spawned by Jobson launches in its own working
+directory.
+
+| Key | Default | Description |
+| `dir:` | `wds/` | Path the directory that holds working directories |
+| `removeAfterExecution:` | (see below) | Configuration for removing working directories after execution |
+
+
+### `removeAfterExecution`: Policy for Removing Working Directories
+
+| Key | Default | Description |
+| `enabled:` | `true` | Indicates whether Jobson should remove working directories after execution |
 
 
 ## `users:`: Users Configuration
