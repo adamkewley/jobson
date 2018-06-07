@@ -40,13 +40,13 @@ public final class DiskSpaceHealthCheck extends HealthCheck {
     protected Result check() throws Exception {
         final long usableSpace = f.getUsableSpace();
         if (usableSpace < minSpaceThreshold) {
-            return Result.healthy(usableSpace + ": bytes remain at " + f.getAbsolutePath());
-        } else {
             return Result.unhealthy(format(
                     "Out of disk space: only %s bytes remain in %s. The threshold for this warning is: %s",
                     usableSpace,
                     f.getAbsolutePath(),
                     minSpaceThreshold));
+        } else {
+            return Result.healthy(usableSpace + ": bytes remain at " + f.getAbsolutePath());
         }
     }
 }
