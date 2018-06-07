@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 
 import static com.github.jobson.Helpers.*;
 import static com.github.jobson.jobs.JobStatus.FINISHED;
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -101,6 +102,7 @@ public final class LocalJobExecutor implements JobExecutor {
 
     private final Path workingDirs;
     private final long delayBeforeForciblyKillingJobs;
+    private final boolean deleteWdAfterExecution;
 
 
 
@@ -119,6 +121,7 @@ public final class LocalJobExecutor implements JobExecutor {
 
         this.workingDirs = workingDirs;
         this.delayBeforeForciblyKillingJobs = delayBeforeForciblyKillingJobs;
+        this.deleteWdAfterExecution = wdRemovalConfig.isEnabled();
     }
 
 
@@ -187,6 +190,14 @@ public final class LocalJobExecutor implements JobExecutor {
             jobExecutionResult = new JobExecutionResult(exitStatus, outputs);
         } else {
             jobExecutionResult = new JobExecutionResult(exitStatus);
+        }
+
+        if (this.deleteWdAfterExecution) {
+            try {
+                Files.delete(workingDir);
+            } catch (IOException e) {
+                log.warn(format("Tried to remove a working directory, %s, but couldn't: %s", workingDir, e.getMessage()));
+            }
         }
 
         promise.complete(jobExecutionResult);
