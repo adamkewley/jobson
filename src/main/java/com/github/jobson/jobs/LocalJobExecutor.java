@@ -21,6 +21,7 @@ package com.github.jobson.jobs;
 
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
+import com.github.jobson.config.RemoveAfterExecutionConfig;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.scripting.functions.JoinFunction;
@@ -104,6 +105,12 @@ public final class LocalJobExecutor implements JobExecutor {
 
 
     public LocalJobExecutor(Path workingDirs, long delayBeforeForciblyKillingJobs) throws FileNotFoundException {
+        this(workingDirs, delayBeforeForciblyKillingJobs, new RemoveAfterExecutionConfig());
+    }
+
+    public LocalJobExecutor(Path workingDirs,
+                            long delayBeforeForciblyKillingJobs,
+                            RemoveAfterExecutionConfig wdRemovalConfig) throws FileNotFoundException {
         requireNonNull(workingDirs);
         if (!workingDirs.toFile().exists())
             throw new FileNotFoundException(workingDirs + ": does not exist");
