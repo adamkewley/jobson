@@ -1,0 +1,30 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 0
+  adminConnectors:
+  - type: http
+    port: 0
+
+specs:
+  dir: $jobSpecDir
+
+jobs:
+  dir: $jobDataDir
+
+workingDirs:
+  dir: $workingDirsDir
+
+  removeAfterExecution:
+    enabled: true
+
+users:
+  file: $userFile
+
+authentication:
+  type: basic
+
+
+execution:
+  maxConcurrentJobs: 10
+  delayBeforeForciblyKillingJobs: PT3S  # ISO 8601
