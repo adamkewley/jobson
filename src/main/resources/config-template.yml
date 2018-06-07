@@ -7,6 +7,9 @@ jobs:
 workingDirs:
   dir: wds
 
+  removeAfterExecution:
+    enabled: false
+
 users:
   file: users
 
