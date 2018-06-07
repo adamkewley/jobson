@@ -22,7 +22,9 @@ package com.github.jobson.systemtests;
 import com.github.jobson.App;
 import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
+import com.github.jobson.api.v1.APIJobDetails;
 import com.github.jobson.config.ApplicationConfig;
+import com.github.jobson.jobs.JobId;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.systemtests.httpapi.TestJobSpecsAPI;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -35,7 +37,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.github.jobson.Constants.HTTP_JOBS_PATH;
 import static io.dropwizard.testing.FixtureHelpers.fixture;
+import static java.lang.Thread.sleep;
 
 public final class SystemTestHelpers {
 
@@ -113,5 +117,23 @@ public final class SystemTestHelpers {
 
     public static void authenticate(Invocation.Builder builder, String username, String password) {
         builder.header("Authorization", "Basic " + Base64.encodeAsString(username + ":" + password));
+    }
+
+    public static void waitUntilJobTerminates(DropwizardAppRule<ApplicationConfig> rule, JobId jobId) throws InterruptedException {
+        int maxAttempts = 50;
+        while (maxAttempts-- > 0) {
+            final APIJobDetails resp =
+                    generateAuthenticatedRequest(rule, jobResourceSubpath(jobId)).get().readEntity(APIJobDetails.class);
+            if (resp.latestStatus().isFinal()) {
+                break;
+            } else {
+                Thread.sleep(50);
+            }
+        }
+
+    }
+
+    public static String jobResourceSubpath(Object subpath) {
+        return HTTP_JOBS_PATH + "/" + subpath.toString();
     }
 }

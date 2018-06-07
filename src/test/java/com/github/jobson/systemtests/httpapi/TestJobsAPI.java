@@ -21,11 +21,11 @@ package com.github.jobson.systemtests.httpapi;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.jobson.TestHelpers;
 import com.github.jobson.api.v1.*;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
-import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.systemtests.SystemTestHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -144,10 +144,6 @@ public final class TestJobsAPI {
         readJSON(detailsResponse.readEntity(String.class), APIJobDetails.class);
     }
 
-    private String jobResourceSubpath(Object subpath) {
-        return HTTP_JOBS_PATH + "/" + subpath.toString();
-    }
-
     @Test
     public void testCanAbortAJob() throws IOException {
         final Response response = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
@@ -218,17 +214,7 @@ public final class TestJobsAPI {
     }
 
     private void waitUntilJobTerminates(JobId jobId) throws InterruptedException {
-        int maxAttempts = 50;
-        while (maxAttempts-- > 0) {
-            final APIJobDetails resp =
-                    generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId)).get().readEntity(APIJobDetails.class);
-            if (resp.latestStatus().isFinal()) {
-                break;
-            } else {
-                sleep(50);
-            }
-        }
-
+        SystemTestHelpers.waitUntilJobTerminates(RULE, jobId);
     }
 
     @Test
