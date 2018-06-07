@@ -20,6 +20,7 @@
 package com.github.jobson.jobs.execution;
 
 import com.github.jobson.TestHelpers;
+import com.github.jobson.config.RemoveAfterExecutionConfig;
 import com.github.jobson.jobs.JobEventListeners;
 import com.github.jobson.jobs.JobExecutionResult;
 import com.github.jobson.jobs.JobExecutor;
@@ -147,5 +148,23 @@ public final class LocalJobExecutorTest extends JobExecutorTest {
 
         assertThat(Files.isSymbolicLink(destination)).isTrue();
         assertThat(Files.readSymbolicLink(destination)).isEqualTo(sourceFile);
+    }
+
+    @Test
+    public void testWdRemovalConfigEnabledCausesWorkingDirectoriesToBeRemovedAfterTheJobCompletes() throws IOException, InterruptedException, ExecutionException, TimeoutException {
+        final Path workingDir = Files.createTempDirectory(LocalJobExecutorTest.class.getSimpleName());
+
+        final RemoveAfterExecutionConfig config = new RemoveAfterExecutionConfig(true);
+
+        final LocalJobExecutor jobExecutor =
+                new LocalJobExecutor(workingDir, DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_MILLISECONDS, config);
+
+        final PersistedJob req = createStandardRequest();
+
+        final CancelablePromise<JobExecutionResult> p = jobExecutor.execute(req, JobEventListeners.createNullListeners());
+
+        p.get();
+
+        assertThat(workingDir.resolve(req.getId().toString()).toFile().exists()).isFalse();
     }
 }

@@ -28,6 +28,16 @@ public final class RemoveAfterExecutionConfig {
     @NotNull
     private boolean enabled = false;
 
+    /**
+     * @deprecated Used by JSON deserializer
+     */
+    @Deprecated
+    public RemoveAfterExecutionConfig() {}
+
+    public RemoveAfterExecutionConfig(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public boolean isEnabled() {
         return enabled;
     }

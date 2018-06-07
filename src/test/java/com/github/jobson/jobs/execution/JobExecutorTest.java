@@ -140,6 +140,10 @@ public abstract class JobExecutorTest {
                 .withSpec(existingSpec.withExecutionConfiguration(newExecutionConfig));
     }
 
+    protected static PersistedJob createStandardRequest() {
+        return STANDARD_REQUEST;
+    }
+
 
     static {
         STANDARD_REQUEST = readJobRequestFixture("fixtures/job/execution/valid-persisted-request.json");
