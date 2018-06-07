@@ -75,9 +75,9 @@ public final class Constants {
     public static final String DEMO_SPEC_DIRNAME = "demo";
 
     public static final String FILESYSTEM_JOBS_DAO_DISK_SPACE_HEALTHCHECK = "JobsDiskHasSufficientSpace";
-    public static final long FILESYSTEM_JOBS_DAO_DISK_SPACE_WARNING_THRESHOLD_IN_BYTES = 1024;
+    public static final long FILESYSTEM_JOBS_DAO_DISK_SPACE_WARNING_THRESHOLD_IN_BYTES = 500000000;  // 0.5 GB
     public static final String FILESYSTEM_SPECS_DAO_DISK_SPACE_HEALTHCHECK = "SpecsDiskHasSufficientSpace";
-    public static final long FILESYSTEM_SPECS_DAO_DISK_SPACE_WARNING_THRESHOLD_IN_BYTES = 1024;
+    public static final long FILESYSTEM_SPECS_DAO_DISK_SPACE_WARNING_THRESHOLD_IN_BYTES = 500000000;  // 0.5 GB
     public static final String JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHCHECK = "JobManagerJobQueue";
     public static final long JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD = 10_000;
 
