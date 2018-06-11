@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Jobson Documentation</title>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,
+                                   maximum-scale=1, user-scalable=no">
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+  </head>
+
+  <body>
+    <h1>Jobson</h1>
+    <p>Jobson is a webserver that turns command-line applications into a job
+system with a standard REST and websocket API. It’s designed to
+automate the most common steps required to set up a web service,
+allowing developers to focus on making standard command-line
+applications.</p>
+
+<p>Jobson was designed to be flexible about changing data types and
+implementation languages. Those attributes also make it a useful
+component in rapidly-evolving batch systems, DevOps platforms, and
+microservices.</p>
+
+<ul>
+  <li><a href="https://github.com/adamkewley/jobson">GitHub</a></li>
+  <li><a href="https://github.com/adamkewley/jobson">Install Guide</a></li>
+  <li><a href="#why-jobson">Why Jobson?</a></li>
+  <li><a href="#getting-started">Getting Started</a></li>
+  <li><a href="#configuration">Configuration</a></li>
+  <li><a href="#job-specs">Job Specs</a></li>
+  <li><a href="#http-api">HTTP API</a></li>
+</ul>
+
+<h1 id="-why-jobson"><a name="why-jobson"></a> Why Jobson</h1>
+
+<p>This scenario is all too familiar:</p>
+
+<ul>
+  <li>
+    <p>An {application} is made that takes {something} and produces
+{something else}.</p>
+  </li>
+  <li>
+    <p>To make {application} easier to distribute, a {webapp} is developed
+around it</p>
+  </li>
+  <li>
+    <p>Implementing {webapp} properly (auth, queueing, persistence,
+multithreading, etc.) takes nearnly as much time as it took to
+develop {application}.</p>
+  </li>
+  <li>
+    <p>Any changes to {application} need to be propagated to {webapp},
+which can become tedious</p>
+  </li>
+</ul>
+
+<p>Most of {webapp}’s development is a pilgimage to familar concerns:
+security, persistence, distribution, and concurrency. Those things are
+<em>sometimes</em> important—only mere mortals write webapps that handle a
+<em>puny</em> 5k concurrent connections—but <em>usually</em> unimporant and
+repetitive.</p>
+
+<p>Jobson tries to automate the process of creating a webapp from an
+existing application. It uses three primary assumptions to do so:</p>
+
+<ul>
+  <li>
+    <p><strong>It assumes your application can be expressed as a standard
+non-interactive command-line program</strong>: Jobson collects <em>all</em> user
+inputs via the web API, then runs your application, then collects
+outputs. It does not interactively forward inputs during
+runtime—that would prevent retries, caching, and queueing—and does
+not perform any trendy magic tricks—noone likes debugging magic
+tricks in production.</p>
+  </li>
+  <li>
+    <p><strong>It assumes you don’t want to write much code</strong>: Jobson does almost
+everything with standard plaintext configuration files. Some
+deployments <em>occasionally</em> benefit from basic scripts written in
+whatever language you’re familar with (for cronjobs, usually).</p>
+  </li>
+  <li>
+    <p><strong>It assumes you don’t <em>need</em> web-scale</strong>: Jobson runs arbitrary
+applications as seperate processes because it’s nice to be able to
+write applications in <em>any</em> language without having to worry about
+threading issues. It uses plaintext files and the filesystem because
+they’re easier to work with than a database. These things make
+Jobson “slow” when compared with high-performance web stacks;
+however, it’s fast enough for the vast majority of use cases.</p>
+  </li>
+</ul>
+
+<p>If you think those assumptions are suitable for your needs, then
+Jobson might be a great tool for you - in many cases, it can be good
+enough to prevent another {webapp} from being made for a standard
+batch-oriented {application}.</p>
+
+<h1 id="-getting-started"><a name="getting-started"></a> Getting Started</h1>
+
+<p>This guide assumes you have
+<a href="https://github.com/adamkewley/jobson">installed Jobson</a>.</p>
+
+<h2 id="viewing-subcommands">Viewing Subcommands</h2>
+
+<p>Jobson’s command-line interface is where setup, debugging, and bootup
+happens. Those commands can be found from a terminal:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson <span class="nt">--help</span>
+usage: java <span class="nt">-jar</span> jobson-0.0.11.jar
+       <span class="o">[</span><span class="nt">-h</span><span class="o">]</span> <span class="o">[</span><span class="nt">-v</span><span class="o">]</span> <span class="o">{</span>server,check,new,generate,users,validate,run<span class="o">}</span> ...
+
+positional arguments:
+  <span class="o">{</span>server,check,new,generate,users,validate,run<span class="o">}</span>
+                         available commands
+
+optional arguments:
+  <span class="nt">-h</span>, <span class="nt">--help</span>             show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  <span class="nt">-v</span>, <span class="nt">--version</span>          show the application version and <span class="nb">exit</span>
+</code></pre></div></div>
+
+<p>The same pattern applies to subcommands:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson new <span class="nt">--help</span>
+usage: java <span class="nt">-jar</span> jobson-0.0.11.jar
+       new <span class="o">[</span><span class="nt">--demo</span><span class="o">]</span> <span class="o">[</span><span class="nt">-h</span><span class="o">]</span>
+
+generate a new jobson deployment <span class="k">in </span>the current working directory
+
+optional arguments:
+  <span class="nt">--demo</span>                 Generate application with a demo spec <span class="o">(</span>default: <span class="nb">false</span><span class="o">)</span>
+  <span class="nt">-h</span>, <span class="nt">--help</span>             show this <span class="nb">help </span>message and <span class="nb">exit</span>
+</code></pre></div></div>
+
+<h2 id="create-a-jobson-deployment">Create a Jobson Deployment</h2>
+
+<p>Jobson is designed to be driven exclusively by standard filesystem
+structures and plaintext files. The <code class="highlighter-rouge">new</code> command generates a
+barebones deployment containing those files:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson new <span class="nt">--demo</span>
+create    config.yml
+create    users
+create    specs
+create    specs/demo
+create    specs/demo/spec.yml
+create    specs/demo/demo-script.sh
+create    specs/demo/demo-dependency
+create    <span class="nb">jobs
+</span>create    wds
+</code></pre></div></div>
+
+<p>Details about the Jobson’s directory structure can be found
+<a href="#dir-structure">here</a>.</p>
+
+<h2 id="generate-a-job-spec">Generate a Job Spec</h2>
+
+<p><a href="#job-specs">Job specs</a> are standard YAML files that describe your
+application. They are held in the <code class="highlighter-rouge">specs/</code> folder
+(<a href="#configuration">details</a>). The <code class="highlighter-rouge">generate spec</code> command generates a
+new job spec:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson generate spec foo
+create    specs/foo
+create    specs/foo/spec.yml
+</code></pre></div></div>
+
+<p>For the sake of this guide, lets assume you want Jobson to host a
+python script takes two inputs, prints something to the standard
+output (via <code class="highlighter-rouge">print</code>), and writes an output file:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># specs/foo/foo.py</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">first_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">second_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">first_name</span> <span class="o">+</span> <span class="s">" "</span> <span class="o">+</span> <span class="n">second_name</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">"output.txt"</span><span class="p">,</span> <span class="s">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">"Some output data</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>In order to turn this script into a web API, Jobson needs a job spec
+that describes the script. Lets edit <code class="highlighter-rouge">specs/foo/spec.yml</code> to do that:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># specs/foo/spec.yml</span>
+
+<span class="na">name</span><span class="pi">:</span> <span class="s">A python script in the Jobson documentation</span>
+<span class="na">description</span><span class="pi">:</span> <span class="pi">&gt;</span>
+  
+  <span class="no">A job that prints the provided first and second name, followed by</span>
+  <span class="no">writing some text to an output file.</span>
+
+<span class="na">expectedInputs</span><span class="pi">:</span>
+
+<span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">firstName</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">First Name</span>
+  
+<span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">secondName</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">Second Name</span>
+  
+<span class="na">execution</span><span class="pi">:</span>
+  <span class="na">application</span><span class="pi">:</span> <span class="s">python</span>
+  <span class="na">arguments</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">foo.py</span>
+  <span class="pi">-</span> <span class="s">${inputs.firstName}</span>
+  <span class="pi">-</span> <span class="s">${inputs.secondName}</span>
+  <span class="na">dependencies</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">source</span><span class="pi">:</span> <span class="s">foo.py</span>
+    <span class="na">target</span><span class="pi">:</span> <span class="s">foo.py</span>
+
+<span class="na">expectedOutputs</span><span class="pi">:</span>
+<span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">outputFile</span>
+  <span class="na">path</span><span class="pi">:</span> <span class="s">output.txt</span>
+</code></pre></div></div>
+
+<p>The spec gives Jobson:</p>
+
+<ul>
+  <li>
+    <p>Basic documentation of the application</p>
+  </li>
+  <li>
+    <p>Expected inputs and their types</p>
+  </li>
+  <li>
+    <p>A description of how the application is executed</p>
+  </li>
+  <li>
+    <p>Expected outputs produced by the application</p>
+  </li>
+</ul>
+
+<p>Further details about what’s possible in job specs can be found
+<a href="#job-specs">here</a>.</p>
+
+<h2 id="validate-the-job-spec">Validate the Job Spec</h2>
+
+<p>The <code class="highlighter-rouge">foo</code> job spec can be validated by Jobson to check for basic
+syntactical errors. The <code class="highlighter-rouge">validate spec</code> command will exit with no
+output if your job spec is syntactically valid. Run it from your main
+jobson deployment folder:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson validate spec foo
+<span class="nv">$ </span>
+</code></pre></div></div>
+
+<h2 id="generate-a-request-against-the-job-spec">Generate a Request Against the Job Spec</h2>
+
+<p>Running an application via Jobson is different from running an
+application from the command line (see <a href="#job-specs">discussion</a>), so
+we need to generate a job request. The <code class="highlighter-rouge">generate request</code> command
+generates a standard JSON request against a spec:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson generate request foo
+<span class="o">{</span>
+  <span class="s2">"spec"</span> : <span class="s2">"foo"</span>,
+  <span class="s2">"name"</span> : <span class="s2">"Adipisci voluptatum vel dolore omnis delectus."</span>,
+  <span class="s2">"inputs"</span> : <span class="o">{</span>
+    <span class="s2">"firstName"</span> : <span class="s2">"Et sint qui nam tempore."</span>,
+    <span class="s2">"secondName"</span> : <span class="s2">"Maxime dolores aut est."</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Jobson has generated placeholder text (e.g. <code class="highlighter-rouge">Et sint qui nam
+tempore.</code>) for the inputs. The generated JSON matches the structure of
+requests as sent via the Jobson HTTP API (specifically, <code class="highlighter-rouge">POST
+/v1/jobs</code>).</p>
+
+<h2 id="run-a-job-request-against-the-job-spec">Run a Job Request Against the Job Spec</h2>
+
+<p>Although the job spec is syntactically correct, it may still fail at
+runtime, so it’s good practice to run a request against the spec.</p>
+
+<p>The <code class="highlighter-rouge">run</code> command runs a job request locally:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson generate request foo <span class="o">&gt;</span> request.json
+<span class="nv">$ </span>jobson run request.json
+Et sint qui nam tempore. Maxime dolores aut est.
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">generate request</code> command generated lorem-ipsum text for
+<code class="highlighter-rouge">firstName</code> and <code class="highlighter-rouge">lastName</code>, which was forwarded into our python script
+(<code class="highlighter-rouge">foo.py</code>) and printed out.</p>
+
+<p>Although it isn’t obvious, the <code class="highlighter-rouge">run</code> command ran <code class="highlighter-rouge">request.json</code>
+through the entire Jobson stack in order to verify that nothing
+breaks. As a convenience feature, it redirected the the standard
+output, standard error, and exit code from the application back to the
+command-line, which lets you debug runtime errors more easily.</p>
+
+<p>We’ve now created a job spec, validated it, and ran it locally, all
+that’s left is to host it.</p>
+
+<h2 id="boot-the-server">Boot the Server</h2>
+
+<p>Jobson is ultimately a webserver that hosts a REST and websocket API
+for the applications that are described by job specs. With a working
+job spec in place, we’re ready to boot a server. The <code class="highlighter-rouge">serve</code> command
+should be ran from the jobson deployment folder:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson serve config.yml 
+<span class="c"># .</span>
+<span class="c"># .</span>
+<span class="c"># ...many log messages</span>
+</code></pre></div></div>
+
+<p>The server is then running, which you can verify with a HTTP tool such
+as <code class="highlighter-rouge">curl</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl localhost:8080/v1/
+<span class="o">{</span><span class="s2">"_links"</span>:<span class="o">{</span><span class="s2">"specs"</span>:<span class="o">{</span><span class="s2">"href"</span>:<span class="s2">"/v1/specs"</span><span class="o">}</span>,<span class="s2">"current-user"</span>:<span class="o">{</span><span class="s2">"href"</span>:<span class="s2">"/v1/users/current"</span><span class="o">}</span>,<span class="s2">"jobs"</span>:<span class="o">{</span><span class="s2">"href"</span>:<span class="s2">"/v1/jobs"</span><span class="o">}}}</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">request.json</code> generated for the <code class="highlighter-rouge">run</code> command is an entirely
+valid API request. Therefore, you can also <code class="highlighter-rouge">POST</code> it via the HTTP API:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl <span class="nt">--data</span> @request.json <span class="nt">-H</span> <span class="s1">'Content-Type: application/json'</span> localhost:8080/v1/jobs
+<span class="o">{</span><span class="s2">"id"</span>:<span class="s2">"svpj5ppevn"</span>,<span class="s2">"_links"</span>:<span class="o">{</span><span class="s2">"outputs"</span>:<span class="o">{</span><span class="s2">"href"</span>:<span class="s2">"/v1/jobs/svpj5ppevn/outputs"</span><span class="o">}</span>,<span class="s2">"inputs"</span>:<span class="o">{</span><span class="s2">"href"</span>:<span class="s2">"/v1/jobs/svpj5ppevn/inputs"</span><span class="o">}</span>,<span class="s2">"self"</span>:<span class="o">{</span><span class="s2">"href"</span>:<span class="s2">"/v1/jobs/svpj5ppevn"</span><span class="o">}</span>,<span class="s2">"spec"</span>:<span class="o">{</span><span class="s2">"href"</span>:<span class="s2">"/v1/jobs/svpj5ppevn/spec"</span><span class="o">}}}</span>
+</code></pre></div></div>
+
+<p>More details about the Jobson HTTP API are available
+<a href="#http-api">here</a>.</p>
+
+<p>There you have it: a standard HTTP + websocket API for <code class="highlighter-rouge">foo.py</code>. Now
+that a server is running, downstream clients can use the API to post
+job requests to the server, which will validate the request is valid
+(e.g. “it has a <code class="highlighter-rouge">firstName</code> string field”), run the application, and
+collect outputs - all while handling authentication, IDing,
+persistence, queueing, concurrency, etc.</p>
+
+<h2 id="whats-next">What’s Next?</h2>
+
+<p>Now that you’ve seen the general idea behind Jobson, there’s several
+steps you can take:</p>
+
+<ul>
+  <li>
+    <p><strong>Add a user interface</strong>: The
+<a href="https://github.com/adamkewley/jobson-ui">Jobson UI</a> project uses
+job specs to generate a website that can be used by anyone with a
+browser.</p>
+  </li>
+  <li>
+    <p><strong>Customize the server</strong>: See <a href="#configuration">Configuration documentation</a></p>
+  </li>
+  <li>
+    <p><strong>Learn about Job Specs</strong>: See <a href="#job-specs">Job Specs documentation</a></p>
+  </li>
+  <li>
+    <p><strong>Use the API</strong>: See <a href="#api">API Documentation</a></p>
+  </li>
+</ul>
+
+<h2 id="-configuration"><a name="configuration"></a> Configuration</h2>
+
+<p>Jobson is configured entirely through standard filesystem structures
+and plaintext files contained in the deployment directory. There are
+no surprise files hidden elsewhere (yet ;)).</p>
+
+<h3 id="configyml-main-configuration-file"><code class="highlighter-rouge">config.yml</code>: Main Configuration File</h3>
+
+<p>A standard YAML file that is used by many of Jobson’s commands
+(e.g. <code class="highlighter-rouge">serve</code>, <code class="highlighter-rouge">generate</code>). It contains everything you would expect a
+top-level configuration file to contain: data locations, server ports,
+authentication configuration, job queue behavior, etc.</p>
+
+<p>See <a href="#config-yml">config.yml</a> for more details.</p>
+
+<h3 id="specs-job-specs"><code class="highlighter-rouge">specs/</code>: Job Specs</h3>
+
+<p>A directory that contains the <a href="#job-specs">job specs</a> hosted by the
+Jobson server. Each subdirectory in <code class="highlighter-rouge">specs/</code> is a job spec hosted by
+Jobson. A job spec ID—as exposed via the Jobson API—is derived from
+the subdirectory’s name. For example, a job spec at
+<code class="highlighter-rouge">specs/foo/spec.yml</code> would result in <code class="highlighter-rouge">foo</code> being exposed via the
+Jobson API.</p>
+
+<h3 id="jobs-job-data"><code class="highlighter-rouge">jobs/</code>: Job Data</h3>
+
+<p>A directory that contains job data. The data associted with each job
+request (inputs, timestamps, outputs) is persisted here under a
+subdirectory named <code class="highlighter-rouge">{job-id}</code>.</p>
+
+<p><strong>Note:</strong> Although job folders are designed to be easy for 3rd-party
+  scripts to read, their structure is not yet stable. Don’t go
+  building something big on the assumption that they are stable.</p>
+
+<h3 id="wds-temporary-working-directories"><code class="highlighter-rouge">wds/</code>: Temporary Working Directories</h3>
+
+<p>A directory that contains runtime working directories. Jobson
+generates a unique job ID for each successful job request. The working
+directory used at runtime by the application is persisted in this
+directory under a subdirectory named <code class="highlighter-rouge">{job-id}</code>.</p>
+
+<p>Before a job executes, Jobson creates a clean working directory and
+copies all dependencies, file arguments, etc. into it. Jobson then
+runs the application in that working directory. This execution model
+helps support:</p>
+
+<ul>
+  <li>
+    <p><strong>Job concurrency</strong>: each job gets its own working directory, so
+concurrent applications are less likely to accidently clobber
+eachother’s temporary files and outputs.</p>
+  </li>
+  <li>
+    <p><strong>Debugging</strong>: If a job fails, a developer can inspect the working
+directory used by that particular job.</p>
+  </li>
+</ul>
+
+<p>Jobson does not need a working directory after an application has
+finised executing. After finishing, Jobson copies any outputs (as
+specified in the <a href="#job-specs">job spec</a>) to the <code class="highlighter-rouge">jobs/</code> folder.</p>
+
+<h3 id="users-authorized-system-users"><code class="highlighter-rouge">users</code>: Authorized System Users</h3>
+
+<p>A plaintext file that contains users authorized to use the Jobson API
+when <code class="highlighter-rouge">basic</code> authorization (see configuration documentation) is
+enabled.</p>
+
+<p>This file should not be edited directly. Instead, the <code class="highlighter-rouge">users</code> command
+should be used to add or modify entries in the file.</p>
+
+<h2 id="job-specs"><a id="job-specs"></a>Job Specs</h2>
+
+<p>The <code class="highlighter-rouge">spec.yml</code> file is a standard YAML file that describes the
+application. Jobson uses job specs to expose the application via its
+REST and websocket API. It also uses them to boot the application and
+collect + persist the application’s outputs.</p>
+
+<p>Job specs are necessary because web applications are structured
+differently from command-line applications. There’s no easy way to
+automatically translate between the two interfaces robustly - any
+attempt to do so would be thwarted by an unusual command-line
+interface.</p>
+
+<p>For example, python scripts can be ran by providing a python script to
+the <code class="highlighter-rouge">python</code> application, followed by any arguments that script
+uses. This pattern (application + arguments) is standard for
+command-line applications. By contrast, web requests typically have a
+structured payloads (e.g. “A JSON object containing a <code class="highlighter-rouge">firstName</code>
+string and <code class="highlighter-rouge">lastName</code> string).</p>
+
+<p>Application arguments need to be <em>forwarded</em> from the
+<code class="highlighter-rouge">expectedInputs</code> (which is what Jobson “asks” for via its API) to the
+<code class="highlighter-rouge">execution</code> (which is what the application needs).</p>
+
+<p>Lets look at the demo spec generated above (<code class="highlighter-rouge">specs/demo/spec.yml</code>):</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Demo Job Spec</span>
+
+<span class="na">description</span><span class="pi">:</span> <span class="pi">&gt;</span>
+
+  <span class="no">A demo job spec generated when creating a new Jobson deployment. Try it out!</span>
+  
+<span class="na">expectedInputs</span><span class="pi">:</span>
+
+<span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">firstName</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">First Name</span>
+  <span class="na">description</span><span class="pi">:</span> <span class="s">Your first name</span>
+  <span class="na">default</span><span class="pi">:</span> <span class="s">Jeff</span>
+  
+<span class="c1"># ...some other inputs...</span>
+
+<span class="na">execution</span><span class="pi">:</span>
+
+  <span class="na">application</span><span class="pi">:</span> <span class="s">bash</span>
+  <span class="na">arguments</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">demo-script.sh</span>
+  <span class="pi">-</span> <span class="s">${inputs.firstName}</span>
+  <span class="pi">-</span> <span class="s">${toJSON(inputs.favoriteFoods)}</span>
+  <span class="pi">-</span> <span class="s">${toFile(toJSON(inputs.favoriteFoods))}</span>
+  <span class="pi">-</span> <span class="s">${inputs.favoriteColor}</span>
+
+  <span class="na">dependencies</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">source</span><span class="pi">:</span> <span class="s">demo-script.sh</span>
+    <span class="na">target</span><span class="pi">:</span> <span class="s">demo-script.sh</span>
+  <span class="pi">-</span> <span class="na">source</span><span class="pi">:</span> <span class="s">demo-dependency</span>
+    <span class="na">target</span><span class="pi">:</span> <span class="s">demo-dependency</span>
+
+<span class="na">expectedOutputs</span><span class="pi">:</span>
+
+<span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">output-from-script.jpg</span>
+  <span class="na">path</span><span class="pi">:</span> <span class="s">output</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">Output from Script</span>
+  <span class="na">description</span><span class="pi">:</span> <span class="s">An output generated by the runtime script</span>
+  <span class="na">mimeType</span><span class="pi">:</span> <span class="s">image/jpeg</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">embed</span><span class="pi">:</span> <span class="no">true</span>
+</code></pre></div></div>
+
+<p>TODO: Work in progress. Need documentation about supported data types,
+scripting functions, etc.</p>
+
+<h1 id="-configyml"><a name="config-yml"></a> <code class="highlighter-rouge">config.yml</code></h1>
+
+<p><code class="highlighter-rouge">config.yml</code> is the top-level configuration file for Jobson. It is a
+standard YAML file.</p>
+
+<p><strong>Note</strong>: Relative paths are resolved relative to <code class="highlighter-rouge">config.yml</code></p>
+
+<h2 id="top-level-fields">Top-Level Fields</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">specs:</code></td>
+      <td><code class="highlighter-rouge">specs/</code></td>
+      <td>Path to the job specs directory</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">jobs:</code></td>
+      <td><code class="highlighter-rouge">jobs/</code></td>
+      <td>Path to the jobs directory</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">workingDirs:</code></td>
+      <td>(see below)</td>
+      <td>Path to the temporary working directories</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">users:</code></td>
+      <td>(see below)</td>
+      <td>An object containing the users configuration</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">authentication:</code></td>
+      <td>(see below)</td>
+      <td>An object containing the authentication configuration</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">execution:</code></td>
+      <td>(see below)</td>
+      <td>An object containing the execution configuration</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="workingdirs-working-directory-configuration"><code class="highlighter-rouge">workingDirs</code>: Working Directory Configuration</h2>
+
+<p>Configuration for working directories. Each process spawned by Jobson launches in its own working
+directory.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">dir:</code></td>
+      <td><code class="highlighter-rouge">wds/</code></td>
+      <td>Path the directory that holds working directories</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">removeAfterExecution:</code></td>
+      <td>(see below)</td>
+      <td>Configuration for removing working directories after execution</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="removeafterexecution-policy-for-removing-working-directories"><code class="highlighter-rouge">removeAfterExecution</code>: Policy for Removing Working Directories</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">enabled:</code></td>
+      <td><code class="highlighter-rouge">true</code></td>
+      <td>Indicates whether Jobson should remove working directories after execution</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="users-users-configuration"><code class="highlighter-rouge">users:</code>: Users Configuration</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">file</code></td>
+      <td><code class="highlighter-rouge">users</code></td>
+      <td>Path to the <code class="highlighter-rouge">users</code> file. Used when <code class="highlighter-rouge">basic</code> authentication is enabled</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="authentication-authentication-configuration"><code class="highlighter-rouge">authentication:</code>: Authentication Configuration</h2>
+
+<p>The relevant <code class="highlighter-rouge">authentication:</code> fields change based on what <code class="highlighter-rouge">type:</code> of
+authentication that was specified. <code class="highlighter-rouge">guest</code> auth has different
+configuration requriements from <code class="highlighter-rouge">jwt</code> auth, for example.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">type:</code></td>
+      <td><code class="highlighter-rouge">basic</code></td>
+      <td>The type of authentication to use. Valid values are <code class="highlighter-rouge">basic</code>, <code class="highlighter-rouge">guest</code>, and <code class="highlighter-rouge">jwt</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">*</code></td>
+      <td>N/A</td>
+      <td>Other keys in <code class="highlighter-rouge">authentication:</code> depend on what <code class="highlighter-rouge">type:</code> was specified (see below)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="type-guest-guest-authentication-configuration"><code class="highlighter-rouge">type: guest</code>: Guest Authentication Configuration</h3>
+
+<p>With <code class="highlighter-rouge">guest</code> authentication, the server will accept all incoming and
+assign them a username of <code class="highlighter-rouge">guestUserName</code>.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td>guestUserName</td>
+      <td>guest</td>
+      <td>The username to assign to all requests</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="type-basic-http-basic-authentication-configuration"><code class="highlighter-rouge">type: basic</code>: HTTP Basic Authentication Configuration</h3>
+
+<p>With <code class="highlighter-rouge">basic</code> authentication, the server will use a HTTP Basic
+(<a href="https://tools.ietf.org/html/rfc7617">RFC 7617</a>) authentication
+scheme to collect a username+password pair from clients. Those
+credentials will then be authenticated against entries in Jobson’s
+<code class="highlighter-rouge">users</code> file (see TODO). Valid credentials shall be permitted to use
+the API. Invalid credentials shall be rejected.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td>realm</td>
+      <td>JobsonBasicAuth</td>
+      <td>The “realm” given during the basic auth scheme. For web-browser clients, this is usually displayed as a string in the popup dialog</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="type-jwt-stateless-json-web-token-jwt-authentication-configuration"><code class="highlighter-rouge">type: jwt</code>: Stateless JSON Web Token (JWT) Authentication Configuration</h3>
+
+<p>With <code class="highlighter-rouge">jwt</code> authentication, the server will use stateless JWTs
+(<a href="https://tools.ietf.org/html/rfc7519">RFC 7519</a>), which allow clients
+to authenticate themselves externally. When enabled, the Jobson server
+expects clients to set an <code class="highlighter-rouge">Authorization:</code> HTTP header with a value of
+<code class="highlighter-rouge">Bearer {json-web-token}</code>. The Jobson server will accept the
+credentials in the token provided the token was signed with
+<code class="highlighter-rouge">secretKey</code> (below). If the header is missing, or mis-signed, Jobson
+shall reject the request.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td>secretKey:</td>
+      <td>(no default)</td>
+      <td>Should be a base64-encoded string. The signature algorithm used by Jobson is “HS512” (from <a href="https://github.com/jwtk/jjwt/blob/master/src/main/java/io/jsonwebtoken/SignatureAlgorithm.java">here</a>), which is a HMAC, SHA-512 algorithm</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="execution-execution-configuration"><code class="highlighter-rouge">execution:</code>: Execution Configuration</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">maxConcurrentJobs:</code></td>
+      <td>10</td>
+      <td>The number of applications that Jobson is allowed to run concurrently. Jobs are queued if there there are currently more than this number of applications running.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">delayBeforeForciblyKillingJobs:</code></td>
+      <td>PT10S</td>
+      <td>An <a href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO 8601</a> duration string that specifies how long Jobson should wait after sending a <code class="highlighter-rouge">SIGINT</code> to an application (see <a href="http://man7.org/linux/man-pages/man7/signal.7.html">signals</a>) before sending a <code class="highlighter-rouge">SIGKILL</code>. A <code class="highlighter-rouge">SIGKILL</code> is guaranteed to kill an application, but might result in a harsh exit. Some applications can intelligently handle <code class="highlighter-rouge">SIGINT</code>s, allowing them to cleanup resources, but might take time to perform cleanup.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="-http-api"><a id="http-api"></a> Http API</h1>
+
+<p>TODO: The documentation is in the code as Swagger annotations but
+needs to be generated.</p>
+    
+  </body>
+</html>
