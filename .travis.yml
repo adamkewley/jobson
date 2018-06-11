@@ -48,5 +48,5 @@ after_deploy: |
   cd gh-pages
   git add -A
   git commit -m "Updated docs for ${TRAVIS_TAG}"
-  git remote add origin-pages https://${GH_TOKEN}@github.com/adamkewley/jobsond.git > /dev/null 2>&1
+  git remote add origin-pages https://${GH_TOKEN}@github.com/adamkewley/jobson.git > /dev/null 2>&1
   git push origin-pages gh-pages

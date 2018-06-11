@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.jobson</groupId>
         <artifactId>jobson-project</artifactId>
-        <version>0.0.16-dev1</version>
+        <version>0.0.16-dev2</version>
     </parent>
 
     <artifactId>jobson</artifactId>

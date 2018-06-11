@@ -1,8 +1,8 @@
 # jobson
 
-[Documentation](https://adamkewley.github.io/jobsond)
+[Documentation](https://adamkewley.github.io/jobson)
 
-[![Build Status](https://travis-ci.org/adamkewley/jobson.svg?branch=master)](https://travis-ci.org/adamkewley/jobsond)
+[![Build Status](https://travis-ci.org/adamkewley/jobson.svg?branch=master)](https://travis-ci.org/adamkewley/jobson)
 
 A webserver that turns command-line applications into a job system.
 Once hosted, [Jobson UI](https://github.com/adamkewley/jobson-ui) can then
@@ -50,7 +50,7 @@ jobson new --demo
 jobson serve config.yml
 ```
 
-See [documentation](https://adamkewley.github.io/jobsond) for a comprehensive
+See [documentation](https://adamkewley.github.io/jobson) for a comprehensive
 walkthrough.
 
 
