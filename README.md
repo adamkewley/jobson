@@ -57,20 +57,23 @@ walkthrough.
 
 # Build
 
-Building the core Jobson jar requires `maven` and `jdk` (8+). E.g. on debian
-distros:
+Building the Jobson jar for development requires `maven` and `jdk` (8+). For
+example:
 
 ```bash
 apt install maven openjdk-8-jdk
-cd jobson && mvn package
+
+mvn package
 ```
 
-Building the entire project (packages, documentation, etc.) additionally
-requires `ruby` and `bundler`, along with some gems. E.g. on debian:
+Building an entire release (packages, documentation, etc.) additionally
+requires `ruby` and `bundler`, along with some gems. For example:
 
 ```bash
 apt install maven openjdk-8-jdk ruby ruby-bundler
 gem install fpm
+
+mvn package -P release
 ```
 
 See `.travis.yml` for a "clean" build example.

@@ -10,6 +10,8 @@ branches:
 before_install:
 - gem install fpm --version 1.10.0  # for creating OS packages
 
+script: mvn test -B -P release
+
 env:
   global:
     # GH_TOKEN=...
@@ -33,8 +35,6 @@ deploy:
 
 # Update documentation site
 after_deploy: |
-  set -e
-
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "Travis CI"
 
