@@ -32,6 +32,7 @@ import com.github.jobson.specs.*;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.utils.CancelablePromise;
 import com.github.jobson.utils.SimpleCancelablePromise;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;
@@ -194,7 +195,7 @@ public final class LocalJobExecutor implements JobExecutor {
 
         if (this.deleteWdAfterExecution) {
             try {
-                Files.delete(workingDir);
+                FileUtils.deleteDirectory(workingDir.toFile());
             } catch (IOException e) {
                 log.warn(format("Tried to remove a working directory, %s, but couldn't: %s", workingDir, e.getMessage()));
             }
