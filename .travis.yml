@@ -10,7 +10,7 @@ branches:
 before_install:
 - gem install fpm --version 1.10.0  # for creating OS packages
 
-script: mvn test -B -P release
+script: mvn package -B -P release
 
 env:
   global:
