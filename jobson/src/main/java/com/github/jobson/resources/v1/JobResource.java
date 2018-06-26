@@ -47,6 +47,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.StreamingOutput;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -329,8 +330,14 @@ public final class JobResource {
             final BinaryData binaryData = maybeBinaryData.get();
 
             final StreamingOutput body = outputStream -> {
-                IOUtils.copyLarge(binaryData.getData(), outputStream);
-                binaryData.getData().close();
+                try {
+                    IOUtils.copyLarge(binaryData.getData(), outputStream);
+                } catch (IOException ex) {
+                    // This *usually* happens becuse the client closed the TCP
+                    // connection, which isn't *exceptional*.
+                } finally {
+                    binaryData.getData().close();
+                }
             };
 
             final Response.ResponseBuilder b =
