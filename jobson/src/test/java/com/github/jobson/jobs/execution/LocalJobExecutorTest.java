@@ -151,7 +151,9 @@ public final class LocalJobExecutorTest extends JobExecutorTest {
     }
 
     @Test
-    public void testWdRemovalConfigEnabledCausesWorkingDirectoriesToBeRemovedAfterTheJobCompletes() throws IOException, InterruptedException, ExecutionException, TimeoutException {
+    public void testWdRemovalConfigEnabledCausesWorkingDirectoriesToBeRemovedAfterTheJobCompletes() throws IOException, InterruptedException, TimeoutException {
+        // FIXME: This test is a bit of a hack to get around the job pipeline not being cleanly architected
+        // it lets the job run + finish, but then needs to wait a while (1 sec) for the wd cleanup to happen
         final Path workingDir = Files.createTempDirectory(LocalJobExecutorTest.class.getSimpleName());
 
         final RemoveAfterExecutionConfig config = new RemoveAfterExecutionConfig(true);
@@ -161,9 +163,19 @@ public final class LocalJobExecutorTest extends JobExecutorTest {
 
         final PersistedJob req = createStandardRequest();
 
-        final CancelablePromise<JobExecutionResult> p = jobExecutor.execute(req, JobEventListeners.createNullListeners());
+        // It's on a bg thread so that the job finalization can also get a chance to kick off
+        final Thread t = new Thread(() -> {
+            final CancelablePromise<JobExecutionResult> p = jobExecutor.execute(req, JobEventListeners.createNullListeners());
 
-        p.get();
+            try {
+                p.get();
+            } catch (Exception ex) {}
+        });
+
+        t.start();
+        t.join();
+
+        Thread.sleep(1000);
 
         assertThat(workingDir.resolve(req.getId().toString()).toFile().exists()).isFalse();
     }

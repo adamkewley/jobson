@@ -193,6 +193,8 @@ public final class LocalJobExecutor implements JobExecutor {
             jobExecutionResult = new JobExecutionResult(exitStatus);
         }
 
+        promise.complete(jobExecutionResult);
+
         if (this.deleteWdAfterExecution) {
             try {
                 FileUtils.deleteDirectory(workingDir.toFile());
@@ -200,8 +202,6 @@ public final class LocalJobExecutor implements JobExecutor {
                 log.warn(format("Tried to remove a working directory, %s, but couldn't: %s", workingDir, e.getMessage()));
             }
         }
-
-        promise.complete(jobExecutionResult);
     }
 
     private List<JobOutputResult> tryResolveJobOutputs(
