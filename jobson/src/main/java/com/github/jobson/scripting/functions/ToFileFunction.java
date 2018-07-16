@@ -40,7 +40,7 @@ public final class ToFileFunction implements FreeFunction {
     @Override
     public Object call(Object... args) {
         if (args.length != 1) {
-            throw new RuntimeException(format("asFile called with %s args (expects 1)", args.length));
+            throw new RuntimeException(format("toFile called with %s args (expects 1)", args.length));
         } else if (!(args[0] instanceof String)) {
             throw new RuntimeException(format(
                     "asFile called with %s, should be called with a string (try using toJSON?)",
