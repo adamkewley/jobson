@@ -66,6 +66,7 @@ public final class LocalJobExecutor implements JobExecutor {
         environment.put("toString", new ToStringFunction());
         environment.put("request", persistedJob);
         environment.put("inputs", mapKeys(persistedJob.getInputs(), JobExpectedInputId::toString));
+        environment.put("outputDir", jobWorkingDir.toString());
 
         return arg.tryEvaluate(environment);
     }
