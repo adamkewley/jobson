@@ -132,8 +132,19 @@ public final class FilesystemJobsDAO implements JobDAO {
 
     private Stream<JobDetails> loadAllJobs() {
         synchronized (fsLock) {
-            return listDirectories(jobsDirectory).map(this::loadJobDetails);
+            return listDirectories(jobsDirectory)
+                    .filter(this::containsARequestJsonFile)
+                    .filter(this::doesNotBeginWithDot)
+                    .map(this::loadJobDetails);
         }
+    }
+
+    private boolean containsARequestJsonFile(File jobDir) {
+        return jobDir.toPath().resolve(JOB_DIR_JOB_DETAILS_FILENAME).toFile().exists();
+    }
+
+    private boolean doesNotBeginWithDot(File jobDir) {
+        return !jobDir.getName().startsWith(".");
     }
 
     private JobDetails loadJobDetails(File jobDir) {
@@ -328,15 +339,20 @@ public final class FilesystemJobsDAO implements JobDAO {
 
     @Override
     public Optional<JobSpec> getSpecJobWasSubmittedAgainst(JobId jobId) {
-        return resolveJobDir(jobId).map(Path::toFile).map(this::loadJobSpec);
+        return resolveJobDir(jobId).map(Path::toFile).flatMap(this::loadJobSpec);
     }
 
-    private JobSpec loadJobSpec(File jobDir) {
+    private Optional<JobSpec> loadJobSpec(File jobDir) {
         final Path jobDetailsPath = jobDir.toPath().resolve(JOB_DIR_JOB_SPEC_FILENAME);
-        try {
-            return loadJSON(jobDetailsPath, JobSpec.class);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+
+        if (jobDetailsPath.toFile().exists()) {
+            try {
+                return Optional.of(loadJSON(jobDetailsPath, JobSpec.class));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else {
+            return Optional.empty();
         }
     }
 

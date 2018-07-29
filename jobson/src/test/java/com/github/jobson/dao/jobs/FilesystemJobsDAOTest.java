@@ -29,6 +29,7 @@ import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
 import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.specs.JobSpec;
+import com.github.jobson.utils.BinaryData;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 import static com.github.jobson.Constants.*;
@@ -289,5 +291,145 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
         Files.delete(pathToInputsJSONFile);
 
         assertThat(dao.hasJobInputs(jobId)).isFalse();
+    }
+
+    @Test
+    public void testGetJobsDoesNotThrowWhenANoneJobDirectoryIsInTheJobsDirectory() throws IOException {
+        // This is to ensure the jobs dir is robust to the presence of other dirs (e.g. `.git`)
+
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+
+        dao.persist(STANDARD_VALID_REQUEST).getId();
+        Files.createDirectory(jobsDir.resolve(".git"));
+
+        final List<JobDetails> jobs = dao.getJobs(100, 0);
+
+        assertThat(jobs.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void testGetJobsDoesNotThrowWhenAnArbitraryFileIsInTheJobsDirectory() throws IOException {
+        // This is to ensure the jobs dir is robust to the presence of files (e.g. `README.md`)
+
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+
+        dao.persist(STANDARD_VALID_REQUEST).getId();
+        Files.createFile(jobsDir.resolve("README.md"));
+
+        final List<JobDetails> jobs = dao.getJobs(100, 0);
+
+        assertThat(jobs.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void testGetJobsDoesNotThrowWhenAJobDirectoryDoesntContainARequestJson() throws IOException {
+        // This is to ensure the jobs dir is robust to the initial request.json being deleted (e.g.
+        // by an external garbage collector). This is because some filesystems (e.g. NFS) can leave
+        // remnants of files around a little while after deletion.
+
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        Files.delete(jobsDir.resolve(jobId.toString()).resolve(Constants.JOB_DIR_JOB_DETAILS_FILENAME));
+
+        final List<JobDetails> jobs = dao.getJobs(100, 0);
+
+        assertThat(jobs.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void testGetJobsDoesNotThrowWhenASpecIsDeletedFromAJobDirectory() throws IOException {
+        // This is to ensure the jobs dir is robust to deleting the spec.json, which isn't *strictly*
+        // necessary for persisting the job
+
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        Files.delete(jobsDir.resolve(jobId.toString()).resolve(Constants.JOB_DIR_JOB_SPEC_FILENAME));
+
+        final List<JobDetails> jobs = dao.getJobs(100, 0);
+
+        assertThat(jobs.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void testGetJobSpecJustReturnsEmptyOptionalIfDeletedFromAJobDirectory() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        Files.delete(jobsDir.resolve(jobId.toString()).resolve(Constants.JOB_DIR_JOB_SPEC_FILENAME));
+
+        final Optional<JobSpec> maybeSpec = dao.getSpecJobWasSubmittedAgainst(jobId);
+
+        assertThat(maybeSpec).isNotPresent();
+    }
+
+    @Test
+    public void testGetJobJobsDoesNotThrowWhenInputsAreDeletedFromJobDirectory() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        Files.delete(jobsDir.resolve(jobId.toString()).resolve(Constants.JOB_DIR_JOB_INPUTS_FILENAME));
+
+        final List<JobDetails> jobs = dao.getJobs(100, 0);
+
+        assertThat(jobs.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void testGetJobsDoesNotThrowWhenStdoutIsDeletedFromJobDirectory() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        dao.appendStdout(jobId, TestHelpers.generateRandomByteObservable());
+        Files.delete(jobsDir.resolve(jobId.toString()).resolve(Constants.JOB_DIR_STDOUT_FILENAME));
+
+        final List<JobDetails> jobs = dao.getJobs(100, 0);
+
+        assertThat(jobs.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void testGetJobsDoesNotThrowWhenStderrIsDeletedFromJobDirectory() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        dao.appendStderr(jobId, TestHelpers.generateRandomByteObservable());
+        Files.delete(jobsDir.resolve(jobId.toString()).resolve(Constants.JOB_DIR_STDERR_FILENAME));
+
+        final List<JobDetails> jobs = dao.getJobs(100, 0);
+
+        assertThat(jobs.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void testGetJobOutputsDoesntFailIfOutputDeletedButStillInMetadata() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+        final JobOutput persistedOutput = generateRandomJobOutput();
+        dao.persistOutput(jobId, persistedOutput);
+
+        Files.delete(
+                jobsDir.resolve(jobId.toString())
+                        .resolve(Constants.JOB_DIR_OUTPUTS_DIRNAME)
+                        .resolve(persistedOutput.getId().toString()));
+
+        final List<JobOutputDetails> jobOutputs = dao.getJobOutputs(jobId);
+
+        assertThat(jobOutputs.size()).isEqualTo(1); // Because there's metadata for it
+
+        final Optional<BinaryData> data = dao.getOutput(jobId, persistedOutput.getId());
+
+        assertThat(data).isNotPresent();  // Because the data itself has been deleted
     }
 }
