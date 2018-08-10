@@ -4,6 +4,7 @@ branches:
   only:
   - master
   - dev
+  - /feature-*/  # feature branches
   - /\d+.\d+.\d+/  # tagged versions
   - /\d+.\d+.\d+-staging/  # staging area for tagged releases
 
