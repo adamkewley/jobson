@@ -29,11 +29,11 @@ public final class JobDependencyConfiguration {
 
     @JsonProperty
     @NotNull
-    private String source;
+    private RawTemplateString source;
 
     @JsonProperty
     @NotNull
-    private String target;
+    private RawTemplateString target;
 
     @JsonProperty
     private boolean softLink = false;
@@ -45,22 +45,22 @@ public final class JobDependencyConfiguration {
     public JobDependencyConfiguration() {}
 
     public JobDependencyConfiguration(String source, String target) {
-        this.source = source;
-        this.target = target;
+        this.source = new RawTemplateString(source);
+        this.target = new RawTemplateString(target);
     }
 
     public JobDependencyConfiguration(String source, String target, boolean softLink) {
-        this.source = source;
-        this.target = target;
+        this.source = new RawTemplateString(source);
+        this.target = new RawTemplateString(target);
         this.softLink = softLink;
     }
 
 
-    public String getSource() {
+    public RawTemplateString getSource() {
         return source;
     }
 
-    public String getTarget() {
+    public RawTemplateString getTarget() {
         return target;
     }
 
@@ -69,7 +69,7 @@ public final class JobDependencyConfiguration {
     }
 
     public JobDependencyConfiguration withSourceResolvedRelativeTo(Path p) {
-        return new JobDependencyConfiguration(p.resolve(source).toString(), target);
+        return new JobDependencyConfiguration(p.resolve(source.getValue()).toString(), target.getValue());
     }
 
 

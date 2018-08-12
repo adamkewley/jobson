@@ -184,7 +184,7 @@ public final class FilesystemJobSpecDAOTest {
         final JobSpec jobSpec = maybeJobSpecConfiguration.get();
 
         final String source =
-                jobSpec.getExecution().getDependencies().get().get(0).getSource();
+                jobSpec.getExecution().getDependencies().get().get(0).getSource().getValue();
 
         assertThat(source).isNotEqualTo("libyaml.so");
         assertThat(source).isEqualTo(jobSpecPath.resolve("libyaml.so").toString());

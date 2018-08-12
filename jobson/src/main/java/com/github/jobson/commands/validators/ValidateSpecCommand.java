@@ -141,7 +141,8 @@ public final class ValidateSpecCommand extends DefaultedConfiguredCommand<Applic
     }
 
     private Stream<String> validateJobDependency(Path jobSpecDir, JobDependencyConfiguration jobDependencyConfiguration) {
-        final Path sourcePath = jobSpecDir.resolve(jobDependencyConfiguration.getSource());
+        // TODO: this will fail because there isn't a job to validate against.
+        final Path sourcePath = jobSpecDir.resolve(jobDependencyConfiguration.getSource().getValue());
 
         if (sourcePath.toFile().exists()) {
             return Stream.empty();

@@ -27,6 +27,7 @@ import com.github.jobson.jobs.JobExecutor;
 import com.github.jobson.jobs.LocalJobExecutor;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.specs.JobDependencyConfiguration;
+import com.github.jobson.specs.RawTemplateString;
 import com.github.jobson.utils.CancelablePromise;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -178,5 +179,119 @@ public final class LocalJobExecutorTest extends JobExecutorTest {
         Thread.sleep(1000);
 
         assertThat(workingDir.resolve(req.getId().toString()).toFile().exists()).isFalse();
+    }
+
+    @Test
+    public void testTemplatedDependencySourceIsResolvedAsATemplateString() throws IOException, InterruptedException, ExecutionException, TimeoutException {
+        final String templatedSource = "${request.id}";
+        final Path actualSourceDir = Files.createTempDirectory(JobExecutorTest.class.getSimpleName());
+        final String templatedSourcePath = actualSourceDir.resolve(templatedSource).toString();
+
+        final Path jobsDir = Files.createTempDirectory(LocalJobExecutorTest.class.getSimpleName());
+        final String destinationName = generateAlphanumStr();
+        final JobDependencyConfiguration dep = new JobDependencyConfiguration(templatedSourcePath, destinationName);
+        final PersistedJob job = createStandardRequestWithDependency(dep);
+
+        final Path pathToSourceFileContainingJobId = Files.createFile(actualSourceDir.resolve(job.getId().toString()));  // The job ID is in the template,
+        final byte[] bytesInSourceFileNamedByJobId = TestHelpers.generateRandomBytes();
+        Files.write(pathToSourceFileContainingJobId, bytesInSourceFileNamedByJobId);
+
+        final LocalJobExecutor jobExecutor = new LocalJobExecutor(jobsDir, DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_MILLISECONDS);
+
+        final CancelablePromise<JobExecutionResult> p =
+                jobExecutor.execute(job, JobEventListeners.createNullListeners());
+
+        p.get();
+
+        final Path destinationPath = jobsDir.resolve(job.getId().toString()).resolve(destinationName);
+
+        final byte[] bytesInOutputFile = Files.readAllBytes(destinationPath);
+
+        assertThat(Files.exists(destinationPath)).isTrue();
+        assertThat(bytesInOutputFile).isEqualTo(bytesInSourceFileNamedByJobId);
+    }
+
+    @Test
+    public void testTemplatedDependencyDestinationIsResolvedAsATemplateArg() throws IOException, InterruptedException, ExecutionException, TimeoutException {
+        final Path sourceDir = Files.createTempDirectory(JobExecutorTest.class.getSimpleName());
+        final Path sourceFile = Files.createFile(sourceDir.resolve(generateAlphanumStr()));
+        final byte[] sourceBytes = TestHelpers.generateRandomBytes();
+        Files.write(sourceFile, sourceBytes);
+
+        final String templatedDestinationName = "${request.id}";
+        final JobDependencyConfiguration dep = new JobDependencyConfiguration(sourceFile.toString(), templatedDestinationName);
+
+        final PersistedJob job = createStandardRequestWithDependency(dep);
+        final Path workingDir = Files.createTempDirectory(LocalJobExecutorTest.class.getSimpleName());
+        final LocalJobExecutor jobExecutor = new LocalJobExecutor(workingDir, DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_MILLISECONDS);
+
+        final CancelablePromise<JobExecutionResult> p =
+                jobExecutor.execute(job, JobEventListeners.createNullListeners());
+
+        p.get();
+
+        final Path expectedDestination = workingDir.resolve(job.getId().toString()).resolve(job.getId().toString());
+
+        assertThat(expectedDestination.toFile().exists()).isTrue();
+
+        final byte[] bytesInDestination = Files.readAllBytes(expectedDestination);
+
+        assertThat(bytesInDestination).isEqualTo(sourceBytes);
+    }
+
+    @Test
+    public void testTemplatedDependencySourceCanBeResolvedWithJobInputs() throws IOException, InterruptedException, ExecutionException, TimeoutException {
+        final String templatedSource = "${inputs.foo}";  // In fixture: resolves to 'a'
+        final Path actualSourceDir = Files.createTempDirectory(JobExecutorTest.class.getSimpleName());
+        final String templatedSourcePath = actualSourceDir.resolve(templatedSource).toString();
+
+        final Path workingDir = Files.createTempDirectory(LocalJobExecutorTest.class.getSimpleName());
+        final Path destination = workingDir.resolve(generateAlphanumStr());
+        final JobDependencyConfiguration dep = new JobDependencyConfiguration(templatedSourcePath, destination.toString());
+        final PersistedJob job = createStandardRequestWithDependency(dep);
+
+        final Path pathToSourceFileNamedByInput = Files.createFile(actualSourceDir.resolve("a"));  // "a" comes from the fixture
+        final byte[] bytesInSourceFileNamedByJobId = TestHelpers.generateRandomBytes();
+        Files.write(pathToSourceFileNamedByInput, bytesInSourceFileNamedByJobId);
+
+        final LocalJobExecutor jobExecutor = new LocalJobExecutor(workingDir, DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_MILLISECONDS);
+
+        final CancelablePromise<JobExecutionResult> p =
+                jobExecutor.execute(job, JobEventListeners.createNullListeners());
+
+        p.get();
+
+        final byte[] bytesInOutputFile = Files.readAllBytes(destination);
+
+        assertThat(Files.exists(destination)).isTrue();
+        assertThat(bytesInOutputFile).isEqualTo(bytesInSourceFileNamedByJobId);
+    }
+
+    @Test
+    public void testTemplatedDependencyDestinationCanBeResolvedWithInputs() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+        final Path sourceDir = Files.createTempDirectory(JobExecutorTest.class.getSimpleName());
+        final Path sourceFile = Files.createFile(sourceDir.resolve(generateAlphanumStr()));
+        final byte[] sourceBytes = TestHelpers.generateRandomBytes();
+        Files.write(sourceFile, sourceBytes);
+
+        final String templatedDestinationName = "${inputs.foo}";  // This is set in fixture
+        final JobDependencyConfiguration dep = new JobDependencyConfiguration(sourceFile.toString(), templatedDestinationName);
+
+        final PersistedJob job = createStandardRequestWithDependency(dep);
+        final Path jobsDir = Files.createTempDirectory(LocalJobExecutorTest.class.getSimpleName());
+        final LocalJobExecutor jobExecutor = new LocalJobExecutor(jobsDir, DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_MILLISECONDS);
+
+        final CancelablePromise<JobExecutionResult> p =
+                jobExecutor.execute(job, JobEventListeners.createNullListeners());
+
+        p.get();
+
+        final Path expectedDestination = jobsDir.resolve(job.getId().toString()).resolve("a");  // "a" comes from fixture
+
+        assertThat(expectedDestination.toFile().exists()).isTrue();
+
+        final byte[] bytesInDestination = Files.readAllBytes(expectedDestination);
+
+        assertThat(bytesInDestination).isEqualTo(sourceBytes);
     }
 }

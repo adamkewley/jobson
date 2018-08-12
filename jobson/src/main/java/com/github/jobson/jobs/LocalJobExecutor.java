@@ -57,7 +57,7 @@ public final class LocalJobExecutor implements JobExecutor {
     private static final Logger log = Logger.getLogger(LocalJobExecutor.class);
 
 
-    private static String resolveArg(PersistedJob persistedJob, Path jobWorkingDir, RawTemplateString arg) {
+    public static String resolveArg(PersistedJob persistedJob, Path jobWorkingDir, RawTemplateString arg) {
         final Map<String, Object> environment = new HashMap<>();
 
         environment.put("toJSON", new ToJSONFunction());
@@ -71,9 +71,12 @@ public final class LocalJobExecutor implements JobExecutor {
         return arg.tryEvaluate(environment);
     }
 
-    private static void handleJobDependency(JobDependencyConfiguration jobDependencyConfiguration, Path workingDir) {
-        final Path source = Paths.get(jobDependencyConfiguration.getSource());
-        final Path target = workingDir.resolve(Paths.get(jobDependencyConfiguration.getTarget()));
+    private static void handleJobDependency(PersistedJob persistedJob, Path workingDir, JobDependencyConfiguration jobDependencyConfiguration) {
+        final String resolvedSourceStr = resolveArg(persistedJob, workingDir, jobDependencyConfiguration.getSource());
+        final Path source = Paths.get(resolvedSourceStr);
+
+        final String resolvedTargetStr = resolveArg(persistedJob, workingDir, jobDependencyConfiguration.getTarget());
+        final Path target = workingDir.resolve(resolvedTargetStr);
 
         if (jobDependencyConfiguration.isSoftLink()) {
             softLinkJobDependency(source, target);
@@ -138,7 +141,7 @@ public final class LocalJobExecutor implements JobExecutor {
             log.debug(req.getId() + ": created working directory: " + workingDir.toString());
 
             executionConfiguration.getDependencies()
-                    .ifPresent(deps -> deps.forEach(dep -> handleJobDependency(dep, workingDir)));
+                    .ifPresent(deps -> deps.forEach(dep -> handleJobDependency(req, workingDir, dep)));
 
             final String application = executionConfiguration.getApplication();
             final List<String> argList = new ArrayList<>();
