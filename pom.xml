@@ -6,7 +6,7 @@
 
     <groupId>com.github.jobson</groupId>
     <artifactId>jobson-project</artifactId>
-    <version>0.0.20-SNAPSHOT</version>
+    <version>0.0.20</version>
     <packaging>pom</packaging>
 
     <name>jobson project</name>
