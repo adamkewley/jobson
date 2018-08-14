@@ -26,6 +26,7 @@ import com.github.jobson.api.v1.*;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.specs.JobOutputId;
 import com.github.jobson.systemtests.SystemTestHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -62,6 +63,7 @@ public final class TestJobsAPI {
     private static final APIJobRequest REQUEST_AGAINST_FITH_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_SIXTH_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_SEVENTH_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_EIGHTH_SPEC;
 
     static {
         REQUEST_AGAINST_FIRST_SPEC = readJSONFixture(
@@ -84,6 +86,9 @@ public final class TestJobsAPI {
                 APIJobRequest.class);
         REQUEST_AGAINST_SEVENTH_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-seventh-spec.json",
+                APIJobRequest.class);
+        REQUEST_AGAINST_EIGHTH_SPEC = readJSONFixture(
+                "fixtures/systemtests/request-against-eighth-spec.json",
                 APIJobRequest.class);
     }
 
@@ -308,6 +313,33 @@ public final class TestJobsAPI {
     }
 
     @Test
+    public void testCanRunAJobWithTemplatedJobDependency() throws InterruptedException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(REQUEST_AGAINST_EIGHTH_SPEC))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
+
+        waitUntilJobTerminates(jobId);
+
+        final Response jobResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId)).get();
+
+        final APIJobDetails resp = jobResponse.readEntity(APIJobDetails.class);
+        assertThat(resp.latestStatus()).isEqualTo(JobStatus.FINISHED);
+
+
+        final Response stdoutResponse =
+                generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId + "/stdout"))
+                        .get();
+
+        assertThat(stdoutResponse.getStatus()).isEqualTo(OK);
+
+        final byte[] stdoutBytes = stdoutResponse.readEntity(byte[].class);
+
+        assertThat(stdoutBytes).isEqualTo("I'm in the eighth spec's fixture!".getBytes()); // From the spec execution
+    }
+
+    @Test
     public void testCanGetJobInputs() throws IOException {
         final APIJobRequest req = REQUEST_AGAINST_FIRST_SPEC;
 
@@ -345,4 +377,6 @@ public final class TestJobsAPI {
 
         assertThat(stderrResponse.getStatus()).isEqualTo(404);
     }
+
+
 }

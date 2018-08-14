@@ -128,3 +128,14 @@
   expectedOutputs:
   - id: bar
     path: ${toString("foo")}
+
+- id: eighth-spec
+  name: Spec that templates a dependency
+  expectedInputs: []
+  execution:
+    application: cat
+    arguments:
+    - ${request.id}
+    dependencies:
+    - source: eighth-spec-dependency
+      target: ${request.id}

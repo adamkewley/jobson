@@ -74,9 +74,11 @@ public final class SystemTestHelpers {
                 Files.write(jobSpecsDir.resolve(spec.getId().toString()).resolve(Constants.SPEC_DIR_SPEC_FILENAME), specYAML.getBytes());
             }
 
-            // This is used by the second spec
             final String secondSpecScript = fixture("fixtures/systemtests/script.sh");
             Files.write(jobSpecsDir.resolve("second-spec").resolve("script.sh"), secondSpecScript.getBytes());
+
+            final String eighthSpecDependency = fixture("fixtures/systemtests/eighth-spec-dependency");
+            Files.write(jobSpecsDir.resolve("eighth-spec").resolve("eighth-spec-dependency"), eighthSpecDependency.getBytes());
 
             final Path jobDataDir = Files.createTempDirectory(SystemTestHelpers.class.getSimpleName());
             final Path workingDirsDir = Files.createTempDirectory(SystemTestHelpers.class.getSimpleName());
