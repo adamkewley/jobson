@@ -10,7 +10,7 @@ title: Job Specs
 - Expected Outputs
 
 
-Overview
+# Overview
 
 Job specs are saved in the job specs directory
 (e.g. `specs/{spec-id}/spec.yml`). At runtime, Jobson uses the job
@@ -43,14 +43,15 @@ expectedInputs:
   default: Jeff
 
 execution:
-  application: bash
-  arguments:
-  - demo-script.sh
-  - ${inputs.firstName}
 
   dependencies:
   - source: demo-script.sh
     target: demo-script.sh
+
+  application: bash
+  arguments:
+  - demo-script.sh
+  - ${inputs.firstName}
 
 expectedOutputs:
 
@@ -86,6 +87,54 @@ the job's working directory (`dependencies: target:
 demo-script.sh`). Once the script runs, it produces a file called
 `output`, which has an `image/jpeg` MIME type and should be persisted
 as `${request.id}.jpg` by Jobson.
+
+
+# Creating a Job Spec
+
+The Jobson command-line interface comes with a basic spec generator
+for creating a bareboes spec:
+
+```bash
+$ jobson generate spec new-spec
+```
+
+This creates a job spec with an ID of `new-spec` at
+`jobs/new-spec/spec.yml`.
+
+
+
+# `spec.yml` Schema
+
+Job specs are standard YAML files that should appear at the correct
+path (e.g. `jobs/{job-id}/spec.yml`). This section describes what can
+be put into the `spec.yml` files.
+
+## `name`
+
+Name of the Job Spec.
+
+
+## `description` 
+
+Detailed Description of the Job Spec
+
+
+## `expectedInputs`
+
+What Input Data Should be Provided to Execute a Job
+
+
+## `execution`
+
+What Executes Once the Input Data is Received.
+
+
+## `expectedOutputs`
+
+What is Produced by Execution (and should be persisted by Jobson).
+
+
+
   
 TODO: Work in progress. Need documentation about supported data types,
 scripting functions, etc.
