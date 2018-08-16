@@ -64,6 +64,9 @@ public final class TestJobsAPI {
     private static final APIJobRequest REQUEST_AGAINST_SIXTH_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_SEVENTH_SPEC;
     private static final APIJobRequest REQUEST_AGAINST_EIGHTH_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_NINTH_SPEC;
+    private static final APIJobRequest REQUEST_AGAINST_TENTH_SPEC;
+
 
     static {
         REQUEST_AGAINST_FIRST_SPEC = readJSONFixture(
@@ -89,6 +92,12 @@ public final class TestJobsAPI {
                 APIJobRequest.class);
         REQUEST_AGAINST_EIGHTH_SPEC = readJSONFixture(
                 "fixtures/systemtests/request-against-eighth-spec.json",
+                APIJobRequest.class);
+        REQUEST_AGAINST_NINTH_SPEC = readJSONFixture(
+                "fixtures/systemtests/request-against-ninth-spec.json",
+                APIJobRequest.class);
+        REQUEST_AGAINST_TENTH_SPEC = readJSONFixture(
+                "fixtures/systemtests/request-aganst-tenth-spec.json",
                 APIJobRequest.class);
     }
 
@@ -378,5 +387,33 @@ public final class TestJobsAPI {
         assertThat(stderrResponse.getStatus()).isEqualTo(404);
     }
 
+    @Test
+    public void testJobWithAbsoluteJobOutputThatDoesExistFinishes() throws InterruptedException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(REQUEST_AGAINST_NINTH_SPEC))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
 
+        waitUntilJobTerminates(jobId);
+
+        final Response jobResp = generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId)).get();
+        final APIJobDetails jobDetails = jobResp.readEntity(APIJobDetails.class);
+
+        assertThat(jobDetails.latestStatus()).isEqualTo(JobStatus.FINISHED);
+    }
+
+    @Test
+    public void testJobWithAbsoluteJobOutputThatDoesNotExistTerminatesWithFatalError() throws InterruptedException {
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(REQUEST_AGAINST_TENTH_SPEC))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
+
+        waitUntilJobTerminates(jobId);
+
+        final Response jobResp = generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId)).get();
+        final APIJobDetails jobDetails = jobResp.readEntity(APIJobDetails.class);
+
+        assertThat(jobDetails.latestStatus()).isEqualTo(JobStatus.FATAL_ERROR);
+    }
 }

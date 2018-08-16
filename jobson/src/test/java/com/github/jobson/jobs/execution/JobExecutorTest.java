@@ -42,6 +42,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -151,6 +152,7 @@ public abstract class JobExecutorTest {
 
 
     protected abstract JobExecutor getInstance();
+    protected abstract JobExecutor getInstance(Path workingDir);
 
 
 
@@ -337,6 +339,73 @@ public abstract class JobExecutorTest {
                 },
                 () -> {});
     }
+
+    @Test
+    public void testSettingAnAbsoluteExpectedOutputWorksIfItExists() throws Throwable {
+        final JobExecutor jobExecutor = getInstance();
+
+        final Path absTmpDirPath = Files.createTempDirectory(JobExecutorTest.class.getSimpleName()).toAbsolutePath();
+        final RawTemplateString outputId = new RawTemplateString("outfile");
+        final RawTemplateString outputPath = new RawTemplateString(absTmpDirPath.resolve(outputId.toString()).toString());
+
+
+        final JobExpectedOutput expectedOutput = generateJobOutput(outputId, outputPath, "text/plain");
+        final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(expectedOutput);
+
+        final PersistedJob req =
+                standardRequestWithExpectedOutputs(expectedOutputs, "touch", outputPath.toString());
+
+        final CancelablePromise<JobExecutionResult> ret = jobExecutor.execute(req, createNullListeners());
+
+        promiseAssert(
+                ret,
+                result -> {
+                    assertThat(result.getOutputs()).isNotEmpty();
+                    assertThat(getJobOutputById(result.getOutputs(), new JobOutputId(outputId.toString()))).isPresent();
+                },
+                () -> {});
+    }
+
+    @Test
+    public void testSettingAnAbsoluteExpectedOutputWorksIfItDoesntExist() throws Throwable {
+        final JobExecutor jobExecutor = getInstance();
+
+        final Path absTmpDirPath = Files.createTempDirectory(JobExecutorTest.class.getSimpleName()).toAbsolutePath();
+        final RawTemplateString outputId = new RawTemplateString("outfile");
+        final RawTemplateString outputPath = new RawTemplateString(absTmpDirPath.resolve(outputId.toString()).toString());
+
+
+        final JobExpectedOutput expectedOutput = generateJobOutput(outputId, outputPath, "text/plain");
+        final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(expectedOutput);
+
+        final PersistedJob req =
+                standardRequestWithExpectedOutputs(expectedOutputs, "touch", "some-unrelated-path");
+
+        final CancelablePromise<JobExecutionResult> ret = jobExecutor.execute(req, createNullListeners());
+
+        ret.get();
+    }
+
+    @Test
+    public void testSettingAnAbsoluteExpectedOutputWorksIfItDoesntExistANDTheExecutorIsUsingARelativeWorkingDirectory() throws Throwable {
+        final JobExecutor jobExecutor = getInstance(Paths.get(".").toAbsolutePath());
+
+        final Path absTmpDirPath = Files.createTempDirectory(JobExecutorTest.class.getSimpleName()).toAbsolutePath();
+        final RawTemplateString outputId = new RawTemplateString("outfile");
+        final RawTemplateString outputPath = new RawTemplateString(absTmpDirPath.resolve(outputId.toString()).toString());
+
+
+        final JobExpectedOutput expectedOutput = generateJobOutput(outputId, outputPath, "text/plain");
+        final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(expectedOutput);
+
+        final PersistedJob req =
+                standardRequestWithExpectedOutputs(expectedOutputs, "touch", "some-unrelated-path");
+
+        final CancelablePromise<JobExecutionResult> ret = jobExecutor.execute(req, createNullListeners());
+
+        ret.get(5, TimeUnit.SECONDS);
+    }
+
 
     @Test
     public void testExecuteWritesStdoutToTheStdoutListener() throws Throwable {

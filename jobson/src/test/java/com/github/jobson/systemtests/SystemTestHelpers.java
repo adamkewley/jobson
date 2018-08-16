@@ -34,6 +34,7 @@ import javax.ws.rs.client.Invocation;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -81,7 +82,7 @@ public final class SystemTestHelpers {
             Files.write(jobSpecsDir.resolve("eighth-spec").resolve("eighth-spec-dependency"), eighthSpecDependency.getBytes());
 
             final Path jobDataDir = Files.createTempDirectory(SystemTestHelpers.class.getSimpleName());
-            final Path workingDirsDir = Files.createTempDirectory(SystemTestHelpers.class.getSimpleName());
+            final Path workingDirsDir = Paths.get(".").toAbsolutePath().relativize(Files.createTempDirectory(SystemTestHelpers.class.getSimpleName()));
 
             final String resolvedAppConfigText =
                     fixture(fixture)
@@ -89,7 +90,7 @@ public final class SystemTestHelpers {
                             .replaceAll("\\$sessionsFile", sessionsFilePath.toAbsolutePath().toString())
                             .replaceAll("\\$jobSpecDir", jobSpecsDir.toAbsolutePath().toString())
                             .replaceAll("\\$jobDataDir", jobDataDir.toAbsolutePath().toString())
-                            .replaceAll("\\$workingDirsDir", workingDirsDir.toAbsolutePath().toString());
+                            .replaceAll("\\$workingDirsDir", workingDirsDir.toString());
 
 
             final Path resolvedAppConfigPath = Files.createTempFile(TestJobSpecsAPI.class.getSimpleName(), "config");

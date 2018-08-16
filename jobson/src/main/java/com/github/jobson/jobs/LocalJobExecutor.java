@@ -124,7 +124,7 @@ public final class LocalJobExecutor implements JobExecutor {
         if (delayBeforeForciblyKillingJobs < 0)
             throw new IllegalArgumentException(delayBeforeForciblyKillingJobs + ": delay before killing jobs must be positive");
 
-        this.workingDirs = workingDirs;
+        this.workingDirs = workingDirs.toAbsolutePath();
         this.delayBeforeForciblyKillingJobs = delayBeforeForciblyKillingJobs;
         this.deleteWdAfterExecution = wdRemovalConfig.isEnabled();
     }

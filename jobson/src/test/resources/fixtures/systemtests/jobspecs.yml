@@ -139,3 +139,27 @@
     dependencies:
     - source: eighth-spec-dependency
       target: ${request.id}
+
+- id: ninth-spec
+  name: Spec that produces output at absolute path
+  expectedInputs: []
+  execution:
+    application: touch
+    arguments:
+    - /tmp/${request.id}
+  expectedOutputs:
+  - id: ${request.id}
+    path: /tmp/${request.id}
+    required: true
+
+- id: tenth-spec
+  name: Spec that fails to produce output at absolute path
+  expectedInputs: []
+  execution:
+    application: echo
+    arguments:
+    - Ignore me
+  expectedOutputs:
+  - id: shouldnt-exist
+    path: /tmp/shouldnt-exist
+    required: true

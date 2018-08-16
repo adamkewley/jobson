@@ -57,6 +57,15 @@ public final class LocalJobExecutorTest extends JobExecutorTest {
         }
     }
 
+    @Override
+    protected JobExecutor getInstance(Path workingDir) {
+        try {
+            return new LocalJobExecutor(workingDir.relativize(createTmpDir(LocalJobExecutorTest.class)), DELAY_BEFORE_FORCIBLY_KILLING_JOBS_IN_MILLISECONDS);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Test(expected = NullPointerException.class)
     public void testCtorThrowsIfWorkingDirsIsNull() throws FileNotFoundException {
