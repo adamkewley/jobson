@@ -1,61 +1,98 @@
-body {
-    margin: 10px auto 40px;
-    max-width:780px;
-    line-height:1.4;
-    font-size:17px;
-    color:#444;
-    padding:0 10px;
-    font-family: Arial, Helvetica, sans-serif;
+@font-face {
+    font-family: "Ubuntu-L";
+    src: url(Ubuntu-L.ttf) format("truetype");
 }
 
+@font-face {
+    font-family: "Ubuntu-M";
+    src: url(Ubuntu-M.ttf) format("truetype");
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: "Ubuntu-L";
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #fafafa;
+    line-height: 1.5;
+    color:#222;
+    font-size: 18px;
+}
+
+.wrap {
+    margin: 0 auto;
+    padding: 0;
+    max-width: 1024px;
+}
+
+
+
+#header-site {
+    width: 100%;
+    background-color: #111;
+    color: #eee;
+}
+
+#header-site h1 {
+    font-family: "Ubuntu-M";
+}
+
+#header-site a {
+    color: #eee;
+    text-decoration: none;
+    margin: 0 1em;
+}
+
+#header-site > * {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
+#section-title {
+    height: 10em;
+    margin: 0 0 -4em 0;
+    padding: 1em 0;
+    background-color: #eee;
+}
+
+
+#content {
+    display: relative;
+}
+
+#content-primary {
+    background-color: white;
+    padding: 1em;
+    margin: 0.1em;
+    width: 70%;
+    float: left;
+}
+
+#content-nav {
+    background-color: white;
+    padding: 1em;
+    margin: 0.1em;
+    width: 28%;
+    float: left;
+}
+
+
+
 pre {
+    font-size: 13px;
     padding: 0.5em;
     overflow: auto;
 }
 
-img {
-    max-width: 100%;
-}
 
 
-#portfolio-images {
-  line-height: 0;
-  column-count: 5;
-  column-gap: 0px;
-
-  img {
-      width: 100%;
-  }
-}
-
-h1,h2,h3 {
-    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-    line-height:1.2
-}
-
-.publication-image {
-    img {
-	display: block;
-	width: 50%;
-	max-width: 500px;
-	margin: 0 auto;
-    }
-}
-
-.blog-figure {
-    display: block;
-    max-width: 80%;
-    margin: 0 auto;
-}
-
-blockquote {
-    margin: 0.2em;
-    padding: 0.3em;
-    padding-left: 1em;
-    font-size: 18px;
-    font-style: oblique;
-    background-color: #efefef;
-}
 
 
 .highlight code, .highlight pre {

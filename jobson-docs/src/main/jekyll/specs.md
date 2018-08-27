@@ -25,7 +25,7 @@ spec to figure out a job's:
 - `expectedOutputs:` from the application, which Jobson should persist
 
 
-Basic Example
+A basic example of a job spec would be:
 
 ```yaml
 name: Demo Job Spec
@@ -64,21 +64,23 @@ expectedOutputs:
     embed: true
 ```
 
-This spec specifies:
+This example specifies:
 
-- A job with a human-readable `name:` of `Demo Job Spec` (and
-  `description:`)
+- A job with a human-readable `name:` of `Demo
+  Job Spec` (and `description:`).
+
 - That expects clients to provide a single string input called
   `firstName`, which defaults to `Jeff` if clients don't provide it
+
 - That, once it receives the inputs:
+
   - Copies `demo-script.sh` from the job spec's directory to
-  `demo-script.sh` in the job's working directory
-  - Executes `bash` with `demo-script.sh` and `${inputs.firstName}` with two arguments:
-  - `demo-script.sh`: The script `bash` should run
-  - `${inputs.firstName}`: The `firstName` provided as an input
-- Before executing, Jobson should copy `demo-script.sh` from the job
-  spec folder to the job's working directory
-- 
+   `demo-script.sh` in the job's working directory
+  - Executes `bash` with `demo-script.sh` and `${inputs.firstName}` with two
+  - arguments: - `demo-script.sh`: The script `bash` should run -
+  - `${inputs.firstName}`: The `firstName` provided as an input -
+  - Before executing, Jobson should copy `demo-script.sh` from the job
+  - spec folder to the job's working directory -
 
 This specifies a job that takes a single string input (`firstName`)
 and runs a bash script (`demo-script.sh`). The bash script is copied
