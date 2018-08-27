@@ -14,19 +14,25 @@
 
 html, body {
     font-family: "Ubuntu-L";
-    margin: 0;
+    margin: 0 0 5em 0;
     padding: 0;
     box-sizing: border-box;
     background-color: #f6f6f6;
     line-height: 1.5;
     color:#222;
-    font-size: 18px;
+    font-size: normal;
 }
 
 .wrap {
     margin: 0 auto;
     padding: 0;
     max-width: 1024px;
+}
+
+@media(max-width: 1200px) {
+    .wrap {
+	max-width: 800px;
+    }
 }
 
 

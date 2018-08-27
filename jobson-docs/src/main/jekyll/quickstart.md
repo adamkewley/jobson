@@ -3,9 +3,9 @@ layout: default
 title: Quickstart
 ---
 
-Jobson's setup is inspired by [Ruby on Rails](rubyonrails.org), where
-the command-line is used to quickly generate and launch
-convention-over-configuration projects (in Jobson,
+Jobson's initial setup is inspired by
+[Ruby on Rails](//rubyonrails.org), where the command-line is used to
+generate and launch convention-over-configuration projects (in Jobson,
 [workspaces](workspaces.md)).
 
 
@@ -18,30 +18,25 @@ for installation steps.
 ## 2) Test Jobson's Command-Line Interface
 
 This guide uses Jobson's [command-line](commandline.html) to get
-going. Ensure you can run it; for example, by showing its help pages:
+going. It should be available if you have installed Jobson
+correctly. Ensure you can run it, for example, by showing its help
+pages:
 
 ```bash
 $ jobson --help
 ```
 
+More details about the command-line interface can be found
+[here](commandline.html).
+
+
 
 ## 3) Generate a Workspace
 
-[Workspaces](workspaces.html) are Jobson's
-convention-over-configuration approach to organizing its configuration
-(`config.yml`), persistence (`jobs/`) and so on. To generate a
-workspace, run:
-
-```bash
-$ jobson new
-```
-
-
-## Create a Jobson Deployment
-
-Jobson is designed to be driven exclusively by standard filesystem
-structures and plaintext files. The `new` command generates a
-barebones deployment containing those files:
+[Workspaces](workspaces.html) are Jobson's way of organizing its
+configuration and data. The `new` command generates a barebones
+workspace containing the minimum necessary files to run a Jobson
+server:
 
 ```bash
 $ jobson new --demo
@@ -56,11 +51,10 @@ create    jobs
 create    wds
 ```
 
-Details about the Jobson's directory structure can be found
-[here](#dir-structure).
+More details about workspaces can be found [here](workspaces.html).
 
 
-## Generate a Job Spec
+## 4) Generate a Job Spec
 
 [Job specs](#job-specs) are standard YAML files that describe your
 application. They are held in the `specs/` folder
@@ -143,7 +137,7 @@ Further details about what's possible in job specs can be found
 [here](#job-specs).
 
 
-## Validate the Job Spec
+## 5) (Optional) Validate the Job Spec
 
 The `foo` job spec can be validated by Jobson to check for basic
 syntactical errors. The `validate spec` command will exit with no
@@ -156,7 +150,7 @@ $
 ```
 
 
-## Generate a Request Against the Job Spec
+## 6) (Optional) Generate a Request Against the Job Spec
 
 Running an application via Jobson is different from running an
 application from the command line (see [discussion](#job-specs)), so
@@ -181,7 +175,7 @@ requests as sent via the Jobson HTTP API (specifically, `POST
 /v1/jobs`).
 
 
-## Run a Job Request Against the Job Spec
+## 7) (Optional) Run a Job Request Against the Job Spec
 
 
 Although the job spec is syntactically correct, it may still fail at
@@ -209,7 +203,7 @@ We've now created a job spec, validated it, and ran it locally, all
 that's left is to host it.
 
 
-## Boot the Server
+## 8) Boot the Server
 
 Jobson is ultimately a webserver that hosts a REST and websocket API
 for the applications that are described by job specs. With a working

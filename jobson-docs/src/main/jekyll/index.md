@@ -4,33 +4,59 @@ title: Overview
 ---
 
 Jobson is a webserver that automates the most common steps required to
-set up a web service around a batch application, which saves
-developers time and lets them focus on desgining standard command-line
-applications.
+set up a web service around a batch application, which enables
+developers to focus on their core application.
 
 
 
 ## How It Works
 
+Jobson uses job specs to host a HTTP/websocket API that can launch
+subprocesses server-side.
+
 
 ### Job Specs
 
-Jobson's core abstraction is the [job spec](specs.html), which it uses
-to automatically:
+[Job specs](specs.html) are what Jobson uses to understand each
+application. An example job spec would be:
 
-- Generate a HTTP/websocket API for the job
-- Validate requests to run the job
-- Execute the job
-- Persist the job's data (inputs, outputs, logs, etc.)
+```yaml
+name: Example Job Spec
+
+description: A job that echoes the provided first name
+  
+expectedInputs:
+
+- id: firstName
+  type: string
+  name: First Name
+  description: Your first name
+  default: Jeff
+
+execution:
+
+  application: echo
+  arguments:
+  - ${inputs.firstName}
+  
+```
+
+Jobson uses job specs to automatically generate a HTTP/websocket API
+for the job, validate requests to run the job, execute the job as a
+subprocess, and persist the job's output.
+
+Because of this declarative approach, Jobson is able to host any
+command-line application. Usually, with no modifications to the
+original application.
 
 
 ### Subprocess Execution
 
-Jobson was developed to help researchers handle, track, and manage
-complex, long-running batch applications written a variety of
-languages/frameworks. Rather than directly integrating with each
-language/framework, Jobson executes jobs as subprocesses. This means
-that, to Jobson, the application is effectively a black box that:
+Jobson uses the host operating system to execute jobs. Internally,
+Jobson uses the information contained in [job specs](specs.html) to
+[fork](http://man7.org/linux/man-pages/man2/fork.2.html) a child
+process. This means that, to Jobson, the application is effectively a
+black box that:
 
 1. Is launched by the host operating system with some command-line
    arguments and dependencies (files, scripts, etc.)
@@ -42,28 +68,27 @@ that, to Jobson, the application is effectively a black box that:
 
 4. *Maybe* produces output files as a side-effect
 
-Because of this approach, Jobson may execute any standard command-line
-application written in any langugage.
+Because of this approach, Jobson is able to execute any application,
+written in any langugage, in parallel, with operating-system-level
+sandboxing (from failures, memory leaks, etc.).
 
 
 ### HTTP/Websocket API
 
+Jobson exposes jobs, both running and available, via a standard
+HTTP/websocket API. Internally, Jobson uses the information contained
+in [job specs](specs.html) to generate a structured API which
+*requires* clients to provide the correct information (inputs, login,
+etc.). The API is also declarative, allowing clients to automatically
+enquire about required inputs.
 
-
-
-
-
-At time of writing, all of this data is persisted to Jobson via a
-[workspace](), which is a standard filesystem layout.
-
-
-
-## Where It's Useful
-
-- Research platforms
-- Devops (launching routine tasks, etc.)
-- Rapid development
-
+Because of this approach, clients
+(e.g. [Jobson UI](https://github.com/adamkewley/jobson-ui)) are
+entirely shielded from the underlying execution mechanism. Clients
+just submit standard JSON requests to an API and retrieve
+results/outputs through that same API. This decoupling means that
+application developers can radically change an application (e.g. to a
+different language) without affecting downstream clients.
 
 
 ## Getting Started

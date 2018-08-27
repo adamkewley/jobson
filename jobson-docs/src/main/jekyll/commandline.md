@@ -1,4 +1,7 @@
-
+---
+layout: default
+title: Command-Line Interface
+---
 
 # <a name="getting-started"></a> Getting Started
 
