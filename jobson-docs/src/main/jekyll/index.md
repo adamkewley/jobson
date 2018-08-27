@@ -4,11 +4,14 @@ title: Overview
 ---
 
 Jobson is a webserver that automates the most common steps required to
-set up a web service around a batch application, which enables
-developers to focus on designing a standard command-line application.
+set up a web service around a batch application, which saves
+developers time and lets them focus on desgining standard command-line
+applications.
+
 
 
 ## How It Works
+
 
 ### Job Specs
 
@@ -19,6 +22,7 @@ to automatically:
 - Validate requests to run the job
 - Execute the job
 - Persist the job's data (inputs, outputs, logs, etc.)
+
 
 ### Subprocess Execution
 
@@ -42,7 +46,11 @@ Because of this approach, Jobson may execute any standard command-line
 application written in any langugage.
 
 
-### Client-Facing HTTP/Websocket API
+### HTTP/Websocket API
+
+
+
+
 
 
 At time of writing, all of this data is persisted to Jobson via a
