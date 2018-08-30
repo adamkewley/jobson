@@ -4,21 +4,15 @@ title: Overview
 ---
 
 Jobson is a webserver that automates the most common steps required to
-set up a web service around a batch application, which enables
-developers to focus on their core application.
+set up a web service around a batch application.
 
 
 
 ## How It Works
 
 Jobson uses job specs to host a HTTP/websocket API that can launch
-subprocesses server-side.
-
-
-### Job Specs
-
-[Job specs](specs.html) are what Jobson uses to understand each
-application. An example job spec would be:
+subprocesses server-side. [Job specs](specs.html) are standard YAML
+files that describe applications. An example would be:
 
 ```yaml
 name: Example Job Spec
@@ -41,22 +35,20 @@ execution:
   
 ```
 
-Jobson uses job specs to automatically generate a HTTP/websocket API
-for the job, validate requests to run the job, execute the job as a
-subprocess, and persist the job's output.
-
-Because of this declarative approach, Jobson is able to host any
-command-line application. Usually, with no modifications to the
-original application.
+Using declarative job specs enables Jobson to automatically generate a
+HTTP/websocket API for the job, validate requests to run the job,
+execute the job as a subprocess, and persist the job's output. It's
+able to host any standard command-line application; usually, with no
+modifications to the application itself.
 
 
 ### Subprocess Execution
 
-Jobson uses the host operating system to execute jobs. Internally,
-Jobson uses the information contained in [job specs](specs.html) to
+Internally, Jobson uses the information contained in
+[job specs](specs.html) to
 [fork](http://man7.org/linux/man-pages/man2/fork.2.html) a child
-process. This means that, to Jobson, the application is effectively a
-black box that:
+process. This means that, to Jobson, the application is a black box
+that:
 
 1. Is launched by the host operating system with some command-line
    arguments and dependencies (files, scripts, etc.)
@@ -68,9 +60,9 @@ black box that:
 
 4. *Maybe* produces output files as a side-effect
 
-Because of this approach, Jobson is able to execute any application,
-written in any langugage, in parallel, with operating-system-level
-sandboxing (from failures, memory leaks, etc.).
+With this approach, Jobson is able to execute any application, written
+in any langugage, with operating-system-level sandboxing (from
+failures, memory leaks, etc.).
 
 
 ### HTTP/Websocket API

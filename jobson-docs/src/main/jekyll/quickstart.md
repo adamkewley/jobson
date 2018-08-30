@@ -17,10 +17,9 @@ for installation steps.
 
 ## 2) Test Jobson's Command-Line Interface
 
-This guide uses Jobson's [command-line](commandline.html) to get
-going. It should be available if you have installed Jobson
-correctly. Ensure you can run it, for example, by showing its help
-pages:
+This guide uses Jobson's command-line to get going. It should be
+available if you have installed Jobson correctly. Ensure you can run
+it, for example, by showing its help pages:
 
 ```bash
 $ jobson --help
@@ -33,10 +32,9 @@ More details about the command-line interface can be found
 
 ## 3) Generate a Workspace
 
-[Workspaces](workspaces.html) are Jobson's way of organizing its
-configuration and data. The `new` command generates a barebones
-workspace containing the minimum necessary files to run a Jobson
-server:
+Workspaces Jobson's way of organizing its configuration and data. The
+`new` command generates a barebones workspace containing the minimum
+necessary files to run a Jobson server:
 
 ```bash
 $ jobson new --demo
@@ -56,16 +54,20 @@ More details about workspaces can be found [here](workspaces.html).
 
 ## 4) Generate a Job Spec
 
-[Job specs](#job-specs) are standard YAML files that describe your
-application. They are held in the `specs/` folder
-([details](#configuration)). The `generate spec` command generates a
-new job spec:
+Job specs standard YAML files that describe an application. They are
+held in the `specs/` folder in a workspace. The `generate spec`
+command generates a new job spec:
 
 ```bash
 $ jobson generate spec foo
 create    specs/foo
 create    specs/foo/spec.yml
 ```
+
+More details about job specs can be found [here](specs.html).
+
+
+## 5) Edit the Job Spec to match the Application
 
 For the sake of this guide, lets assume you want Jobson to host a
 python script takes two inputs, prints something to the standard
@@ -123,39 +125,49 @@ expectedOutputs:
   path: output.txt
 ```
 
-The spec gives Jobson:
+This example is describing a job that:
 
-- Basic documentation of the application
+- Takes two `string` inputs (`firstName` and `secondName`)
 
-- Expected inputs and their types
-
-- A description of how the application is executed
+- Copies `foo.py` in the job spec's folder to `foo.py` in the runtime
+  working directory
   
-- Expected outputs produced by the application
+- Executes `python` with arguments `{inputs.firstName}`,
+  `${inputs.secondName}`. These arguments are examples of template
+  expressions. In this case, those expressions resolve to the
+  `firstName` and `secondName` inputs provided by clients
+  
+- Checks that the `python` script exits with an exit code of `0`
 
-Further details about what's possible in job specs can be found
-[here](#job-specs).
+- Once the application has exited, checks for a file called
+  `output.txt` in the application's working directory and persists
+  that file under the ID `outputFile`
+  
+More details about [job specs](specs.html) and
+[template expressions](template-expressions.html) are available at the
+links.
 
 
-## 5) (Optional) Validate the Job Spec
 
-The `foo` job spec can be validated by Jobson to check for basic
-syntactical errors. The `validate spec` command will exit with no
-output if your job spec is syntactically valid. Run it from your main
-jobson deployment folder:
+## 5) *Optional*: Validate and Run a Job Against the Job Spec
+
+The job spec can be validated by Jobson to check for basic syntactical
+errors. The `validate spec` command will exit with no output if your
+job spec is syntactically valid. Run it from your main jobson
+deployment folder:
 
 ```bash
 $ jobson validate spec foo
-$ 
 ```
 
+The `validate` command exits silently on success.
 
-## 6) (Optional) Generate a Request Against the Job Spec
 
-Running an application via Jobson is different from running an
-application from the command line (see [discussion](#job-specs)), so
-we need to generate a job request. The `generate request` command
-generates a standard JSON request against a spec:
+For a more in-depth validation step, it's a good idea to run an actual
+job request against the job spec to see if any runtime bugs pop
+up. Jobson accepts accepts job requests in a JSON format. The
+`generate request` command generates a random standard JSON request
+against a spec:
 
 ```bash
 $ jobson generate request foo
@@ -173,10 +185,6 @@ Jobson has generated placeholder text (e.g. `Et sint qui nam
 tempore.`) for the inputs. The generated JSON matches the structure of
 requests as sent via the Jobson HTTP API (specifically, `POST
 /v1/jobs`).
-
-
-## 7) (Optional) Run a Job Request Against the Job Spec
-
 
 Although the job spec is syntactically correct, it may still fail at
 runtime, so it's good practice to run a request against the spec.
@@ -203,19 +211,22 @@ We've now created a job spec, validated it, and ran it locally, all
 that's left is to host it.
 
 
+
 ## 8) Boot the Server
 
-Jobson is ultimately a webserver that hosts a REST and websocket API
-for the applications that are described by job specs. With a working
-job spec in place, we're ready to boot a server. The `serve` command
-should be ran from the jobson deployment folder:
+With a working job spec in place, we're ready to boot a server. The
+`serve` command should be ran from the workspace:
 
 ```bash
 $ jobson serve config.yml 
-# .
-# .
-# ...many log messages
 ```
+
+More details about the server configuration (`config.yml`) are
+available [here](server-configuration.html).
+
+
+
+## 9) Verify the Server's Working
 
 The server is then running, which you can verify with a HTTP tool such
 as `curl`:
@@ -233,20 +244,15 @@ $ curl --data @request.json -H 'Content-Type: application/json' localhost:8080/v
 {"id":"svpj5ppevn","_links":{"outputs":{"href":"/v1/jobs/svpj5ppevn/outputs"},"inputs":{"href":"/v1/jobs/svpj5ppevn/inputs"},"self":{"href":"/v1/jobs/svpj5ppevn"},"spec":{"href":"/v1/jobs/svpj5ppevn/spec"}}}
 ```
 
-More details about the Jobson HTTP API are available
-[here](#http-api).
-
-There you have it: a standard HTTP + websocket API for `foo.py`. Now
-that a server is running, downstream clients can use the API to post
-job requests to the server, which will validate the request is valid
-(e.g. "it has a `firstName` string field"), run the application, and
-collect outputs - all while handling authentication, IDing,
-persistence, queueing, concurrency, etc.
-
-
-
 
 ## What's Next?
+
+
+Now that a server is running, downstream clients can use the API to
+post job requests to the server, which will validate the request is
+valid (e.g. "it has a `firstName` string field"), run the application,
+and collect outputs - all while handling authentication, IDing,
+persistence, queueing, concurrency, etc.
 
 Now that you've seen the general idea behind Jobson, there's several
 steps you can take:
@@ -256,8 +262,7 @@ steps you can take:
   job specs to generate a website that can be used by anyone with a
   browser.
   
-- **Customize the server**: See [Configuration documentation](#configuration)
+- **Customize the server**: See
+  [Server Configuration](server-configuration.html)
   
-- **Learn about Job Specs**: See [Job Specs documentation](#job-specs)
-
-- **Use the API**: See [API Documentation](#api)
+- **Learn about Job Specs**: See [Job Specs](specs.html)
