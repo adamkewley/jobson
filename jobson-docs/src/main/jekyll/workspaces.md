@@ -3,11 +3,15 @@ layout: default
 title: Workspaces
 ---
 
-Jobson is configured entirely through standard filesystem structures
-and plaintext files contained in the deployment directory. There are
-no surprise files hidden elsewhere (yet ;)).
+Jobson is configured through standard plaintext configuration files
+and directories. All the necessary files (e.g. `config.yml`, `specs/`,
+`jobs/`) are, by default, kept together in the same directory after
+running the `jobson new` command. That directory is what we call a
+"workspace".
 
-### `config.yml`: Main Configuration File
+# Top-Level Files/Directories
+
+## `config.yml`: Main Configuration File
 
 A standard YAML file that is used by many of Jobson's commands
 (e.g. `serve`, `generate`). It contains everything you would expect a
@@ -17,7 +21,7 @@ authentication configuration, job queue behavior, etc.
 See [config.yml](#config-yml) for more details.
 
 
-### `specs/`: Job Specs
+## `specs/`: Job Specs
 
 A directory that contains the [job specs](#job-specs) hosted by the
 Jobson server. Each subdirectory in `specs/` is a job spec hosted by
@@ -27,7 +31,7 @@ the subdirectory's name. For example, a job spec at
 Jobson API.
 
 
-### `jobs/`: Job Data
+## `jobs/`: Job Data
 
 A directory that contains job data. The data associted with each job
 request (inputs, timestamps, outputs) is persisted here under a
@@ -38,7 +42,7 @@ subdirectory named `{job-id}`.
   building something big on the assumption that they are stable.
 
 
-### `wds/`: Temporary Working Directories
+## `wds/`: Temporary Working Directories
 
 A directory that contains runtime working directories. Jobson
 generates a unique job ID for each successful job request. The working
@@ -62,7 +66,7 @@ finised executing. After finishing, Jobson copies any outputs (as
 specified in the [job spec](#job-specs)) to the `jobs/` folder.
 
 
-### `users`: Authorized System Users
+## `users`: Authorized System Users
 
 A plaintext file that contains users authorized to use the Jobson API
 when `basic` authorization (see configuration documentation) is

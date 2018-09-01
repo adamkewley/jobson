@@ -3,15 +3,16 @@ layout: default
 title: Command-Line Interface
 ---
 
-# <a name="getting-started"></a> Getting Started
+The command-line interface (CLI) for Jobson, `jobson`, contains
+commands aimed at day-to-day development and administration of
+Jobson. The CLI is available once jobson has been
+[installed](https://github.com/adamkewley/jobson).
 
-This guide assumes you have
-[installed Jobson](https://github.com/adamkewley/jobson).
 
-## Viewing Subcommands
+## Viewing Help with `--help`
 
-Jobson's command-line interface is where setup, debugging, and bootup
-happens. Those commands can be found from a terminal:
+Pass the `--help` argument to `jobson` to view the help documentation
+for a particular command.
 
 ```bash
 $ jobson --help
@@ -27,7 +28,8 @@ optional arguments:
   -v, --version          show the application version and exit
 ```
 
-The same pattern applies to subcommands:
+
+The `--help` argument also works with the other subcommands:
 
 ```bash
 $ jobson new --help
@@ -40,3 +42,7 @@ optional arguments:
   --demo                 Generate application with a demo spec (default: false)
   -h, --help             show this help message and exit
 ```
+
+
+HELP TODO: The in-CLI documentation explains the commands, but having
+the documentation here also would be useful to devs.

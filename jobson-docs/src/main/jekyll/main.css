@@ -97,6 +97,11 @@ pre {
     overflow: auto;
 }
 
+code {
+    background-color: #eee;
+    padding: 0.1em;
+}
+
 
 
 

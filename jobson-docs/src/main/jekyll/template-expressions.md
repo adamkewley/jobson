@@ -48,6 +48,14 @@ string that contains each element in the `StringArray` joined with the
 delimiter.
 
 
+### `String toString(Object arg)`
+
+A function that takes an argument (e.g. `request.firstName`) and
+returns a string representation of that arugment. Note: internally,
+this uses the Java `.toString` method on the argument, which may
+produce non-obvious results with complex arguments.
+
+
 ### `Object request`
 
 A reference to the request that initiated the job. Useful fields in
@@ -67,3 +75,9 @@ the request are:
 ### `Object inputs`
 
 Shortcut for `request.inputs`.
+
+
+### `String outputDir`
+
+The output directory for the job. At time of writing, this is always
+the same as the job's working directory.

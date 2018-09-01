@@ -4,15 +4,14 @@ title: Overview
 ---
 
 Jobson is a webserver that automates the most common steps required to
-set up a web service around a batch application.
+build a web service around a batch application.
 
 
 
 ## How It Works
 
-Jobson uses job specs to host a HTTP/websocket API that can launch
-subprocesses server-side. [Job specs](specs.html) are standard YAML
-files that describe applications. An example would be:
+Jobson's core abstraction is the [job spec](specs.html), which
+describes an application. An example job spec would be:
 
 ```yaml
 name: Example Job Spec
@@ -61,26 +60,26 @@ that:
 4. *Maybe* produces output files as a side-effect
 
 With this approach, Jobson is able to execute any application, written
-in any langugage, with operating-system-level sandboxing (from
-failures, memory leaks, etc.).
+in any langugage, with sandboxing (processes don't share memory or
+threads).
 
 
 ### HTTP/Websocket API
 
-Jobson exposes jobs, both running and available, via a standard
-HTTP/websocket API. Internally, Jobson uses the information contained
-in [job specs](specs.html) to generate a structured API which
-*requires* clients to provide the correct information (inputs, login,
-etc.). The API is also declarative, allowing clients to automatically
-enquire about required inputs.
+Internally, Jobson uses the information contained in
+[job specs](specs.html) to generate a structured API which *requires*
+clients to provide the correct information (inputs, login, etc.). The
+API exposes jobs, both running and available, via a standard
+HTTP/websocket API. The API is also declarative, allowing clients to
+automatically enquire about required inputs.
 
 Because of this approach, clients
 (e.g. [Jobson UI](https://github.com/adamkewley/jobson-ui)) are
 entirely shielded from the underlying execution mechanism. Clients
-just submit standard JSON requests to an API and retrieve
+just submit standard JSON requests to a HTTP API and retrieve
 results/outputs through that same API. This decoupling means that
 application developers can radically change an application (e.g. to a
-different language) without affecting downstream clients.
+different language) without breaking downstream clients.
 
 
 ## Getting Started
