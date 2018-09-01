@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Jobson Documentation</title>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,
+                                   maximum-scale=1, user-scalable=no">
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+    
+  </head>
+
+  <body>
+    <header id="header-site">
+  <div class="wrap">
+    <h1>Jobson</h1>
+    <nav>
+      <a href="index.html">docs</a>
+      <a href="https://github.com/adamkewley/jobson">source</a>
+      <a href="https://github.com/adamkewley/jobson/releases">download</a>
+    </nav>
+  </div>
+</header>
+
+
+    <header id="section-title">
+      <div class="wrap">
+	<h1>Server Configuration</h1>
+      </div>
+    </header>
+
+    <section id="content">
+      <div class="wrap">
+	<main id="content-primary">
+	  <p><code class="highlighter-rouge">config.yml</code> is the top-level configuration file for Jobson. It is a
+standard YAML file.</p>
+
+<p><strong>Note</strong>: Relative paths are resolved relative to <code class="highlighter-rouge">config.yml</code></p>
+
+<h2 id="top-level-fields">Top-Level Fields</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">specs:</code></td>
+      <td><code class="highlighter-rouge">specs/</code></td>
+      <td>Path to the job specs directory</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">jobs:</code></td>
+      <td><code class="highlighter-rouge">jobs/</code></td>
+      <td>Path to the jobs directory</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">workingDirs:</code></td>
+      <td>(see below)</td>
+      <td>Path to the temporary working directories</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">users:</code></td>
+      <td>(see below)</td>
+      <td>An object containing the users configuration</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">authentication:</code></td>
+      <td>(see below)</td>
+      <td>An object containing the authentication configuration</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">execution:</code></td>
+      <td>(see below)</td>
+      <td>An object containing the execution configuration</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="workingdirs-working-directory-configuration"><code class="highlighter-rouge">workingDirs</code>: Working Directory Configuration</h2>
+
+<p>Configuration for working directories. Each process spawned by Jobson launches in its own working
+directory.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">dir:</code></td>
+      <td><code class="highlighter-rouge">wds/</code></td>
+      <td>Path the directory that holds working directories</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">removeAfterExecution:</code></td>
+      <td>(see below)</td>
+      <td>Configuration for removing working directories after execution</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="removeafterexecution-policy-for-removing-working-directories"><code class="highlighter-rouge">removeAfterExecution</code>: Policy for Removing Working Directories</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">enabled:</code></td>
+      <td><code class="highlighter-rouge">true</code></td>
+      <td>Indicates whether Jobson should remove working directories after execution</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="users-users-configuration"><code class="highlighter-rouge">users:</code>: Users Configuration</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">file</code></td>
+      <td><code class="highlighter-rouge">users</code></td>
+      <td>Path to the <code class="highlighter-rouge">users</code> file. Used when <code class="highlighter-rouge">basic</code> authentication is enabled</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="authentication-authentication-configuration"><code class="highlighter-rouge">authentication:</code>: Authentication Configuration</h2>
+
+<p>The relevant <code class="highlighter-rouge">authentication:</code> fields change based on what <code class="highlighter-rouge">type:</code> of
+authentication that was specified. <code class="highlighter-rouge">guest</code> auth has different
+configuration requriements from <code class="highlighter-rouge">jwt</code> auth, for example.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">type:</code></td>
+      <td><code class="highlighter-rouge">basic</code></td>
+      <td>The type of authentication to use. Valid values are <code class="highlighter-rouge">basic</code>, <code class="highlighter-rouge">guest</code>, and <code class="highlighter-rouge">jwt</code>.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">*</code></td>
+      <td>N/A</td>
+      <td>Other keys in <code class="highlighter-rouge">authentication:</code> depend on what <code class="highlighter-rouge">type:</code> was specified (see below)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="type-guest-guest-authentication-configuration"><code class="highlighter-rouge">type: guest</code>: Guest Authentication Configuration</h3>
+
+<p>With <code class="highlighter-rouge">guest</code> authentication, the server will accept all incoming and
+assign them a username of <code class="highlighter-rouge">guestUserName</code>.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td>guestUserName</td>
+      <td>guest</td>
+      <td>The username to assign to all requests</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="type-basic-http-basic-authentication-configuration"><code class="highlighter-rouge">type: basic</code>: HTTP Basic Authentication Configuration</h3>
+
+<p>With <code class="highlighter-rouge">basic</code> authentication, the server will use a HTTP Basic
+(<a href="https://tools.ietf.org/html/rfc7617">RFC 7617</a>) authentication
+scheme to collect a username+password pair from clients. Those
+credentials will then be authenticated against entries in Jobson’s
+<code class="highlighter-rouge">users</code> file (see TODO). Valid credentials shall be permitted to use
+the API. Invalid credentials shall be rejected.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td>realm</td>
+      <td>JobsonBasicAuth</td>
+      <td>The “realm” given during the basic auth scheme. For web-browser clients, this is usually displayed as a string in the popup dialog</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="type-jwt-stateless-json-web-token-jwt-authentication-configuration"><code class="highlighter-rouge">type: jwt</code>: Stateless JSON Web Token (JWT) Authentication Configuration</h3>
+
+<p>With <code class="highlighter-rouge">jwt</code> authentication, the server will use stateless JWTs
+(<a href="https://tools.ietf.org/html/rfc7519">RFC 7519</a>), which allow clients
+to authenticate themselves externally. When enabled, the Jobson server
+expects clients to set an <code class="highlighter-rouge">Authorization:</code> HTTP header with a value of
+<code class="highlighter-rouge">Bearer {json-web-token}</code>. The Jobson server will accept the
+credentials in the token provided the token was signed with
+<code class="highlighter-rouge">secretKey</code> (below). If the header is missing, or mis-signed, Jobson
+shall reject the request.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td>secretKey:</td>
+      <td>(no default)</td>
+      <td>Should be a base64-encoded string. The signature algorithm used by Jobson is “HS512” (from <a href="https://github.com/jwtk/jjwt/blob/master/src/main/java/io/jsonwebtoken/SignatureAlgorithm.java">here</a>), which is a HMAC, SHA-512 algorithm</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="execution-execution-configuration"><code class="highlighter-rouge">execution:</code>: Execution Configuration</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Key</td>
+      <td>Default</td>
+      <td>Description</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">maxConcurrentJobs:</code></td>
+      <td>10</td>
+      <td>The number of applications that Jobson is allowed to run concurrently. Jobs are queued if there there are currently more than this number of applications running.</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">delayBeforeForciblyKillingJobs:</code></td>
+      <td>PT10S</td>
+      <td>An <a href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO 8601</a> duration string that specifies how long Jobson should wait after sending a <code class="highlighter-rouge">SIGINT</code> to an application (see <a href="http://man7.org/linux/man-pages/man7/signal.7.html">signals</a>) before sending a <code class="highlighter-rouge">SIGKILL</code>. A <code class="highlighter-rouge">SIGKILL</code> is guaranteed to kill an application, but might result in a harsh exit. Some applications can intelligently handle <code class="highlighter-rouge">SIGINT</code>s, allowing them to cleanup resources, but might take time to perform cleanup.</td>
+    </tr>
+  </tbody>
+</table>
+
+	</main>
+	
+	<nav id="content-nav">
+	  <ul>
+  <li><a href="index.html">Overview</a></li>
+  <li><a href="quickstart.html">Quickstart</a></li>
+  <li><a href="https://github.com/adamkewley/jobson">Install</a></li>
+  <li><a href="commandline.html">Command-Line Interface</a></li>
+  <li><a href="workspaces.html">Workspaces</a></li>
+  <li><a href="specs.html">Job Specs</a></li>
+  <li><a href="template-expressions.html">Template Expressions</a></li>
+  <li><a href="server-configuration.html">Server Configuration</a></li>
+</ul>
+
+	</nav>
+      </div>
+    </section>
+  </body>
+</html>

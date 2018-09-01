@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Jobson Documentation</title>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,
+                                   maximum-scale=1, user-scalable=no">
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+    
+  </head>
+
+  <body>
+    <header id="header-site">
+  <div class="wrap">
+    <h1>Jobson</h1>
+    <nav>
+      <a href="index.html">docs</a>
+      <a href="https://github.com/adamkewley/jobson">source</a>
+      <a href="https://github.com/adamkewley/jobson/releases">download</a>
+    </nav>
+  </div>
+</header>
+
+
+    <header id="section-title">
+      <div class="wrap">
+	<h1>Command-Line Interface</h1>
+      </div>
+    </header>
+
+    <section id="content">
+      <div class="wrap">
+	<main id="content-primary">
+	  <p>The command-line interface (CLI) for Jobson, <code class="highlighter-rouge">jobson</code>, contains
+commands aimed at day-to-day development and administration of
+Jobson. The CLI is available once jobson has been
+<a href="https://github.com/adamkewley/jobson">installed</a>.</p>
+
+<h2 id="viewing-help-with---help">Viewing Help with <code class="highlighter-rouge">--help</code></h2>
+
+<p>Pass the <code class="highlighter-rouge">--help</code> argument to <code class="highlighter-rouge">jobson</code> to view the help documentation
+for a particular command.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson <span class="nt">--help</span>
+usage: java <span class="nt">-jar</span> jobson-0.0.11.jar
+       <span class="o">[</span><span class="nt">-h</span><span class="o">]</span> <span class="o">[</span><span class="nt">-v</span><span class="o">]</span> <span class="o">{</span>server,check,new,generate,users,validate,run<span class="o">}</span> ...
+
+positional arguments:
+  <span class="o">{</span>server,check,new,generate,users,validate,run<span class="o">}</span>
+                         available commands
+
+optional arguments:
+  <span class="nt">-h</span>, <span class="nt">--help</span>             show this <span class="nb">help </span>message and <span class="nb">exit</span>
+  <span class="nt">-v</span>, <span class="nt">--version</span>          show the application version and <span class="nb">exit</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">--help</code> argument also works with the other subcommands:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson new <span class="nt">--help</span>
+usage: java <span class="nt">-jar</span> jobson-0.0.11.jar
+       new <span class="o">[</span><span class="nt">--demo</span><span class="o">]</span> <span class="o">[</span><span class="nt">-h</span><span class="o">]</span>
+
+generate a new jobson deployment <span class="k">in </span>the current working directory
+
+optional arguments:
+  <span class="nt">--demo</span>                 Generate application with a demo spec <span class="o">(</span>default: <span class="nb">false</span><span class="o">)</span>
+  <span class="nt">-h</span>, <span class="nt">--help</span>             show this <span class="nb">help </span>message and <span class="nb">exit</span>
+</code></pre></div></div>
+
+<p>HELP TODO: The in-CLI documentation explains the commands, but having
+the documentation here also would be useful to devs.</p>
+
+	</main>
+	
+	<nav id="content-nav">
+	  <ul>
+  <li><a href="index.html">Overview</a></li>
+  <li><a href="quickstart.html">Quickstart</a></li>
+  <li><a href="https://github.com/adamkewley/jobson">Install</a></li>
+  <li><a href="commandline.html">Command-Line Interface</a></li>
+  <li><a href="workspaces.html">Workspaces</a></li>
+  <li><a href="specs.html">Job Specs</a></li>
+  <li><a href="template-expressions.html">Template Expressions</a></li>
+  <li><a href="server-configuration.html">Server Configuration</a></li>
+</ul>
+
+	</nav>
+      </div>
+    </section>
+  </body>
+</html>
