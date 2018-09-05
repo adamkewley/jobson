@@ -1,0 +1,20 @@
+{
+  "id": "job-schema-7",
+  "name": "Job Schema 7",
+  "description": "Job Schema 7",
+  "expectedInputs": [
+    {
+      "id": "float-input",
+      "name": "Float input",
+      "description": "Float input",
+      "type": "float"
+    }
+  ],
+  "execution": {
+    "application": "bash",
+    "arguments": [
+      "arg1",
+      "arg2"
+    ]
+  }
+}

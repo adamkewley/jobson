@@ -1,0 +1,6 @@
+{
+  "spec": "",
+  "inputs": {
+    "int-input": "not a double"
+  }
+}
