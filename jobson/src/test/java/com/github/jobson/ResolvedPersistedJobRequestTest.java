@@ -169,6 +169,15 @@ public final class ResolvedPersistedJobRequestTest {
     }
 
     @Test
+    public void testValidateProducesAValidationErrorWhenSpecContainsIntButALongValueIsProvided() {
+        testSpecReqPair(
+                "fixtures/specs/15_job-spec-with-int.json",
+                "fixtures/specs/15_req-with-long.json",
+                req -> fail("Invalid request generated no validation errors"),
+                validationErrors -> assertThat(validationErrors.size()).isGreaterThan(0));
+    }
+
+    @Test
     public void testValidateReturnsValidationErrorsIfTheRequestContainsTheWrongInputTypesForTheSchema() {
         final JobSpecId jobSpecId = TestHelpers.generateJobSpecId();
         final JobExpectedInputId schemaInputId = TestHelpers.generateJobInputSchemaId();
