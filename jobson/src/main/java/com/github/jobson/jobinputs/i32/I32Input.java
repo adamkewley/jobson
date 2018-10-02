@@ -20,6 +20,7 @@
 package com.github.jobson.jobinputs.i32;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.jobson.jobinputs.JobInput;
 
 import javax.validation.constraints.NotNull;
@@ -35,6 +36,7 @@ public final class I32Input implements JobInput {
     }
 
     @Override
+    @JsonValue
     public String toString() {
         return Integer.toString(this.value);
     }

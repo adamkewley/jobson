@@ -20,6 +20,7 @@
 package com.github.jobson.jobinputs.f64;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.jobson.jobinputs.JobInput;
 
 import javax.validation.constraints.NotNull;
@@ -34,7 +35,17 @@ public final class F64Input implements JobInput {
         this.value = value;
     }
 
+    public F64Input(String value) {
+        // The API may have to accept 64-bit doubles in string format because
+        // javascript clients can't handle 64-bit binary decimals without losing
+        // precision (after 16 significant digits, "real" doubles lose precision
+        // after 21 digits). Because of this, clients *may* send a double as a string
+        // which the server parses into a binary double server-side
+        this.value = Double.parseDouble(value);
+    }
+
     @Override
+    @JsonValue
     public String toString() {
         return Double.toString(value);
     }
