@@ -20,8 +20,8 @@
 package com.github.jobson;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jobson.api.v1.APIJobRequest;
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APICreateJobRequest;
+import com.github.jobson.api.v1.APIUserId;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
@@ -49,12 +49,12 @@ public final class ResolvedPersistedJobRequestTest {
             Consumer<ValidJobRequest> req,
             Consumer<List<ValidationError>> validationErrors) {
         final JobSpec validJobSchema = TestHelpers.readJSONFixture(specJSONPath, JobSpec.class);
-        final UserId userId = TestHelpers.generateUserId();
-        final APIJobRequest jobRequestWithInvalidSpecifiedOption =
-                TestHelpers.readJSONFixture(reqJSONPath, APIJobRequest.class);
+        final APIUserId APIUserId = TestHelpers.generateUserId();
+        final APICreateJobRequest jobRequestWithInvalidSpecifiedOption =
+                TestHelpers.readJSONFixture(reqJSONPath, APICreateJobRequest.class);
 
         final Either<ValidJobRequest, List<ValidationError>> ret =
-                ValidJobRequest.tryCreate(validJobSchema, userId, jobRequestWithInvalidSpecifiedOption);
+                ValidJobRequest.tryCreate(validJobSchema, APIUserId, jobRequestWithInvalidSpecifiedOption);
 
 
         ret.handleBoth(req, validationErrors);
@@ -201,7 +201,7 @@ public final class ResolvedPersistedJobRequestTest {
                                 Optional.empty(),
                                 Optional.empty()));
 
-        final UserId userId = TestHelpers.generateUserId();
+        final APIUserId APIUserId = TestHelpers.generateUserId();
 
         final JobInput inputThatDoesntMatchSchema =
                 new SelectInput(TestHelpers.generateRandomString());
@@ -212,14 +212,14 @@ public final class ResolvedPersistedJobRequestTest {
         final Map<JobExpectedInputId, JsonNode> genericInputs =
                 Helpers.mapValues(inputs, TestHelpers::toJsonNode);
 
-        final APIJobRequest APIJobRequest =
-                new APIJobRequest(
-                        jobSpecId,
+        final APICreateJobRequest apiCreateJobRequest =
+                new APICreateJobRequest(
+                        jobSpecId.toString(),
                         TestHelpers.generateRandomString(),
-                        genericInputs);
+                        Helpers.mapKeys(genericInputs, JobExpectedInputId::toString));
 
         final Either<ValidJobRequest, List<ValidationError>> ret =
-                ValidJobRequest.tryCreate(jobSpec, userId, APIJobRequest);
+                ValidJobRequest.tryCreate(jobSpec, APIUserId, apiCreateJobRequest);
 
         ret.handleBoth(
                 req -> fail("Invalid request generated no validation errors"),

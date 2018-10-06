@@ -20,7 +20,7 @@
 package com.github.jobson.dao.users;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIUserId;
 
 import javax.validation.constraints.NotNull;
 
@@ -32,7 +32,7 @@ public final class UserCredentials {
         final String fields[] = line.split(":");
 
         if (fields.length == 3) {
-            return new UserCredentials(new UserId(fields[0]), fields[1], fields[2]);
+            return new UserCredentials(new APIUserId(fields[0]), fields[1], fields[2]);
         } else {
             throw new RuntimeException(format(
                     "Error reading a line in the users file. %s columns are present " +
@@ -45,7 +45,7 @@ public final class UserCredentials {
 
     @JsonProperty
     @NotNull
-    private UserId id;
+    private APIUserId id;
 
     @JsonProperty
     @NotNull
@@ -56,14 +56,14 @@ public final class UserCredentials {
     private String authField;
 
 
-    public UserCredentials(UserId id, String authName, String authField) {
+    public UserCredentials(APIUserId id, String authName, String authField) {
         this.id = id;
         this.authName = authName;
         this.authField = authField;
     }
 
 
-    public UserId getId() {
+    public APIUserId getId() {
         return id;
     }
 

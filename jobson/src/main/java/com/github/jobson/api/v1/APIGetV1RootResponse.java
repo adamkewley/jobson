@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,49 +19,29 @@
 
 package com.github.jobson.api.v1;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "Summary information for a user")
-public final class APIUserDetails {
+import java.util.Map;
 
-    @ApiModelProperty(value = "A unique identifier for the user", example = "akewley")
+@ApiModel(description = "A root response, which describes sub-resources")
+public final class APIGetV1RootResponse {
+
+    @ApiModelProperty(value = "Links to related resources and actions")
     @JsonProperty
-    private UserId id;
+    private Map<String, APIRestLink> _links;
 
 
-
-    /**
-     * @deprecated Used by JSON deserializer
-     */
-    public APIUserDetails()  {}
-
-    public APIUserDetails(UserId id) {
-        this.id = id;
+    public APIGetV1RootResponse(
+            @JsonProperty("_links") Map<String, APIRestLink> _links) {
+        this._links = _links;
     }
 
 
-
-    public UserId getId() {
-        return id;
-    }
-
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        APIUserDetails that = (APIUserDetails) o;
-
-        return id != null ? id.equals(that.id) : that.id == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    @JsonIgnore
+    public Map<String, APIRestLink> getLinks() {
+        return _links;
     }
 }

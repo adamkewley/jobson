@@ -23,8 +23,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.github.jobson.Helpers;
-import com.github.jobson.api.v1.APIJobRequest;
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APICreateJobRequest;
+import com.github.jobson.api.v1.APIUserId;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
@@ -51,18 +51,18 @@ public class ValidJobRequest {
 
     public static Either<ValidJobRequest, List<ValidationError>> tryCreate(
             JobSpec jobSpec,
-            UserId userId,
-            APIJobRequest APIJobRequest) throws RuntimeException {
+            APIUserId APIUserId,
+            APICreateJobRequest apiCreateJobRequest) throws RuntimeException {
 
         final Map<JobExpectedInputId, JobExpectedInput> jobExpectedInputs =
                 jobSpec.getExpectedInputs()
                         .stream()
                         .collect(toMap(JobExpectedInput::getId, identity()));
 
-        return resolveJobInputs(jobExpectedInputs, APIJobRequest.getInputs())
+        return resolveJobInputs(jobExpectedInputs, apiCreateJobRequest.getInputs())
                 .leftMap(inputs -> new ValidJobRequest(
-                        userId,
-                        APIJobRequest.getName(),
+                        APIUserId,
+                        apiCreateJobRequest.getName(),
                         inputs,
                         jobSpec))
                 .leftFlatMap(req -> {
@@ -75,7 +75,10 @@ public class ValidJobRequest {
 
     private static Either<Map<JobExpectedInputId, JobInput>, List<ValidationError>> resolveJobInputs(
             Map<JobExpectedInputId, JobExpectedInput> expectedInputs,
-            Map<JobExpectedInputId, JsonNode> suppliedInputs) {
+            Map<String, JsonNode> rawSuppliedInputs) {
+
+        final Map<JobExpectedInputId, JsonNode> suppliedInputs =
+                Helpers.mapKeys(rawSuppliedInputs, JobExpectedInputId::new);
 
         final Map<JobExpectedInputId, JobInput> defaultedInputs =
                 resolveDefaultedInputs(expectedInputs, suppliedInputs);
@@ -236,7 +239,7 @@ public class ValidJobRequest {
 
 
     @JsonProperty
-    private UserId owner;
+    private APIUserId owner;
 
     @JsonProperty
     private String name;
@@ -255,7 +258,7 @@ public class ValidJobRequest {
     public ValidJobRequest() {}
 
     public ValidJobRequest(
-            UserId owner,
+            APIUserId owner,
             String name,
             Map<JobExpectedInputId, JobInput> inputs,
             JobSpec spec) {
@@ -268,7 +271,7 @@ public class ValidJobRequest {
 
 
 
-    public UserId getOwner() {
+    public APIUserId getOwner() {
         return owner;
     }
 

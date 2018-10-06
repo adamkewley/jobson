@@ -19,46 +19,52 @@
 
 package com.github.jobson.api.v1;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.jobs.JobId;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-@ApiModel(description = "Response to a successful job submission request")
-public final class APIJobCreatedResponse {
+@ApiModel(description = "A job request")
+public final class APICreateJobRequest {
 
-    @ApiModelProperty(value = "The new job's ID")
+    @ApiModelProperty(value = "The job spec that the request is being made against")
     @JsonProperty
-    private JobId id;
+    @NotNull
+    private String spec;
 
-    @ApiModelProperty(value = "Links to related resources and actions")
+    @ApiModelProperty(value = "Human-readable name for the job")
     @JsonProperty
-    private Map<String, APIRestLink> _links;
+    @NotNull
+    private String name;
+
+    @ApiModelProperty(value = "Inputs for the job")
+    @JsonProperty
+    @NotNull
+    private Map<String, JsonNode> inputs;
 
 
-    /**
-     * @deprecated Used by JSON deserializer
-     */
-    public APIJobCreatedResponse() {}
-
-    public APIJobCreatedResponse(
-            JobId id,
-            Map<String, APIRestLink> _links) {
-        this.id = id;
-        this._links = _links;
+    public APICreateJobRequest(
+            @JsonProperty("spec") String spec,
+            @JsonProperty("name") String name,
+            @JsonProperty("inputs") Map<String, JsonNode> inputs) {
+        this.spec = spec;
+        this.name = name;
+        this.inputs = inputs;
     }
 
 
-
-    public JobId getId() {
-        return id;
+    public String getSpec() {
+        return spec;
     }
 
-    @JsonIgnore
-    public Map<String, APIRestLink> getLinks() {
-        return _links;
+    public String getName() {
+        return name;
+    }
+
+    public Map<String, JsonNode> getInputs() {
+        return inputs;
     }
 }

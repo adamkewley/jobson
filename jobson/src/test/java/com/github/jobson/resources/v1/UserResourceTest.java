@@ -20,8 +20,8 @@
 package com.github.jobson.resources.v1;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIUserDetails;
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIGetUserDetailsResponse;
+import com.github.jobson.api.v1.APIUserId;
 import org.junit.Test;
 
 import javax.ws.rs.core.SecurityContext;
@@ -33,7 +33,7 @@ public final class UserResourceTest {
 
     @Test
     public void testGetCurrentUserReturnsCurrentUserId() {
-        final UserId userId = TestHelpers.generateUserId();
+        final APIUserId APIUserId = TestHelpers.generateUserId();
 
         final SecurityContext securityContext = new SecurityContext() {
             @Override
@@ -41,7 +41,7 @@ public final class UserResourceTest {
                 return new Principal() {
                     @Override
                     public String getName() {
-                        return userId.toString();
+                        return APIUserId.toString();
                     }
                 };
             }
@@ -64,8 +64,8 @@ public final class UserResourceTest {
 
         final UserResource userResource = new UserResource();
 
-        final APIUserDetails APIUserDetails = userResource.fetchCurrentUserDetails(securityContext);
+        final APIGetUserDetailsResponse apiGetUserDetailsResponse = userResource.fetchCurrentUserDetails(securityContext);
 
-        assertThat(APIUserDetails.getId()).isEqualTo(userId);
+        assertThat(apiGetUserDetailsResponse.getId()).isEqualTo(APIUserId);
     }
 }

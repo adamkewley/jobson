@@ -19,7 +19,7 @@
 
 package com.github.jobson.commands.users;
 
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIUserId;
 import com.github.jobson.auth.basic.BasicAuthenticator;
 import com.github.jobson.commands.DefaultedConfiguredCommand;
 import com.github.jobson.config.ApplicationConfig;
@@ -60,7 +60,7 @@ public final class UseraddCommand extends DefaultedConfiguredCommand<Application
 
     @Override
     protected void run(Bootstrap<ApplicationConfig> bootstrap, Namespace namespace, ApplicationConfig applicationConfig) throws Exception {
-        final UserId login = new UserId(namespace.get(LOGIN_ARG));
+        final APIUserId login = new APIUserId(namespace.get(LOGIN_ARG));
         final File userFile = new File(applicationConfig.getUsersConfiguration().getFile());
         final FilesystemUserDAO dao = new FilesystemUserDAO(userFile);
 
@@ -74,7 +74,7 @@ public final class UseraddCommand extends DefaultedConfiguredCommand<Application
         }
     }
 
-    private void addNewUser(Namespace namespace, FilesystemUserDAO dao, UserId login) {
+    private void addNewUser(Namespace namespace, FilesystemUserDAO dao, APIUserId login) {
         final String password = namespace.getString(PASSWORD_ARG) == null ?
                 generateRandomBase36String(30) :
                 namespace.getString(PASSWORD_ARG);

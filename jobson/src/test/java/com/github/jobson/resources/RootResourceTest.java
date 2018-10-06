@@ -21,7 +21,7 @@ package com.github.jobson.resources;
 
 import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.APIRootResponse;
+import com.github.jobson.api.APIGetRootResponse;
 import org.junit.Test;
 
 import static com.github.jobson.TestHelpers.assertHasKeyWithValue;
@@ -32,7 +32,7 @@ public final class RootResourceTest {
     @Test
     public void testGetReturnsAResponse() {
         final RootResource resource = new RootResource();
-        final APIRootResponse response = resource.get(TestHelpers.generateSecureSecurityContext());
+        final APIGetRootResponse response = resource.get(TestHelpers.generateSecureSecurityContext());
 
         assertThat(response).isNotNull();
     }
@@ -40,7 +40,7 @@ public final class RootResourceTest {
     @Test
     public void testGetResponseContainsALinkToTheV1Root() {
         final RootResource resource = new RootResource();
-        final APIRootResponse response = resource.get(TestHelpers.generateSecureSecurityContext());
+        final APIGetRootResponse response = resource.get(TestHelpers.generateSecureSecurityContext());
 
         assertHasKeyWithValue(
                 response.getLinks(),

@@ -22,11 +22,13 @@ package com.github.jobson.systemtests;
 import com.github.jobson.App;
 import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIJobDetails;
+import com.github.jobson.api.v1.APIGetJobDetailsResponse;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.systemtests.httpapi.TestJobSpecsAPI;
+import com.github.jobson.utils.APIMappers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.glassfish.jersey.internal.util.Base64;
 
@@ -122,12 +124,17 @@ public final class SystemTestHelpers {
         builder.header("Authorization", "Basic " + Base64.encodeAsString(username + ":" + password));
     }
 
+    public static void waitUntilJobTerminates(DropwizardAppRule<ApplicationConfig> rule, String jobId) throws InterruptedException {
+        waitUntilJobTerminates(rule, new JobId(jobId));
+    }
+
     public static void waitUntilJobTerminates(DropwizardAppRule<ApplicationConfig> rule, JobId jobId) throws InterruptedException {
         int maxAttempts = 50;
         while (maxAttempts-- > 0) {
-            final APIJobDetails resp =
-                    generateAuthenticatedRequest(rule, jobResourceSubpath(jobId)).get().readEntity(APIJobDetails.class);
-            if (resp.getTimestamps().get(resp.getTimestamps().size() -1 ).getStatus().isFinal()) {
+            final APIGetJobDetailsResponse resp =
+                    generateAuthenticatedRequest(rule, jobResourceSubpath(jobId)).get().readEntity(APIGetJobDetailsResponse.class);
+            final JobStatus status = APIMappers.fromAPIJobStatus(resp.latestStatus());
+            if (status.isFinal()) {
                 break;
             } else {
                 Thread.sleep(50);

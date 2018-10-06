@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,36 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package com.github.jobson.jobs;
+package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.Constants;
-import com.github.jobson.Helpers;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
 
-@ApiModel(description = "Timestamp on a job")
-public final class JobTimestamp {
-
-    public static JobTimestamp now(JobStatus jobStatus, String message) {
-        return new JobTimestamp(jobStatus, Helpers.now(), Optional.of(message));
-    }
-
-    public static JobTimestamp now(JobStatus jobStatus) {
-        return new JobTimestamp(jobStatus, Helpers.now(), Optional.empty());
-    }
-
-
+public final class APIJobTimestamp {
 
     @ApiModelProperty(value = "The new status of the job")
     @JsonProperty
-    private JobStatus status;
+    private APIJobStatus status;
 
     @ApiModelProperty(value = "When the status change occurred")
     @JsonProperty
@@ -60,22 +44,17 @@ public final class JobTimestamp {
     private String message = null;
 
 
-
-    /**
-     * @deprecated Used by JSON deserializer
-     */
-    public JobTimestamp() {}
-
-
-    public JobTimestamp(JobStatus status, Date time, Optional<String> message) {
+    public APIJobTimestamp(
+            @JsonProperty("status") APIJobStatus status,
+            @JsonProperty("time") Date time,
+            @JsonProperty("message") String message) {
         this.status = status;
         this.time = time;
-        this.message = message.orElse(null);
+        this.message = message;
     }
 
 
-
-    public JobStatus getStatus() {
+    public APIJobStatus getStatus() {
         return status;
     }
 
@@ -83,23 +62,7 @@ public final class JobTimestamp {
         return time;
     }
 
-    public Optional<String> getMessage() {
-        return message != null ? Optional.of(message) : Optional.empty();
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        JobTimestamp that = (JobTimestamp) o;
-        return status == that.status &&
-                Objects.equals(time, that.time) &&
-                Objects.equals(message, that.message);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(status, time, message);
+    public String getMessage() {
+        return message;
     }
 }

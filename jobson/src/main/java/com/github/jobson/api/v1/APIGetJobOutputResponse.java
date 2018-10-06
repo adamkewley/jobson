@@ -20,8 +20,6 @@
 package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.dao.jobs.JobOutputDetails;
-import com.github.jobson.specs.JobOutputId;
 import io.swagger.annotations.ApiModel;
 
 import javax.validation.constraints.NotNull;
@@ -30,26 +28,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @ApiModel(description = "Details about an output produced by a job")
-public final class APIJobOutput {
-
-    public static APIJobOutput fromJobOutput(
-            String outputsFolderHref,
-            JobOutputDetails jobOutputDetails) {
-
-        return new APIJobOutput(
-                jobOutputDetails.getId(),
-                jobOutputDetails.getSizeInBytes(),
-                outputsFolderHref,
-                jobOutputDetails.getMimeType(),
-                jobOutputDetails.getName(),
-                jobOutputDetails.getDescription(),
-                jobOutputDetails.getMetadata());
-    }
-
+public final class APIGetJobOutputResponse {
 
     @JsonProperty
     @NotNull
-    private JobOutputId id;
+    private String id;
 
     @JsonProperty
     private long sizeInBytes;
@@ -72,19 +55,14 @@ public final class APIJobOutput {
     private Map<String, String> metadata = new HashMap<>();
 
 
-    /**
-     * @deprecated Used by JSON deserializer.
-     */
-    public APIJobOutput() {}
-
-    public APIJobOutput(
-            JobOutputId id,
-            long sizeInBytes,
-            String href,
-            Optional<String> mimeType,
-            Optional<String> name,
-            Optional<String> description,
-            Map<String, String> metadata) {
+    public APIGetJobOutputResponse(
+            @JsonProperty("id") String id,
+            @JsonProperty("sizeInBytes") long sizeInBytes,
+            @JsonProperty("href") String href,
+            @JsonProperty("mimeType") Optional<String> mimeType,
+            @JsonProperty("name") Optional<String> name,
+            @JsonProperty("description") Optional<String> description,
+            @JsonProperty("metadata") Map<String, String> metadata) {
         this.id = id;
         this.sizeInBytes = sizeInBytes;
         this.href = href;
@@ -95,7 +73,7 @@ public final class APIJobOutput {
     }
 
 
-    public JobOutputId getId() {
+    public String getId() {
         return this.id;
     }
 

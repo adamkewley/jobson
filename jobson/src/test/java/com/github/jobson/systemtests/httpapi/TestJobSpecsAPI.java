@@ -20,8 +20,8 @@
 package com.github.jobson.systemtests.httpapi;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIJobSpec;
-import com.github.jobson.api.v1.APIJobSpecSummaryCollection;
+import com.github.jobson.api.v1.APIGetJobSpecResponse;
+import com.github.jobson.api.v1.APIGetJobSpecSummariesResponse;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.specs.JobSpec;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -61,14 +61,14 @@ public final class TestJobSpecsAPI {
     @Test
     public void testOKSummariesResponseContainsSummaries() throws IOException {
         final Response response = generateAuthenticatedRequest(RULE, HTTP_SPECS_PATH).get();
-        response.readEntity(APIJobSpecSummaryCollection.class);
+        response.readEntity(APIGetJobSpecSummariesResponse.class);
     }
 
     @Test
     public void testGetJobSpecSummariesContainsTheJobSpecsInTheJobSpecsFolder() throws IOException {
-        final APIJobSpecSummaryCollection resp = generateAuthenticatedRequest(RULE, HTTP_SPECS_PATH)
+        final APIGetJobSpecSummariesResponse resp = generateAuthenticatedRequest(RULE, HTTP_SPECS_PATH)
                 .get()
-                .readEntity(APIJobSpecSummaryCollection.class);
+                .readEntity(APIGetJobSpecSummariesResponse.class);
 
         final List<JobSpec> specsProvidedWhenBooting =
                 asList(readYAMLFixture("fixtures/systemtests/jobspecs.yml", JobSpec[].class));
@@ -90,6 +90,6 @@ public final class TestJobSpecsAPI {
 
         assertThat(response.getStatus()).isEqualTo(OK);
 
-        TestHelpers.readJSON(response.readEntity(String.class), APIJobSpec.class);
+        TestHelpers.readJSON(response.readEntity(String.class), APIGetJobSpecResponse.class);
     }
 }

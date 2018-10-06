@@ -21,28 +21,18 @@ package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.jobinputs.JobExpectedInput;
-import com.github.jobson.specs.JobSpec;
-import com.github.jobson.specs.JobSpecId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
 @ApiModel(description = "A job spec's details")
-public final class APIJobSpec {
-
-    public static APIJobSpec fromJobSpec(JobSpec jobSpec) {
-        return new APIJobSpec(
-                jobSpec.getId(),
-                jobSpec.getName(),
-                jobSpec.getDescription(),
-                jobSpec.getExpectedInputs());
-    }
+public final class APIGetJobSpecResponse {
 
 
     @ApiModelProperty(value = "ID of the job spec")
     @JsonProperty
-    private JobSpecId id;
+    private String id;
 
     @ApiModelProperty(value = "Human-readable name of the job spec")
     @JsonProperty
@@ -57,16 +47,11 @@ public final class APIJobSpec {
     private List<JobExpectedInput<?>> expectedInputs;
 
 
-    /**
-     * @deprecated Used by JSON deserializer.
-     */
-    public APIJobSpec() {}
-
-    public APIJobSpec(
-            JobSpecId id,
-            String name,
-            String description,
-            List<JobExpectedInput<?>> expectedInputs) {
+    public APIGetJobSpecResponse(
+            @JsonProperty("id") String id,
+            @JsonProperty("name") String name,
+            @JsonProperty("description") String description,
+            @JsonProperty("expectedInputs") List<JobExpectedInput<?>> expectedInputs) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -74,7 +59,7 @@ public final class APIJobSpec {
     }
 
 
-    public JobSpecId getId() {
+    public String getId() {
         return id;
     }
 
@@ -96,7 +81,7 @@ public final class APIJobSpec {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        APIJobSpec that = (APIJobSpec) o;
+        APIGetJobSpecResponse that = (APIGetJobSpecResponse) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;

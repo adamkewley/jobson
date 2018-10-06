@@ -19,8 +19,8 @@
 
 package com.github.jobson.resources.v1;
 
+import com.github.jobson.api.v1.APIGetV1RootResponse;
 import com.github.jobson.api.v1.APIRestLink;
-import com.github.jobson.api.v1.APIV1RootResponse;
 import io.swagger.annotations.Api;
 
 import javax.annotation.security.PermitAll;
@@ -43,13 +43,13 @@ public final class V1RootResource {
 
     @GET
     @PermitAll
-    public APIV1RootResponse get(@Context SecurityContext context) {
+    public APIGetV1RootResponse get(@Context SecurityContext context) {
         Map<String, APIRestLink> links = new HashMap<>();
         try {
             links.put("jobs", new APIRestLink(new URI(HTTP_JOBS_PATH)));
             links.put("current-user", new APIRestLink(new URI(HTTP_USERS_PATH + "/current")));
             links.put("specs", new APIRestLink(new URI(HTTP_SPECS_PATH)));
-            return new APIV1RootResponse(links);
+            return new APIGetV1RootResponse(links);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

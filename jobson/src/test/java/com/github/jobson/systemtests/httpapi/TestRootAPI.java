@@ -20,9 +20,8 @@
 package com.github.jobson.systemtests.httpapi;
 
 import com.github.jobson.Constants;
-import com.github.jobson.TestConstants;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.APIRootResponse;
+import com.github.jobson.api.APIGetRootResponse;
 import com.github.jobson.config.ApplicationConfig;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
@@ -61,7 +60,7 @@ public final class TestRootAPI {
         final Response response = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
 
         final String json = response.readEntity(String.class);
-        final APIRootResponse parsedResponse = TestHelpers.readJSON(json, APIRootResponse.class);
+        final APIGetRootResponse parsedResponse = TestHelpers.readJSON(json, APIGetRootResponse.class);
 
         assertThat(parsedResponse).isNotNull();
     }
@@ -71,7 +70,7 @@ public final class TestRootAPI {
         final Response response = generateAuthenticatedRequest(RULE, HTTP_ROOT).get();
 
         final String json = response.readEntity(String.class);
-        final APIRootResponse parsedResponse = TestHelpers.readJSON(json, APIRootResponse.class);
+        final APIGetRootResponse parsedResponse = TestHelpers.readJSON(json, APIGetRootResponse.class);
 
         assertHasKeyWithValue(parsedResponse.getLinks(), "v1", Constants.HTTP_V1_ROOT);
     }

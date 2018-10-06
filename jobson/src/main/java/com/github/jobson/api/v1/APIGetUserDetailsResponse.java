@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,27 +23,38 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.List;
+@ApiModel(description = "Summary information for a user")
+public final class APIGetUserDetailsResponse {
 
-@ApiModel(description = "Response to a request for job summaries")
-public final class APIJobOutputCollection {
-
-    @ApiModelProperty(value = "The entries returned")
+    @ApiModelProperty(value = "A unique identifier for the user", example = "akewley")
     @JsonProperty
-    private List<APIJobOutput> entries;
+    private APIUserId id;
 
 
-    /**
-     * @deprecated Used by JSON deserializer.
-     */
-    public APIJobOutputCollection() {}
-
-    public APIJobOutputCollection(List<APIJobOutput> entries) {
-        this.entries = entries;
+    public APIGetUserDetailsResponse(
+            @JsonProperty("id") APIUserId id) {
+        this.id = id;
     }
 
 
-    public List<APIJobOutput> getEntries() {
-        return entries;
+    public APIUserId getId() {
+        return id;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        APIGetUserDetailsResponse that = (APIGetUserDetailsResponse) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

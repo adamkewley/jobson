@@ -19,7 +19,7 @@
 
 package com.github.jobson.commands.users;
 
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIUserId;
 import com.github.jobson.auth.basic.BasicAuthenticator;
 import com.github.jobson.commands.DefaultedConfiguredCommand;
 import com.github.jobson.config.ApplicationConfig;
@@ -53,7 +53,7 @@ public final class PasswdCommand extends DefaultedConfiguredCommand<ApplicationC
 
     @Override
     protected void run(Bootstrap<ApplicationConfig> bootstrap, Namespace namespace, ApplicationConfig applicationConfig) throws Exception {
-        final UserId login = new UserId(namespace.get(LOGIN_ARG));
+        final APIUserId login = new APIUserId(namespace.get(LOGIN_ARG));
         final File userFile = new File(applicationConfig.getUsersConfiguration().getFile());
         final FilesystemUserDAO dao = new FilesystemUserDAO(userFile);
 

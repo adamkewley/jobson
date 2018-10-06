@@ -27,6 +27,6 @@ public final class APIJobDetailsRequestTest {
 
     @Test
     public void testCanDeserializeAJobRequest() {
-        readJSONFixture("fixtures/api/v1/APIJobSubmissionRequest/job-request.json", APIJobRequest.class);
+        readJSONFixture("fixtures/api/v1/APIJobSubmissionRequest/job-request.json", APICreateJobRequest.class);
     }
 }

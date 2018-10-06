@@ -20,7 +20,7 @@
 package com.github.jobson.jobs.jobstates;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIUserId;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobinputs.JobInput;
 import com.github.jobson.jobs.JobEventListeners;
@@ -60,7 +60,7 @@ public final class QueuedJob extends PersistedJob {
 
     public QueuedJob(
             JobId id,
-            UserId owner,
+            APIUserId owner,
             String name,
             Map<JobExpectedInputId, JobInput> inputs,
             List<JobTimestamp> timestamps,

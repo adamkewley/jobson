@@ -19,9 +19,9 @@
 
 package com.github.jobson.dao.users;
 
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIUserId;
 
 public interface UserDAO extends ReadonlyUserDAO {
-    boolean addNewUser(UserId id, String authName, String authField);
-    boolean updateUserAuth(UserId id, String authName, String authField);
+    boolean addNewUser(APIUserId id, String authName, String authField);
+    boolean updateUserAuth(APIUserId id, String authName, String authField);
 }

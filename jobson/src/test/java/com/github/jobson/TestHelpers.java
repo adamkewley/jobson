@@ -23,10 +23,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.github.jobson.api.v1.APIJobDetails;
-import com.github.jobson.api.v1.APIJobRequest;
+import com.github.jobson.api.v1.APIGetJobDetailsResponse;
+import com.github.jobson.api.v1.APICreateJobRequest;
 import com.github.jobson.api.v1.APIRestLink;
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIUserId;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.jobs.JobOutputDetails;
@@ -186,8 +186,8 @@ public final class TestHelpers {
         return new JobOutputId(generateRandomString());
     }
 
-    public static UserId generateUserId() {
-        return new UserId(TestHelpers.generateRandomString());
+    public static APIUserId generateUserId() {
+        return new APIUserId(TestHelpers.generateRandomString());
     }
 
     public static String generateUserName() {
@@ -262,8 +262,8 @@ public final class TestHelpers {
         return generateJobDetailsWithStatuses(generateTypicalJobStatusTimestamps());
     }
 
-    public static APIJobDetails generateAPIJobDetailsWithStatus(JobStatus jobStatus) {
-        return APIJobDetails.fromJobDetails(generateJobDetailsWithStatus(jobStatus), Collections.emptyMap());
+    public static APIGetJobDetailsResponse generateAPIJobDetailsWithStatus(JobStatus jobStatus) {
+        return Helpers.fromJobDetails(generateJobDetailsWithStatus(jobStatus), Collections.emptyMap());
     }
 
     public static JobDetails generateJobDetailsWithStatus(JobStatus jobStatus) {
@@ -278,8 +278,8 @@ public final class TestHelpers {
                 jobStatuses);
     }
 
-    public static APIJobDetails generateAPIJobDetailsWithStatuses(List<JobTimestamp> jobStatuses) {
-        return APIJobDetails.fromJobDetails(generateJobDetailsWithStatuses(jobStatuses), Collections.emptyMap());
+    public static APIGetJobDetailsResponse generateAPIJobDetailsWithStatuses(List<JobTimestamp> jobStatuses) {
+        return Helpers.fromJobDetails(generateJobDetailsWithStatuses(jobStatuses), Collections.emptyMap());
     }
 
     public static SecurityContext generateSecureSecurityContext() {
@@ -316,11 +316,11 @@ public final class TestHelpers {
         };
     }
 
-    public static APIJobRequest generateJobSubmissionRequest() {
+    public static APICreateJobRequest generateJobSubmissionRequest() {
         final JobSpecId jobSpecId = generateJobSpecId();
         final String description = generateRandomString();
         final Map<JobExpectedInputId, JobInput> inputs = generateRandomJobInputs();
-        final Map<JobExpectedInputId, JsonNode> anonymizedInputs =
+        final Map<JobExpectedInputId, JsonNode> rawAnonymizedInputs =
                 Helpers.mapValues(inputs, input -> {
                     try {
                         return JSON_MAPPER.readValue(
@@ -331,7 +331,10 @@ public final class TestHelpers {
                     }
                 });
 
-        return new APIJobRequest(jobSpecId, description, anonymizedInputs);
+        final Map<String, JsonNode> anonymizedInputs =
+                Helpers.mapKeys(rawAnonymizedInputs, JobExpectedInputId::toString);
+
+        return new APICreateJobRequest(jobSpecId.toString(), description, anonymizedInputs);
     }
 
     public static Map<JobExpectedInputId, JobInput> generateRandomJobInputs() {
@@ -518,7 +521,7 @@ public final class TestHelpers {
                 STANDARD_VALID_REQUEST.getSpec());
     }
 
-    public static ValidJobRequest validRequestWithOwner(UserId owner) {
+    public static ValidJobRequest validRequestWithOwner(APIUserId owner) {
         return new ValidJobRequest(
                 owner,
                 STANDARD_VALID_REQUEST.getName(),

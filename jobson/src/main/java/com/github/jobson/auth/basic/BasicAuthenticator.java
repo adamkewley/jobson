@@ -19,7 +19,7 @@
 
 package com.github.jobson.auth.basic;
 
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIUserId;
 import com.github.jobson.dao.users.ReadonlyUserDAO;
 import com.github.jobson.dao.users.UserCredentials;
 import io.dropwizard.auth.AuthenticationException;
@@ -66,14 +66,14 @@ public final class BasicAuthenticator implements Authenticator<BasicCredentials,
 
     @Override
     public Optional<Principal> authenticate(BasicCredentials basicCredentials) throws AuthenticationException {
-        final UserId id = new UserId(basicCredentials.getUsername());
+        final APIUserId id = new APIUserId(basicCredentials.getUsername());
 
         return readonlyUserDAO
                 .getUserCredentialsById(id)
                 .filter(BasicAuthenticator::hasCorrectAuthType)
                 .filter(credentials -> matchesTheCredentialsSuppliedByTheClient(credentials, basicCredentials))
                 .map(UserCredentials::getId)
-                .map(UserId::toString)
+                .map(APIUserId::toString)
                 .map(PrincipalImpl::new);
     }
 }

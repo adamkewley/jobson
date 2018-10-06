@@ -18,10 +18,9 @@
  */
 package com.github.jobson.systemtests.bootup;
 
-import com.github.jobson.api.v1.APIJobCreatedResponse;
-import com.github.jobson.api.v1.APIJobRequest;
+import com.github.jobson.api.v1.APICreateJobResponse;
+import com.github.jobson.api.v1.APICreateJobRequest;
 import com.github.jobson.config.ApplicationConfig;
-import com.github.jobson.jobs.JobId;
 import com.github.jobson.systemtests.SystemTestHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
@@ -51,12 +50,12 @@ public final class TestAppBootsWithWdCleanupConfig {
 
     @Test
     public void testWorkingDirDoesNotExistAfterExecution() throws InterruptedException {
-        final APIJobRequest request = readJSONFixture("fixtures/systemtests/request-against-first-spec.json", APIJobRequest.class);
+        final APICreateJobRequest request = readJSONFixture("fixtures/systemtests/request-against-first-spec.json", APICreateJobRequest.class);
 
-        final JobId createdJob =
+        final String createdJob =
                 generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
                         .post(json(request))
-                        .readEntity(APIJobCreatedResponse.class)
+                        .readEntity(APICreateJobResponse.class)
                         .getId();
 
         SystemTestHelpers.waitUntilJobTerminates(RULE, createdJob);

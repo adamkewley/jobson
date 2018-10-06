@@ -19,8 +19,8 @@
 
 package com.github.jobson.resources.v1;
 
-import com.github.jobson.api.v1.APIUserDetails;
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIGetUserDetailsResponse;
+import com.github.jobson.api.v1.APIUserId;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -47,7 +47,7 @@ public final class UserResource {
                     "*something*. If authentication is disabled (e.g. guest auth is enabled) then the client's ID is" +
                     " handled as the guest username (usually, 'guest'). All other auth types have an associated username " +
                     "that jobson will extract and return via this entrypoint")
-    public APIUserDetails fetchCurrentUserDetails(@Context SecurityContext context) {
-        return new APIUserDetails(new UserId(context.getUserPrincipal().getName()));
+    public APIGetUserDetailsResponse fetchCurrentUserDetails(@Context SecurityContext context) {
+        return new APIGetUserDetailsResponse(new APIUserId(context.getUserPrincipal().getName()));
     }
 }

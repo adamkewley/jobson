@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,28 +17,34 @@
  * under the License.
  */
 
-package com.github.jobson.api.v1;
+package com.github.jobson.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.jobson.api.v1.APIRestLink;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.net.URI;
+import java.util.Map;
 
-@ApiModel(description = "A related resource link")
-public final class APIRestLink {
+@ApiModel(description = "A root response, which describes sub-resources")
+public final class APIGetRootResponse {
 
-    @ApiModelProperty(value = "The link's URL")
-    private URI href;
+    @ApiModelProperty(value = "Links to related resources")
+    @JsonProperty
+    private Map<String, APIRestLink> _links;
 
+    /**
+     * @deprecated Used by JSON deserializer
+     */
+    public APIGetRootResponse() {}
 
-    public APIRestLink(
-            @JsonProperty("href") URI href) {
-        this.href = href;
+    public APIGetRootResponse(Map<String, APIRestLink> _links) {
+        this._links = _links;
     }
 
-
-    public URI getHref() {
-        return href;
+    @JsonIgnore
+    public Map<String, APIRestLink> getLinks() {
+        return _links;
     }
 }

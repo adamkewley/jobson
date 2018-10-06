@@ -19,10 +19,10 @@
 
 package com.github.jobson.dao.users;
 
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIUserId;
 
 import java.util.Optional;
 
 public interface ReadonlyUserDAO {
-    Optional<UserCredentials> getUserCredentialsById(UserId id);
+    Optional<UserCredentials> getUserCredentialsById(APIUserId id);
 }

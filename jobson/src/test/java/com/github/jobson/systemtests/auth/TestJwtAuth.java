@@ -20,7 +20,7 @@
 package com.github.jobson.systemtests.auth;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIUserDetails;
+import com.github.jobson.api.v1.APIGetUserDetailsResponse;
 import com.github.jobson.auth.jwt.JsonWebTokenAuthenticator;
 import com.github.jobson.auth.jwt.JsonWebTokenConfig;
 import com.github.jobson.config.ApplicationConfig;
@@ -84,7 +84,7 @@ public final class TestJwtAuth {
         final Response response = b.get();
         assertThat(response.getStatus()).isEqualTo(OK);
 
-        final APIUserDetails parsedResponse = response.readEntity(APIUserDetails.class);
+        final APIGetUserDetailsResponse parsedResponse = response.readEntity(APIGetUserDetailsResponse.class);
         assertThat(parsedResponse.getId().toString()).isEqualTo(username);
     }
 }

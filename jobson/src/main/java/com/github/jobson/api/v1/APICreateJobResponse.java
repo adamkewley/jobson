@@ -19,26 +19,39 @@
 
 package com.github.jobson.api.v1;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.net.URI;
+import java.util.Map;
 
-@ApiModel(description = "A related resource link")
-public final class APIRestLink {
+@ApiModel(description = "Response to a successful job submission request")
+public final class APICreateJobResponse {
 
-    @ApiModelProperty(value = "The link's URL")
-    private URI href;
+    @ApiModelProperty(value = "The new job's ID")
+    @JsonProperty
+    private String id;
+
+    @ApiModelProperty(value = "Links to related resources and actions")
+    @JsonProperty
+    private Map<String, APIRestLink> _links;
 
 
-    public APIRestLink(
-            @JsonProperty("href") URI href) {
-        this.href = href;
+    public APICreateJobResponse(
+            @JsonProperty("id") String id,
+            @JsonProperty("_links") Map<String, APIRestLink> _links) {
+        this.id = id;
+        this._links = _links;
     }
 
 
-    public URI getHref() {
-        return href;
+    public String getId() {
+        return id;
+    }
+
+    @JsonIgnore
+    public Map<String, APIRestLink> getLinks() {
+        return _links;
     }
 }

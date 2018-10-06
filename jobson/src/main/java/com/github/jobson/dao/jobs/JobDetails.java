@@ -20,7 +20,7 @@
 package com.github.jobson.dao.jobs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIUserId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobTimestamp;
@@ -51,7 +51,7 @@ public class JobDetails {
 
     @ApiModelProperty(value = "The owner of the job.")
     @JsonProperty
-    private UserId owner;
+    private APIUserId owner;
 
     @ApiModelProperty(value = "Timestamps indicating when job status changes occurred")
     @JsonProperty
@@ -63,7 +63,7 @@ public class JobDetails {
      */
     public JobDetails() {}
 
-    public JobDetails(JobId id, String name, UserId owner, List<JobTimestamp> timestamps) {
+    public JobDetails(JobId id, String name, APIUserId owner, List<JobTimestamp> timestamps) {
         this.id = id;
         this.name = name;
         this.owner = owner;
@@ -79,7 +79,7 @@ public class JobDetails {
         return name;
     }
 
-    public UserId getOwner() {
+    public APIUserId getOwner() {
         return owner;
     }
 

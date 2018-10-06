@@ -26,7 +26,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.github.jobson.api.v1.APIJobDetails;
+import com.github.jobson.api.v1.APIGetJobDetailsResponse;
+import com.github.jobson.api.v1.APIRestLink;
+import com.github.jobson.dao.jobs.JobDetails;
+import com.github.jobson.utils.APIMappers;
 import com.github.jobson.utils.BinaryData;
 import io.reactivex.Observer;
 import org.apache.commons.io.IOUtils;
@@ -390,5 +393,18 @@ public final class Helpers {
                 return CONTINUE;
             }
         });
+    }
+
+    public static APIGetJobDetailsResponse fromJobDetails(
+            JobDetails jobDetails,
+            Map<String, APIRestLink> restLinks) {
+
+        return new APIGetJobDetailsResponse(
+                jobDetails.getId().toString(),
+                jobDetails.getName(),
+                jobDetails.getOwner(),
+                APIMappers.toAPIJobStatus(jobDetails.latestStatus()),
+                jobDetails.getTimestamps().stream().map(APIMappers::toAPITimestamp).collect(Collectors.toList()),
+                restLinks);
     }
 }

@@ -19,42 +19,34 @@
 
 package com.github.jobson.api.v1;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "A unique identifier for a user on the system")
-public final class UserId {
+@ApiModel(description = "An error message")
+public final class APIErrorResponse {
 
-    private final String id;
+    private final String message;
+    private final String code;
 
 
-
-    @JsonCreator
-    public UserId(String id) {
-        this.id = id;
+    public APIErrorResponse(
+            @JsonProperty("message") String message,
+            @JsonProperty("code") String httpStatusCode) {
+        this.message = message;
+        this.code = httpStatusCode;
     }
 
 
-
-    @Override
-    @JsonValue
-    public String toString() {
-        return this.id;
+    @ApiModelProperty(value = "An explanation of the error", required = true)
+    public String getMessage() {
+        return this.message;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        UserId userId = (UserId) o;
-
-        return id != null ? id.equals(userId.id) : userId.id == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    @ApiModelProperty(
+            value = "The HTTP status code associated with the message.",
+            required = true)
+    public String getCode() {
+        return this.code;
     }
 }

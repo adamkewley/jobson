@@ -20,7 +20,7 @@
 package com.github.jobson.systemtests.httpapi;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIV1RootResponse;
+import com.github.jobson.api.v1.APIGetV1RootResponse;
 import com.github.jobson.config.ApplicationConfig;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
@@ -56,7 +56,7 @@ public final class TestV1RootAPI {
     public void testResponseParsesToAnAPIRootResponse() {
         final Response resp = generateAuthenticatedRequest(RULE, HTTP_V1_ROOT).get();
         final String json = resp.readEntity(String.class);
-        final APIV1RootResponse parsedResp = TestHelpers.readJSON(json, APIV1RootResponse.class);
+        final APIGetV1RootResponse parsedResp = TestHelpers.readJSON(json, APIGetV1RootResponse.class);
         assertThat(parsedResp).isNotNull();
     }
 
@@ -64,7 +64,7 @@ public final class TestV1RootAPI {
     public void testResponseContainsJobsLinks() {
         final Response resp = generateAuthenticatedRequest(RULE, HTTP_V1_ROOT).get();
         final String json = resp.readEntity(String.class);
-        final APIV1RootResponse parsedResp = TestHelpers.readJSON(json, APIV1RootResponse.class);
+        final APIGetV1RootResponse parsedResp = TestHelpers.readJSON(json, APIGetV1RootResponse.class);
         assertThat(parsedResp.getLinks().containsKey("jobs")).isTrue();
     }
 
@@ -72,7 +72,7 @@ public final class TestV1RootAPI {
     public void testResponseContainsSpecsLinks() {
         final Response resp = generateAuthenticatedRequest(RULE, HTTP_V1_ROOT).get();
         final String json = resp.readEntity(String.class);
-        final APIV1RootResponse parsedResp = TestHelpers.readJSON(json, APIV1RootResponse.class);
+        final APIGetV1RootResponse parsedResp = TestHelpers.readJSON(json, APIGetV1RootResponse.class);
         assertThat(parsedResp.getLinks().containsKey("specs")).isTrue();
     }
 
@@ -80,7 +80,7 @@ public final class TestV1RootAPI {
     public void testResponseContainsCurrentUserLinks() {
         final Response resp = generateAuthenticatedRequest(RULE, HTTP_V1_ROOT).get();
         final String json = resp.readEntity(String.class);
-        final APIV1RootResponse parsedResp = TestHelpers.readJSON(json, APIV1RootResponse.class);
+        final APIGetV1RootResponse parsedResp = TestHelpers.readJSON(json, APIGetV1RootResponse.class);
         assertThat(parsedResp.getLinks().containsKey("current-user")).isTrue();
     }
 

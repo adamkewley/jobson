@@ -19,31 +19,27 @@
 
 package com.github.jobson.api.v1;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.Map;
+import java.util.List;
 
-@ApiModel(description = "A root response, which describes sub-resources")
-public final class APIV1RootResponse {
+@ApiModel(description = "Response to a request for job summaries")
+public final class APIGetJobOutputsResponse {
 
-    @ApiModelProperty(value = "Links to related resources and actions")
+    @ApiModelProperty(value = "The entries returned")
     @JsonProperty
-    private Map<String, APIRestLink> _links;
+    private List<APIGetJobOutputResponse> entries;
 
-    /**
-     * @deprecated Used by JSON deserializer
-     */
-    public APIV1RootResponse() {}
 
-    public APIV1RootResponse(Map<String, APIRestLink> _links) {
-        this._links = _links;
+    public APIGetJobOutputsResponse(
+            @JsonProperty("entries") List<APIGetJobOutputResponse> entries) {
+        this.entries = entries;
     }
 
-    @JsonIgnore
-    public Map<String, APIRestLink> getLinks() {
-        return _links;
+
+    public List<APIGetJobOutputResponse> getEntries() {
+        return entries;
     }
 }

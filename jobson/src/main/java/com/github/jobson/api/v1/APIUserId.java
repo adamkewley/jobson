@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,34 +17,44 @@
  * under the License.
  */
 
-package com.github.jobson.api;
+package com.github.jobson.api.v1;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.api.v1.APIRestLink;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
-import java.util.Map;
+@ApiModel(description = "A unique identifier for a user on the system")
+public final class APIUserId {
 
-@ApiModel(description = "A root response, which describes sub-resources")
-public final class APIRootResponse {
+    private final String id;
 
-    @ApiModelProperty(value = "Links to related resources")
-    @JsonProperty
-    private Map<String, APIRestLink> _links;
 
-    /**
-     * @deprecated Used by JSON deserializer
-     */
-    public APIRootResponse() {}
 
-    public APIRootResponse(Map<String, APIRestLink> _links) {
-        this._links = _links;
+    @JsonCreator
+    public APIUserId(String id) {
+        this.id = id;
     }
 
-    @JsonIgnore
-    public Map<String, APIRestLink> getLinks() {
-        return _links;
+
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return this.id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        APIUserId APIUserId = (APIUserId) o;
+
+        return id != null ? id.equals(APIUserId.id) : APIUserId.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

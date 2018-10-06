@@ -20,7 +20,7 @@
 package com.github.jobson.resources;
 
 import com.github.jobson.Constants;
-import com.github.jobson.api.APIRootResponse;
+import com.github.jobson.api.APIGetRootResponse;
 import com.github.jobson.api.v1.APIRestLink;
 import io.swagger.annotations.Api;
 
@@ -43,9 +43,9 @@ public final class RootResource {
 
     @GET
     @PermitAll
-    public APIRootResponse get(@Context SecurityContext context) {
+    public APIGetRootResponse get(@Context SecurityContext context) {
         final Map<String, APIRestLink> links = new HashMap<>();
         links.put("v1", new APIRestLink(URI.create(Constants.HTTP_V1_ROOT)));
-        return new APIRootResponse(links);
+        return new APIGetRootResponse(links);
     }
 }

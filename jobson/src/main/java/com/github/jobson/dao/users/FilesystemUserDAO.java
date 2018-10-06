@@ -19,7 +19,7 @@
 
 package com.github.jobson.dao.users;
 
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APIUserId;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,7 +49,7 @@ public final class FilesystemUserDAO implements UserDAO {
     }
 
     @Override
-    public Optional<UserCredentials> getUserCredentialsById(UserId id) {
+    public Optional<UserCredentials> getUserCredentialsById(APIUserId id) {
         requireNonNull(id);
 
         try {
@@ -70,7 +70,7 @@ public final class FilesystemUserDAO implements UserDAO {
     }
 
     @Override
-    public boolean addNewUser(UserId id, String authName, String authField) {
+    public boolean addNewUser(APIUserId id, String authName, String authField) {
         try {
             final boolean userExists =
                     readUserCredentials().anyMatch(c -> c.getId().equals(id));
@@ -87,7 +87,7 @@ public final class FilesystemUserDAO implements UserDAO {
     }
 
     @Override
-    public boolean updateUserAuth(UserId id, String authName, String authField) {
+    public boolean updateUserAuth(APIUserId id, String authName, String authField) {
         try {
             final List<UserCredentials> allCredentials = readUserCredentials().collect(Collectors.toList());
 

@@ -23,8 +23,8 @@ import ch.qos.logback.classic.Level;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
-import com.github.jobson.api.v1.APIJobRequest;
-import com.github.jobson.api.v1.UserId;
+import com.github.jobson.api.v1.APICreateJobRequest;
+import com.github.jobson.api.v1.APIUserId;
 import com.github.jobson.config.ApplicationConfig;
 import com.github.jobson.dao.jobs.FilesystemJobsDAO;
 import com.github.jobson.dao.specs.FilesystemJobSpecDAO;
@@ -101,9 +101,9 @@ public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConf
 
         final String requestJson = new String(requestBytes);
 
-        final APIJobRequest jobSubmissionRequest;
+        final APICreateJobRequest jobSubmissionRequest;
         try {
-            jobSubmissionRequest = readJSON(requestJson, APIJobRequest.class);
+            jobSubmissionRequest = readJSON(requestJson, APICreateJobRequest.class);
         } catch (JsonParseException ex) {
             System.err.println("Could not parse json. Message: " + ex.getMessage());
             System.exit(1);
@@ -129,10 +129,10 @@ public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConf
 
         final JobEventListeners listeners = createJobEventListeners();
 
-        final UserId userId = new UserId("jobson-run-command");
+        final APIUserId APIUserId = new APIUserId("jobson-run-command");
         log.debug("Submitting job request");
 
-        validateAPIRequest(jobSubmissionRequest, filesystemJobSpecDAO, userId)
+        validateAPIRequest(jobSubmissionRequest, filesystemJobSpecDAO, APIUserId)
                 .visit(createResultVisitor(jobManager, listeners));
     }
 

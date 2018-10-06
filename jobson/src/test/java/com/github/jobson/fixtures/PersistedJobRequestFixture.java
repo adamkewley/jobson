@@ -21,9 +21,8 @@ package com.github.jobson.fixtures;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jobson.api.v1.APIJobRequest;
-import com.github.jobson.api.v1.UserId;
-import com.github.jobson.jobinputs.JobExpectedInputId;
+import com.github.jobson.api.v1.APICreateJobRequest;
+import com.github.jobson.api.v1.APIUserId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.jobstates.PersistedJob;
 import com.github.jobson.jobs.jobstates.ValidJobRequest;
@@ -43,21 +42,21 @@ public final class PersistedJobRequestFixture {
     private String name;
 
     @JsonProperty
-    private UserId owner;
+    private APIUserId owner;
 
     @JsonProperty
-    private Map<JobExpectedInputId, JsonNode> inputs;
+    private Map<String, JsonNode> inputs;
 
     @JsonProperty
     private JobSpec spec;
 
 
 
-    public UserId getOwner() {
+    public APIUserId getOwner() {
         return owner;
     }
 
-    public Map<JobExpectedInputId, JsonNode> getInputs() {
+    public Map<String, JsonNode> getInputs() {
         return inputs;
     }
 
@@ -72,15 +71,15 @@ public final class PersistedJobRequestFixture {
 
 
     public PersistedJob toPersistedJobRequest() {
-        final APIJobRequest APIJobRequest = new APIJobRequest(
-                this.spec.getId(),
+        final APICreateJobRequest apiCreateJobRequest = new APICreateJobRequest(
+                this.spec.getId().toString(),
                 this.name,
                 this.inputs);
 
         final ValidJobRequest validJobRequest = ValidJobRequest.tryCreate(
                 this.spec,
                 this.owner,
-                APIJobRequest).getLeft().get();
+                apiCreateJobRequest).getLeft().get();
 
         return new PersistedJob(
                 this.id,

@@ -23,6 +23,7 @@ import com.github.jobson.api.v1.*;
 import com.github.jobson.dao.specs.JobSpecDAO;
 import com.github.jobson.dao.specs.JobSpecSummary;
 import com.github.jobson.specs.JobSpecId;
+import com.github.jobson.utils.APIMappers;
 import io.swagger.annotations.*;
 
 import javax.annotation.security.PermitAll;
@@ -78,7 +79,7 @@ public final class JobSpecResource {
             @ApiResponse(code = 200, message = "Job summaries returned")
     })
     @PermitAll
-    public APIJobSpecSummaryCollection fetchJobSpecSummaries(
+    public APIGetJobSpecSummariesResponse fetchJobSpecSummaries(
             @Context
                     SecurityContext context,
             @ApiParam(value = "The page number (0-indexed)")
@@ -110,13 +111,13 @@ public final class JobSpecResource {
                         final Map<String, APIRestLink> restLinks = singletonMap(
                                 "details",
                                 new APIRestLink(new URI(HTTP_SPECS_PATH + "/" + summary.getId().toString())));
-                        return APIJobSpecSummary.fromJobSpecSummary(summary, restLinks);
+                        return APIMappers.fromJobSpecSummary(summary, restLinks);
                     } catch (URISyntaxException ex) {
                         throw new WebApplicationException(ex);
                     }
                 }).collect(toList());
 
-        return new APIJobSpecSummaryCollection(apiJobSpecSummaries, emptyMap());
+        return new APIGetJobSpecSummariesResponse(apiJobSpecSummaries, emptyMap());
     }
 
     @GET
@@ -127,11 +128,11 @@ public final class JobSpecResource {
             notes = "If found, returns a job spec. A job spec describes declaratively what a " +
                     "job needs in order to run.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Job specification found and returned", response = APIJobSpec.class),
-            @ApiResponse(code = 404, message = "The job specification cannot be found", response = APIErrorMessage.class)
+            @ApiResponse(code = 200, message = "Job specification found and returned", response = APIGetJobSpecResponse.class),
+            @ApiResponse(code = 404, message = "The job specification cannot be found", response = APIErrorResponse.class)
     })
     @PermitAll
-    public Optional<APIJobSpec> fetchJobSpecDetailsById(
+    public Optional<APIGetJobSpecResponse> fetchJobSpecDetailsById(
             @Context
                     SecurityContext context,
             @ApiParam(value = "The job spec's ID")
@@ -141,6 +142,6 @@ public final class JobSpecResource {
 
         if (jobSpecId == null) throw new WebApplicationException("Job Spec ID cannot be null", 400);
 
-        return jobSpecDAO.getJobSpecById(jobSpecId).map(APIJobSpec::fromJobSpec);
+        return jobSpecDAO.getJobSpecById(jobSpecId).map(APIMappers::fromJobSpec);
     }
 }

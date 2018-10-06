@@ -20,7 +20,7 @@
 package com.github.jobson.resources.v1;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIV1RootResponse;
+import com.github.jobson.api.v1.APIGetV1RootResponse;
 import org.junit.Test;
 
 import javax.ws.rs.core.SecurityContext;
@@ -36,7 +36,7 @@ public final class V1RootResourceTest {
         assertThat(createRootResourceAndGetResponse()).isNotNull();
     }
 
-    private APIV1RootResponse createRootResourceAndGetResponse() {
+    private APIGetV1RootResponse createRootResourceAndGetResponse() {
         final V1RootResource v1RootResource = new V1RootResource();
         final SecurityContext securityContext = TestHelpers.generateSecureSecurityContext();
         return v1RootResource.get(securityContext);
@@ -44,22 +44,22 @@ public final class V1RootResourceTest {
 
     @Test
     public void testGetReturnsAResponseThatHasAJobsLink() {
-        final APIV1RootResponse APIV1RootResponse = createRootResourceAndGetResponse();
-        assertHasKeyWithValue(APIV1RootResponse.getLinks(), "jobs", HTTP_JOBS_PATH);
+        final APIGetV1RootResponse apiGetV1RootResponse = createRootResourceAndGetResponse();
+        assertHasKeyWithValue(apiGetV1RootResponse.getLinks(), "jobs", HTTP_JOBS_PATH);
     }
 
     @Test
     public void testGetReturnsAResponseThatHasACurrentUserLink() {
-        final APIV1RootResponse APIV1RootResponse = createRootResourceAndGetResponse();
+        final APIGetV1RootResponse apiGetV1RootResponse = createRootResourceAndGetResponse();
         assertHasKeyWithValue(
-                APIV1RootResponse.getLinks(),
+                apiGetV1RootResponse.getLinks(),
                 "current-user",
                 HTTP_USERS_PATH + "/current");
     }
 
     @Test
     public void testGetReturnsAResponseThatHasASpecsLink() {
-        final APIV1RootResponse APIV1RootResponse = createRootResourceAndGetResponse();
-        assertHasKeyWithValue(APIV1RootResponse.getLinks(), "specs", HTTP_SPECS_PATH);
+        final APIGetV1RootResponse apiGetV1RootResponse = createRootResourceAndGetResponse();
+        assertHasKeyWithValue(apiGetV1RootResponse.getLinks(), "specs", HTTP_SPECS_PATH);
     }
 }

@@ -27,32 +27,27 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import java.util.Map;
 
-@ApiModel(description = "Response to a request for job summaries")
-public final class APIJobDetailsCollection {
+@ApiModel(description = "A collection of job spec summaries")
+public final class APIGetJobSpecSummariesResponse {
 
-    @ApiModelProperty(value = "The entries returned")
+    @ApiModelProperty(value = "The summaries")
     @JsonProperty
-    private List<APIJobDetails> entries;
+    private List<APIJobSpecSummary> entries;
 
     @ApiModelProperty(value = "Links to related resources and actions")
     @JsonProperty
     private Map<String, APIRestLink> _links;
 
 
-    /**
-     * @deprecated Used by JSON deserializer
-     */
-    public APIJobDetailsCollection() {}
-
-    public APIJobDetailsCollection(
-            List<APIJobDetails> entries,
-            Map<String, APIRestLink> _links) {
+    public APIGetJobSpecSummariesResponse(
+            @JsonProperty("entries") List<APIJobSpecSummary> entries,
+            @JsonProperty("_links") Map<String, APIRestLink> _links) {
         this.entries = entries;
         this._links = _links;
     }
 
 
-    public List<APIJobDetails> getEntries() {
+    public List<APIJobSpecSummary> getEntries() {
         return entries;
     }
 
