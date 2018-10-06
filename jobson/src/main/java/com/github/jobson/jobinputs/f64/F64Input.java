@@ -30,11 +30,18 @@ public final class F64Input implements JobInput {
     @NotNull
     private final double value;
 
+
+    @JsonCreator
+    public F64Input(long value) {
+        this.value = value;
+    }
+
     @JsonCreator
     public F64Input(double value) {
         this.value = value;
     }
 
+    @JsonCreator
     public F64Input(String value) {
         // The API may have to accept 64-bit doubles in string format because
         // javascript clients can't handle 64-bit binary decimals without losing
