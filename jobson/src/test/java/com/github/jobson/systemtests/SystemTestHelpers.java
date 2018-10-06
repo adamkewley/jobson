@@ -127,13 +127,12 @@ public final class SystemTestHelpers {
         while (maxAttempts-- > 0) {
             final APIJobDetails resp =
                     generateAuthenticatedRequest(rule, jobResourceSubpath(jobId)).get().readEntity(APIJobDetails.class);
-            if (resp.latestStatus().isFinal()) {
+            if (resp.getTimestamps().get(resp.getTimestamps().size() -1 ).getStatus().isFinal()) {
                 break;
             } else {
                 Thread.sleep(50);
             }
         }
-
     }
 
     public static String jobResourceSubpath(Object subpath) {

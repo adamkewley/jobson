@@ -262,17 +262,24 @@ public final class TestHelpers {
         return generateJobDetailsWithStatuses(generateTypicalJobStatusTimestamps());
     }
 
-    public static APIJobDetails generateJobDetailsWithStatus(JobStatus jobStatus) {
-        return generateJobDetailsWithStatuses(Arrays.asList(JobTimestamp.now(jobStatus)));
+    public static APIJobDetails generateAPIJobDetailsWithStatus(JobStatus jobStatus) {
+        return APIJobDetails.fromJobDetails(generateJobDetailsWithStatus(jobStatus), Collections.emptyMap());
     }
 
-    public static APIJobDetails generateJobDetailsWithStatuses(List<JobTimestamp> jobStatuses) {
-        return new APIJobDetails(
+    public static JobDetails generateJobDetailsWithStatus(JobStatus jobStatus) {
+        return generateJobDetailsWithStatuses(Collections.singletonList(JobTimestamp.now(jobStatus)));
+    }
+
+    public static JobDetails generateJobDetailsWithStatuses(List<JobTimestamp> jobStatuses) {
+        return new JobDetails(
                 generateJobId(),
                 generateUserName(),
                 generateUserId(),
-                jobStatuses,
-                new HashMap<>());
+                jobStatuses);
+    }
+
+    public static APIJobDetails generateAPIJobDetailsWithStatuses(List<JobTimestamp> jobStatuses) {
+        return APIJobDetails.fromJobDetails(generateJobDetailsWithStatuses(jobStatuses), Collections.emptyMap());
     }
 
     public static SecurityContext generateSecureSecurityContext() {

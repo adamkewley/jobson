@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.github.jobson.api.v1.APIJobDetails;
 import com.github.jobson.utils.BinaryData;
 import io.reactivex.Observer;
 import org.apache.commons.io.IOUtils;

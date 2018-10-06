@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.jobs.JobId;
+import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobTimestamp;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 @ApiModel(description = "Details of a job on the system")
-public class APIJobDetails extends JobDetails {
+public class APIJobDetails {
 
     public static APIJobDetails fromJobDetails(
             JobDetails jobDetails,
@@ -45,6 +46,21 @@ public class APIJobDetails extends JobDetails {
                 restLinks);
     }
 
+    @ApiModelProperty(value = "The job's ID")
+    @JsonProperty
+    private JobId id;
+
+    @ApiModelProperty(value = "A name for the job")
+    @JsonProperty
+    private String name;
+
+    @ApiModelProperty(value = "The owner of the job.")
+    @JsonProperty
+    private UserId owner;
+
+    @ApiModelProperty(value = "Timestamps indicating when job status changes occurred")
+    @JsonProperty
+    private List<JobTimestamp> timestamps;
 
     @ApiModelProperty(value = "Links to related resources and actions")
     @JsonProperty
@@ -63,10 +79,38 @@ public class APIJobDetails extends JobDetails {
             List<JobTimestamp> timestamps,
             Map<String, APIRestLink> _links) {
 
-        super(id, name, owner, timestamps);
+        this.id = id;
+        this.name = name;
+        this.owner = owner;
+        this.timestamps = timestamps;
         this._links = _links;
     }
 
+
+    public JobId getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public UserId getOwner() {
+        return owner;
+    }
+
+    public List<JobTimestamp> getTimestamps() {
+        return timestamps;
+    }
+
+    @JsonIgnore
+    public JobStatus latestStatus() {
+        return this.timestamps.get(this.timestamps.size() - 1).getStatus();
+    }
+
+    public JobDetails toJobDetails() {
+        return new JobDetails(id, name, owner, timestamps);
+    }
 
     @JsonIgnore
     public Map<String, APIRestLink> getLinks() {

@@ -102,7 +102,8 @@ public final class JobResourceTest {
                 Optional.empty(),
                 Optional.empty());
 
-        Assertions.assertThat(returnedSummaries.getEntries()).isEqualTo(summariesReturnedByDAO);
+        Assertions.assertThat(
+                returnedSummaries.getEntries().stream().map(e -> e.toJobDetails()).collect(Collectors.toList())).isEqualTo(summariesReturnedByDAO);
     }
 
     private JobDAO mockJobDAOThatReturns(List<JobDetails> details) {
@@ -398,7 +399,7 @@ public final class JobResourceTest {
 
         verify(jobDAO, times(1))
                 .getJobDetailsById(eq(jobDetailsFromDAO.getId()));
-        assertThat(jobDetailsResponse.get()).isEqualTo(jobDetailsFromDAO);
+        assertThat(jobDetailsResponse.get().toJobDetails()).isEqualTo(jobDetailsFromDAO);
     }
 
     private JobDAO mockJobDAOThatReturns(Optional<JobDetails> jobDetailsReturnedByDAO) {
@@ -435,7 +436,7 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobDetailsByIdSetsASelfRESTLink() {
-        final APIJobDetails jobDetailsReturnedByDAO =
+        final JobDetails jobDetailsReturnedByDAO =
                 generateJobDetailsWithStatus(JobStatus.RUNNING);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
@@ -456,8 +457,7 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobDetailsByIdSetsAnInputsRESTLink() {
-        final APIJobDetails jobDetailsReturnedByDAO =
-                generateJobDetailsWithStatus(JobStatus.RUNNING);
+        final JobDetails jobDetailsReturnedByDAO = generateJobDetailsWithStatus(JobStatus.RUNNING);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         when(jobDAO.hasJobInputs(any())).thenReturn(true);
         final JobResource jobResource = resourceThatUses(jobDAO);
@@ -478,8 +478,7 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobDetailsByIdSetsAnOutputsRESTLink() {
-        final APIJobDetails jobDetailsReturnedByDAO =
-                generateJobDetailsWithStatus(JobStatus.RUNNING);
+        final JobDetails jobDetailsReturnedByDAO = generateJobDetailsWithStatus(JobStatus.RUNNING);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
@@ -499,8 +498,7 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobDetailsByIdSetsAnAbortRESTLinkIfJobIsAbortable() throws IOException {
-        final APIJobDetails jobDetailsReturnedByDAO =
-                generateJobDetailsWithStatus(JobStatus.RUNNING);
+        final JobDetails jobDetailsReturnedByDAO = generateJobDetailsWithStatus(JobStatus.RUNNING);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
@@ -520,8 +518,7 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobDetailsByIdDoesNotSetAnAbortRESTLinkIfJobIsNotAbortable() throws IOException {
-        final APIJobDetails jobDetailsReturnedByDAO =
-                generateJobDetailsWithStatus(JobStatus.FINISHED);
+        final JobDetails jobDetailsReturnedByDAO = generateJobDetailsWithStatus(JobStatus.FINISHED);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
@@ -540,8 +537,7 @@ public final class JobResourceTest {
 
     @Test
     public void testFetchJobDetailsByIdSetsARESTLinkForTheSpec() {
-        final APIJobDetails jobDetailsReturnedByDAO =
-                generateJobDetailsWithStatus(JobStatus.FINISHED);
+        final JobDetails jobDetailsReturnedByDAO = generateJobDetailsWithStatus(JobStatus.FINISHED);
         final JobDAO jobDAO = mockJobDAOThatReturns(Optional.of(jobDetailsReturnedByDAO));
         final JobResource jobResource = resourceThatUses(jobDAO);
 
