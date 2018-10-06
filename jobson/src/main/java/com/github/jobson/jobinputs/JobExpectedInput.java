@@ -23,6 +23,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.github.jobson.jobinputs.f32.F32ExpectedInput;
+import com.github.jobson.jobinputs.f64.F64ExpectedInput;
+import com.github.jobson.jobinputs.i32.I32ExpectedInput;
+import com.github.jobson.jobinputs.i64.I64ExpectedInput;
 import com.github.jobson.jobinputs.select.SelectExpectedInput;
 import com.github.jobson.jobinputs.sql.SQLExpectedInput;
 import com.github.jobson.jobinputs.string.StringExpectedInput;
@@ -40,7 +44,11 @@ import java.util.Optional;
         @JsonSubTypes.Type(value = SQLExpectedInput.class, name = "sql"),
         @JsonSubTypes.Type(value = SelectExpectedInput.class, name = "select"),
         @JsonSubTypes.Type(value = StringExpectedInput.class, name = "string"),
-        @JsonSubTypes.Type(value = StringArrayExpectedInput.class, name = "string[]")
+        @JsonSubTypes.Type(value = StringArrayExpectedInput.class, name = "string[]"),
+        @JsonSubTypes.Type(value = F32ExpectedInput.class, name = "float"),
+        @JsonSubTypes.Type(value = F64ExpectedInput.class, name = "double"),
+        @JsonSubTypes.Type(value = I32ExpectedInput.class, name = "int"),
+        @JsonSubTypes.Type(value = I64ExpectedInput.class, name = "long"),
 })
 public abstract class JobExpectedInput<TJobInput extends JobInput> {
 
