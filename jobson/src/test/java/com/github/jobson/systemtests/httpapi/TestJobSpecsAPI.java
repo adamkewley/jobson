@@ -20,10 +20,10 @@
 package com.github.jobson.systemtests.httpapi;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIGetJobSpecResponse;
-import com.github.jobson.api.v1.APIGetJobSpecSummariesResponse;
-import com.github.jobson.config.ApplicationConfig;
-import com.github.jobson.specs.JobSpec;
+import com.github.jobson.api.http.v1.APIGetJobSpecResponse;
+import com.github.jobson.api.http.v1.APIGetJobSpecSummariesResponse;
+import com.github.jobson.api.config.ApplicationConfig;
+import com.github.jobson.api.specs.JobSpec;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;

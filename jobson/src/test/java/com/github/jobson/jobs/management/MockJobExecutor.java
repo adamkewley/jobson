@@ -19,13 +19,13 @@
 
 package com.github.jobson.jobs.management;
 
-import com.github.jobson.jobs.JobEventListeners;
-import com.github.jobson.jobs.JobExecutionResult;
-import com.github.jobson.jobs.JobExecutor;
-import com.github.jobson.jobs.JobStatus;
-import com.github.jobson.jobs.jobstates.PersistedJob;
-import com.github.jobson.utils.CancelablePromise;
-import com.github.jobson.utils.SimpleCancelablePromise;
+import com.github.jobson.scheduling.old.JobEventListeners;
+import com.github.jobson.execution.old.JobExecutionResult;
+import com.github.jobson.execution.old.JobExecutor;
+import com.github.jobson.persistence.jobs.JobStatus;
+import com.github.jobson.persistence.jobs.PersistedJob;
+import com.github.jobson.util.CancelablePromise;
+import com.github.jobson.util.SimpleCancelablePromise;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;

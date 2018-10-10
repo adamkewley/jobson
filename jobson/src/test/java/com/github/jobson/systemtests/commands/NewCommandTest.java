@@ -21,7 +21,7 @@
 package com.github.jobson.systemtests.commands;
 
 import com.github.jobson.Constants;
-import com.github.jobson.commands.NewCommand;
+import com.github.jobson.cli.NewCommand;
 import org.junit.Test;
 
 import java.io.IOException;

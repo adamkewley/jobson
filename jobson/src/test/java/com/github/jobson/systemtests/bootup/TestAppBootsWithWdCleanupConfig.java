@@ -18,9 +18,9 @@
  */
 package com.github.jobson.systemtests.bootup;
 
-import com.github.jobson.api.v1.APICreateJobResponse;
-import com.github.jobson.api.v1.APICreateJobRequest;
-import com.github.jobson.config.ApplicationConfig;
+import com.github.jobson.api.http.v1.APICreateJobResponse;
+import com.github.jobson.api.http.v1.APICreateJobRequest;
+import com.github.jobson.api.config.ApplicationConfig;
 import com.github.jobson.systemtests.SystemTestHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;

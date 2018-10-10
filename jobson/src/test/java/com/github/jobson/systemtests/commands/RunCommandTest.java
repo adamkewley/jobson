@@ -21,7 +21,7 @@
 package com.github.jobson.systemtests.commands;
 
 import com.github.jobson.Constants;
-import com.github.jobson.Helpers;
+import com.github.jobson.util.Helpers;
 import com.github.jobson.TestHelpers;
 import org.junit.Test;
 

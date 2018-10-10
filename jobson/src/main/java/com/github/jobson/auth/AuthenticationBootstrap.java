@@ -19,7 +19,7 @@
 
 package com.github.jobson.auth;
 
-import com.github.jobson.dao.users.UserDAO;
+import com.github.jobson.persistence.users.UserDAO;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 
 import static java.util.Objects.requireNonNull;

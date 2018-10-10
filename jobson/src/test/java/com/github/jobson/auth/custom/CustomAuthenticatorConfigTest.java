@@ -19,6 +19,7 @@
 
 package com.github.jobson.auth.custom;
 
+import com.github.jobson.api.config.auth.CustomAuthenticatorConfig;
 import org.junit.Test;
 
 import static com.github.jobson.TestHelpers.createTypicalAuthBootstrap;

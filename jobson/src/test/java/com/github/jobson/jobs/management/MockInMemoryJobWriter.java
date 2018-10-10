@@ -19,12 +19,12 @@
 
 package com.github.jobson.jobs.management;
 
-import com.github.jobson.dao.jobs.WritingJobDAO;
-import com.github.jobson.jobs.JobId;
-import com.github.jobson.jobs.JobOutput;
-import com.github.jobson.jobs.JobStatus;
-import com.github.jobson.jobs.jobstates.PersistedJob;
-import com.github.jobson.jobs.jobstates.ValidJobRequest;
+import com.github.jobson.persistence.jobs.WritingJobDAO;
+import com.github.jobson.persistence.jobs.JobId;
+import com.github.jobson.persistence.jobs.JobOutput;
+import com.github.jobson.persistence.jobs.JobStatus;
+import com.github.jobson.persistence.jobs.PersistedJob;
+import com.github.jobson.persistence.jobs.ValidJobRequest;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 

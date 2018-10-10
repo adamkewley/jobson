@@ -19,8 +19,8 @@
 
 package com.github.jobson.resources.v1;
 
-import com.github.jobson.api.v1.APIGetUserDetailsResponse;
-import com.github.jobson.api.v1.APIUserId;
+import com.github.jobson.api.http.v1.APIGetUserDetailsResponse;
+import com.github.jobson.api.http.v1.APIUserId;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 

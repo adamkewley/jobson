@@ -1,6 +1,7 @@
 package com.github.jobson.auth.jwt;
 
 import com.github.jobson.TestHelpers;
+import com.github.jobson.auth.JsonWebTokenAuthFilter;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.Authorizer;

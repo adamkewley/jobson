@@ -19,11 +19,11 @@
 
 package com.github.jobson.resources.v1;
 
-import com.github.jobson.api.v1.*;
-import com.github.jobson.dao.specs.JobSpecDAO;
-import com.github.jobson.dao.specs.JobSpecSummary;
-import com.github.jobson.specs.JobSpecId;
-import com.github.jobson.utils.APIMappers;
+import com.github.jobson.api.http.v1.*;
+import com.github.jobson.persistence.specs.JobSpecDAO;
+import com.github.jobson.persistence.specs.JobSpecSummary;
+import com.github.jobson.api.specs.JobSpecId;
+import com.github.jobson.util.APIMappers;
 import io.swagger.annotations.*;
 
 import javax.annotation.security.PermitAll;

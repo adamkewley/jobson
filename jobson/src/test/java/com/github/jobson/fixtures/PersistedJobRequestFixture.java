@@ -21,12 +21,12 @@ package com.github.jobson.fixtures;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jobson.api.v1.APICreateJobRequest;
-import com.github.jobson.api.v1.APIUserId;
-import com.github.jobson.jobs.JobId;
-import com.github.jobson.jobs.jobstates.PersistedJob;
-import com.github.jobson.jobs.jobstates.ValidJobRequest;
-import com.github.jobson.specs.JobSpec;
+import com.github.jobson.api.http.v1.APICreateJobRequest;
+import com.github.jobson.api.http.v1.APIUserId;
+import com.github.jobson.persistence.jobs.JobId;
+import com.github.jobson.persistence.jobs.PersistedJob;
+import com.github.jobson.persistence.jobs.ValidJobRequest;
+import com.github.jobson.api.specs.JobSpec;
 
 import java.util.Map;
 

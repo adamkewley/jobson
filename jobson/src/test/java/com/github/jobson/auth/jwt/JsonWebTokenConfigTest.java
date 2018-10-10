@@ -21,6 +21,7 @@ package com.github.jobson.auth.jwt;
 
 import com.github.jobson.TestHelpers;
 import com.github.jobson.auth.AuthenticationBootstrap;
+import com.github.jobson.api.config.auth.JsonWebTokenConfig;
 import io.dropwizard.auth.AuthFilter;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

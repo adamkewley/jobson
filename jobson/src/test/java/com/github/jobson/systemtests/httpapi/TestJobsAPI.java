@@ -21,8 +21,8 @@ package com.github.jobson.systemtests.httpapi;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jobson.api.v1.*;
-import com.github.jobson.config.ApplicationConfig;
+import com.github.jobson.api.http.v1.*;
+import com.github.jobson.api.config.ApplicationConfig;
 import com.github.jobson.systemtests.SystemTestHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.github.jobson.Constants.HTTP_JOBS_PATH;
-import static com.github.jobson.Helpers.readJSON;
+import static com.github.jobson.util.Helpers.readJSON;
 import static com.github.jobson.HttpStatusCodes.*;
 import static com.github.jobson.TestHelpers.readJSONFixture;
 import static com.github.jobson.systemtests.SystemTestHelpers.*;

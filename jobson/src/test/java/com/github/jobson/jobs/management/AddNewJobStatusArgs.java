@@ -18,8 +18,8 @@
  */
 package com.github.jobson.jobs.management;
 
-import com.github.jobson.jobs.JobId;
-import com.github.jobson.jobs.JobStatus;
+import com.github.jobson.persistence.jobs.JobId;
+import com.github.jobson.persistence.jobs.JobStatus;
 
 public final class AddNewJobStatusArgs {
 

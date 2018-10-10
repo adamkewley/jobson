@@ -20,8 +20,8 @@
 package com.github.jobson.resources.v1;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIGetUserDetailsResponse;
-import com.github.jobson.api.v1.APIUserId;
+import com.github.jobson.api.http.v1.APIGetUserDetailsResponse;
+import com.github.jobson.api.http.v1.APIUserId;
 import org.junit.Test;
 
 import javax.ws.rs.core.SecurityContext;

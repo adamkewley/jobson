@@ -20,19 +20,20 @@
 package com.github.jobson;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jobson.api.v1.APICreateJobRequest;
-import com.github.jobson.api.v1.APIUserId;
-import com.github.jobson.jobinputs.JobExpectedInput;
-import com.github.jobson.jobinputs.JobExpectedInputId;
-import com.github.jobson.jobinputs.JobInput;
-import com.github.jobson.jobinputs.select.SelectInput;
-import com.github.jobson.jobinputs.stringarray.StringArrayExpectedInput;
-import com.github.jobson.jobs.jobstates.ValidJobRequest;
-import com.github.jobson.specs.ExecutionConfiguration;
-import com.github.jobson.specs.JobSpec;
-import com.github.jobson.specs.JobSpecId;
-import com.github.jobson.utils.Either;
-import com.github.jobson.utils.ValidationError;
+import com.github.jobson.api.http.v1.APICreateJobRequest;
+import com.github.jobson.api.http.v1.APIUserId;
+import com.github.jobson.api.specs.inputs.JobExpectedInput;
+import com.github.jobson.api.specs.inputs.JobExpectedInputId;
+import com.github.jobson.api.specs.inputs.JobInput;
+import com.github.jobson.api.specs.inputs.select.SelectInput;
+import com.github.jobson.api.specs.inputs.stringarray.StringArrayExpectedInput;
+import com.github.jobson.persistence.jobs.ValidJobRequest;
+import com.github.jobson.api.specs.ExecutionConfiguration;
+import com.github.jobson.api.specs.JobSpec;
+import com.github.jobson.api.specs.JobSpecId;
+import com.github.jobson.util.Either;
+import com.github.jobson.util.Helpers;
+import com.github.jobson.util.ValidationError;
 import org.junit.Test;
 
 import java.util.*;

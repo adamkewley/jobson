@@ -20,10 +20,10 @@
 package com.github.jobson.systemtests.auth;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIGetUserDetailsResponse;
-import com.github.jobson.auth.jwt.JsonWebTokenAuthenticator;
-import com.github.jobson.auth.jwt.JsonWebTokenConfig;
-import com.github.jobson.config.ApplicationConfig;
+import com.github.jobson.api.http.v1.APIGetUserDetailsResponse;
+import com.github.jobson.auth.JsonWebTokenAuthenticator;
+import com.github.jobson.api.config.auth.JsonWebTokenConfig;
+import com.github.jobson.api.config.ApplicationConfig;
 import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.jsonwebtoken.SignatureAlgorithm;

@@ -50,7 +50,7 @@
             <version>9.4.8.v20171121</version>
         </dependency>
 
-        <!-- Generating Lorem-Ipsum etc. for generator commands -->
+        <!-- Generating Lorem-Ipsum etc. for generator cli -->
         <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>

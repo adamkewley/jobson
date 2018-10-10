@@ -22,7 +22,7 @@ package com.github.jobson.auth.custom;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.github.jobson.auth.AuthenticationBootstrap;
-import com.github.jobson.config.AuthenticationConfig;
+import com.github.jobson.api.config.auth.AuthenticationConfig;
 import io.dropwizard.auth.AuthFilter;
 
 import java.security.Principal;

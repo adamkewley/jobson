@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.auth.PermitAllAuthorizer;
-import com.github.jobson.config.AuthenticationConfig;
+import com.github.jobson.api.config.auth.AuthenticationConfig;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 

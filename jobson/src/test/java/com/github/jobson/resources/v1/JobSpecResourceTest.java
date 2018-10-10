@@ -20,14 +20,14 @@
 package com.github.jobson.resources.v1;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.v1.APIGetJobSpecResponse;
-import com.github.jobson.api.v1.APIJobSpecSummary;
-import com.github.jobson.api.v1.APIGetJobSpecSummariesResponse;
-import com.github.jobson.dao.specs.JobSpecDAO;
-import com.github.jobson.dao.specs.JobSpecSummary;
-import com.github.jobson.specs.JobSpec;
-import com.github.jobson.specs.JobSpecId;
-import com.github.jobson.utils.APIMappers;
+import com.github.jobson.api.http.v1.APIGetJobSpecResponse;
+import com.github.jobson.api.http.v1.APIJobSpecSummary;
+import com.github.jobson.api.http.v1.APIGetJobSpecSummariesResponse;
+import com.github.jobson.persistence.specs.JobSpecDAO;
+import com.github.jobson.persistence.specs.JobSpecSummary;
+import com.github.jobson.api.specs.JobSpec;
+import com.github.jobson.api.specs.JobSpecId;
+import com.github.jobson.util.APIMappers;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;

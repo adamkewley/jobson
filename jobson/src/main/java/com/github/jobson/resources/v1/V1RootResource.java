@@ -19,8 +19,8 @@
 
 package com.github.jobson.resources.v1;
 
-import com.github.jobson.api.v1.APIGetV1RootResponse;
-import com.github.jobson.api.v1.APIRestLink;
+import com.github.jobson.api.http.v1.APIGetV1RootResponse;
+import com.github.jobson.api.http.v1.APIRestLink;
 import io.swagger.annotations.Api;
 
 import javax.annotation.security.PermitAll;

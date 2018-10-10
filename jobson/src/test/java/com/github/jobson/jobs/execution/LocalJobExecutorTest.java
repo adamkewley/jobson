@@ -20,16 +20,14 @@
 package com.github.jobson.jobs.execution;
 
 import com.github.jobson.TestHelpers;
-import com.github.jobson.config.RemoveAfterExecutionConfig;
-import com.github.jobson.jobs.JobEventListeners;
-import com.github.jobson.jobs.JobExecutionResult;
-import com.github.jobson.jobs.JobExecutor;
-import com.github.jobson.jobs.LocalJobExecutor;
-import com.github.jobson.jobs.jobstates.PersistedJob;
-import com.github.jobson.specs.JobDependencyConfiguration;
-import com.github.jobson.specs.RawTemplateString;
-import com.github.jobson.utils.CancelablePromise;
-import org.apache.commons.io.FileUtils;
+import com.github.jobson.api.config.RemoveAfterExecutionConfig;
+import com.github.jobson.scheduling.old.JobEventListeners;
+import com.github.jobson.execution.old.JobExecutionResult;
+import com.github.jobson.execution.old.JobExecutor;
+import com.github.jobson.execution.old.LocalJobExecutor;
+import com.github.jobson.persistence.jobs.PersistedJob;
+import com.github.jobson.api.specs.JobDependencyConfiguration;
+import com.github.jobson.util.CancelablePromise;
 import org.junit.Test;
 
 import java.io.File;

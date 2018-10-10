@@ -19,7 +19,7 @@
 
 package com.github.jobson.systemtests.auth;
 
-import com.github.jobson.config.ApplicationConfig;
+import com.github.jobson.api.config.ApplicationConfig;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;

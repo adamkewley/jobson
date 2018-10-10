@@ -19,9 +19,9 @@
 
 package com.github.jobson.jobs.management;
 
-import com.github.jobson.jobs.JobId;
-import com.github.jobson.specs.JobOutputId;
-import com.github.jobson.utils.BinaryData;
+import com.github.jobson.persistence.jobs.JobId;
+import com.github.jobson.api.specs.JobOutputId;
+import com.github.jobson.util.BinaryData;
 
 public final class PersistOutputArgs {
 

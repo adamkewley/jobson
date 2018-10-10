@@ -21,7 +21,7 @@ package com.github.jobson.resources;
 
 import com.github.jobson.Constants;
 import com.github.jobson.TestHelpers;
-import com.github.jobson.api.APIGetRootResponse;
+import com.github.jobson.api.http.APIGetRootResponse;
 import org.junit.Test;
 
 import static com.github.jobson.TestHelpers.assertHasKeyWithValue;
