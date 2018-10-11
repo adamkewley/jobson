@@ -18,8 +18,7 @@
  */
 package com.github.jobson.execution.old;
 
-import com.github.jobson.execution.old.MissingOutput;
-import com.github.jobson.persistence.jobs.JobOutput;
+import com.github.jobson.internal.JobOutput;
 
 public interface JobOutputResultVisitorT<T> {
     T visit(MissingOutput missingOutput);

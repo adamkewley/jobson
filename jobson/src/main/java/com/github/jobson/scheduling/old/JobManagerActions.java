@@ -19,9 +19,9 @@
 
 package com.github.jobson.scheduling.old;
 
-import com.github.jobson.persistence.jobs.JobId;
+import com.github.jobson.api.persistence.JobId;
 import com.github.jobson.execution.old.FinalizedJob;
-import com.github.jobson.persistence.jobs.ValidJobRequest;
+import com.github.jobson.internal.ValidJobRequest;
 import com.github.jobson.util.CancelablePromise;
 import org.apache.commons.lang3.tuple.Pair;
 

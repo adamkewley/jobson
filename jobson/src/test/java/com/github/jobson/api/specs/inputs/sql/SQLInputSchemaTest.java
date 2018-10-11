@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.github.jobson.util.Helpers.toJSON;
-import static com.github.jobson.TestHelpers.readJSONFixture;
+import static com.github.jobson.other.TestHelpers.readJSONFixture;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class SQLInputSchemaTest {

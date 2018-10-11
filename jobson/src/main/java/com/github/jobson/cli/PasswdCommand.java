@@ -19,10 +19,10 @@
 
 package com.github.jobson.cli;
 
-import com.github.jobson.api.http.v1.APIUserId;
+import com.github.jobson.api.http.APIUserId;
 import com.github.jobson.auth.BasicAuthenticator;
 import com.github.jobson.api.config.ApplicationConfig;
-import com.github.jobson.persistence.users.FilesystemUserDAO;
+import com.github.jobson.persistence.FilesystemUserDAO;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;

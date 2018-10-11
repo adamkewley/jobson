@@ -21,7 +21,7 @@ package com.github.jobson.cli;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.javafaker.Faker;
-import com.github.jobson.api.http.v1.APICreateJobRequest;
+import com.github.jobson.api.http.APICreateJobRequest;
 import com.github.jobson.api.config.ApplicationConfig;
 import com.github.jobson.api.specs.inputs.JobExpectedInput;
 import com.github.jobson.api.specs.inputs.JobInput;

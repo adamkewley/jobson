@@ -19,9 +19,9 @@
 
 package com.github.jobson.auth;
 
-import com.github.jobson.api.http.v1.APIUserId;
-import com.github.jobson.persistence.users.ReadonlyUserDAO;
-import com.github.jobson.persistence.users.UserCredentials;
+import com.github.jobson.api.http.APIUserId;
+import com.github.jobson.persistence.ReadonlyUserDAO;
+import com.github.jobson.internal.UserCredentials;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.PrincipalImpl;

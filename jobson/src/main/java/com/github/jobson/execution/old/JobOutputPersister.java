@@ -18,9 +18,9 @@
  */
 package com.github.jobson.execution.old;
 
-import com.github.jobson.persistence.jobs.JobId;
-import com.github.jobson.persistence.jobs.JobOutput;
-import com.github.jobson.persistence.jobs.WritingJobDAO;
+import com.github.jobson.api.persistence.JobId;
+import com.github.jobson.internal.JobOutput;
+import com.github.jobson.persistence.WritingJobDAO;
 
 import java.util.Optional;
 

@@ -19,5 +19,5 @@
 package com.github.jobson.scheduling;
 
 public interface JobScheduler {
-    void schedule();
+    void scheduleSync();
 }

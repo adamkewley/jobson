@@ -18,8 +18,8 @@
  */
 package com.github.jobson.scheduling;
 
-import com.github.jobson.persistence.jobs.JobId;
-import com.github.jobson.persistence.jobs.PersistedJob;
+import com.github.jobson.api.persistence.JobId;
+import com.github.jobson.internal.PersistedJob;
 
 import java.util.Map;
 

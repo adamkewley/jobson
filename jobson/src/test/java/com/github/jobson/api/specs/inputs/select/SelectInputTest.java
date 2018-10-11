@@ -19,7 +19,7 @@
 
 package com.github.jobson.api.specs.inputs.select;
 
-import com.github.jobson.TestHelpers;
+import com.github.jobson.other.TestHelpers;
 import org.junit.Test;
 
 public final class SelectInputTest {

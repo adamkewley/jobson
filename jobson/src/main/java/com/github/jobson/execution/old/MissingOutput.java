@@ -19,7 +19,7 @@
 package com.github.jobson.execution.old;
 
 import com.github.jobson.api.specs.JobOutputId;
-import com.github.jobson.persistence.jobs.JobOutputResult;
+import com.github.jobson.internal.JobOutputResult;
 
 public final class MissingOutput implements JobOutputResult {
 

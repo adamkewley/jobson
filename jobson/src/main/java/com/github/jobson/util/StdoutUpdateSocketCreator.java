@@ -19,7 +19,7 @@
 
 package com.github.jobson.util;
 
-import com.github.jobson.persistence.jobs.JobId;
+import com.github.jobson.api.persistence.JobId;
 import com.github.jobson.scheduling.old.JobManagerEvents;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;

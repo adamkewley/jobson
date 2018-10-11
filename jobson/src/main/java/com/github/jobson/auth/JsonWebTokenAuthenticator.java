@@ -86,7 +86,7 @@ public final class JsonWebTokenAuthenticator implements Authenticator<String, Pr
         } catch (MalformedJwtException ex) {
             throw new AuthenticationException("The provided json web token was malformed.", ex);
         } catch (SignatureException ex) {
-            throw new AuthenticationException("The provided json web token failed signature validation tests.", ex);
+            throw new AuthenticationException("The provided json web token failed signature validation other.", ex);
         }
     }
 

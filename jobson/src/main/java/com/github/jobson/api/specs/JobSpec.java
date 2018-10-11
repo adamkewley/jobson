@@ -20,7 +20,7 @@
 package com.github.jobson.api.specs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.persistence.specs.JobSpecSummary;
+import com.github.jobson.internal.JobSpecSummary;
 import com.github.jobson.api.specs.inputs.JobExpectedInput;
 
 import javax.validation.Valid;

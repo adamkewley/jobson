@@ -18,17 +18,15 @@
  */
 package com.github.jobson.execution;
 
-import com.github.jobson.persistence.jobs.JobId;
+import com.github.jobson.api.persistence.JobId;
 import io.reactivex.Observable;
 
 import java.util.Optional;
-import java.util.Set;
 
 public interface JobExecutor {
-    void scheduleForExecution(JobId jobId);
-    Optional<NewJobExecutionResult> scheduleForExecutionAndWait(JobId jobId);
+    Optional<JobExecutionResult> executeSync(JobId jobId);
+    void executeAsync(JobId jobId);
     Observable<JobExitEvent> onJobExecuted();
-    Set<JobId> getRunningJobs();
     boolean isRunning(JobId jobId);
-    void sendAbortSignalFor(JobId jobId);
+    void abortAsync(JobId jobId);
 }

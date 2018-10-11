@@ -20,7 +20,7 @@ users:
 
 authentication:
   type: custom
-  className: com.github.jobson.systemtests.auth.SystemtestCustomAuthConfig
+  className: com.github.jobson.other.system.auth.SystemtestCustomAuthConfig
   properties:
     username: some-username
     password: some-password

@@ -21,9 +21,39 @@ package com.github.jobson.execution;
 import java.util.Map;
 import java.util.Optional;
 
-public interface JobOutputMetadata {
-    Optional<String> getMimeType();
-    Optional<String> getName();
-    Optional<String> getDescription();
-    Map<String, String> getMetadata();
+public final class JobOutputMetadata {
+
+    private final Optional<String> mimeType;
+    private final Optional<String> name;
+    private final Optional<String> description;
+    private final Map<String, String> metadata;
+
+
+    public JobOutputMetadata(
+            Optional<String> mimeType,
+            Optional<String> name,
+            Optional<String> description,
+            Map<String, String> metadata) {
+        this.mimeType = mimeType;
+        this.name = name;
+        this.description = description;
+        this.metadata = metadata;
+    }
+
+
+    public Optional<String> getMimeType() {
+        return mimeType;
+    }
+
+    public Optional<String> getName() {
+        return name;
+    }
+
+    public Optional<String> getDescription() {
+        return description;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
 }

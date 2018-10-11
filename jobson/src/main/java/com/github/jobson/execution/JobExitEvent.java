@@ -18,15 +18,15 @@
  */
 package com.github.jobson.execution;
 
-import com.github.jobson.persistence.jobs.JobId;
+import com.github.jobson.api.persistence.JobId;
 
 public final class JobExitEvent {
 
     private final JobId jobId;
-    private final NewJobExecutionResult executionResult;
+    private final JobExecutionResult executionResult;
 
 
-    public JobExitEvent(JobId jobId, NewJobExecutionResult executionResult) {
+    public JobExitEvent(JobId jobId, JobExecutionResult executionResult) {
         this.jobId = jobId;
         this.executionResult = executionResult;
     }
@@ -36,7 +36,7 @@ public final class JobExitEvent {
         return jobId;
     }
 
-    public NewJobExecutionResult getExecutionResult() {
+    public JobExecutionResult getExecutionResult() {
         return executionResult;
     }
 }

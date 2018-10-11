@@ -19,7 +19,7 @@
 
 package com.github.jobson.execution.scripting.functions;
 
-import com.github.jobson.TestHelpers;
+import com.github.jobson.other.TestHelpers;
 import com.github.jobson.api.specs.inputs.stringarray.StringArrayInput;
 import org.junit.Test;
 

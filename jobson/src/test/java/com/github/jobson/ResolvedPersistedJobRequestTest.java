@@ -20,17 +20,18 @@
 package com.github.jobson;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.jobson.api.http.v1.APICreateJobRequest;
-import com.github.jobson.api.http.v1.APIUserId;
+import com.github.jobson.api.http.APICreateJobRequest;
+import com.github.jobson.api.http.APIUserId;
 import com.github.jobson.api.specs.inputs.JobExpectedInput;
 import com.github.jobson.api.specs.inputs.JobExpectedInputId;
 import com.github.jobson.api.specs.inputs.JobInput;
 import com.github.jobson.api.specs.inputs.select.SelectInput;
 import com.github.jobson.api.specs.inputs.stringarray.StringArrayExpectedInput;
-import com.github.jobson.persistence.jobs.ValidJobRequest;
+import com.github.jobson.internal.ValidJobRequest;
 import com.github.jobson.api.specs.ExecutionConfiguration;
 import com.github.jobson.api.specs.JobSpec;
 import com.github.jobson.api.specs.JobSpecId;
+import com.github.jobson.other.TestHelpers;
 import com.github.jobson.util.Either;
 import com.github.jobson.util.Helpers;
 import com.github.jobson.util.ValidationError;

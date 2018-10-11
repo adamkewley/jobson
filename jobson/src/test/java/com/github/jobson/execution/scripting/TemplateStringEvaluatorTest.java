@@ -19,7 +19,7 @@
 
 package com.github.jobson.execution.scripting;
 
-import com.github.jobson.TestHelpers;
+import com.github.jobson.other.TestHelpers;
 import com.github.jobson.execution.scripting.testclasses.ExampleObject;
 import com.github.jobson.execution.scripting.testclasses.JsonStringifier;
 import org.junit.Test;
@@ -30,7 +30,7 @@ import java.util.Map;
 
 import static com.github.jobson.util.Helpers.generateRandomBase36String;
 import static com.github.jobson.util.Helpers.toJSON;
-import static com.github.jobson.TestHelpers.*;
+import static com.github.jobson.other.TestHelpers.*;
 import static com.github.jobson.execution.scripting.TemplateStringEvaluator.evaluate;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;

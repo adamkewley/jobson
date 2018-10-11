@@ -23,7 +23,7 @@
 
 package com.github.jobson.execution.scripting.functions;
 
-import com.github.jobson.TestHelpers;
+import com.github.jobson.other.TestHelpers;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -19,7 +19,7 @@
 
 package com.github.jobson.api.specs;
 
-import com.github.jobson.TestHelpers;
+import com.github.jobson.other.TestHelpers;
 import org.junit.Test;
 
 import java.io.IOException;

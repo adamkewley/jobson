@@ -20,7 +20,7 @@
 package com.github.jobson.scheduling.old;
 
 import com.github.jobson.api.ws.JobEvent;
-import com.github.jobson.persistence.jobs.JobId;
+import com.github.jobson.api.persistence.JobId;
 import io.reactivex.Observable;
 
 import java.util.Optional;

@@ -20,8 +20,8 @@
 package com.github.jobson.api.ws;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.persistence.jobs.JobId;
-import com.github.jobson.persistence.jobs.JobStatus;
+import com.github.jobson.api.persistence.JobId;
+import com.github.jobson.api.persistence.JobStatus;
 import io.swagger.annotations.ApiModel;
 
 @ApiModel(description = "Response to a request for a job spec's details")

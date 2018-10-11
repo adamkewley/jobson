@@ -23,17 +23,17 @@ import ch.qos.logback.classic.Level;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.github.jobson.Constants;
 import com.github.jobson.util.Helpers;
-import com.github.jobson.api.http.v1.APICreateJobRequest;
-import com.github.jobson.api.http.v1.APIUserId;
+import com.github.jobson.api.http.APICreateJobRequest;
+import com.github.jobson.api.http.APIUserId;
 import com.github.jobson.api.config.ApplicationConfig;
-import com.github.jobson.persistence.jobs.FilesystemJobsDAO;
-import com.github.jobson.persistence.specs.FilesystemJobSpecDAO;
+import com.github.jobson.persistence.FilesystemJobsDAO;
+import com.github.jobson.persistence.FilesystemJobSpecDAO;
 import com.github.jobson.scheduling.old.JobEventListeners;
 import com.github.jobson.execution.old.JobExecutor;
 import com.github.jobson.scheduling.old.JobManager;
 import com.github.jobson.execution.old.LocalJobExecutor;
 import com.github.jobson.execution.old.FinalizedJob;
-import com.github.jobson.persistence.jobs.ValidJobRequest;
+import com.github.jobson.internal.ValidJobRequest;
 import com.github.jobson.util.EitherVisitor;
 import com.github.jobson.util.ValidationError;
 import io.dropwizard.setup.Bootstrap;
@@ -53,7 +53,7 @@ import java.util.List;
 
 import static com.github.jobson.util.Helpers.commaSeparatedList;
 import static com.github.jobson.util.Helpers.readJSON;
-import static com.github.jobson.resources.v1.JobResource.validateAPIRequest;
+import static com.github.jobson.resources.JobResource.validateAPIRequest;
 
 public final class RunCommand extends DefaultedConfiguredCommand<ApplicationConfig> {
 

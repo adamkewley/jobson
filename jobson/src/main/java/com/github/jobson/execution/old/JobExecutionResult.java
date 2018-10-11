@@ -19,8 +19,8 @@
 
 package com.github.jobson.execution.old;
 
-import com.github.jobson.persistence.jobs.JobStatus;
-import com.github.jobson.persistence.jobs.JobOutputResult;
+import com.github.jobson.api.persistence.JobStatus;
+import com.github.jobson.internal.JobOutputResult;
 
 import java.util.ArrayList;
 import java.util.List;

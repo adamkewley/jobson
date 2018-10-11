@@ -21,11 +21,11 @@ package com.github.jobson.scheduling.old;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.execution.old.*;
-import com.github.jobson.persistence.jobs.JobId;
-import com.github.jobson.persistence.jobs.JobStatus;
-import com.github.jobson.persistence.jobs.PersistedJob;
-import com.github.jobson.persistence.jobs.ValidJobRequest;
-import com.github.jobson.persistence.jobs.WritingJobDAO;
+import com.github.jobson.api.persistence.JobId;
+import com.github.jobson.api.persistence.JobStatus;
+import com.github.jobson.internal.PersistedJob;
+import com.github.jobson.internal.ValidJobRequest;
+import com.github.jobson.persistence.WritingJobDAO;
 import com.github.jobson.util.CancelablePromise;
 import com.github.jobson.util.SimpleCancelablePromise;
 import com.github.jobson.api.ws.JobEvent;
@@ -47,7 +47,7 @@ import static com.github.jobson.Constants.JOB_MANAGER_JOB_QUEUE_OVERFLOW_HEALTHC
 import static com.github.jobson.Constants.JOB_MANAGER_MAX_JOB_QUEUE_OVERFLOW_THRESHOLD;
 import static com.github.jobson.util.Helpers.now;
 import static com.github.jobson.util.Helpers.tryGet;
-import static com.github.jobson.persistence.jobs.JobStatus.*;
+import static com.github.jobson.api.persistence.JobStatus.*;
 import static java.lang.String.format;
 
 public final class JobManager implements JobManagerEvents, JobManagerActions {

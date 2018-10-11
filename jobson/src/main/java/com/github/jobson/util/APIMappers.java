@@ -18,13 +18,13 @@
  */
 package com.github.jobson.util;
 
-import com.github.jobson.api.http.v1.*;
-import com.github.jobson.persistence.jobs.JobDetails;
-import com.github.jobson.persistence.jobs.JobOutputDetails;
-import com.github.jobson.persistence.specs.JobSpecSummary;
-import com.github.jobson.persistence.jobs.JobId;
-import com.github.jobson.persistence.jobs.JobStatus;
-import com.github.jobson.persistence.jobs.JobTimestamp;
+import com.github.jobson.api.http.*;
+import com.github.jobson.api.persistence.JobDetails;
+import com.github.jobson.api.persistence.JobOutputDetails;
+import com.github.jobson.internal.JobSpecSummary;
+import com.github.jobson.api.persistence.JobId;
+import com.github.jobson.api.persistence.JobStatus;
+import com.github.jobson.api.persistence.JobTimestamp;
 import com.github.jobson.api.specs.JobSpec;
 import com.github.jobson.api.specs.JobSpecId;
 

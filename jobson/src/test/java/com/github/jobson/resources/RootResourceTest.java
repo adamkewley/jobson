@@ -20,11 +20,11 @@
 package com.github.jobson.resources;
 
 import com.github.jobson.Constants;
-import com.github.jobson.TestHelpers;
+import com.github.jobson.other.TestHelpers;
 import com.github.jobson.api.http.APIGetRootResponse;
 import org.junit.Test;
 
-import static com.github.jobson.TestHelpers.assertHasKeyWithValue;
+import static com.github.jobson.other.TestHelpers.assertHasKeyWithValue;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public final class RootResourceTest {

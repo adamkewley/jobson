@@ -19,7 +19,7 @@
 
 package com.github.jobson.execution.old;
 
-import com.github.jobson.persistence.jobs.PersistedJob;
+import com.github.jobson.internal.PersistedJob;
 import com.github.jobson.scheduling.old.JobEventListeners;
 import com.github.jobson.util.CancelablePromise;
 

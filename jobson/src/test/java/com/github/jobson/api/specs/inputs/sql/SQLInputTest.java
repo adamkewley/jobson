@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.github.jobson.TestHelpers.readJSONFixture;
+import static com.github.jobson.other.TestHelpers.readJSONFixture;
 
 public final class SQLInputTest {
 

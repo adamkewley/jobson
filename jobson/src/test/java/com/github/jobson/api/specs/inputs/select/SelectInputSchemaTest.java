@@ -20,7 +20,7 @@
 package com.github.jobson.api.specs.inputs.select;
 
 import com.github.jobson.util.Helpers;
-import com.github.jobson.TestHelpers;
+import com.github.jobson.other.TestHelpers;
 import com.github.jobson.util.ValidationError;
 import org.junit.Test;
 

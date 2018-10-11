@@ -21,13 +21,13 @@ package com.github.jobson.execution.old;
 
 import com.github.jobson.Constants;
 import com.github.jobson.scheduling.old.JobEventListeners;
-import com.github.jobson.persistence.jobs.JobOutput;
-import com.github.jobson.persistence.jobs.JobOutputResult;
+import com.github.jobson.internal.JobOutput;
+import com.github.jobson.internal.JobOutputResult;
 import com.github.jobson.util.Helpers;
 import com.github.jobson.api.config.RemoveAfterExecutionConfig;
 import com.github.jobson.api.specs.inputs.JobExpectedInputId;
-import com.github.jobson.persistence.jobs.JobStatus;
-import com.github.jobson.persistence.jobs.PersistedJob;
+import com.github.jobson.api.persistence.JobStatus;
+import com.github.jobson.internal.PersistedJob;
 import com.github.jobson.execution.scripting.functions.JoinFunction;
 import com.github.jobson.execution.scripting.functions.ToFileFunction;
 import com.github.jobson.execution.scripting.functions.ToJSONFunction;
@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.github.jobson.util.Helpers.*;
-import static com.github.jobson.persistence.jobs.JobStatus.FINISHED;
+import static com.github.jobson.api.persistence.JobStatus.FINISHED;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
