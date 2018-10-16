@@ -21,7 +21,7 @@ package com.github.jobson.api.specs;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.github.jobson.execution.scripting.TemplateStringEvaluator;
+import com.github.jobson.scripting.TemplateStringEvaluator;
 
 import java.util.Map;
 

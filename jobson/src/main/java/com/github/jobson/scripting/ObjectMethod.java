@@ -16,13 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+package com.github.jobson.scripting;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+public final class ObjectMethod {
+
+    private final Method m;
+    private final Object thisArg;
+
+
+    public ObjectMethod(Method m, Object thisArg) {
+        this.m = m;
+        this.thisArg = thisArg;
+    }
+
+
+    public Object call(Object... args) {
+        try {
+            return m.invoke(thisArg, args);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

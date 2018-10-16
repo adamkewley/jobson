@@ -16,13 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.finalizing;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import com.github.jobson.api.persistence.JobId;
+import com.github.jobson.api.specs.JobOutputId;
+import com.github.jobson.internal.JobOutputMetadata;
+
+import java.nio.file.Path;
+
+public interface JobFinalizerIO {
+    void copyFileToOutput(JobId jobId, JobOutputId outputId, Path sourceFile);
+    void moveFileToOutput(JobId jobId, JobOutputId outputId, Path sourceFile);
+    void writeOutputMetadata(JobId jobId, JobOutputId outputId, JobOutputMetadata jobOutputMetadata);
+
+    void logInfo(JobId jobId, String statusMessage);
 }

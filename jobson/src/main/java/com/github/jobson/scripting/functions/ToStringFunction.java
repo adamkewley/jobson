@@ -16,13 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.scripting.functions;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import com.github.jobson.scripting.FreeFunction;
+
+public final class ToStringFunction implements FreeFunction {
+    @Override
+    public Object call(Object... args) {
+        if (args.length != 1) {
+            throw new RuntimeException(String.format("Incorrect number of arguments (%s), expected 1", args.length));
+        } else {
+            return args[0].toString();
+        }
+    }
 }

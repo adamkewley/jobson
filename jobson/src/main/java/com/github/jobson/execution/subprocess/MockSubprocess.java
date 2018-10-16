@@ -16,13 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.subprocess;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import java.util.concurrent.BlockingQueue;
+
+import static com.github.jobson.execution.subprocess.ProcessSignals.SIGKILL;
+import static com.github.jobson.execution.subprocess.ProcessSignals.TERM;
+
+public final class MockSubprocess implements Subprocess {
+
+    private final BlockingQueue<ProcessSignals> signalQueue;
+
+    public MockSubprocess(BlockingQueue<ProcessSignals> signalQueue) {
+        this.signalQueue = signalQueue;
+    }
+
+    @Override
+    public void sendSigterm() {
+        signalQueue.offer(TERM);
+    }
+
+    @Override
+    public void sendSigkill() {
+        signalQueue.offer(SIGKILL);
+    }
 }

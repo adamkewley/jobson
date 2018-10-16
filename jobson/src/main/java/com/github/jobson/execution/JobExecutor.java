@@ -26,7 +26,7 @@ import java.util.Optional;
 public interface JobExecutor {
     Optional<JobExecutionResult> executeSync(JobId jobId);
     void executeAsync(JobId jobId);
-    Observable<JobExitEvent> onJobExecuted();
+    Observable<JobExitEvent> onAnyJobExit();
     boolean isRunning(JobId jobId);
     void abortAsync(JobId jobId);
 }

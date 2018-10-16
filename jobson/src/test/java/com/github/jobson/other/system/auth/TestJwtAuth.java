@@ -22,7 +22,7 @@ package com.github.jobson.other.system.auth;
 import com.github.jobson.other.TestHelpers;
 import com.github.jobson.api.http.APIGetUserDetailsResponse;
 import com.github.jobson.auth.JsonWebTokenAuthenticator;
-import com.github.jobson.api.config.auth.JsonWebTokenConfig;
+import com.github.jobson.api.config.JsonWebTokenConfig;
 import com.github.jobson.api.config.ApplicationConfig;
 import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.testing.junit.DropwizardAppRule;

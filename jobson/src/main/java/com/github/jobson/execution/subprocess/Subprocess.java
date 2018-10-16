@@ -18,9 +18,7 @@
  */
 package com.github.jobson.execution.subprocess;
 
-import java.util.concurrent.TimeUnit;
-
 public interface Subprocess {
-    int waitFor() throws InterruptedException;
-    boolean waitFor(long l, TimeUnit timeUnit) throws InterruptedException;
+    void sendSigterm();
+    void sendSigkill();
 }

@@ -21,7 +21,7 @@ package com.github.jobson.execution.subprocess;
 import java.nio.ByteBuffer;
 
 public interface SubprocessMonitor {
-    void onStdout(ByteBuffer buffer, boolean closed);
-    void onStderr(ByteBuffer buffer, boolean closed);
+    void onStdoutUpdate(ByteBuffer buf, boolean closed);
+    void onStderrUpdate(ByteBuffer buf, boolean closed);
     void onExit(int exitCode);
 }

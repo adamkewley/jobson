@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,35 +17,35 @@
  * under the License.
  */
 
-package com.github.jobson.other.system.auth;
+package com.github.jobson.api.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.github.jobson.auth.AuthenticationBootstrap;
-import com.github.jobson.auth.PermitAllAuthorizer;
-import com.github.jobson.api.config.AuthenticationConfig;
+import com.github.jobson.auth.BasicAuthenticator;
 import io.dropwizard.auth.AuthFilter;
+import io.dropwizard.auth.PermitAllAuthorizer;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 
-import javax.validation.constraints.NotNull;
 import java.security.Principal;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NONE, visible = true)
-public final class SystemtestCustomAuthConfig implements AuthenticationConfig {
+import static com.github.jobson.Constants.DEFAULT_BASIC_AUTH_REALM;
+
+/**
+ * Configuration for a basic authenticator. Authenticates incoming requests using
+ * the HTTP Basic protocol (RFC 2617)
+ */
+public final class BasicAuthenticatorConfig implements AuthenticationConfig {
 
     @JsonProperty
-    @NotNull
-    private String username;
+    private String realm = DEFAULT_BASIC_AUTH_REALM;
 
-    @JsonProperty
-    @NotNull
-    private String password;
 
     @Override
     public AuthFilter<?, Principal> createAuthFilter(AuthenticationBootstrap bootstrap) {
         return new BasicCredentialAuthFilter.Builder<>()
-                .setAuthenticator(new SpecificUsernamePwAuthenticator(username, password))
+                .setAuthenticator(new BasicAuthenticator(bootstrap.getUserDAO()))
                 .setAuthorizer(new PermitAllAuthorizer())
+                .setRealm(realm)
                 .buildAuthFilter();
     }
 }

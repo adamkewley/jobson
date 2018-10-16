@@ -16,13 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.staging;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import com.github.jobson.api.persistence.JobDetails;
+import com.github.jobson.api.specs.JobSpec;
+import com.github.jobson.execution.subprocess.SubprocessInput;
+
+import java.io.IOException;
+import java.nio.file.Path;
+
+public final class LocalJobStager {
+
+    public LocalJobStager(Path workingDirs, JobStagerIO stagerIO) {
+        throw new RuntimeException("NYI");
+    }
+
+    public SubprocessInput stageJob(JobDetails jobDetails, JobSpec jobSpec) throws IOException {
+        // TODO: Create working dir
+        // TODO: Copy dependencies
+        // TODO: Render args
+        throw new RuntimeException("NYI");
+    }
 }

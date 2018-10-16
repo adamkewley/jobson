@@ -16,13 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.subprocess;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+public final class MockApplication {
+
+    private final byte[] stdout;
+    private final byte[] stderr;
+    private final int exitCode;
+    private final long runtimeInMillisec;
+
+
+    public MockApplication(byte[] stdout, byte[] stderr, int exitCode, long runtimeInMillisec) {
+        this.stdout = stdout;
+        this.stderr = stderr;
+        this.exitCode = exitCode;
+        this.runtimeInMillisec = runtimeInMillisec;
+    }
+
+
+    public byte[] getStdout() {
+        return stdout;
+    }
+
+    public byte[] getStderr() {
+        return stderr;
+    }
+
+    public int getExitCode() {
+        return exitCode;
+    }
+
+    public long getRuntimeInMillisec() {
+        return runtimeInMillisec;
+    }
 }

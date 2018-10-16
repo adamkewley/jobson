@@ -16,13 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+package com.github.jobson.scripting.functions;
+
+import com.github.jobson.scripting.FreeFunction;
+
+import static com.github.jobson.util.Helpers.toJSON;
+import static java.lang.String.format;
+
+public final class ToJSONFunction implements FreeFunction {
+    @Override
+    public Object call(Object... args) {
+        if (args.length != 1)
+            throw new RuntimeException(format("toJSON called with %s args (expects 1)", args.length));
+        return toJSON(args[0]);
+    }
 }

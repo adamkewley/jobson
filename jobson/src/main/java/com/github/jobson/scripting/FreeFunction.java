@@ -16,13 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+package com.github.jobson.scripting;
+
+public interface FreeFunction {
+    Object call(Object... args);
 }

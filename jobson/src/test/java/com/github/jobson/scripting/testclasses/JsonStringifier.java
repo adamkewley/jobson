@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+package com.github.jobson.scripting.testclasses;
+
+import static com.github.jobson.util.Helpers.toJSON;
+
+public final class JsonStringifier {
+
+    public String stringify(Object o) {
+        return toJSON(o);
+    }
 }

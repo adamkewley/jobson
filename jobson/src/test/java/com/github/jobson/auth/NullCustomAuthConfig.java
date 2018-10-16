@@ -19,9 +19,8 @@
 
 package com.github.jobson.auth;
 
-import com.github.jobson.auth.AuthenticationBootstrap;
-import com.github.jobson.api.config.auth.GuestAuthenticationConfig;
-import com.github.jobson.api.config.auth.AuthenticationConfig;
+import com.github.jobson.api.config.GuestAuthenticationConfig;
+import com.github.jobson.api.config.AuthenticationConfig;
 import io.dropwizard.auth.AuthFilter;
 
 import java.security.Principal;

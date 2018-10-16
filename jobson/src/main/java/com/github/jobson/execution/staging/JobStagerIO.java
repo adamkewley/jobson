@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.staging;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import com.github.jobson.api.specs.JobSpecId;
+
+import java.nio.file.Path;
+
+public interface JobStagerIO {
+    void copyDependency(JobSpecId specId, Path source, Path target);
+    void softlinkDependency(JobSpecId specId, Path linkTarget, Path linkName);
 }

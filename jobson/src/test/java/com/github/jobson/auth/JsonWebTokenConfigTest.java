@@ -20,7 +20,7 @@
 package com.github.jobson.auth;
 
 import com.github.jobson.other.TestHelpers;
-import com.github.jobson.api.config.auth.JsonWebTokenConfig;
+import com.github.jobson.api.config.JsonWebTokenConfig;
 import io.dropwizard.auth.AuthFilter;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

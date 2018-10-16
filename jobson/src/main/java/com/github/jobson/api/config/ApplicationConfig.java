@@ -20,7 +20,6 @@
 package com.github.jobson.api.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.jobson.api.config.auth.AuthenticationConfig;
 import io.dropwizard.Configuration;
 
 import javax.validation.Valid;

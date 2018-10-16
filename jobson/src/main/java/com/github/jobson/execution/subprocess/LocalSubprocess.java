@@ -18,23 +18,26 @@
  */
 package com.github.jobson.execution.subprocess;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
 
 public final class LocalSubprocess implements Subprocess {
 
     private final Process p;
 
+
     public LocalSubprocess(Process p) {
+        Objects.requireNonNull(p);
+
         this.p = p;
     }
 
     @Override
-    public int waitFor() throws InterruptedException {
-        return p.waitFor();
+    public void sendSigterm() {
+        p.destroy();
     }
 
     @Override
-    public boolean waitFor(long l, TimeUnit timeUnit) throws InterruptedException {
-        return p.waitFor(l, timeUnit);
+    public void sendSigkill() {
+        p.destroyForcibly();
     }
 }

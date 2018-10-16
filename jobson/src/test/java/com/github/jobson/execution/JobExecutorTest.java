@@ -18,11 +18,9 @@
  */
 package com.github.jobson.execution;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import com.github.jobson.execution.subprocess.SubprocessFactory;
+
+public abstract class JobExecutorTest {
+
+    protected abstract JobExecutor getInstance(JobExecutorIO ioDao, SubprocessFactory factory);
 }

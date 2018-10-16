@@ -18,11 +18,15 @@
  */
 package com.github.jobson.execution;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import org.junit.Test;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+
+public final class LocalJobExecutorTest {
+
+    @Test
+    public void testEnsureConformsToInterface() {
+        assertThat(false).isTrue();
+    }
 }

@@ -17,34 +17,54 @@
  * under the License.
  */
 
-package com.github.jobson.other.system.auth;
+package com.github.jobson.api.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.github.jobson.auth.AuthenticationBootstrap;
 import com.github.jobson.auth.PermitAllAuthorizer;
-import com.github.jobson.api.config.AuthenticationConfig;
+import com.github.jobson.auth.JsonWebTokenAuthFilter;
+import com.github.jobson.auth.JsonWebTokenAuthenticator;
 import io.dropwizard.auth.AuthFilter;
-import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.validation.constraints.NotNull;
+import java.security.Key;
 import java.security.Principal;
+import java.util.Base64;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NONE, visible = true)
-public final class SystemtestCustomAuthConfig implements AuthenticationConfig {
-
-    @JsonProperty
-    @NotNull
-    private String username;
+public final class JsonWebTokenConfig implements AuthenticationConfig {
 
     @JsonProperty
     @NotNull
-    private String password;
+    @NotEmpty
+    private String secretKey;  // Base64 string
+
+    /**
+     * @deprecated Used by JSON deserializer.
+     */
+    public JsonWebTokenConfig() {}
+
+    public JsonWebTokenConfig(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public SignatureAlgorithm getSignatureAlgorithm() {
+        return SignatureAlgorithm.HS512;
+    }
 
     @Override
     public AuthFilter<?, Principal> createAuthFilter(AuthenticationBootstrap bootstrap) {
-        return new BasicCredentialAuthFilter.Builder<>()
-                .setAuthenticator(new SpecificUsernamePwAuthenticator(username, password))
+        final byte[] decodedSecretKey = Base64.getDecoder().decode(secretKey);
+        final Key secretKeyKey = new SecretKeySpec(decodedSecretKey, 0, decodedSecretKey.length, this.getSignatureAlgorithm().toString());
+
+        return new JsonWebTokenAuthFilter.Builder<>()
+                .setAuthenticator(new JsonWebTokenAuthenticator(secretKeyKey, this.getSignatureAlgorithm()))
                 .setAuthorizer(new PermitAllAuthorizer())
                 .buildAuthFilter();
     }

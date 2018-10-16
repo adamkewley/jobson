@@ -18,11 +18,38 @@
  */
 package com.github.jobson.execution;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import com.github.jobson.api.persistence.JobId;
+import com.github.jobson.execution.subprocess.SubprocessFactory;
+import io.reactivex.Observable;
+
+import java.util.*;
+
+public final class LocalJobExecutor implements JobExecutor {
+
+    public LocalJobExecutor(
+            LocalJobExecutorConfig config,
+            JobExecutorIO jobExecutorIO,
+            SubprocessFactory subprocessFactory) {
+
+    }
+
+    public Optional<JobExecutionResult> executeSync(JobId jobId) {
+        return Optional.empty();
+    }
+
+    public void executeAsync(JobId jobId) {
+
+    }
+
+    public Observable<JobExitEvent> onAnyJobExit() {
+        return null;
+    }
+
+    public boolean isRunning(JobId jobId) {
+        return false;
+    }
+
+    public void abortAsync(JobId jobId) {
+
+    }
 }

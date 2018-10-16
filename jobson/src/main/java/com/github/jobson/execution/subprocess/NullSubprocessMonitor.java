@@ -16,13 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.subprocess;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import java.nio.ByteBuffer;
+
+public class NullSubprocessMonitor implements SubprocessMonitor {
+    @Override
+    public void onStdoutUpdate(ByteBuffer buf, boolean closed) {
+        if (!closed) {
+            buf.clear();
+        }
+    }
+
+    @Override
+    public void onStderrUpdate(ByteBuffer buf, boolean closed) {
+        if (!closed) {
+            buf.clear();
+        }
+    }
+
+    @Override
+    public void onExit(int exitCode) {
+
+    }
 }

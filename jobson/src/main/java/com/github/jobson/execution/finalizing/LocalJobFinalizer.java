@@ -16,13 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.finalizing;
 
-public enum JobExecutionResult {
-    PREPARATION_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import com.github.jobson.api.persistence.JobDetails;
+import com.github.jobson.api.specs.JobSpec;
+
+import java.nio.file.Path;
+
+public final class LocalJobFinalizer {
+
+    public LocalJobFinalizer(JobFinalizerIO jobFinalizerIO) {
+        throw new RuntimeException("NYI");
+    }
+
+    public boolean finalize(JobDetails jobDetails, JobSpec jobSpec, Path workingDir) {
+        // TODO: Check `expectedOutputs` exist
+        // TODO: Persist expectedOutput metadata, where appropriate (e.g. via detection)
+        // TODO: Set job state
+        throw new RuntimeException("NYI");
+    }
 }
