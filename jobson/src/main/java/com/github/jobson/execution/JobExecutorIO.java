@@ -38,6 +38,8 @@ public interface JobExecutorIO {
 
     void setJobAsExecuting(JobId jobId);
 
+    void appendStdout(JobId jobId, ByteBuffer bytes);
+    void appendStderr(JobId jobId, ByteBuffer bytes);
     void appendData(JobId jobId, JobOutputId outputId, ByteBuffer bytes);
     void copyFileToOutput(JobId jobId, JobOutputId outputId, Path sourceFile);
     void moveFileToOutput(JobId jobId, JobOutputId outputId, Path sourceFile);

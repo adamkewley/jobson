@@ -22,6 +22,7 @@ package com.github.jobson.internal;
 import com.github.jobson.api.http.APIUserId;
 import com.github.jobson.api.persistence.JobId;
 import com.github.jobson.api.persistence.JobTimestamp;
+import com.github.jobson.api.specs.ExecutionConfiguration;
 import com.github.jobson.api.specs.JobSpec;
 import com.github.jobson.api.specs.inputs.JobExpectedInputId;
 import com.github.jobson.api.specs.inputs.JobInput;
@@ -84,5 +85,13 @@ public class PersistedJob extends ValidJobRequest {
                 this.getInputs(),
                 this.getTimestamps(),
                 spec);
+    }
+
+    public PersistedJob withInputs(Map<JobExpectedInputId, JobInput> inputs) {
+        return new PersistedJob(id, getOwner(), getName(), inputs, timestamps, getSpec());
+    }
+
+    public PersistedJob withExecutionConfiguration(ExecutionConfiguration executionConfiguration) {
+        return new PersistedJob(id, getOwner(), getName(), getInputs(), timestamps, getSpec().withExecutionConfiguration(executionConfiguration));
     }
 }

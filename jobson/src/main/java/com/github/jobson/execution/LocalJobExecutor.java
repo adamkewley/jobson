@@ -33,15 +33,15 @@ public final class LocalJobExecutor implements JobExecutor {
 
     }
 
-    public Optional<JobExecutionResult> executeSync(JobId jobId) {
-        return Optional.empty();
+    public JobExecutionResult executeSync(JobId jobId) {
+        return JobExecutionResult.COULD_NOT_LOAD_JOB;
     }
 
     public void executeAsync(JobId jobId) {
 
     }
 
-    public Observable<JobExitEvent> onAnyJobExit() {
+    public Observable<JobExitEvent> onJobExit() {
         return null;
     }
 

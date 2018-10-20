@@ -29,7 +29,7 @@ public final class LocalJobFinalizer {
         throw new RuntimeException("NYI");
     }
 
-    public boolean finalize(JobDetails jobDetails, JobSpec jobSpec, Path workingDir) {
+    public boolean finalize(JobDetails jobDetails, JobSpec jobSpec, Path workingDir, int exitCode) {
         // TODO: Check `expectedOutputs` exist
         // TODO: Persist expectedOutput metadata, where appropriate (e.g. via detection)
         // TODO: Set job state

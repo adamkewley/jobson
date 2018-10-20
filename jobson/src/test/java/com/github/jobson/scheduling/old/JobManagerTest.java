@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.github.jobson.scheduling;
+package com.github.jobson.scheduling.old;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.github.jobson.Constants;
@@ -36,8 +36,6 @@ import com.github.jobson.api.specs.JobExpectedOutput;
 import com.github.jobson.api.specs.JobOutputId;
 import com.github.jobson.api.specs.JobSpec;
 import com.github.jobson.api.specs.RawTemplateString;
-import com.github.jobson.scheduling.old.JobEventListeners;
-import com.github.jobson.scheduling.old.JobManager;
 import com.github.jobson.util.CancelablePromise;
 import com.github.jobson.util.SimpleCancelablePromise;
 import com.github.jobson.api.ws.JobEvent;

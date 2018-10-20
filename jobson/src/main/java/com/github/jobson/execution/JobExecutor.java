@@ -21,12 +21,10 @@ package com.github.jobson.execution;
 import com.github.jobson.api.persistence.JobId;
 import io.reactivex.Observable;
 
-import java.util.Optional;
-
 public interface JobExecutor {
-    Optional<JobExecutionResult> executeSync(JobId jobId);
+    JobExecutionResult executeSync(JobId jobId);
     void executeAsync(JobId jobId);
-    Observable<JobExitEvent> onAnyJobExit();
+    Observable<JobExitEvent> onJobExit();
     boolean isRunning(JobId jobId);
     void abortAsync(JobId jobId);
 }

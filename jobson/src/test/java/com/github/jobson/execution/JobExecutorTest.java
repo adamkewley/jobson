@@ -19,8 +19,67 @@
 package com.github.jobson.execution;
 
 import com.github.jobson.execution.subprocess.SubprocessFactory;
+import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class JobExecutorTest {
 
     protected abstract JobExecutor getInstance(JobExecutorIO ioDao, SubprocessFactory factory);
+
+    @Test
+    public void testExecuteSyncWithBadJobIdReturnsCouldNotLoadJob() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testExecuteSyncWithBadJobSpecReturnsPreparationFailed() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testExecuteSyncWithBadExecutionArgsReturnsLaunchFailed() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testExecuteSyncWithFailingApplicationReturnsApplicationFailed() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testExecuteSyncWithMissingOutputReturnsFinalizationFailed() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testExecuteSyncThenAbortingReturnsAborted() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testExecuteSyncWithGoodJobReturnsSuccess() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testExecuteSyncSetsJobAsExecuting() {
+        assertThat(false).isTrue();
+    }
+
+    // The dependencies/staging is handled by staging impl., which is tested elsewhere
+
+    @Test
+    public void testExecuteSyncWritesStdoutToTheIODAO() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testExecuteSyncWritesStderrToTheIODAO() {
+        assertThat(false).isTrue();
+    }
+
+    // Setting final state is handled by finalizer impl., which is tested elsewhere
+
+    // The after-exec outputs are handled by the finalizer impl., which is tested elsewhere
 }

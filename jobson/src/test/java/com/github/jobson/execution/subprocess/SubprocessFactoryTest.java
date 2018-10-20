@@ -18,7 +18,6 @@
  */
 package com.github.jobson.execution.subprocess;
 
-import com.github.jobson.execution.subprocess.*;
 import org.junit.Test;
 
 import java.io.IOException;

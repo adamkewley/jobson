@@ -29,5 +29,6 @@ public interface JobFinalizerIO {
     void moveFileToOutput(JobId jobId, JobOutputId outputId, Path sourceFile);
     void writeOutputMetadata(JobId jobId, JobOutputId outputId, JobOutputMetadata jobOutputMetadata);
 
+
     void logInfo(JobId jobId, String statusMessage);
 }

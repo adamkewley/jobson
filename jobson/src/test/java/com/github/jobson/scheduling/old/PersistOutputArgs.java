@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.github.jobson.scheduling;
+package com.github.jobson.scheduling.old;
 
 import com.github.jobson.api.persistence.JobId;
 import com.github.jobson.api.specs.JobOutputId;

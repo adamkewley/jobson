@@ -19,6 +19,7 @@
 package com.github.jobson.execution;
 
 public enum JobExecutionResult {
+    COULD_NOT_LOAD_JOB,
     PREPARATION_FAILED,
     LAUNCH_FAILED,
     APPLICATION_FAILED,

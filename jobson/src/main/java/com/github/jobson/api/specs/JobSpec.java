@@ -140,9 +140,14 @@ public final class JobSpec {
         return new JobSpec(id, name, description, expectedInputs, executionConfig, expectedOutputs);
     }
 
+    public JobSpec withExpectedInputs(List<JobExpectedInput<?>> expectedInputs) {
+        return new JobSpec(id, name, description, expectedInputs, execution, expectedOutputs);
+    }
+
     public JobSpec withExpectedOutputs(List<JobExpectedOutput> expectedOutputs) {
         return new JobSpec(id, name, description, expectedInputs, execution, expectedOutputs);
     }
+
 
     @Override
     public boolean equals(Object o) {

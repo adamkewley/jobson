@@ -18,23 +18,43 @@
  */
 package com.github.jobson.execution.staging;
 
-import com.github.jobson.api.persistence.JobDetails;
+import com.github.jobson.api.specs.ExecutionConfiguration;
 import com.github.jobson.api.specs.JobSpec;
 import com.github.jobson.api.specs.JobSpecId;
-import com.github.jobson.execution.finalizing.LocalJobFinalizer;
+import com.github.jobson.api.specs.RawTemplateString;
+import com.github.jobson.api.specs.inputs.JobExpectedInput;
+import com.github.jobson.api.specs.inputs.JobExpectedInputId;
+import com.github.jobson.api.specs.inputs.JobInput;
+import com.github.jobson.api.specs.inputs.string.StringExpectedInput;
+import com.github.jobson.api.specs.inputs.string.StringInput;
+import com.github.jobson.api.specs.inputs.stringarray.StringArrayExpectedInput;
+import com.github.jobson.api.specs.inputs.stringarray.StringArrayInput;
+import com.github.jobson.execution.subprocess.SubprocessInput;
+import com.github.jobson.internal.PersistedJob;
+import com.github.jobson.other.TestHelpers;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static com.github.jobson.other.TestHelpers.*;
+import static com.github.jobson.util.Helpers.toJSON;
+import static java.lang.String.format;
+import static java.util.Collections.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public final class LocalJobStagerTest {
 
     private static LocalJobStager createInstance() throws IOException {
         final Path workingDirs = Files.createTempDirectory(LocalJobStager.class.getName());
+        return createInstance(workingDirs);
+    }
 
+    private static LocalJobStager createInstance(Path workingDirs) {
         final JobStagerIO jobStagerIO = new JobStagerIO() {
             @Override
             public void copyDependency(JobSpecId specId, Path source, Path target) {
@@ -50,216 +70,250 @@ public final class LocalJobStagerTest {
         return new LocalJobStager(workingDirs, jobStagerIO);
     }
 
+    private static JobSpec generateStandardJobSpec() {
+        return generateBasicJobSpec();  // TODO: something more sophisticated. NEEDS: .someList
+    }
+
+    private static PersistedJob generateJobWithInputsAndExecution(
+            List<JobExpectedInput<?>> expectedInputs,
+            ExecutionConfiguration executionConfiguration,
+            Map<JobExpectedInputId, JobInput> actualInputs) {
+
+        final JobSpec jobSpec = generateBasicJobSpec()
+                .withExpectedInputs(expectedInputs)
+                .withExecutionConfiguration(executionConfiguration);
+        final PersistedJob job = generateBasicPersistedJob()
+                .withInputs(actualInputs)
+                .withSpec(jobSpec);
+
+        return job;
+    }
+
+    private static JobSpec generateBasicJobSpec() {
+        return new JobSpec(
+                generateJobSpecId(),
+                generateRandomString(),
+                generateRandomString(),
+                emptyList(),
+                generateBasicExecutionConfig(),
+                emptyList());
+    }
+
+    private static ExecutionConfiguration generateBasicExecutionConfig() {
+        return generateExecutionConfig("echo", generateRandomString());
+    }
+
+    private static List<JobExpectedInput<?>> generateSoloStringInput(String id) {
+        return singletonList(generateStringInput(id));
+    }
+
+    private static JobExpectedInput<?> generateStringInput(String id) {
+        return new StringExpectedInput(new JobExpectedInputId(id), id, id, Optional.empty());
+    }
+
+    private static List<JobExpectedInput<?>> generateSoloStrlistInput(String id) {
+        return singletonList(generateStringListExpectedInput(id));
+    }
+
+    private static StringArrayExpectedInput generateStringListExpectedInput(String id) {
+        return new StringArrayExpectedInput(new JobExpectedInputId(id), id, id, Optional.empty());
+    }
+
+    private static ExecutionConfiguration generateExecutionConfigWithArgs(String... args) {
+        return generateExecutionConfig(generateRandomString(), args);
+    }
+
+    private static ExecutionConfiguration generateExecutionConfig(String application, String... args) {
+        return new ExecutionConfiguration(application, Optional.of(Arrays.stream(args).map(RawTemplateString::new).collect(Collectors.toList())), Optional.empty());
+    }
+
+    private static PersistedJob generateStandardJob() {
+        return generateBasicPersistedJob();  // TODO: something more sophisticated
+    }
+
+    private static PersistedJob generateBasicPersistedJob() {
+        return new PersistedJob(
+                generateJobId(),
+                generateUserId(),
+                generateRandomString(),
+                emptyMap(),
+                emptyList(),
+                generateBasicJobSpec());
+    }
+
+    private static Map<JobExpectedInputId, JobInput> generateSoloStringInput(String inputId, String val) {
+        final HashMap<JobExpectedInputId, JobInput> ret = new HashMap<>();
+        ret.put(new JobExpectedInputId(inputId), generateStringInputVal(val));
+        return ret;
+    }
+
+    private static JobInput generateStringInputVal(String val) {
+        return new StringInput(val);
+    }
+
+    private static Map<JobExpectedInputId, JobInput> generateSoloStringlistInput(String inputId, List<String> vals) {
+        final HashMap<JobExpectedInputId, JobInput> ret = new HashMap<>();
+        ret.put(new JobExpectedInputId(inputId), new StringArrayInput(vals));
+        return ret;
+    }
+
     @Test
     public void testStageJobEvaluatesJobInputsAsExpected() throws IOException {
+        final String expectedInputId = generateRandomString();
+        final String inputValue = generateRandomString();
+
+        final List<JobExpectedInput<?>> expectedInputs = generateSoloStringInput(expectedInputId);
+        final ExecutionConfiguration executionConfiguration = generateExecutionConfigWithArgs(format("${inputs.%s}", expectedInputId));
+        final Map<JobExpectedInputId, JobInput> inputs = generateSoloStringInput(expectedInputId, inputValue);
+
+        final PersistedJob job = generateJobWithInputsAndExecution(expectedInputs, executionConfiguration, inputs);
+
         final LocalJobStager jobStager = createInstance();
-        final JobDetails jobDetails = null;  // TODO
-        final JobSpec jobSpec = null;  //
-    }
+        final SubprocessInput subprocessInput = jobStager.stageJob(job);
 
-    // IMPORTED:
-
-    @Test
-    public void testExecuteEvaluatesJobInputsAsExpected() throws InterruptedException {
-        final JobExecutor jobExecutor = getInstance();
-        final PersistedJob req =
-                standardRequestWithCommand("echo", "${inputs.foo}");
-        final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
-        final Subject<byte[]> stdoutSubject = PublishSubject.create();
-
-        stdoutSubject.subscribe(bytes ->
-                bytesEchoedToStdout.getAndUpdate(existingBytes ->
-                        Bytes.concat(existingBytes, bytes)));
-
-        final Semaphore s = new Semaphore(1);
-        s.acquire();
-        stdoutSubject.doOnComplete(s::release).subscribe();
-
-        final JobEventListeners listeners =
-                createStdoutListener(stdoutSubject);
-
-        jobExecutor.execute(req, listeners);
-
-        s.tryAcquire(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
-
-        final String stringFromStdout = new String(bytesEchoedToStdout.get()).trim();
-        assertThat(stringFromStdout).isEqualTo("a"); // from spec
+        assertThat(subprocessInput.getArgs().size()).isEqualTo(2);
+        assertThat(subprocessInput.getArgs().get(1)).isEqualTo(inputValue);
     }
 
     @Test
-    public void testExecuteEvaluatesToJSONFunctionAsExpected() throws InterruptedException, IOException {
-        final JobExecutor jobExecutor = getInstance();
-        final PersistedJob req =
-                standardRequestWithCommand("echo", "${toJSON(inputs)}");
-        final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
-        final Subject<byte[]> stdoutSubject = PublishSubject.create();
+    public void testStageJobEvaluatesToJSONFunctionAsExpected() throws IOException {
+        final PersistedJob job = generateStandardJob()
+                .withExecutionConfiguration(generateExecutionConfig(generateRandomString(), "${toJSON(inputs)}"));
 
-        stdoutSubject.subscribe(bytes ->
-                bytesEchoedToStdout.getAndUpdate(existingBytes ->
-                        Bytes.concat(existingBytes, bytes)));
+        final LocalJobStager jobStager = createInstance();
+        final SubprocessInput subprocessInput = jobStager.stageJob(job);
 
-        final Semaphore s = new Semaphore(1);
-        s.acquire();
-        stdoutSubject.doOnComplete(s::release).subscribe();
-
-        final JobEventListeners listeners =
-                createStdoutListener(stdoutSubject);
-
-        jobExecutor.execute(req, listeners);
-
-        s.tryAcquire(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
-
-        final String stringFromStdout = new String(bytesEchoedToStdout.get()).trim();
-
-        TestHelpers.assertJSONEqual(stringFromStdout, toJSON(STANDARD_REQUEST.getInputs()));
+        assertThat(subprocessInput.getArgs().size()).isEqualTo(2);
+        assertJSONEqual(subprocessInput.getArgs().get(1), toJSON(job.getInputs()));
     }
 
     @Test
-    public void testExecuteEvaluatesToFileAsExpected() throws InterruptedException, IOException {
-        final JobExecutor jobExecutor = getInstance();
-        final PersistedJob req =
-                standardRequestWithCommand("echo", "${toFile(toJSON(inputs))}");
-        final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
-        final Subject<byte[]> stdoutSubject = PublishSubject.create();
+    public void testStageJobEvaluatesToFileAsExpected() throws IOException {
+        final PersistedJob job = generateStandardJob()
+                .withExecutionConfiguration(generateExecutionConfig(generateRandomString(), "${toFile(toJSON(inputs))}"));
 
-        stdoutSubject.subscribe(bytes ->
-                bytesEchoedToStdout.getAndUpdate(existingBytes ->
-                        Bytes.concat(existingBytes, bytes)));
+        final LocalJobStager jobStager = createInstance();
+        final SubprocessInput subprocessInput = jobStager.stageJob(job);
 
-        final Semaphore s = new Semaphore(1);
-        s.acquire();
-        stdoutSubject.doOnComplete(s::release).subscribe();
+        assertThat(subprocessInput.getArgs().size()).isEqualTo(2);
 
-        final JobEventListeners listeners =
-                createStdoutListener(stdoutSubject);
+        final String fileArg = subprocessInput.getArgs().get(1);
+        final Path filePath = Paths.get(fileArg);
 
-        jobExecutor.execute(req, listeners);
+        assertThat(filePath.toFile()).exists();
 
-        s.tryAcquire(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
+        final String jsonInFile = new String(Files.readAllBytes(filePath));
 
-        final String stringFromStdout = new String(bytesEchoedToStdout.get()).trim();
-        final Path p = Paths.get(stringFromStdout);
-
-        assertThat(p.toFile().exists());
-
-        final String loadedJson = new String(Files.readAllBytes(p));
-
-        TestHelpers.assertJSONEqual(loadedJson, toJSON(STANDARD_REQUEST.getInputs()));
+        assertJSONEqual(jsonInFile, toJSON(job.getInputs()));
     }
 
     @Test
-    public void testExecuteEvaluatesJoinAsExpected() throws InterruptedException {
-        final JobExecutor jobExecutor = getInstance();
-        final PersistedJob req =
-                standardRequestWithCommand("echo", "${join(',', inputs.someList)}");
-        final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
-        final Subject<byte[]> stdoutSubject = PublishSubject.create();
-        stdoutSubject.subscribe(bytes ->
-                bytesEchoedToStdout.getAndUpdate(existingBytes ->
-                        Bytes.concat(existingBytes, bytes)));
+    public void testStageJobEvaluatesJoinAsExpected() throws IOException {
+        final String expectedInputId = generateRandomString();
+        final List<String> inputs = generateRandomList(0, 5, TestHelpers::generateAlphanumStr);
 
-        final Semaphore s = new Semaphore(1);
-        s.acquire();
-        stdoutSubject.doOnComplete(s::release).subscribe();
+        final List<JobExpectedInput<?>> expectedInputs = generateSoloStrlistInput(expectedInputId);
+        final ExecutionConfiguration executionConfiguration = generateExecutionConfigWithArgs(format("${join(',', inputs.%s)}", expectedInputId));
+        final Map<JobExpectedInputId, JobInput> actualInputs = generateSoloStringlistInput(expectedInputId, inputs);
 
-        final JobEventListeners listeners =
-                createStdoutListener(stdoutSubject);
+        final PersistedJob job = generateJobWithInputsAndExecution(expectedInputs, executionConfiguration, actualInputs);
 
-        jobExecutor.execute(req, listeners);
+        final LocalJobStager jobStager = createInstance();
+        final SubprocessInput subprocessInput = jobStager.stageJob(job);
 
-        s.tryAcquire(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
-
-        final String stringFromStdout = new String(bytesEchoedToStdout.get()).trim();
-
-        assertThat(stringFromStdout).isEqualTo("a,b,c,d"); // From the input fixture
+        assertThat(subprocessInput.getArgs().get(1)).isEqualTo("a,b,c,d");
     }
 
     @Test
-    public void testExecuteEvaluatesToStringAsExpected() throws InterruptedException {
-        final JobExecutor jobExecutor = getInstance();
-        final PersistedJob req =
-                standardRequestWithCommand("echo", "${toString(inputs.someString)}");
-        final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
-        final Subject<byte[]> stdoutSubject = PublishSubject.create();
-        stdoutSubject.subscribe(bytes ->
-                bytesEchoedToStdout.getAndUpdate(existingBytes ->
-                        Bytes.concat(existingBytes, bytes)));
+    public void testStageJobEvaluatesToStringAsExpected() throws IOException {
+        final String expectedInputId = generateRandomString();
+        final String inputValue = generateRandomString();
 
-        final Semaphore s = new Semaphore(1);
-        s.acquire();
-        stdoutSubject.doOnComplete(s::release).subscribe();
+        final List<JobExpectedInput<?>> expectedInputs = generateSoloStringInput(expectedInputId);
+        final ExecutionConfiguration executionConfiguration = generateExecutionConfigWithArgs(format("${toString(inputs.%s)}", expectedInputId));
+        final Map<JobExpectedInputId, JobInput> actualInputs = generateSoloStringInput(expectedInputId, inputValue);
 
-        final JobEventListeners listeners =
-                createStdoutListener(stdoutSubject);
+        final PersistedJob job = generateJobWithInputsAndExecution(expectedInputs, executionConfiguration, actualInputs);
 
-        jobExecutor.execute(req, listeners);
+        final LocalJobStager jobStager = createInstance();
+        final SubprocessInput subprocessInput = jobStager.stageJob(job);
 
-        s.tryAcquire(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
-
-        final String stringFromStdout = new String(bytesEchoedToStdout.get()).trim();
-
-        assertThat(stringFromStdout).isEqualTo("hello, world!"); // from input fixture
-    }
-
-
-    @Test
-    public void testExecuteEvaluatesOutputDirAsExpected() throws InterruptedException {
-        final JobExecutor jobExecutor = getInstance();
-        final PersistedJob req =
-                standardRequestWithCommand("echo", "${outputDir}");
-        final AtomicReference<byte[]> bytesEchoedToStdout = new AtomicReference<>(new byte[]{});
-        final Subject<byte[]> stdoutSubject = PublishSubject.create();
-        stdoutSubject.subscribe(bytes ->
-                bytesEchoedToStdout.getAndUpdate(existingBytes ->
-                        Bytes.concat(existingBytes, bytes)));
-
-        final Semaphore s = new Semaphore(1);
-        s.acquire();
-        stdoutSubject.doOnComplete(s::release).subscribe();
-
-        final JobEventListeners listeners =
-                createStdoutListener(stdoutSubject);
-
-        jobExecutor.execute(req, listeners);
-
-        s.tryAcquire(TestConstants.DEFAULT_TIMEOUT, MILLISECONDS);
-
-        final String stringFromStdout = new String(bytesEchoedToStdout.get()).trim();
-
-        assertThat(Files.exists(Paths.get(stringFromStdout)));
+        assertThat(subprocessInput.getArgs().get(1)).isEqualTo(inputValue);
     }
 
     @Test
-    public void testExecuteEvaluatesTemplateStringsInTheExpectedOutputs() throws Throwable {
-        final JobExecutor jobExecutor = getInstance();
+    public void testStageJobEvaluatesOutputDirAsExpected() throws IOException {
+        final Path outputDirs = Files.createTempDirectory(LocalJobStagerTest.class.getName());
 
-        final RawTemplateString rawTemplateIdStr = new RawTemplateString("${request.id}");
-        final RawTemplateString rawTemplatePathStr = new RawTemplateString("${toString('foo')}");
-        final JobExpectedOutput jobExpectedOutput = new JobExpectedOutput(rawTemplateIdStr, rawTemplatePathStr, "application/octet-stream");
-        final List<JobExpectedOutput> expectedOutputs = Collections.singletonList(jobExpectedOutput);
+        final PersistedJob job = generateStandardJob()
+                .withExecutionConfiguration(generateExecutionConfig(generateRandomString(), "${outputDir}"));
 
-        final PersistedJob req =
-                standardRequestWithExpectedOutputs(expectedOutputs, "touch", "foo");
+        final LocalJobStager jobStager = createInstance(outputDirs);
+        final SubprocessInput subprocessInput = jobStager.stageJob(job);
 
-        final JobEventListeners listeners = createNullListeners();
+        final Path echoedPath = Paths.get(subprocessInput.getArgs().get(1));
 
-        promiseAssert(
-                jobExecutor.execute(req, listeners),
-                result -> {
-                    assertThat(result.getOutputs()).isNotEmpty();
-
-                    final JobOutputId expectedOutputIdAfterEvaluation =
-                            new JobOutputId(STANDARD_REQUEST.getId().toString());
-
-                    final Optional<JobOutput> maybeJobOutput =
-                            getJobOutputById(result.getOutputs(), expectedOutputIdAfterEvaluation);
-
-                    assertThat(maybeJobOutput).isPresent();
-
-                    final JobOutput jobOutput = maybeJobOutput.get();
-
-                    assertThat(jobOutput.getId().toString()).isEqualTo(req.getId().toString());
-                });
+        assertThat(echoedPath.toFile()).exists();
+        assertThat(echoedPath.getParent()).isEqualTo(outputDirs);
     }
 
+    @Test
+    public void testStageJobCopiesFileDependencyWhenSoftlinkFalse() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testStageJobSoftlinksFileDependencyWhenSoftlinkTrue() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testStageJobFileIsCopiedWithExecutePermissionsMaintained() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testStageJobDirectoryIsCopiedWithExecutePermissionsMaintained() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testStageJobDirectoryIsSoftlinkedWithExecutePermissionsMaintained() {
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testStageJobSoftlinkedFileDependencyIsSoftLinkedFromTheDestinationToTheSource() {
+        // Files.isSymbolicLink
+        // Files.readSymbolicLink
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testStageJobTemplatedDependencySourceIsResolvedAsATemplateString() {
+        // The source can be a template string (e.g. ${request.id})
+        // e.g.
+        // - set source ${request.id}
+        // - stage it
+        // - source should be ${reqeust.id}
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testStageJobTemplatedDependencyDestinationIsResolvedAsATemplateString() {
+        // The destination can be a template string
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testStageJobTemplatedDependencyCanContainReferenceToJobInputs() {
+        // The dependency template can reference an input (e.g. ${inputs.foo})
+        assertThat(false).isTrue();
+    }
+
+    @Test
+    public void testStageJobTemplatedDependencyDestinationCanContainReferenceToJobInputs() {
+        // The dependency destination template can reference an input (e.g. ${inputs.foo})
+        assertThat(false).isTrue();
+    }
 }
