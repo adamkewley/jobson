@@ -21,25 +21,7 @@ package com.github.jobson.execution.subprocess;
 import java.nio.file.Path;
 import java.util.List;
 
-public final class SubprocessInput {
-
-    private final List<String> args;
-    private final Path workingDir;
-
-
-    public SubprocessInput(
-            List<String> args,
-            Path workingDir) {
-        this.args = args;
-        this.workingDir = workingDir;
-    }
-
-
-    public List<String> getArgs() {
-        return args;
-    }
-
-    public Path getWorkingDir() {
-        return workingDir;
-    }
+public interface SubprocessInput {
+    List<String> getArgs();
+    Path getWorkingDir();
 }

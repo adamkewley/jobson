@@ -25,10 +25,10 @@ import java.util.Arrays;
 
 public class LocalSubprocessFactoryTest extends SubprocessFactoryTest {
 
-    private static SubprocessInput inputWithArgs(String... args) throws IOException {
+    private static SubprocessInputImpl inputWithArgs(String... args) throws IOException {
         final Path workingDir = Files.createTempDirectory(SubprocessFactoryTest.class.getName());
 
-        return new SubprocessInput(Arrays.asList(args), workingDir);
+        return new SubprocessInputImpl(Arrays.asList(args), workingDir);
     }
 
     @Override
@@ -37,17 +37,17 @@ public class LocalSubprocessFactoryTest extends SubprocessFactoryTest {
     }
 
     @Override
-    protected SubprocessInput getInputsToProgThatWritesStdoutAndExitsWith0ExitCode() throws IOException {
+    protected SubprocessInputImpl getInputsToProgThatWritesStdoutAndExitsWith0ExitCode() throws IOException {
         return inputWithArgs("ls");
     }
 
     @Override
-    protected SubprocessInput getInputsToProdThatWritesToStderrAndExitsWithNonzeroExitCode() throws IOException {
+    protected SubprocessInputImpl getInputsToProdThatWritesToStderrAndExitsWithNonzeroExitCode() throws IOException {
         return inputWithArgs("cat", "file-that-doesnt-exist");
     }
 
     @Override
-    protected SubprocessInput getBogusInputsToProg() throws IOException {
+    protected SubprocessInputImpl getBogusInputsToProg() throws IOException {
         return inputWithArgs("this-prog-doesnt-exist", "so-args-are-ignored");
     }
 }

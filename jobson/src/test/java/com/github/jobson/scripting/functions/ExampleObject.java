@@ -16,14 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
 
-public enum JobExecutionResult {
-    COULD_NOT_LOAD_QUEUED_JOB,
-    STAGING_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+package com.github.jobson.scripting.functions;
+
+public final class ExampleObject {
+
+    private final String y;
+
+    public ExampleObject(String y) {
+        this.y = y;
+    }
+
+    public String getY() {
+        return y;
+    }
 }

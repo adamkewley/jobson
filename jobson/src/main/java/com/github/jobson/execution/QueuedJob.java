@@ -18,12 +18,21 @@
  */
 package com.github.jobson.execution;
 
-public enum JobExecutionResult {
-    COULD_NOT_LOAD_QUEUED_JOB,
-    STAGING_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import com.github.jobson.api.http.APIUserId;
+import com.github.jobson.api.persistence.JobId;
+import com.github.jobson.api.persistence.JobTimestamp;
+import com.github.jobson.api.specs.JobSpec;
+import com.github.jobson.api.specs.inputs.JobExpectedInputId;
+import com.github.jobson.api.specs.inputs.JobInput;
+
+import java.util.List;
+import java.util.Map;
+
+public interface QueuedJob {
+    JobId getId();
+    List<JobTimestamp> getTimestamps();
+    APIUserId getOwner();
+    String getName();
+    Map<JobExpectedInputId, JobInput> getInputs();
+    JobSpec getSpec();
 }

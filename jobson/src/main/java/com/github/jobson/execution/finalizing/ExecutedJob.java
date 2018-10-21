@@ -16,14 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.finalizing;
 
-public enum JobExecutionResult {
-    COULD_NOT_LOAD_QUEUED_JOB,
-    STAGING_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import com.github.jobson.execution.staging.StagedJob;
+
+public interface ExecutedJob extends StagedJob {
+    int getExitCode();
 }

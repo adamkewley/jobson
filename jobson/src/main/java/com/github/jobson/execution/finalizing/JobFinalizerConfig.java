@@ -16,14 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package com.github.jobson.execution.finalizing;
 
-package com.github.jobson.scripting.testclasses;
+public final class JobFinalizerConfig {
 
-import static com.github.jobson.util.Helpers.toJSON;
+    private final boolean removeWdsAfterExecution;
 
-public final class JsonStringifier {
 
-    public String stringify(Object o) {
-        return toJSON(o);
+    public JobFinalizerConfig(boolean removeWdsAfterExecution) {
+        this.removeWdsAfterExecution = removeWdsAfterExecution;
+    }
+
+
+    public boolean isRemoveWdsAfterExecution() {
+        return removeWdsAfterExecution;
     }
 }

@@ -16,38 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.finalizing;
 
 import com.github.jobson.api.persistence.JobId;
-import com.github.jobson.execution.subprocess.SubprocessFactory;
-import io.reactivex.Observable;
+import com.github.jobson.api.specs.JobOutputId;
+import com.github.jobson.internal.JobOutputMetadata;
 
-public final class LocalJobExecutor implements JobExecutor {
+import java.nio.file.Path;
 
-    public LocalJobExecutor(
-            LocalJobExecutorConfig config,
-            JobExecutorIO jobExecutorIO,
-            SubprocessFactory subprocessFactory) {
-
-    }
-
-    public JobExecutionResult executeSync(JobId jobId) {
-        return JobExecutionResult.COULD_NOT_LOAD_QUEUED_JOB;
-    }
-
-    public void executeAsync(JobId jobId) {
+public final class NullJobFinalizerIO implements JobFinalizerIO {
+    @Override
+    public void copyFileToOutput(JobId jobId, JobOutputId outputId, Path sourceFile) {
 
     }
 
-    public Observable<JobExitEvent> onJobExit() {
-        return null;
+    @Override
+    public void moveFileToOutput(JobId jobId, JobOutputId outputId, Path sourceFile) {
+
     }
 
-    public boolean isRunning(JobId jobId) {
-        return false;
+    @Override
+    public void writeOutputMetadata(JobId jobId, JobOutputId outputId, JobOutputMetadata jobOutputMetadata) {
+
     }
 
-    public void abortAsync(JobId jobId) {
+    @Override
+    public void finalizeJobAsSuccess(JobId jobId) {
+
+    }
+
+    @Override
+    public void finalizeJobAsFailure(JobId jobId, String reason) {
+
+    }
+
+    @Override
+    public void finalizeJobAsAborted(JobId jobId) {
 
     }
 }

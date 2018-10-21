@@ -16,14 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.subprocess;
 
-public enum JobExecutionResult {
-    COULD_NOT_LOAD_QUEUED_JOB,
-    STAGING_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import java.nio.file.Path;
+import java.util.List;
+
+public final class SubprocessInputImpl implements SubprocessInput {
+
+    private final List<String> args;
+    private final Path workingDir;
+
+
+    public SubprocessInputImpl(
+            List<String> args,
+            Path workingDir) {
+        this.args = args;
+        this.workingDir = workingDir;
+    }
+
+    @Override
+    public List<String> getArgs() {
+        return args;
+    }
+
+    @Override
+    public Path getWorkingDir() {
+        return workingDir;
+    }
 }

@@ -19,9 +19,7 @@
 package com.github.jobson.execution;
 
 import com.github.jobson.api.specs.JobOutputId;
-import com.github.jobson.api.specs.JobSpec;
 import com.github.jobson.api.specs.JobSpecId;
-import com.github.jobson.api.persistence.JobDetails;
 import com.github.jobson.api.persistence.JobId;
 import com.github.jobson.internal.JobOutputMetadata;
 
@@ -31,20 +29,19 @@ import java.util.Optional;
 
 public interface JobExecutorIO {
 
-    Optional<JobDetails> getJobDetailsById(JobId jobId);
-    Optional<JobSpec> getAssociatedJobSpec(JobId jobId);
-    void copyDependency(JobSpecId specId, Path source, Path target);
-    void softlinkDependency(JobSpecId specId, Path linkTarget, Path linkName);
+    Optional<QueuedJob> getQueuedJobById(JobId jobId);
 
     void setJobAsExecuting(JobId jobId);
 
+    void copyDependency(JobSpecId specId, Path source, Path target);
+    void softlinkDependency(JobSpecId specId, Path linkTarget, Path linkName);
+
     void appendStdout(JobId jobId, ByteBuffer bytes);
     void appendStderr(JobId jobId, ByteBuffer bytes);
-    void appendData(JobId jobId, JobOutputId outputId, ByteBuffer bytes);
+
     void copyFileToOutput(JobId jobId, JobOutputId outputId, Path sourceFile);
     void moveFileToOutput(JobId jobId, JobOutputId outputId, Path sourceFile);
     void writeOutputMetadata(JobId jobId, JobOutputId outputId, JobOutputMetadata jobOutputMetadata);
-
     void finalizeJobAsSuccess(JobId jobId);
     void finalizeJobAsFailure(JobId jobId, String reason);
     void finalizeJobAsAborted(JobId jobId);

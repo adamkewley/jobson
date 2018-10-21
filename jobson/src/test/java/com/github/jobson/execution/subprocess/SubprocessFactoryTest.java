@@ -30,9 +30,9 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 public abstract class SubprocessFactoryTest {
 
     protected abstract SubprocessFactory getInstance();
-    protected abstract SubprocessInput getInputsToProgThatWritesStdoutAndExitsWith0ExitCode() throws IOException;
-    protected abstract SubprocessInput getInputsToProdThatWritesToStderrAndExitsWithNonzeroExitCode() throws IOException;
-    protected abstract SubprocessInput getBogusInputsToProg() throws IOException;
+    protected abstract SubprocessInputImpl getInputsToProgThatWritesStdoutAndExitsWith0ExitCode() throws IOException;
+    protected abstract SubprocessInputImpl getInputsToProdThatWritesToStderrAndExitsWithNonzeroExitCode() throws IOException;
+    protected abstract SubprocessInputImpl getBogusInputsToProg() throws IOException;
 
 
     @Test(expected = NullPointerException.class)
@@ -45,7 +45,7 @@ public abstract class SubprocessFactoryTest {
 
     @Test(expected = NullPointerException.class)
     public void testCreateThrowsNPEIfMonitorNull() throws IOException {
-        final SubprocessInput inputs = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
+        final SubprocessInputImpl inputs = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
         final SubprocessFactory factory = getInstance();
 
         factory.create(inputs, null);
@@ -53,7 +53,7 @@ public abstract class SubprocessFactoryTest {
 
     @Test(expected = RuntimeException.class)
     public void testCreateThrowsRuntimeExceptionIfProcessInputIsBogus() throws IOException {
-        final SubprocessInput inputs = getBogusInputsToProg();
+        final SubprocessInputImpl inputs = getBogusInputsToProg();
         final SubprocessMonitor monitor = new NullSubprocessMonitor();
         final SubprocessFactory factory = getInstance();
 
@@ -62,7 +62,7 @@ public abstract class SubprocessFactoryTest {
 
     @Test
     public void testCreateReturnsSubprocessInstanceWhenProvidedCorrectArguments() throws IOException {
-        final SubprocessInput inputs = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
+        final SubprocessInputImpl inputs = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
         final SubprocessMonitor monitor = new NullSubprocessMonitor();
         final SubprocessFactory factory = getInstance();
 
@@ -73,7 +73,7 @@ public abstract class SubprocessFactoryTest {
 
     @Test
     public void testCreateReturnedSubprocessWaitForReturnsWithZeroExitCode() throws IOException, InterruptedException {
-        final SubprocessInput inputs = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
+        final SubprocessInputImpl inputs = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
         final WaitableSubprocessMonitor monitor = new WaitableSubprocessMonitor();
         final SubprocessFactory factory = getInstance();
 
@@ -86,7 +86,7 @@ public abstract class SubprocessFactoryTest {
 
     @Test
     public void testCreateReturnedSubprocessWaitForReturnsWithNonzeroExitCode() throws IOException, InterruptedException {
-        final SubprocessInput inputs = getInputsToProdThatWritesToStderrAndExitsWithNonzeroExitCode();
+        final SubprocessInputImpl inputs = getInputsToProdThatWritesToStderrAndExitsWithNonzeroExitCode();
         final WaitableSubprocessMonitor monitor = new WaitableSubprocessMonitor();
         final SubprocessFactory factory = getInstance();
 
@@ -99,7 +99,7 @@ public abstract class SubprocessFactoryTest {
 
     @Test
     public void testCreateSubprocessCallsMonitorToStdout() throws IOException, InterruptedException {
-        final SubprocessInput input = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
+        final SubprocessInputImpl input = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
         final AtomicBoolean onStdoutCalled = new AtomicBoolean(false);
         final WaitableSubprocessMonitor monitor = new WaitableSubprocessMonitor() {
             @Override
@@ -118,7 +118,7 @@ public abstract class SubprocessFactoryTest {
 
     @Test
     public void testCreateSubprocessCallsMonitorToStderr() throws IOException, InterruptedException {
-        final SubprocessInput input = getInputsToProdThatWritesToStderrAndExitsWithNonzeroExitCode();
+        final SubprocessInputImpl input = getInputsToProdThatWritesToStderrAndExitsWithNonzeroExitCode();
         final AtomicBoolean onStderrCalled = new AtomicBoolean(false);
         final WaitableSubprocessMonitor monitor = new WaitableSubprocessMonitor() {
             @Override
@@ -137,7 +137,7 @@ public abstract class SubprocessFactoryTest {
 
     @Test
     public void testCreateSubprocessCallsOnExit() throws IOException, InterruptedException {
-        final SubprocessInput input = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
+        final SubprocessInputImpl input = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
         final AtomicBoolean onExitCalled = new AtomicBoolean(false);
         final WaitableSubprocessMonitor monitor = new WaitableSubprocessMonitor() {
             @Override
@@ -157,7 +157,7 @@ public abstract class SubprocessFactoryTest {
 
     @Test
     public void testCreateSubprocessOnExitIsCalledWithExitCodeWhenExitCodeIsZero() throws InterruptedException, IOException {
-        final SubprocessInput input = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
+        final SubprocessInputImpl input = getInputsToProgThatWritesStdoutAndExitsWith0ExitCode();
         final AtomicInteger onExitValue = new AtomicInteger(-1);
         final WaitableSubprocessMonitor monitor = new WaitableSubprocessMonitor() {
             @Override
@@ -176,7 +176,7 @@ public abstract class SubprocessFactoryTest {
 
     @Test
     public void testCreateSubprocessOnExitIsCalledWithNonzeroExitCodeWhenExitCodeIsNonzero() throws IOException, InterruptedException {
-        final SubprocessInput input = getInputsToProdThatWritesToStderrAndExitsWithNonzeroExitCode();
+        final SubprocessInputImpl input = getInputsToProdThatWritesToStderrAndExitsWithNonzeroExitCode();
         final AtomicInteger onExitValue = new AtomicInteger(-1);
 
         final WaitableSubprocessMonitor monitor = new WaitableSubprocessMonitor() {

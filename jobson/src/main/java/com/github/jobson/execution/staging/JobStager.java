@@ -16,14 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.github.jobson.execution;
+package com.github.jobson.execution.staging;
 
-public enum JobExecutionResult {
-    COULD_NOT_LOAD_QUEUED_JOB,
-    STAGING_FAILED,
-    LAUNCH_FAILED,
-    APPLICATION_FAILED,
-    FINALIZATION_FAILED,
-    ABORTED,
-    SUCCESS,
+import com.github.jobson.execution.QueuedJob;
+
+import java.io.IOException;
+
+public interface JobStager {
+    StagedJob stageJob(QueuedJob job) throws IOException;
 }

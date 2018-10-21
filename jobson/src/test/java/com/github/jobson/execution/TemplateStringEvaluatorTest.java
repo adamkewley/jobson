@@ -17,11 +17,12 @@
  * under the License.
  */
 
-package com.github.jobson.scripting;
+package com.github.jobson.execution;
 
+import com.github.jobson.scripting.FreeFunction;
 import com.github.jobson.other.TestHelpers;
-import com.github.jobson.scripting.testclasses.ExampleObject;
-import com.github.jobson.scripting.testclasses.JsonStringifier;
+import com.github.jobson.scripting.functions.ExampleObject;
+import com.github.jobson.scripting.functions.JsonStringifier;
 import org.junit.Test;
 
 import java.util.HashMap;

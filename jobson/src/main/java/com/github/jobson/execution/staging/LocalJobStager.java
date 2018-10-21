@@ -18,19 +18,19 @@
  */
 package com.github.jobson.execution.staging;
 
-import com.github.jobson.execution.subprocess.SubprocessInput;
-import com.github.jobson.internal.PersistedJob;
+import com.github.jobson.execution.QueuedJob;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-public final class LocalJobStager {
+public final class LocalJobStager implements JobStager {
 
     public LocalJobStager(Path workingDirs, JobStagerIO stagerIO) {
         throw new RuntimeException("NYI");
     }
 
-    public SubprocessInput stageJob(PersistedJob job) throws IOException {
+    @Override
+    public StagedJob stageJob(QueuedJob job) throws IOException {
         // TODO: Create working dir
         // TODO: Copy dependencies
         // TODO: Render args

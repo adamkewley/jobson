@@ -29,7 +29,9 @@ import com.github.jobson.api.specs.inputs.string.StringExpectedInput;
 import com.github.jobson.api.specs.inputs.string.StringInput;
 import com.github.jobson.api.specs.inputs.stringarray.StringArrayExpectedInput;
 import com.github.jobson.api.specs.inputs.stringarray.StringArrayInput;
-import com.github.jobson.execution.subprocess.SubprocessInput;
+import com.github.jobson.execution.QueuedJob;
+import com.github.jobson.execution.QueuedJobImpl;
+import com.github.jobson.execution.subprocess.SubprocessInputImpl;
 import com.github.jobson.internal.PersistedJob;
 import com.github.jobson.other.TestHelpers;
 import org.junit.Test;
@@ -74,7 +76,7 @@ public final class LocalJobStagerTest {
         return generateBasicJobSpec();  // TODO: something more sophisticated. NEEDS: .someList
     }
 
-    private static PersistedJob generateJobWithInputsAndExecution(
+    private static QueuedJobImpl generateJobWithInputsAndExecution(
             List<JobExpectedInput<?>> expectedInputs,
             ExecutionConfiguration executionConfiguration,
             Map<JobExpectedInputId, JobInput> actualInputs) {
@@ -82,7 +84,7 @@ public final class LocalJobStagerTest {
         final JobSpec jobSpec = generateBasicJobSpec()
                 .withExpectedInputs(expectedInputs)
                 .withExecutionConfiguration(executionConfiguration);
-        final PersistedJob job = generateBasicPersistedJob()
+        final QueuedJobImpl job = generateBasicPersistedJob()
                 .withInputs(actualInputs)
                 .withSpec(jobSpec);
 
@@ -127,17 +129,17 @@ public final class LocalJobStagerTest {
         return new ExecutionConfiguration(application, Optional.of(Arrays.stream(args).map(RawTemplateString::new).collect(Collectors.toList())), Optional.empty());
     }
 
-    private static PersistedJob generateStandardJob() {
+    private static QueuedJobImpl generateStandardJob() {
         return generateBasicPersistedJob();  // TODO: something more sophisticated
     }
 
-    private static PersistedJob generateBasicPersistedJob() {
-        return new PersistedJob(
+    private static QueuedJobImpl generateBasicPersistedJob() {
+        return new QueuedJobImpl(
                 generateJobId(),
+                emptyList(),
                 generateUserId(),
                 generateRandomString(),
                 emptyMap(),
-                emptyList(),
                 generateBasicJobSpec());
     }
 
@@ -166,38 +168,38 @@ public final class LocalJobStagerTest {
         final ExecutionConfiguration executionConfiguration = generateExecutionConfigWithArgs(format("${inputs.%s}", expectedInputId));
         final Map<JobExpectedInputId, JobInput> inputs = generateSoloStringInput(expectedInputId, inputValue);
 
-        final PersistedJob job = generateJobWithInputsAndExecution(expectedInputs, executionConfiguration, inputs);
+        final QueuedJob job = generateJobWithInputsAndExecution(expectedInputs, executionConfiguration, inputs);
 
         final LocalJobStager jobStager = createInstance();
-        final SubprocessInput subprocessInput = jobStager.stageJob(job);
+        final StagedJob stagedJob = jobStager.stageJob(job);
 
-        assertThat(subprocessInput.getArgs().size()).isEqualTo(2);
-        assertThat(subprocessInput.getArgs().get(1)).isEqualTo(inputValue);
+        assertThat(stagedJob.getArgs().size()).isEqualTo(2);
+        assertThat(stagedJob.getArgs().get(1)).isEqualTo(inputValue);
     }
 
     @Test
     public void testStageJobEvaluatesToJSONFunctionAsExpected() throws IOException {
-        final PersistedJob job = generateStandardJob()
+        final QueuedJob job = generateStandardJob()
                 .withExecutionConfiguration(generateExecutionConfig(generateRandomString(), "${toJSON(inputs)}"));
 
         final LocalJobStager jobStager = createInstance();
-        final SubprocessInput subprocessInput = jobStager.stageJob(job);
+        final StagedJob stagedJob = jobStager.stageJob(job);
 
-        assertThat(subprocessInput.getArgs().size()).isEqualTo(2);
-        assertJSONEqual(subprocessInput.getArgs().get(1), toJSON(job.getInputs()));
+        assertThat(stagedJob.getArgs().size()).isEqualTo(2);
+        assertJSONEqual(stagedJob.getArgs().get(1), toJSON(job.getInputs()));
     }
 
     @Test
     public void testStageJobEvaluatesToFileAsExpected() throws IOException {
-        final PersistedJob job = generateStandardJob()
+        final QueuedJob job = generateStandardJob()
                 .withExecutionConfiguration(generateExecutionConfig(generateRandomString(), "${toFile(toJSON(inputs))}"));
 
         final LocalJobStager jobStager = createInstance();
-        final SubprocessInput subprocessInput = jobStager.stageJob(job);
+        final StagedJob stagedJob = jobStager.stageJob(job);
 
-        assertThat(subprocessInput.getArgs().size()).isEqualTo(2);
+        assertThat(stagedJob.getArgs().size()).isEqualTo(2);
 
-        final String fileArg = subprocessInput.getArgs().get(1);
+        final String fileArg = stagedJob.getArgs().get(1);
         final Path filePath = Paths.get(fileArg);
 
         assertThat(filePath.toFile()).exists();
@@ -216,12 +218,12 @@ public final class LocalJobStagerTest {
         final ExecutionConfiguration executionConfiguration = generateExecutionConfigWithArgs(format("${join(',', inputs.%s)}", expectedInputId));
         final Map<JobExpectedInputId, JobInput> actualInputs = generateSoloStringlistInput(expectedInputId, inputs);
 
-        final PersistedJob job = generateJobWithInputsAndExecution(expectedInputs, executionConfiguration, actualInputs);
+        final QueuedJob job = generateJobWithInputsAndExecution(expectedInputs, executionConfiguration, actualInputs);
 
         final LocalJobStager jobStager = createInstance();
-        final SubprocessInput subprocessInput = jobStager.stageJob(job);
+        final StagedJob stagedJob = jobStager.stageJob(job);
 
-        assertThat(subprocessInput.getArgs().get(1)).isEqualTo("a,b,c,d");
+        assertThat(stagedJob.getArgs().get(1)).isEqualTo("a,b,c,d");
     }
 
     @Test
@@ -233,25 +235,25 @@ public final class LocalJobStagerTest {
         final ExecutionConfiguration executionConfiguration = generateExecutionConfigWithArgs(format("${toString(inputs.%s)}", expectedInputId));
         final Map<JobExpectedInputId, JobInput> actualInputs = generateSoloStringInput(expectedInputId, inputValue);
 
-        final PersistedJob job = generateJobWithInputsAndExecution(expectedInputs, executionConfiguration, actualInputs);
+        final QueuedJob job = generateJobWithInputsAndExecution(expectedInputs, executionConfiguration, actualInputs);
 
         final LocalJobStager jobStager = createInstance();
-        final SubprocessInput subprocessInput = jobStager.stageJob(job);
+        final StagedJob stagedJob = jobStager.stageJob(job);
 
-        assertThat(subprocessInput.getArgs().get(1)).isEqualTo(inputValue);
+        assertThat(stagedJob.getArgs().get(1)).isEqualTo(inputValue);
     }
 
     @Test
     public void testStageJobEvaluatesOutputDirAsExpected() throws IOException {
         final Path outputDirs = Files.createTempDirectory(LocalJobStagerTest.class.getName());
 
-        final PersistedJob job = generateStandardJob()
+        final QueuedJob job = generateStandardJob()
                 .withExecutionConfiguration(generateExecutionConfig(generateRandomString(), "${outputDir}"));
 
         final LocalJobStager jobStager = createInstance(outputDirs);
-        final SubprocessInput subprocessInput = jobStager.stageJob(job);
+        final StagedJob stagedJob = jobStager.stageJob(job);
 
-        final Path echoedPath = Paths.get(subprocessInput.getArgs().get(1));
+        final Path echoedPath = Paths.get(stagedJob.getArgs().get(1));
 
         assertThat(echoedPath.toFile()).exists();
         assertThat(echoedPath.getParent()).isEqualTo(outputDirs);

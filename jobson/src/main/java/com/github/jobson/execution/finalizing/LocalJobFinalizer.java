@@ -18,18 +18,13 @@
  */
 package com.github.jobson.execution.finalizing;
 
-import com.github.jobson.api.persistence.JobDetails;
-import com.github.jobson.api.specs.JobSpec;
+public final class LocalJobFinalizer implements JobFinalizer {
 
-import java.nio.file.Path;
-
-public final class LocalJobFinalizer {
-
-    public LocalJobFinalizer(JobFinalizerIO jobFinalizerIO) {
+    public LocalJobFinalizer(JobFinalizerConfig jobFinalizerConfig, JobFinalizerIO jobFinalizerIO) {
         throw new RuntimeException("NYI");
     }
 
-    public boolean finalize(JobDetails jobDetails, JobSpec jobSpec, Path workingDir, int exitCode) {
+    public void finalizeJob(ExecutedJob executedJob) {
         // TODO: Check `expectedOutputs` exist
         // TODO: Persist expectedOutput metadata, where appropriate (e.g. via detection)
         // TODO: Set job state

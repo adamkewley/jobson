@@ -16,18 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package com.github.jobson.execution.finalizing;
 
-package com.github.jobson.scripting.testclasses;
-
-public final class ExampleObject {
-
-    private final String y;
-
-    public ExampleObject(String y) {
-        this.y = y;
-    }
-
-    public String getY() {
-        return y;
-    }
+public interface JobFinalizer {
+    void finalizeJob(ExecutedJob executedJob);
 }
