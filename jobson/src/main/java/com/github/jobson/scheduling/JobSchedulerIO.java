@@ -22,9 +22,10 @@ import com.github.jobson.api.persistence.JobId;
 import com.github.jobson.internal.PersistedJob;
 
 import java.util.Map;
+import java.util.Set;
 
 public interface JobSchedulerIO {
     Map<JobId, PersistedJob> getSubmittedJobs();
-    void setJobStateAsExecuting(JobId jobId);
-    void setJobStateAsSubmitted(JobId jobId);  // scheduler is in position to reschedule dangling jobs after a crash.
+    Set<JobId> getExecutingJobs();  // scheduler is in position to resubmit dangling jobs after a crash
+    void setJobStateAsSubmitted(JobId jobId);  // as above
 }
