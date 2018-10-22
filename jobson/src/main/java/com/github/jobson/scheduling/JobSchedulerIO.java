@@ -26,6 +26,6 @@ import java.util.Set;
 
 public interface JobSchedulerIO {
     Map<JobId, PersistedJob> getSubmittedJobs();
-    Set<JobId> getExecutingJobs();  // scheduler is in position to resubmit dangling jobs after a crash
-    void setJobStateAsSubmitted(JobId jobId);  // as above
+    Set<JobId> getExecutingJobs();  // scheduler is in position to kill dangling jobs after a crash
+    void setJobStateAsFatalError(JobId jobId, String reason);  // as above
 }
