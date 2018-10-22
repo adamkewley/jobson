@@ -6,7 +6,7 @@
 
     <groupId>com.github.jobson</groupId>
     <artifactId>jobson-project</artifactId>
-    <version>0.1.0-beta.1</version>
+    <version>1.0.0-dev.5</version>
     <packaging>pom</packaging>
 
     <name>jobson project</name>
@@ -47,18 +47,104 @@
         </developer>
     </developers>
 
-    <profiles>
-        <profile>
-            <id>release</id>
-            <modules>
-                <module>jobson-nix</module>
-                <module>jobson-deb</module>
-                <module>jobson-docs</module>
-            </modules>
-        </profile>
-    </profiles>
+    <properties>
+        <version.jobsonswagger>1.0.0-dev.5</version.jobsonswagger>
+        <version.jobsonswaggerui>1.0.0-dev.5</version.jobsonswaggerui>
+
+        <dropwizard.version>1.3.5</dropwizard.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <docker.user>adamkewley</docker.user>
+        <docker.repo>jobson-1.0.0-throwaway</docker.repo>
+        <version.swaggerui>3.19.3</version.swaggerui>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-bom</artifactId>
+                <version>${dropwizard.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.0</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <compilerArgument>-Xlint:deprecation</compilerArgument>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.1</version>
+                    <configuration>
+                        <useSystemClassLoader>false</useSystemClassLoader>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-maven-plugin</artifactId>
+                    <version>4.7.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <modules>
+        <!-- Core code -->
         <module>jobson</module>
+        <module>jobson-swagger</module>
+        <module>jobson-ui</module>
+
+        <!-- Documentation -->
+        <module>jobson-swagger-ui</module>
+        <module>jobson-docs</module>
+
+        <!-- Packaging -->
+        <module>jobson-deb</module>
+        <module>jobson-nix</module>
+        <module>jobson-docker</module>
     </modules>
 </project>

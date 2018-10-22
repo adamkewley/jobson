@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.jobson</groupId>
+        <artifactId>jobson-project</artifactId>
+        <version>1.0.0-dev.5</version>
+    </parent>
+
+    <artifactId>jobson-docker</artifactId>
+    <packaging>pom</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.jobson</groupId>
+            <artifactId>jobson-deb</artifactId>
+            <version>1.0.0-dev.5</version>
+            <type>deb</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- Unpack the jobson-nix distro: it contains jobson, UI, etc. -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.github.jobson</groupId>
+                                    <artifactId>jobson-deb</artifactId>
+                                    <type>deb</type>
+                                    <outputDirectory>
+                                        ${project.build.directory}
+                                    </outputDirectory>
+                                    <destFileName>jobson.deb</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-docker-image</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <exec executable="docker" failonerror="true">
+                                    <arg value="build"/>
+                                    <arg value="-t"/>
+                                    <arg value="${docker.user}/${docker.repo}:${project.version}"/>
+                                    <arg value="-t"/>
+                                    <arg value="${docker.user}/${docker.repo}:latest"/>
+                                    <arg value="."/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

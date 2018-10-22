@@ -7,56 +7,140 @@
     <parent>
         <groupId>com.github.jobson</groupId>
         <artifactId>jobson-project</artifactId>
-        <version>0.1.0-beta.1</version>
+        <version>1.0.0-dev.5</version>
     </parent>
 
     <artifactId>jobson-nix</artifactId>
     <packaging>pom</packaging>
 
-    <name>jobson-nix</name>
-    <description>
-        *nix (bash script + java) packaging for the jobson jar
-    </description>
-
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>com.github.jobson</groupId>
             <artifactId>jobson</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.0.0-dev.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jobson</groupId>
+            <artifactId>jobson-docs</artifactId>
+            <version>1.0.0-dev.5</version>
+            <type>tar.gz</type>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jobson</groupId>
+            <artifactId>jobson-ui</artifactId>
+            <version>1.0.0-dev.5</version>
+            <type>tar.gz</type>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Package the source, binaries, etc. into standard tarballs used in releases -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/assembly/assemble-tarball.xml</descriptor>
-                    </descriptors>
-                     <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
+                        <id>copy-jobson-jar-dependencies</id>
+                        <phase>validate</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
+                        <configuration>
+                            <excludeArtifactIds>jobson-docs,jobson-ui</excludeArtifactIds>
+                            <includeScope>runtime</includeScope>
+                            <outputDirectory>${project.build.directory}/dependencies/jobson</outputDirectory>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>unpack-docs</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.github.jobson</groupId>
+                                    <artifactId>jobson-docs</artifactId>
+                                    <type>tar.gz</type>
+                                    <outputDirectory>${project.build.directory}/dependencies/jobson-docs</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>unpack-ui</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.github.jobson</groupId>
+                                    <artifactId>jobson-ui</artifactId>
+                                    <type>tar.gz</type>
+                                    <outputDirectory>${project.build.directory}/dependencies/jobson-ui</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.10</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>attach-artifacts</id>
+                        <id>create-dist-dir</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <exec executable="bash" failonerror="true">
+                                    <arg value="compile.sh"/>
+                                    <arg value="${project.build.directory}" />
+                                    <arg value="${project.artifactId}"/>
+                                    <arg value="${project.version}"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>package-into-tarball</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <tar destfile="${project.build.directory}/${project.artifactId}-${project.version}.tar.gz"
+                                     basedir="${project.build.directory}"
+                                     includes="${project.artifactId}-${project.version}/**"
+                                     compression="gzip"
+                                     longfile="gnu" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <!-- Attach as artifact -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-output-tarball-as-build-artifact</id>
                         <phase>package</phase>
                         <goals>
                             <goal>attach-artifact</goal>
@@ -64,7 +148,9 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>${project.build.directory}/${project.artifactId}-${project.version}.tar.gz</file>
+                                    <file>
+                                        ${project.build.directory}/${project.artifactId}-${project.version}.tar.gz
+                                    </file>
                                     <type>tar.gz</type>
                                 </artifact>
                             </artifacts>

@@ -48,8 +48,6 @@ import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.federecio.dropwizard.swagger.SwaggerBundle;
-import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.eclipse.jetty.http.pathmap.RegexPathSpec;
 import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
@@ -83,16 +81,6 @@ public final class App extends Application<ApplicationConfig> {
         configurationBootstrap.addCommand(new UsersCommand());
         configurationBootstrap.addCommand(new ValidateCommand());
         configurationBootstrap.addCommand(new RunCommand());
-
-        configurationBootstrap.addBundle(new SwaggerBundle<ApplicationConfig>() {
-            @Override
-            protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(ApplicationConfig applicationConfig) {
-                final SwaggerBundleConfiguration conf = new SwaggerBundleConfiguration();
-                conf.setResourcePackage("com.github.jobson.resources.v1");
-                conf.setUriPrefix("/");
-                return conf;
-            }
-        });
     }
 
     public void run(ApplicationConfig applicationConfig, Environment environment) throws Exception {

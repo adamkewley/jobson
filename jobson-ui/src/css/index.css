@@ -1,0 +1,33 @@
+pre {
+  padding: 0.1em;
+  height: 30em;
+  white-space: pre-wrap;
+  font-family: monospace;
+  line-height: normal;
+  color: #ddd;
+  background-color: #222;
+  overflow: auto;
+  font-size: smaller !important;
+}
+
+#job-list tr, #job-list td {
+  padding: 0.1em 0;
+}
+
+.ui.grid.jobson-condensed-grid {
+  margin-top: 1em;
+}
+
+.ui.grid.jobson-condensed-grid > .column:not(.row) {
+  padding-top: 0.1em;
+  padding-bottom: 0;
+}
+
+.sql-expected-input .table-wrapper {
+  height: 40em;
+  overflow-y: scroll;
+}
+
+.sql-expected-input .table-wrapper td:first-child {
+  text-align: center;
+}

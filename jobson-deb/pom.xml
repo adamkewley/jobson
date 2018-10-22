@@ -7,37 +7,42 @@
     <parent>
         <groupId>com.github.jobson</groupId>
         <artifactId>jobson-project</artifactId>
-        <version>0.1.0-beta.1</version>
+        <version>1.0.0-dev.5</version>
     </parent>
 
     <artifactId>jobson-deb</artifactId>
     <packaging>pom</packaging>
 
-    <name>jobson-deb</name>
-    <description>
-        Debian packaging for jobson
-    </description>
+    <dependencies>
+        <dependency>
+            <groupId>com.github.jobson</groupId>
+            <artifactId>jobson-nix</artifactId>
+            <version>1.0.0-dev.5</version>
+            <type>tar.gz</type>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
+            <!-- Unpack nix tarball -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>copy</id>
+                        <id>unpack</id>
                         <phase>validate</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>jobson</artifactId>
-                                    <version>${project.parent.version}</version>
-                                    <outputDirectory>target</outputDirectory>
+                                    <groupId>com.github.jobson</groupId>
+                                    <artifactId>jobson-nix</artifactId>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -45,24 +50,67 @@
                 </executions>
             </plugin>
 
+            <!-- Compile (repackage nix tarball) + package (create .deb pkg) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
                 <executions>
                     <execution>
-                        <id>mk-deb-pkg</id>
+                        <id>repackage-nix-tarball</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <target>
-                                <exec executable="/bin/bash" failonerror="true">
+                                <exec executable="bash" failonerror="true">
+                                    <arg value="repackage-nix-tarball.sh" />
+                                    <arg value="${project.artifactId}" />
+                                    <arg value="${project.version}" />
+                                    <arg value="${project.version}" />
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>create-deb-pkg</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <exec executable="bash" failonerror="true">
                                     <arg value="${project.basedir}/make-deb-pkg.sh" />
                                     <arg value="${project.version}" />
                                 </exec>
                             </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Attach deb package as output artifact -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-output-tarball-as-build-artifact</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>
+                                        ${project.build.directory}/jobson_${project.version}_all.deb
+                                    </file>
+                                    <type>deb</type>
+                                </artifact>
+                            </artifacts>
                         </configuration>
                     </execution>
                 </executions>
