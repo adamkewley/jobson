@@ -65,7 +65,7 @@
                                 <version>1</version>
                             </info>
                             <swaggerDirectory>${project.build.directory}/</swaggerDirectory>
-                            <swaggerFileName>${project.artifactId}</swaggerFileName>
+                            <swaggerFileName>${project.artifactId}-${project.version}</swaggerFileName>
                         </apiSource>
                     </apiSources>
                 </configuration>

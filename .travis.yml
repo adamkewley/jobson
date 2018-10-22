@@ -10,7 +10,6 @@ branches:
 
 before_install:
 - gem install fpm --version 1.10.0  # for creating OS packages
--
 
 script: mvn package
 
@@ -31,6 +30,9 @@ deploy:
   - jobson-deb/target/jobson_${TRAVIS_TAG}_all.deb
   - jobson-nix/target/jobson-nix-${TRAVIS_TAG}.tar.gz
   - jobson-docs/target/jobson-docs-${TRAVIS_TAG}.tar.gz
+  - jobson-swagger/target/jobson-swagger-${TRAVIS_TAG}.json
+  - jobson-swagger-ui/target/jobson-swagger-ui-${TRAVIS_TAG}.tar.gz
+  - jobson-ui/target/jobson-ui-${TRAVIS_TAG}.tar.gz
 
   on:
     tags: true
