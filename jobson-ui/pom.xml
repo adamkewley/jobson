@@ -10,74 +10,63 @@
         <version>0.1.0-beta.1</version>
     </parent>
 
-    <artifactId>jobson-docs</artifactId>
+    <artifactId>jobson-ui</artifactId>
+    <version>0.1.0-beta.1</version>
     <packaging>pom</packaging>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <generateProjectInfo>false</generateProjectInfo>
-                    <generateReports>false</generateReports>
-                </configuration>
-            </plugin>
-
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
                 <executions>
                     <execution>
-                        <id>install-python-deps</id>
+                        <id>install-node-deps</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <target>
-                                <exec executable="pip3" failonerror="true">
+                                <exec executable="npm" failonerror="true">
                                     <arg value="install" />
-                                    <arg value="-r" />
-                                    <arg value="requirements.txt" />
                                 </exec>
                             </target>
                         </configuration>
                     </execution>
 
                     <execution>
-                        <id>compile-sphinx-docs</id>
+                        <id>compile-site</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <target>
-                                <exec executable="make" failonerror="true">
-                                    <arg value="html" />
+                                <exec executable="npm" failonerror="true">
+                                    <arg value="run" />
+                                    <arg value="build" />
                                 </exec>
-
-                                <move file="${project.basedir}/target/html"
-                                      tofile="${project.basedir}/target/${project.artifactId}-${project.version}" />
                             </target>
                         </configuration>
                     </execution>
 
                     <execution>
-                        <id>package-documentation-into-tarball</id>
+                        <id>package-built-site-into-tarball</id>
                         <phase>package</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <target>
-                                <tar basedir="${project.basedir}/target"
-                                     includes="${project.artifactId}-${project.version}/**"
-                                     longfile="gnu"
-                                     destfile="${project.basedir}/target/${project.artifactId}-${project.version}.tar.gz"
-                                     compression="gzip" />
+                                <exec executable="tar" dir="${project.basedir}/target" failonerror="true">
+                                    <arg value="cvzf" />
+                                    <arg value="${project.basedir}/target/${project.artifactId}-${project.version}.tar.gz" />
+                                    <arg value="site" />
+                                    <arg value="--transform" />
+                                    <arg value="s/site/${project.artifactId}-${project.version}/" />
+                                </exec>
                             </target>
                         </configuration>
                     </execution>
@@ -85,4 +74,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

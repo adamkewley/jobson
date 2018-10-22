@@ -1,0 +1,19 @@
+---
+
+name: Example Job Spec
+
+description: A job that echoes the provided first name
+
+expectedInputs:
+
+- id: firstName
+  type: string
+  name: First Name
+  description: Your first name
+  default: Jeff
+
+execution:
+
+  application: echo
+  arguments:
+  - ${inputs.firstName}

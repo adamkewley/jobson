@@ -47,18 +47,11 @@
         </developer>
     </developers>
 
-    <profiles>
-        <profile>
-            <id>release</id>
-            <modules>
-                <module>jobson-nix</module>
-                <module>jobson-deb</module>
-                <module>jobson-docs</module>
-            </modules>
-        </profile>
-    </profiles>
-
     <modules>
         <module>jobson</module>
+        <module>jobson-nix</module>
+        <module>jobson-deb</module>
+        <module>jobson-docs</module>
+        <module>jobson-ui</module>
     </modules>
 </project>

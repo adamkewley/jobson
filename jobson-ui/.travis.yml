@@ -1,0 +1,27 @@
+language: node_js
+node_js: "6.14.4"
+
+branches:
+  only:
+  - master
+  - dev
+  - /\d+.\d+.\d+/  # tagged versions
+  - /\d+.\d+.\d+-staging/  # staging area for tagged releases
+
+script: "npm run build"
+
+before_deploy:
+- tar czf jobson-ui-${TRAVIS_TAG}.tar.gz --transform "s/^dist/jobson-ui-${TRAVIS_TAG}/" dist/
+
+deploy:
+  provider: releases
+  api_key:
+    secure: D4ZbEEeBgQNo05H8mQFRnS/jXa+zTqHtZHqPmr7UQWD9K3gcRrNcbeYiJSo3U7KalcjNSQkzytFDYyf5c2KL/QHDDCeKRLKNYnbh5mFG/NgrRZ1IonpCUh59vkPdKbGcV1dFC2S4xsv8KEK/hErYlJPKh6g6MlzSYqqKqyd+7Z7QI4V+Quzg4kaPqwhZy8qDSSml8VNYecvt8a6oqUxIXjixumUFHZF4mBhPWjq5hvWpYcu1GzRo/0IiVMBfsC6lOQUDWaHsO7rZ2Y2JNXUMCpzlpNVcTGlvNO1h4KR9vPrObdXc8IkB/NipPDNnkb1KuYiecI2kDqlyVxp9jl+het7TSdu6vJRGlBF4Ka9jB6FHKzTYR4Z83m2XAeZWWSbTgMrZHTuS2lKTqkCr+1W9mpSpvRA64gHi2CYgquok08LXQMIy4wxDAmyLWBeTlrUohFNv181lwWT03On6Ussb0atK+bfTOCapZIK93Z7nepWI4iHMIPnkAjY6OTOHYFUHsh4GTOfgp9GswO2Zt7RTjVumHNJVyrUZDMqVUttwS9ey8zVKAacDyodyEDlwy32WQv0TQcY2wtargz9VPIXkN3H3AnGDdIeAjkY7QBnarKng6sGTt1N7yYYAEGobmKBc1CBSXCpwREA0xGuDQqewCuuFOGTgGaAXQjLI2b+jExg=
+
+  skip_cleanup: true
+
+  file: jobson-ui-${TRAVIS_TAG}.tar.gz
+
+  on:
+    repo: adamkewley/jobson-ui
+    tags: true
