@@ -13,11 +13,15 @@
     <artifactId>jobson-docs</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <version.jobsonswaggerui>0.1.0-beta.1</version.jobsonswaggerui>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.github.jobson</groupId>
             <artifactId>jobson-swagger-ui</artifactId>
-            <version>0.1.0-beta.1</version>
+            <version>${version.jobsonswaggerui}</version>
             <type>tar.gz</type>
         </dependency>
     </dependencies>
@@ -41,7 +45,7 @@
                                 <artifactItem>
                                     <groupId>com.github.jobson</groupId>
                                     <artifactId>jobson-swagger-ui</artifactId>
-                                    <version>0.1.0-beta.1</version>
+                                    <version>${version.jobsonswaggerui}</version>
                                     <type>tar.gz</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/apidocs</outputDirectory>
@@ -96,7 +100,7 @@
                                 </move>
 
                                 <!-- Rename swagger docs to `apidocs` because the Sphinx docs link to that -->
-                                <move file="${project.build.directory}/${project.artifactId}-${project.version}/jobson-swagger-ui-0.1.0-beta.1"
+                                <move file="${project.build.directory}/${project.artifactId}-${project.version}/jobson-swagger-ui-${version.jobsonswaggerui}"
                                       tofile="${project.build.directory}/${project.artifactId}-${project.version}/apidocs" />
                             </target>
                         </configuration>
