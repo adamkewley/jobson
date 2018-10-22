@@ -7,14 +7,14 @@
     <parent>
         <groupId>com.github.jobson</groupId>
         <artifactId>jobson-project</artifactId>
-        <version>0.1.0-beta.1</version>
+        <version>1.0.0-dev.1</version>
     </parent>
 
     <artifactId>jobson-docs</artifactId>
     <packaging>pom</packaging>
 
     <properties>
-        <version.jobsonswaggerui>0.1.0-beta.1</version.jobsonswaggerui>
+        <version.jobsonswaggerui>1.0.0-dev.1</version.jobsonswaggerui>
     </properties>
 
     <dependencies>
