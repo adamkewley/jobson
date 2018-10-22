@@ -79,3 +79,4 @@ Jobson.
     server-configuration
     template-expressions
     workspaces
+    HTTP API <apidocs/index.html#://>

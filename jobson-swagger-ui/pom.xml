@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.jobson</groupId>
+        <artifactId>jobson-project</artifactId>
+        <version>0.1.0-beta.1</version>
+    </parent>
+
+    <artifactId>jobson-swagger-ui</artifactId>
+    <version>0.1.0-beta.1</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <version.swaggerui>3.19.3</version.swaggerui>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.jobson</groupId>
+            <artifactId>jobson-swagger</artifactId>
+            <version>0.1.0-beta.1</version>
+            <type>json</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-swagger-json-dependency-ready-for-compilation</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.github.jobson</groupId>
+                                    <artifactId>jobson-swagger</artifactId>
+                                    <version>0.1.0-beta.1</version>
+                                    <type>json</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <destFileName>swagger.json</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+
+                    <execution>
+                        <id>get-swagger-ui-from-npm</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <exec executable="npm" failonerror="true">
+                                    <arg value="install"/>
+                                    <arg value="--prefix"/>
+                                    <arg value="${project.build.directory}"/>
+                                    <arg value="swagger-ui-dist@${version.swaggerui}"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>move-ui-and-swagger-into-appropriate-structure</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.build.directory}/${project.artifactId}-${project.version}">
+                                    <fileset dir="${project.build.directory}/node_modules/swagger-ui-dist"/>
+                                </copy>
+                                <copy file="${project.build.directory}/swagger.json"
+                                      tofile="${project.build.directory}/${project.artifactId}-${project.version}/swagger.json"/>
+
+                                <replace file="${project.build.directory}/${project.artifactId}-${project.version}/index.html"
+                                         token="https://petstore.swagger.io/v2/swagger.json"
+                                         value="swagger.json"/>
+                            </target>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>package-everything-into-tarball</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <tar destfile="${project.build.directory}/${project.artifactId}-${project.version}.tar.gz"
+                                     basedir="${project.build.directory}"
+                                     includes="${project.artifactId}-${project.version}/**"
+                                     compression="gzip"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-output-tarball-as-build-artifact</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>
+                                        ${project.build.directory}/${project.artifactId}-${project.version}.tar.gz
+                                    </file>
+                                    <type>tar.gz</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

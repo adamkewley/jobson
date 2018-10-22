@@ -13,15 +13,43 @@
     <artifactId>jobson-docs</artifactId>
     <packaging>pom</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.jobson</groupId>
+            <artifactId>jobson-swagger-ui</artifactId>
+            <version>0.1.0-beta.1</version>
+            <type>tar.gz</type>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
+            <!-- Unpack API documentation into output -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                    <generateProjectInfo>false</generateProjectInfo>
-                    <generateReports>false</generateReports>
-                </configuration>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.github.jobson</groupId>
+                                    <artifactId>jobson-swagger-ui</artifactId>
+                                    <version>0.1.0-beta.1</version>
+                                    <type>tar.gz</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/apidocs</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
 
@@ -61,6 +89,15 @@
 
                                 <move file="${project.basedir}/target/html"
                                       tofile="${project.basedir}/target/${project.artifactId}-${project.version}" />
+
+                                <!-- Copy the swagger docs into that dir -->
+                                <move todir="${project.build.directory}/${project.artifactId}-${project.version}/">
+                                    <fileset dir="${project.build.directory}/apidocs" />
+                                </move>
+
+                                <!-- Rename swagger docs to `apidocs` because the Sphinx docs link to that -->
+                                <move file="${project.build.directory}/${project.artifactId}-${project.version}/jobson-swagger-ui-0.1.0-beta.1"
+                                      tofile="${project.build.directory}/${project.artifactId}-${project.version}/apidocs" />
                             </target>
                         </configuration>
                     </execution>
