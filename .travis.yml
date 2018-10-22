@@ -9,6 +9,8 @@ branches:
   - /\d+.\d+.\d+-staging/  # staging area for tagged releases
 
 before_install:
+- apt install python3
+- apt install node
 - gem install fpm --version 1.10.0  # for creating OS packages
 
 script: mvn package
