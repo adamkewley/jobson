@@ -49,6 +49,7 @@
 
     <modules>
         <module>jobson</module>
+        <module>jobson-swagger</module>
         <module>jobson-nix</module>
         <module>jobson-deb</module>
         <module>jobson-docs</module>
