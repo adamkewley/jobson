@@ -1,280 +1,471 @@
+
+
 <!DOCTYPE html>
-<html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Server Configuration &mdash; jobson-docs 1.0.0-dev.7 documentation</title>
+  
 
-  <head>
-    <title>Jobson Documentation</title>
+  
+  
+  
+  
+
+  
+
+  
+  
     
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1,
-                                   maximum-scale=1, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" href="main.css">
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Workspaces" href="workspaces.html" />
+    <link rel="prev" title="Command-Line Interface" href="commandline.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
     
-  </head>
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-  <body>
-    <header id="header-site">
-  <div class="wrap">
-    <h1>Jobson</h1>
-    <nav>
-      <a href="index.html">docs</a>
-      <a href="https://github.com/adamkewley/jobson">source</a>
-      <a href="https://github.com/adamkewley/jobson/releases">download</a>
-    </nav>
-  </div>
-</header>
+          
+            <a href="index.html" class="icon icon-home"> jobson-docs
+          
 
+          
+          </a>
 
-    <header id="section-title">
-      <div class="wrap">
-	<h1>Server Configuration</h1>
-      </div>
-    </header>
+          
+            
+            
+          
 
-    <section id="content">
-      <div class="wrap">
-	<main id="content-primary">
-	  <p><code class="highlighter-rouge">config.yml</code> is the top-level configuration file for Jobson. It is a
-standard YAML file.</p>
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
 
-<p><strong>Note</strong>: Relative paths are resolved relative to <code class="highlighter-rouge">config.yml</code></p>
+          
+        </div>
 
-<h2 id="top-level-fields">Top-Level Fields</h2>
-
-<table>
-  <tbody>
-    <tr>
-      <td>Key</td>
-      <td>Default</td>
-      <td>Description</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">specs:</code></td>
-      <td><code class="highlighter-rouge">specs/</code></td>
-      <td>Path to the job specs directory</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">jobs:</code></td>
-      <td><code class="highlighter-rouge">jobs/</code></td>
-      <td>Path to the jobs directory</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">workingDirs:</code></td>
-      <td>(see below)</td>
-      <td>Path to the temporary working directories</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">users:</code></td>
-      <td>(see below)</td>
-      <td>An object containing the users configuration</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">authentication:</code></td>
-      <td>(see below)</td>
-      <td>An object containing the authentication configuration</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">execution:</code></td>
-      <td>(see below)</td>
-      <td>An object containing the execution configuration</td>
-    </tr>
-  </tbody>
-</table>
-
-<h2 id="workingdirs-working-directory-configuration"><code class="highlighter-rouge">workingDirs</code>: Working Directory Configuration</h2>
-
-<p>Configuration for working directories. Each process spawned by Jobson launches in its own working
-directory.</p>
-
-<table>
-  <tbody>
-    <tr>
-      <td>Key</td>
-      <td>Default</td>
-      <td>Description</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">dir:</code></td>
-      <td><code class="highlighter-rouge">wds/</code></td>
-      <td>Path the directory that holds working directories</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">removeAfterExecution:</code></td>
-      <td>(see below)</td>
-      <td>Configuration for removing working directories after execution</td>
-    </tr>
-  </tbody>
-</table>
-
-<h3 id="removeafterexecution-policy-for-removing-working-directories"><code class="highlighter-rouge">removeAfterExecution</code>: Policy for Removing Working Directories</h3>
-
-<table>
-  <tbody>
-    <tr>
-      <td>Key</td>
-      <td>Default</td>
-      <td>Description</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">enabled:</code></td>
-      <td><code class="highlighter-rouge">true</code></td>
-      <td>Indicates whether Jobson should remove working directories after execution</td>
-    </tr>
-  </tbody>
-</table>
-
-<h2 id="users-users-configuration"><code class="highlighter-rouge">users:</code>: Users Configuration</h2>
-
-<table>
-  <tbody>
-    <tr>
-      <td>Key</td>
-      <td>Default</td>
-      <td>Description</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">file</code></td>
-      <td><code class="highlighter-rouge">users</code></td>
-      <td>Path to the <code class="highlighter-rouge">users</code> file. Used when <code class="highlighter-rouge">basic</code> authentication is enabled</td>
-    </tr>
-  </tbody>
-</table>
-
-<h2 id="authentication-authentication-configuration"><code class="highlighter-rouge">authentication:</code>: Authentication Configuration</h2>
-
-<p>The relevant <code class="highlighter-rouge">authentication:</code> fields change based on what <code class="highlighter-rouge">type:</code> of
-authentication that was specified. <code class="highlighter-rouge">guest</code> auth has different
-configuration requriements from <code class="highlighter-rouge">jwt</code> auth, for example.</p>
-
-<table>
-  <tbody>
-    <tr>
-      <td>Key</td>
-      <td>Default</td>
-      <td>Description</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">type:</code></td>
-      <td><code class="highlighter-rouge">basic</code></td>
-      <td>The type of authentication to use. Valid values are <code class="highlighter-rouge">basic</code>, <code class="highlighter-rouge">guest</code>, and <code class="highlighter-rouge">jwt</code>.</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">*</code></td>
-      <td>N/A</td>
-      <td>Other keys in <code class="highlighter-rouge">authentication:</code> depend on what <code class="highlighter-rouge">type:</code> was specified (see below)</td>
-    </tr>
-  </tbody>
-</table>
-
-<h3 id="type-guest-guest-authentication-configuration"><code class="highlighter-rouge">type: guest</code>: Guest Authentication Configuration</h3>
-
-<p>With <code class="highlighter-rouge">guest</code> authentication, the server will accept all incoming and
-assign them a username of <code class="highlighter-rouge">guestUserName</code>.</p>
-
-<table>
-  <tbody>
-    <tr>
-      <td>Key</td>
-      <td>Default</td>
-      <td>Description</td>
-    </tr>
-    <tr>
-      <td>guestUserName</td>
-      <td>guest</td>
-      <td>The username to assign to all requests</td>
-    </tr>
-  </tbody>
-</table>
-
-<h3 id="type-basic-http-basic-authentication-configuration"><code class="highlighter-rouge">type: basic</code>: HTTP Basic Authentication Configuration</h3>
-
-<p>With <code class="highlighter-rouge">basic</code> authentication, the server will use a HTTP Basic
-(<a href="https://tools.ietf.org/html/rfc7617">RFC 7617</a>) authentication
-scheme to collect a username+password pair from clients. Those
-credentials will then be authenticated against entries in Jobson’s
-<code class="highlighter-rouge">users</code> file (see TODO). Valid credentials shall be permitted to use
-the API. Invalid credentials shall be rejected.</p>
-
-<table>
-  <tbody>
-    <tr>
-      <td>Key</td>
-      <td>Default</td>
-      <td>Description</td>
-    </tr>
-    <tr>
-      <td>realm</td>
-      <td>JobsonBasicAuth</td>
-      <td>The “realm” given during the basic auth scheme. For web-browser clients, this is usually displayed as a string in the popup dialog</td>
-    </tr>
-  </tbody>
-</table>
-
-<h3 id="type-jwt-stateless-json-web-token-jwt-authentication-configuration"><code class="highlighter-rouge">type: jwt</code>: Stateless JSON Web Token (JWT) Authentication Configuration</h3>
-
-<p>With <code class="highlighter-rouge">jwt</code> authentication, the server will use stateless JWTs
-(<a href="https://tools.ietf.org/html/rfc7519">RFC 7519</a>), which allow clients
-to authenticate themselves externally. When enabled, the Jobson server
-expects clients to set an <code class="highlighter-rouge">Authorization:</code> HTTP header with a value of
-<code class="highlighter-rouge">Bearer {json-web-token}</code>. The Jobson server will accept the
-credentials in the token provided the token was signed with
-<code class="highlighter-rouge">secretKey</code> (below). If the header is missing, or mis-signed, Jobson
-shall reject the request.</p>
-
-<table>
-  <tbody>
-    <tr>
-      <td>Key</td>
-      <td>Default</td>
-      <td>Description</td>
-    </tr>
-    <tr>
-      <td>secretKey:</td>
-      <td>(no default)</td>
-      <td>Should be a base64-encoded string. The signature algorithm used by Jobson is “HS512” (from <a href="https://github.com/jwtk/jjwt/blob/master/src/main/java/io/jsonwebtoken/SignatureAlgorithm.java">here</a>), which is a HMAC, SHA-512 algorithm</td>
-    </tr>
-  </tbody>
-</table>
-
-<h2 id="execution-execution-configuration"><code class="highlighter-rouge">execution:</code>: Execution Configuration</h2>
-
-<table>
-  <tbody>
-    <tr>
-      <td>Key</td>
-      <td>Default</td>
-      <td>Description</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">maxConcurrentJobs:</code></td>
-      <td>10</td>
-      <td>The number of applications that Jobson is allowed to run concurrently. Jobs are queued if there there are currently more than this number of applications running.</td>
-    </tr>
-    <tr>
-      <td><code class="highlighter-rouge">delayBeforeForciblyKillingJobs:</code></td>
-      <td>PT10S</td>
-      <td>An <a href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO 8601</a> duration string that specifies how long Jobson should wait after sending a <code class="highlighter-rouge">SIGINT</code> to an application (see <a href="http://man7.org/linux/man-pages/man7/signal.7.html">signals</a>) before sending a <code class="highlighter-rouge">SIGKILL</code>. A <code class="highlighter-rouge">SIGKILL</code> is guaranteed to kill an application, but might result in a harsh exit. Some applications can intelligently handle <code class="highlighter-rouge">SIGINT</code>s, allowing them to cleanup resources, but might take time to perform cleanup.</td>
-    </tr>
-  </tbody>
-</table>
-
-	</main>
-	
-	<nav id="content-nav">
-	  <ul>
-  <li><a href="index.html">Overview</a></li>
-  <li><a href="quickstart.html">Quickstart</a></li>
-  <li><a href="https://github.com/adamkewley/jobson">Install</a></li>
-  <li><a href="commandline.html">Command-Line Interface</a></li>
-  <li><a href="workspaces.html">Workspaces</a></li>
-  <li><a href="specs.html">Job Specs</a></li>
-  <li><a href="template-expressions.html">Template Expressions</a></li>
-  <li><a href="server-configuration.html">Server Configuration</a></li>
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commandline.html">Command-Line Interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Server Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#top-level-fields">Top-Level Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workingdirs-working-directory-configuration"><code class="docutils literal notranslate"><span class="pre">workingDirs</span></code>: Working Directory Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#removeafterexecution-policy-for-removing-working-directories"><code class="docutils literal notranslate"><span class="pre">removeAfterExecution</span></code>: Policy for Removing Working Directories</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#users-users-configuration"><code class="docutils literal notranslate"><span class="pre">users:</span></code>: Users Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#authentication-authentication-configuration"><code class="docutils literal notranslate"><span class="pre">authentication:</span></code>: Authentication Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#type-guest-guest-authentication-configuration"><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">guest</span></code>: Guest Authentication Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#type-basic-http-basic-authentication-configuration"><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">basic</span></code>: HTTP Basic Authentication Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#type-jwt-stateless-json-web-token-jwt-authentication-configuration"><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">jwt</span></code>: Stateless JSON Web Token (JWT) Authentication Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#execution-execution-configuration"><code class="docutils literal notranslate"><span class="pre">execution:</span></code>: Execution Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="workspaces.html">Workspaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="specs.html">Job Specs</a></li>
+<li class="toctree-l1"><a class="reference external" href="apidocs/index.html#://">HTTP API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ui.html">User Interface (Jobson UI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Developer’s Guide</a></li>
 </ul>
 
-	</nav>
+            
+          
+        </div>
       </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jobson-docs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Server Configuration</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/server-configuration.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="server-configuration">
+<h1>Server Configuration<a class="headerlink" href="#server-configuration" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">config.yml</span></code> is the top-level configuration file for Jobson. It is a
+standard YAML file.</p>
+<p><strong>Note</strong>: Relative paths are resolved relative to <code class="docutils literal notranslate"><span class="pre">config.yml</span></code></p>
+<div class="section" id="top-level-fields">
+<h2>Top-Level Fields<a class="headerlink" href="#top-level-fields" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils" id="id1">
+<caption><span class="caption-text">Top-level fields</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">specs:</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">specs/</span></code></td>
+<td>Path to the job specs directory</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">jobs:</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">jobs/</span></code></td>
+<td>Path to the jobs directory</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">workingDirs:</span></code></td>
+<td>(see below)</td>
+<td>Path to the temporary working directories</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">users:</span></code></td>
+<td>(see below)</td>
+<td>An object containing the users configuration</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">authentication:</span></code></td>
+<td>(see below)</td>
+<td>An object containing the authentication configuration</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">execution:</span></code></td>
+<td>(see below)</td>
+<td>An object containing the execution configuration</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="workingdirs-working-directory-configuration">
+<h2><code class="docutils literal notranslate"><span class="pre">workingDirs</span></code>: Working Directory Configuration<a class="headerlink" href="#workingdirs-working-directory-configuration" title="Permalink to this headline">¶</a></h2>
+<p>Configuration for working directories. Each process spawned by Jobson
+launches in its own working directory.</p>
+<table border="1" class="docutils" id="id2">
+<caption><span class="caption-text">Working Directory Configuration</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Key</td>
+<td>Default</td>
+<td>Description</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">dir:</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">wds/</span></code></td>
+<td>Path the directory that holds working directories</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">removeAfterExecution:</span></code></td>
+<td>(see below)</td>
+<td>Configuration for removing working directories after execution</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="removeafterexecution-policy-for-removing-working-directories">
+<h3><code class="docutils literal notranslate"><span class="pre">removeAfterExecution</span></code>: Policy for Removing Working Directories<a class="headerlink" href="#removeafterexecution-policy-for-removing-working-directories" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Key</td>
+<td>Default</td>
+<td>Description</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">enabled:</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">true</span></code></td>
+<td>Indicates whether Jobson should remove working directories after execution</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="users-users-configuration">
+<h2><code class="docutils literal notranslate"><span class="pre">users:</span></code>: Users Configuration<a class="headerlink" href="#users-users-configuration" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Key</td>
+<td>Default</td>
+<td>Description</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">file</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">users</span></code></td>
+<td>Path to the <code class="docutils literal notranslate"><span class="pre">users</span></code> file. Used when <code class="docutils literal notranslate"><span class="pre">basic</span></code> authentication is enabled</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="authentication-authentication-configuration">
+<h2><code class="docutils literal notranslate"><span class="pre">authentication:</span></code>: Authentication Configuration<a class="headerlink" href="#authentication-authentication-configuration" title="Permalink to this headline">¶</a></h2>
+<p>The relevant <code class="docutils literal notranslate"><span class="pre">authentication:</span></code> fields change based on what <code class="docutils literal notranslate"><span class="pre">type:</span></code>
+of authentication that was specified. <code class="docutils literal notranslate"><span class="pre">guest</span></code> auth has different
+configuration requriements from <code class="docutils literal notranslate"><span class="pre">jwt</span></code> auth, for example.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Key</td>
+<td>Default</td>
+<td>Description</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">type:</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">basic</span></code></td>
+<td>The type of authentication to use. Valid values are <code class="docutils literal notranslate"><span class="pre">basic</span></code>, <code class="docutils literal notranslate"><span class="pre">guest</span></code>, and <code class="docutils literal notranslate"><span class="pre">jwt</span></code>. Other keys in <code class="docutils literal notranslate"><span class="pre">authentication:</span></code> depend on what <code class="docutils literal notranslate"><span class="pre">type:</span></code> was specified (see below)</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="type-guest-guest-authentication-configuration">
+<h3><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">guest</span></code>: Guest Authentication Configuration<a class="headerlink" href="#type-guest-guest-authentication-configuration" title="Permalink to this headline">¶</a></h3>
+<p>With <code class="docutils literal notranslate"><span class="pre">guest</span></code> authentication, the server will accept all incoming and
+assign them a username of <code class="docutils literal notranslate"><span class="pre">guestUserName</span></code>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Key</td>
+<td>Default</td>
+<td>Description</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">guestUserName</span></code></td>
+<td>guest</td>
+<td>The username to assign to all requests</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="type-basic-http-basic-authentication-configuration">
+<h3><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">basic</span></code>: HTTP Basic Authentication Configuration<a class="headerlink" href="#type-basic-http-basic-authentication-configuration" title="Permalink to this headline">¶</a></h3>
+<p>With <code class="docutils literal notranslate"><span class="pre">basic</span></code> authentication, the server will use a HTTP Basic (<a class="reference external" href="https://tools.ietf.org/html/rfc7617">RFC
+7617</a>) authentication scheme to
+collect a username+password pair from clients. Those credentials will
+then be authenticated against entries in Jobson’s <code class="docutils literal notranslate"><span class="pre">users</span></code> file (see
+TODO). Valid credentials shall be permitted to use the API. Invalid
+credentials shall be rejected.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Key</td>
+<td>Default</td>
+<td>Description</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">realm</span></code></td>
+<td>JobsonBasicAuth</td>
+<td>The “realm” given during the basic auth scheme. For web-browser clients, this is usually displayed as a string in the popup dialog</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="type-jwt-stateless-json-web-token-jwt-authentication-configuration">
+<h3><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">jwt</span></code>: Stateless JSON Web Token (JWT) Authentication Configuration<a class="headerlink" href="#type-jwt-stateless-json-web-token-jwt-authentication-configuration" title="Permalink to this headline">¶</a></h3>
+<p>With <code class="docutils literal notranslate"><span class="pre">jwt</span></code> authentication, the server will use stateless JWTs (<a class="reference external" href="https://tools.ietf.org/html/rfc7519">RFC
+7519</a>), which allow clients to
+authenticate themselves externally. When enabled, the Jobson server
+expects clients to set an <code class="docutils literal notranslate"><span class="pre">Authorization:</span></code> HTTP header with a value of
+<code class="docutils literal notranslate"><span class="pre">Bearer</span> <span class="pre">{json-web-token}</span></code>. The Jobson server will accept the
+credentials in the token provided the token was signed with
+<code class="docutils literal notranslate"><span class="pre">secretKey</span></code> (below). If the header is missing, or mis-signed, Jobson
+shall reject the request.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Key</td>
+<td>Default</td>
+<td>Description</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">secretKey</span></code></td>
+<td>(no default)</td>
+<td>Should be a base64-encoded string. The signature algorithm used by Jobson is “HS512” (from <a class="reference external" href="https://github.com/jwtk/jjwt/blob/master/src/main/java/io/jsonwebtoken/SignatureAlgorithm.java">here</a>), which is a HMAC, SHA-512 algorithm</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="execution-execution-configuration">
+<h2><code class="docutils literal notranslate"><span class="pre">execution:</span></code>: Execution Configuration<a class="headerlink" href="#execution-execution-configuration" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Key</td>
+<td>Default</td>
+<td>Description</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">maxConcurrentJobs:</span></code></td>
+<td>10</td>
+<td>The number of applications that Jobson is allowed to run concurrently. Jobs are queued if there there are currently more than this number of applications running.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">delayBeforeForciblyKillingJobs:</span></code></td>
+<td>PT10S</td>
+<td>An <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO8601</a> duration string that specifies how long Jobson should wait after sending a <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> to an application (see <a class="reference external" href="http://man7.org/linux/man-pages/man7/signal.7.html">signals</a>) before sending a <code class="docutils literal notranslate"><span class="pre">SIGKILL</span></code>. A <code class="docutils literal notranslate"><span class="pre">SIGKILL</span></code> is guaranteed to kill an application, but might result in a harsh exit. Some applications can intelligently handle <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code>s, allowing them to cleanup resources, but might take time to perform cleanup.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="workspaces.html" class="btn btn-neutral float-right" title="Workspaces" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="commandline.html" class="btn btn-neutral" title="Command-Line Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Adam Kewley
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
     </section>
-  </body>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>

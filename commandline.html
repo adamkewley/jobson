@@ -1,95 +1,289 @@
+
+
 <!DOCTYPE html>
-<html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Command-Line Interface &mdash; jobson-docs 1.0.0-dev.7 documentation</title>
+  
 
-  <head>
-    <title>Jobson Documentation</title>
+  
+  
+  
+  
+
+  
+
+  
+  
     
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1,
-                                   maximum-scale=1, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" href="main.css">
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Server Configuration" href="server-configuration.html" />
+    <link rel="prev" title="Quickstart" href="quickstart.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
     
-  </head>
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-  <body>
-    <header id="header-site">
-  <div class="wrap">
-    <h1>Jobson</h1>
-    <nav>
-      <a href="index.html">docs</a>
-      <a href="https://github.com/adamkewley/jobson">source</a>
-      <a href="https://github.com/adamkewley/jobson/releases">download</a>
-    </nav>
-  </div>
-</header>
+          
+            <a href="index.html" class="icon icon-home"> jobson-docs
+          
 
+          
+          </a>
 
-    <header id="section-title">
-      <div class="wrap">
-	<h1>Command-Line Interface</h1>
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command-Line Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-cli-via-a-docker-container">Running the CLI via a Docker Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#viewing-help-with-help">Viewing Help with <code class="docutils literal notranslate"><span class="pre">--help</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-a-new-user-basic-auth">Adding a new User (basic auth)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="server-configuration.html">Server Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workspaces.html">Workspaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="specs.html">Job Specs</a></li>
+<li class="toctree-l1"><a class="reference external" href="apidocs/index.html#://">HTTP API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ui.html">User Interface (Jobson UI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Developer’s Guide</a></li>
+</ul>
+
+            
+          
+        </div>
       </div>
-    </header>
+    </nav>
 
-    <section id="content">
-      <div class="wrap">
-	<main id="content-primary">
-	  <p>The command-line interface (CLI) for Jobson, <code class="highlighter-rouge">jobson</code>, contains
-commands aimed at day-to-day development and administration of
-Jobson. The CLI is available once jobson has been
-<a href="https://github.com/adamkewley/jobson">installed</a>.</p>
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
-<h2 id="viewing-help-with---help">Viewing Help with <code class="highlighter-rouge">--help</code></h2>
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jobson-docs</a>
+        
+      </nav>
 
-<p>Pass the <code class="highlighter-rouge">--help</code> argument to <code class="highlighter-rouge">jobson</code> to view the help documentation
-for a particular command.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson <span class="nt">--help</span>
-usage: java <span class="nt">-jar</span> jobson-0.0.11.jar
-       <span class="o">[</span><span class="nt">-h</span><span class="o">]</span> <span class="o">[</span><span class="nt">-v</span><span class="o">]</span> <span class="o">{</span>server,check,new,generate,users,validate,run<span class="o">}</span> ...
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Command-Line Interface</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/commandline.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="command-line-interface">
+<h1>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h1>
+<p>The command-line interface (CLI) for Jobson, <code class="docutils literal notranslate"><span class="pre">jobson</span></code>, contains
+commands aimed at day-to-day development and administration of Jobson.
+The CLI is available once jobson has been
+<a class="reference external" href="install.html">installed</a>.</p>
+<div class="section" id="running-the-cli-via-a-docker-container">
+<h2>Running the CLI via a Docker Container<a class="headerlink" href="#running-the-cli-via-a-docker-container" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">jobson</span></code> CLI can be used from outside a container by first entering the workspace (<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">/home/jobson</span></code>) then
+executing the commands. For example, adding a <code class="docutils literal notranslate"><span class="pre">basic</span></code> auth user via a container:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">start</span> <span class="n">jobson</span><span class="o">-</span><span class="n">container</span>
+<span class="n">docker</span> <span class="n">exec</span> <span class="o">-</span><span class="n">ti</span> <span class="n">jobson</span><span class="o">-</span><span class="n">container</span> <span class="n">sh</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;cd /home/jobson &amp;&amp; jobson users add config.yml -p PASSWORD USERNAME&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="viewing-help-with-help">
+<h2>Viewing Help with <code class="docutils literal notranslate"><span class="pre">--help</span></code><a class="headerlink" href="#viewing-help-with-help" title="Permalink to this headline">¶</a></h2>
+<p>Pass the <code class="docutils literal notranslate"><span class="pre">--help</span></code> argument to <code class="docutils literal notranslate"><span class="pre">jobson</span></code> to view the help
+documentation for a particular command.</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson --help
+usage: java -jar jobson-0.0.11.jar
+       [-h] [-v] {server,check,new,generate,users,validate,run} ...
 
 positional arguments:
-  <span class="o">{</span>server,check,new,generate,users,validate,run<span class="o">}</span>
+  {server,check,new,generate,users,validate,run}
                          available commands
 
 optional arguments:
-  <span class="nt">-h</span>, <span class="nt">--help</span>             show this <span class="nb">help </span>message and <span class="nb">exit</span>
-  <span class="nt">-v</span>, <span class="nt">--version</span>          show the application version and <span class="nb">exit</span>
-</code></pre></div></div>
+  -h, --help             show this help message and exit
+  -v, --version          show the application version and exit
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">--help</span></code> argument also works with the other subcommands:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson new --help
+usage: java -jar jobson-0.0.11.jar
+       new [--demo] [-h]
 
-<p>The <code class="highlighter-rouge">--help</code> argument also works with the other subcommands:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson new <span class="nt">--help</span>
-usage: java <span class="nt">-jar</span> jobson-0.0.11.jar
-       new <span class="o">[</span><span class="nt">--demo</span><span class="o">]</span> <span class="o">[</span><span class="nt">-h</span><span class="o">]</span>
-
-generate a new jobson deployment <span class="k">in </span>the current working directory
+generate a new jobson deployment in the current working directory
 
 optional arguments:
-  <span class="nt">--demo</span>                 Generate application with a demo spec <span class="o">(</span>default: <span class="nb">false</span><span class="o">)</span>
-  <span class="nt">-h</span>, <span class="nt">--help</span>             show this <span class="nb">help </span>message and <span class="nb">exit</span>
-</code></pre></div></div>
+  --demo                 Generate application with a demo spec (default: false)
+  -h, --help             show this help message and exit
+</pre></div>
+</div>
+</div>
+<div class="section" id="adding-a-new-user-basic-auth">
+<h2>Adding a new User (basic auth)<a class="headerlink" href="#adding-a-new-user-basic-auth" title="Permalink to this headline">¶</a></h2>
+<p>If Jobson is configured to use <code class="docutils literal notranslate"><span class="pre">basic</span></code> authentication in the <a class="reference external" href="server-configuration.html">server config</a> :</p>
+<div class="code yaml highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># config.yml</span>
+<span class="n">authentication</span><span class="p">:</span>
+  <span class="nb">type</span><span class="p">:</span> <span class="n">basic</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">users</span></code> subcommand can be used to add new users to the system:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson users add config.yml -p PASSWORD USERNAME
+</pre></div>
+</div>
+<p>This command appends an entry to the file pointed at by the <code class="docutils literal notranslate"><span class="pre">users.file</span></code>
+setting in the server config (<code class="docutils literal notranslate"><span class="pre">config.yml</span></code>). The entry is hashed in a
+similar way to how Linux passwords are hashed, preventing the password from
+being read:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ cat users
+USERNAME:basic:$6$XbPs6uOo$7AYilI2.iL84jLxXqb10vnzGygtXWCy1W27EUU7AhbKrDrtHGSI1jTRCIlUUmMhDzdwZ0sS7vm7iBrJ1VV6JB.
+</pre></div>
+</div>
+</div>
+</div>
 
-<p>HELP TODO: The in-CLI documentation explains the commands, but having
-the documentation here also would be useful to devs.</p>
 
-	</main>
-	
-	<nav id="content-nav">
-	  <ul>
-  <li><a href="index.html">Overview</a></li>
-  <li><a href="quickstart.html">Quickstart</a></li>
-  <li><a href="https://github.com/adamkewley/jobson">Install</a></li>
-  <li><a href="commandline.html">Command-Line Interface</a></li>
-  <li><a href="workspaces.html">Workspaces</a></li>
-  <li><a href="specs.html">Job Specs</a></li>
-  <li><a href="template-expressions.html">Template Expressions</a></li>
-  <li><a href="server-configuration.html">Server Configuration</a></li>
-</ul>
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="server-configuration.html" class="btn btn-neutral float-right" title="Server Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="quickstart.html" class="btn btn-neutral" title="Quickstart" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
-	</nav>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Adam Kewley
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
       </div>
+
     </section>
-  </body>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>

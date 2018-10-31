@@ -1,129 +1,292 @@
+
+
 <!DOCTYPE html>
-<html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Workspaces &mdash; jobson-docs 1.0.0-dev.7 documentation</title>
+  
 
-  <head>
-    <title>Jobson Documentation</title>
+  
+  
+  
+  
+
+  
+
+  
+  
     
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1,
-                                   maximum-scale=1, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" href="main.css">
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Job Specs" href="specs.html" />
+    <link rel="prev" title="Server Configuration" href="server-configuration.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
     
-  </head>
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-  <body>
-    <header id="header-site">
-  <div class="wrap">
-    <h1>Jobson</h1>
-    <nav>
-      <a href="index.html">docs</a>
-      <a href="https://github.com/adamkewley/jobson">source</a>
-      <a href="https://github.com/adamkewley/jobson/releases">download</a>
-    </nav>
-  </div>
-</header>
+          
+            <a href="index.html" class="icon icon-home"> jobson-docs
+          
 
+          
+          </a>
 
-    <header id="section-title">
-      <div class="wrap">
-	<h1>Workspaces</h1>
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commandline.html">Command-Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server-configuration.html">Server Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Workspaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#top-level-files-directories">Top-Level Files/Directories</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#config-yml-main-configuration-file"><code class="docutils literal notranslate"><span class="pre">config.yml</span></code>: Main Configuration File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#specs-job-specs"><code class="docutils literal notranslate"><span class="pre">specs/</span></code>: Job Specs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jobs-job-data"><code class="docutils literal notranslate"><span class="pre">jobs/</span></code>: Job Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wds-temporary-working-directories"><code class="docutils literal notranslate"><span class="pre">wds/</span></code>: Temporary Working Directories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#users-authorized-system-users"><code class="docutils literal notranslate"><span class="pre">users</span></code>: Authorized System Users</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="specs.html">Job Specs</a></li>
+<li class="toctree-l1"><a class="reference external" href="apidocs/index.html#://">HTTP API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ui.html">User Interface (Jobson UI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Developer’s Guide</a></li>
+</ul>
+
+            
+          
+        </div>
       </div>
-    </header>
+    </nav>
 
-    <section id="content">
-      <div class="wrap">
-	<main id="content-primary">
-	  <p>Jobson is configured through standard plaintext configuration files
-and directories. All the necessary files (e.g. <code class="highlighter-rouge">config.yml</code>, <code class="highlighter-rouge">specs/</code>,
-<code class="highlighter-rouge">jobs/</code>) are, by default, kept together in the same directory after
-running the <code class="highlighter-rouge">jobson new</code> command. That directory is what we call a
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jobson-docs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Workspaces</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/workspaces.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="workspaces">
+<h1>Workspaces<a class="headerlink" href="#workspaces" title="Permalink to this headline">¶</a></h1>
+<p>Jobson is configured through standard plaintext configuration files and
+directories. All the necessary files (e.g. <code class="docutils literal notranslate"><span class="pre">config.yml</span></code>, <code class="docutils literal notranslate"><span class="pre">specs/</span></code>,
+<code class="docutils literal notranslate"><span class="pre">jobs/</span></code>) are, by default, kept together in the same directory after
+running the <code class="docutils literal notranslate"><span class="pre">jobson</span> <span class="pre">new</span></code> command. That directory is what we call a
 “workspace”.</p>
-
-<h1 id="top-level-filesdirectories">Top-Level Files/Directories</h1>
-
-<h2 id="configyml-main-configuration-file"><code class="highlighter-rouge">config.yml</code>: Main Configuration File</h2>
-
-<p>A standard YAML file that is used by many of Jobson’s commands
-(e.g. <code class="highlighter-rouge">serve</code>, <code class="highlighter-rouge">generate</code>). It contains everything you would expect a
+<div class="section" id="top-level-files-directories">
+<h2>Top-Level Files/Directories<a class="headerlink" href="#top-level-files-directories" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="config-yml-main-configuration-file">
+<h3><code class="docutils literal notranslate"><span class="pre">config.yml</span></code>: Main Configuration File<a class="headerlink" href="#config-yml-main-configuration-file" title="Permalink to this headline">¶</a></h3>
+<p>A standard YAML file that is used by many of Jobson’s commands (e.g.
+<code class="docutils literal notranslate"><span class="pre">serve</span></code>, <code class="docutils literal notranslate"><span class="pre">generate</span></code>). It contains everything you would expect a
 top-level configuration file to contain: data locations, server ports,
 authentication configuration, job queue behavior, etc.</p>
-
-<p>See <a href="#config-yml">config.yml</a> for more details.</p>
-
-<h2 id="specs-job-specs"><code class="highlighter-rouge">specs/</code>: Job Specs</h2>
-
-<p>A directory that contains the <a href="#job-specs">job specs</a> hosted by the
-Jobson server. Each subdirectory in <code class="highlighter-rouge">specs/</code> is a job spec hosted by
-Jobson. A job spec ID—as exposed via the Jobson API—is derived from
-the subdirectory’s name. For example, a job spec at
-<code class="highlighter-rouge">specs/foo/spec.yml</code> would result in <code class="highlighter-rouge">foo</code> being exposed via the
-Jobson API.</p>
-
-<h2 id="jobs-job-data"><code class="highlighter-rouge">jobs/</code>: Job Data</h2>
-
+<p>See <a class="reference external" href="#config-yml">config.yml</a> for more details.</p>
+</div>
+<div class="section" id="specs-job-specs">
+<h3><code class="docutils literal notranslate"><span class="pre">specs/</span></code>: Job Specs<a class="headerlink" href="#specs-job-specs" title="Permalink to this headline">¶</a></h3>
+<p>A directory that contains the <a class="reference external" href="#job-specs">job specs</a> hosted by the
+Jobson server. Each subdirectory in <code class="docutils literal notranslate"><span class="pre">specs/</span></code> is a job spec hosted by
+Jobson. A job spec ID—as exposed via the Jobson API—is derived from the
+subdirectory’s name. For example, a job spec at <code class="docutils literal notranslate"><span class="pre">specs/foo/spec.yml</span></code>
+would result in <code class="docutils literal notranslate"><span class="pre">foo</span></code> being exposed via the Jobson API.</p>
+</div>
+<div class="section" id="jobs-job-data">
+<h3><code class="docutils literal notranslate"><span class="pre">jobs/</span></code>: Job Data<a class="headerlink" href="#jobs-job-data" title="Permalink to this headline">¶</a></h3>
 <p>A directory that contains job data. The data associted with each job
 request (inputs, timestamps, outputs) is persisted here under a
-subdirectory named <code class="highlighter-rouge">{job-id}</code>.</p>
-
+subdirectory named <code class="docutils literal notranslate"><span class="pre">{job-id}</span></code>.</p>
 <p><strong>Note:</strong> Although job folders are designed to be easy for 3rd-party
-  scripts to read, their structure is not yet stable. Don’t go
-  building something big on the assumption that they are stable.</p>
-
-<h2 id="wds-temporary-working-directories"><code class="highlighter-rouge">wds/</code>: Temporary Working Directories</h2>
-
-<p>A directory that contains runtime working directories. Jobson
-generates a unique job ID for each successful job request. The working
-directory used at runtime by the application is persisted in this
-directory under a subdirectory named <code class="highlighter-rouge">{job-id}</code>.</p>
-
+scripts to read, their structure is not yet stable. Don’t go building
+something big on the assumption that they are stable.</p>
+</div>
+<div class="section" id="wds-temporary-working-directories">
+<h3><code class="docutils literal notranslate"><span class="pre">wds/</span></code>: Temporary Working Directories<a class="headerlink" href="#wds-temporary-working-directories" title="Permalink to this headline">¶</a></h3>
+<p>A directory that contains runtime working directories. Jobson generates
+a unique job ID for each successful job request. The working directory
+used at runtime by the application is persisted in this directory under
+a subdirectory named <code class="docutils literal notranslate"><span class="pre">{job-id}</span></code>.</p>
 <p>Before a job executes, Jobson creates a clean working directory and
-copies all dependencies, file arguments, etc. into it. Jobson then
-runs the application in that working directory. This execution model
-helps support:</p>
-
-<ul>
-  <li>
-    <p><strong>Job concurrency</strong>: each job gets its own working directory, so
+copies all dependencies, file arguments, etc. into it. Jobson then runs
+the application in that working directory. This execution model helps
+support:</p>
+<ul class="simple">
+<li><strong>Job concurrency</strong>: each job gets its own working directory, so
 concurrent applications are less likely to accidently clobber
-eachother’s temporary files and outputs.</p>
-  </li>
-  <li>
-    <p><strong>Debugging</strong>: If a job fails, a developer can inspect the working
-directory used by that particular job.</p>
-  </li>
+eachother’s temporary files and outputs.</li>
+<li><strong>Debugging</strong>: If a job fails, a developer can inspect the working
+directory used by that particular job.</li>
 </ul>
-
 <p>Jobson does not need a working directory after an application has
 finised executing. After finishing, Jobson copies any outputs (as
-specified in the <a href="#job-specs">job spec</a>) to the <code class="highlighter-rouge">jobs/</code> folder.</p>
-
-<h2 id="users-authorized-system-users"><code class="highlighter-rouge">users</code>: Authorized System Users</h2>
-
+specified in the <a class="reference external" href="#job-specs">job spec</a>) to the <code class="docutils literal notranslate"><span class="pre">jobs/</span></code> folder.</p>
+</div>
+<div class="section" id="users-authorized-system-users">
+<h3><code class="docutils literal notranslate"><span class="pre">users</span></code>: Authorized System Users<a class="headerlink" href="#users-authorized-system-users" title="Permalink to this headline">¶</a></h3>
 <p>A plaintext file that contains users authorized to use the Jobson API
-when <code class="highlighter-rouge">basic</code> authorization (see configuration documentation) is
+when <code class="docutils literal notranslate"><span class="pre">basic</span></code> authorization (see configuration documentation) is
 enabled.</p>
-
-<p>This file should not be edited directly. Instead, the <code class="highlighter-rouge">users</code> command
+<p>This file should not be edited directly. Instead, the <code class="docutils literal notranslate"><span class="pre">users</span></code> command
 should be used to add or modify entries in the file.</p>
+</div>
+</div>
+</div>
 
-	</main>
-	
-	<nav id="content-nav">
-	  <ul>
-  <li><a href="index.html">Overview</a></li>
-  <li><a href="quickstart.html">Quickstart</a></li>
-  <li><a href="https://github.com/adamkewley/jobson">Install</a></li>
-  <li><a href="commandline.html">Command-Line Interface</a></li>
-  <li><a href="workspaces.html">Workspaces</a></li>
-  <li><a href="specs.html">Job Specs</a></li>
-  <li><a href="template-expressions.html">Template Expressions</a></li>
-  <li><a href="server-configuration.html">Server Configuration</a></li>
-</ul>
 
-	</nav>
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="specs.html" class="btn btn-neutral float-right" title="Job Specs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="server-configuration.html" class="btn btn-neutral" title="Server Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Adam Kewley
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
       </div>
+
     </section>
-  </body>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>

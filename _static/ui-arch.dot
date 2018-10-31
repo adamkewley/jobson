@@ -1,0 +1,37 @@
+# http://www.graphviz.org/content/cluster
+
+graph G {
+    
+    subgraph cluster_clients {
+        label = "clients";
+        color = grey;
+        fontcolor=grey;
+        
+        user [label="UI"];
+    }
+    
+    subgraph cluster_webserver {
+        label = "public webserver";
+        color = "grey";
+        fontcolor = grey;
+        
+        server;
+        config [label="config.json"];
+        uiAssets;
+    }
+    
+    subgraph cluster_jobson {
+        label = "backend";
+        color = grey;
+        fontcolor = grey;
+        
+        jobson;
+    }
+    
+    server [label="Webserver (e.g. nginx)", color=black, style=filled, fontcolor=white];
+    
+    user -- server [label="HTTP(S)/websocket"];
+    server -- config [label="/config.json"];
+    server -- uiAssets [label=" /*"];
+    server -- jobson [label="{apiPrefix}/*"];
+}

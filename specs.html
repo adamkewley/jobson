@@ -1,192 +1,467 @@
+
+
 <!DOCTYPE html>
-<html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Job Specs &mdash; jobson-docs 1.0.0-dev.7 documentation</title>
+  
 
-  <head>
-    <title>Jobson Documentation</title>
+  
+  
+  
+  
+
+  
+
+  
+  
     
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1,
-                                   maximum-scale=1, user-scalable=no">
 
-    <link rel="stylesheet" type="text/css" href="main.css">
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User Interface (Jobson UI)" href="ui.html" />
+    <link rel="prev" title="Workspaces" href="workspaces.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
     
-  </head>
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-  <body>
-    <header id="header-site">
-  <div class="wrap">
-    <h1>Jobson</h1>
-    <nav>
-      <a href="index.html">docs</a>
-      <a href="https://github.com/adamkewley/jobson">source</a>
-      <a href="https://github.com/adamkewley/jobson/releases">download</a>
-    </nav>
-  </div>
-</header>
+          
+            <a href="index.html" class="icon icon-home"> jobson-docs
+          
 
+          
+          </a>
 
-    <header id="section-title">
-      <div class="wrap">
-	<h1>Job Specs</h1>
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commandline.html">Command-Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server-configuration.html">Server Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workspaces.html">Workspaces</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Job Specs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-job-spec">Creating a Job Spec</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spec-yml-schema"><code class="docutils literal notranslate"><span class="pre">spec.yml</span></code> Schema</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#description"><code class="docutils literal notranslate"><span class="pre">description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#expectedinputs"><code class="docutils literal notranslate"><span class="pre">expectedInputs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#execution"><code class="docutils literal notranslate"><span class="pre">execution</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#expectedoutputs"><code class="docutils literal notranslate"><span class="pre">expectedOutputs</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#template-strings">Template Strings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#string-tojson-object-arg"><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">toJSON(Object</span> <span class="pre">arg)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#string-tofile-string-content"><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">toFile(String</span> <span class="pre">content)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#string-join-string-delimiter-stringarray-strings"><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">join(String</span> <span class="pre">delimiter,</span> <span class="pre">StringArray</span> <span class="pre">strings)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#string-tostring-object-arg"><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">toString(Object</span> <span class="pre">arg)</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#object-request"><code class="docutils literal notranslate"><span class="pre">Object</span> <span class="pre">request</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#object-inputs"><code class="docutils literal notranslate"><span class="pre">Object</span> <span class="pre">inputs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#string-outputdir"><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">outputDir</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="apidocs/index.html#://">HTTP API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ui.html">User Interface (Jobson UI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Developer’s Guide</a></li>
+</ul>
+
+            
+          
+        </div>
       </div>
-    </header>
+    </nav>
 
-    <section id="content">
-      <div class="wrap">
-	<main id="content-primary">
-	  <ul>
-  <li>Overview</li>
-  <li>Creating a new job spec</li>
-  <li>Expected Inputs</li>
-  <li>Execution</li>
-  <li>Expected Outputs</li>
-</ul>
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
-<h1 id="overview">Overview</h1>
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jobson-docs</a>
+        
+      </nav>
 
-<p>Job specs are saved in the job specs directory
-(e.g. <code class="highlighter-rouge">specs/{spec-id}/spec.yml</code>). At runtime, Jobson uses the job
-spec to figure out a job’s:</p>
 
-<ul>
-  <li><code class="highlighter-rouge">name:</code> and <code class="highlighter-rouge">description:</code></li>
-  <li><code class="highlighter-rouge">expectedInputs:</code> from clients</li>
-  <li><code class="highlighter-rouge">execution:</code> of the <code class="highlighter-rouge">application:</code>, once the inputs are provided</li>
-  <li><code class="highlighter-rouge">execution:</code> <code class="highlighter-rouge">arguments:</code>, which may include some of the inputs</li>
-  <li><code class="highlighter-rouge">execution:</code> <code class="highlighter-rouge">dependencies:</code>, such as scripts or data files that
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Job Specs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/specs.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="job-specs">
+<h1>Job Specs<a class="headerlink" href="#job-specs" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Job specs are saved in the job specs directory (e.g.
+<code class="docutils literal notranslate"><span class="pre">specs/{spec-id}/spec.yml</span></code>). At runtime, Jobson uses the job spec to
+figure out a job’s:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">name:</span></code> and <code class="docutils literal notranslate"><span class="pre">description:</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">expectedInputs:</span></code> from clients</li>
+<li><code class="docutils literal notranslate"><span class="pre">execution:</span></code> of the <code class="docutils literal notranslate"><span class="pre">application:</span></code>, once the inputs are provided</li>
+<li><code class="docutils literal notranslate"><span class="pre">execution:</span></code> <code class="docutils literal notranslate"><span class="pre">arguments:</span></code>, which may include some of the inputs</li>
+<li><code class="docutils literal notranslate"><span class="pre">execution:</span></code> <code class="docutils literal notranslate"><span class="pre">dependencies:</span></code>, such as scripts or data files that
 should be copied into the runtime working directory</li>
-  <li><code class="highlighter-rouge">expectedOutputs:</code> from the application, which Jobson should persist</li>
+<li><code class="docutils literal notranslate"><span class="pre">expectedOutputs:</span></code> from the application, which Jobson should
+persist</li>
 </ul>
-
 <p>A basic example of a job spec would be:</p>
+<div class="highlight-yaml notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="nn">---</span>
 
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">Demo Job Spec</span>
+<span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Demo Job Spec</span>
 
-<span class="na">description</span><span class="pi">:</span> <span class="pi">&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">&gt;</span>
 
   <span class="no">A demo job spec generated when creating a new Jobson deployment. Try it out!</span>
-  
-<span class="na">expectedInputs</span><span class="pi">:</span>
 
-<span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">firstName</span>
-  <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">First Name</span>
-  <span class="na">description</span><span class="pi">:</span> <span class="s">Your first name</span>
-  <span class="na">default</span><span class="pi">:</span> <span class="s">Jeff</span>
+<span class="l l-Scalar l-Scalar-Plain">expectedInputs</span><span class="p p-Indicator">:</span>
 
-<span class="na">execution</span><span class="pi">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">firstName</span>
+  <span class="l l-Scalar l-Scalar-Plain">type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">string</span>
+  <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">First Name</span>
+  <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Your first name</span>
+  <span class="l l-Scalar l-Scalar-Plain">default</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Jeff</span>
 
-  <span class="na">dependencies</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">source</span><span class="pi">:</span> <span class="s">demo-script.sh</span>
-    <span class="na">target</span><span class="pi">:</span> <span class="s">demo-script.sh</span>
+<span class="l l-Scalar l-Scalar-Plain">execution</span><span class="p p-Indicator">:</span>
 
-  <span class="na">application</span><span class="pi">:</span> <span class="s">bash</span>
-  <span class="na">arguments</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="s">demo-script.sh</span>
-  <span class="pi">-</span> <span class="s">${inputs.firstName}</span>
+  <span class="l l-Scalar l-Scalar-Plain">dependencies</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">demo-script.sh</span>
+    <span class="l l-Scalar l-Scalar-Plain">target</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">demo-script.sh</span>
 
-<span class="na">expectedOutputs</span><span class="pi">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">application</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bash</span>
+  <span class="l l-Scalar l-Scalar-Plain">arguments</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">demo-script.sh</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">${inputs.firstName}</span>
 
-<span class="pi">-</span> <span class="na">id</span><span class="pi">:</span> <span class="s">output-from-script.jpg</span>
-  <span class="na">path</span><span class="pi">:</span> <span class="s">output</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">Output from Script</span>
-  <span class="na">description</span><span class="pi">:</span> <span class="s">An output generated by the runtime script</span>
-  <span class="na">mimeType</span><span class="pi">:</span> <span class="s">image/jpeg</span>
-  <span class="na">metadata</span><span class="pi">:</span>
-    <span class="na">embed</span><span class="pi">:</span> <span class="no">true</span>
-</code></pre></div></div>
+<span class="l l-Scalar l-Scalar-Plain">expectedOutputs</span><span class="p p-Indicator">:</span>
 
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">output-from-script.jpg</span>
+  <span class="l l-Scalar l-Scalar-Plain">path</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">output</span>
+  <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Output from Script</span>
+  <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">An output generated by the runtime script</span>
+  <span class="l l-Scalar l-Scalar-Plain">mimeType</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">image/jpeg</span>
+  <span class="l l-Scalar l-Scalar-Plain">metadata</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">embed</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</td></tr></table></div>
 <p>This example specifies:</p>
-
-<ul>
-  <li>
-    <p>A job with a human-readable <code class="highlighter-rouge">name:</code> of <code class="highlighter-rouge">Demo
-Job Spec</code> (and <code class="highlighter-rouge">description:</code>).</p>
-  </li>
-  <li>
-    <p>That expects clients to provide a single string input called
-<code class="highlighter-rouge">firstName</code>, which defaults to <code class="highlighter-rouge">Jeff</code> if clients don’t provide it</p>
-  </li>
-  <li>
-    <p>That, once it receives the inputs:</p>
-
-    <ul>
-      <li>Copies <code class="highlighter-rouge">demo-script.sh</code> from the job spec’s directory to
- <code class="highlighter-rouge">demo-script.sh</code> in the job’s working directory</li>
-      <li>Executes <code class="highlighter-rouge">bash</code> with <code class="highlighter-rouge">demo-script.sh</code> and <code class="highlighter-rouge">${inputs.firstName}</code> with two</li>
-      <li>arguments: - <code class="highlighter-rouge">demo-script.sh</code>: The script <code class="highlighter-rouge">bash</code> should run -</li>
-      <li><code class="highlighter-rouge">${inputs.firstName}</code>: The <code class="highlighter-rouge">firstName</code> provided as an input -</li>
-      <li>Before executing, Jobson should copy <code class="highlighter-rouge">demo-script.sh</code> from the job</li>
-      <li>spec folder to the job’s working directory -</li>
-    </ul>
-  </li>
+<ul class="simple">
+<li>A job with a human-readable <code class="docutils literal notranslate"><span class="pre">name:</span></code> of <code class="docutils literal notranslate"><span class="pre">Demo</span>&#160;&#160; <span class="pre">Job</span> <span class="pre">Spec</span></code> (and
+<code class="docutils literal notranslate"><span class="pre">description:</span></code>).</li>
+<li>That expects clients to provide a single string input called
+<code class="docutils literal notranslate"><span class="pre">firstName</span></code>, which defaults to <code class="docutils literal notranslate"><span class="pre">Jeff</span></code> if clients don’t provide it</li>
+<li>That, once it receives the inputs:</li>
+<li>Copies <code class="docutils literal notranslate"><span class="pre">demo-script.sh</span></code> from the job spec’s directory to
+<code class="docutils literal notranslate"><span class="pre">demo-script.sh</span></code> in the job’s working directory</li>
+<li>Executes <code class="docutils literal notranslate"><span class="pre">bash</span></code> with <code class="docutils literal notranslate"><span class="pre">demo-script.sh</span></code> and <code class="docutils literal notranslate"><span class="pre">${inputs.firstName}</span></code>
+with two</li>
+<li>arguments: - <code class="docutils literal notranslate"><span class="pre">demo-script.sh</span></code>: The script <code class="docutils literal notranslate"><span class="pre">bash</span></code> should run -</li>
+<li><code class="docutils literal notranslate"><span class="pre">${inputs.firstName}</span></code>: The <code class="docutils literal notranslate"><span class="pre">firstName</span></code> provided as an input -</li>
+<li>Before executing, Jobson should copy <code class="docutils literal notranslate"><span class="pre">demo-script.sh</span></code> from the job</li>
+<li>spec folder to the job’s working directory -</li>
 </ul>
-
-<p>This specifies a job that takes a single string input (<code class="highlighter-rouge">firstName</code>)
-and runs a bash script (<code class="highlighter-rouge">demo-script.sh</code>). The bash script is copied
-from the spec directory (<code class="highlighter-rouge">dependencies: source: demo-script.sh</code>) into
-the job’s working directory (<code class="highlighter-rouge">dependencies: target:
-demo-script.sh</code>). Once the script runs, it produces a file called
-<code class="highlighter-rouge">output</code>, which has an <code class="highlighter-rouge">image/jpeg</code> MIME type and should be persisted
-as <code class="highlighter-rouge">${request.id}.jpg</code> by Jobson.</p>
-
-<h1 id="creating-a-job-spec">Creating a Job Spec</h1>
-
-<p>The Jobson command-line interface comes with a basic spec generator
-for creating a bareboes spec:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>jobson generate spec new-spec
-</code></pre></div></div>
-
-<p>This creates a job spec with an ID of <code class="highlighter-rouge">new-spec</code> at
-<code class="highlighter-rouge">jobs/new-spec/spec.yml</code>.</p>
-
-<h1 id="specyml-schema"><code class="highlighter-rouge">spec.yml</code> Schema</h1>
-
-<p>Job specs are standard YAML files that should appear at the correct
-path (e.g. <code class="highlighter-rouge">jobs/{job-id}/spec.yml</code>). This section describes what can
-be put into the <code class="highlighter-rouge">spec.yml</code> files.</p>
-
-<h2 id="name"><code class="highlighter-rouge">name</code></h2>
-
+<p>This specifies a job that takes a single string input (<code class="docutils literal notranslate"><span class="pre">firstName</span></code>)
+and runs a bash script (<code class="docutils literal notranslate"><span class="pre">demo-script.sh</span></code>). The bash script is copied
+from the spec directory (<code class="docutils literal notranslate"><span class="pre">dependencies:</span> <span class="pre">source:</span> <span class="pre">demo-script.sh</span></code>) into
+the job’s working directory (<code class="docutils literal notranslate"><span class="pre">dependencies:</span> <span class="pre">target:</span> <span class="pre">demo-script.sh</span></code>).
+Once the script runs, it produces a file called <code class="docutils literal notranslate"><span class="pre">output</span></code>, which has an
+<code class="docutils literal notranslate"><span class="pre">image/jpeg</span></code> MIME type and should be persisted as
+<code class="docutils literal notranslate"><span class="pre">${request.id}.jpg</span></code> by Jobson.</p>
+</div>
+<div class="section" id="creating-a-job-spec">
+<h2>Creating a Job Spec<a class="headerlink" href="#creating-a-job-spec" title="Permalink to this headline">¶</a></h2>
+<p>The Jobson command-line interface comes with a basic spec generator for
+creating a bareboes spec:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson generate spec new-spec
+</pre></div>
+</div>
+<p>This creates a job spec with an ID of <code class="docutils literal notranslate"><span class="pre">new-spec</span></code> at
+<code class="docutils literal notranslate"><span class="pre">jobs/new-spec/spec.yml</span></code>.</p>
+</div>
+<div class="section" id="spec-yml-schema">
+<h2><code class="docutils literal notranslate"><span class="pre">spec.yml</span></code> Schema<a class="headerlink" href="#spec-yml-schema" title="Permalink to this headline">¶</a></h2>
+<p>Job specs are standard YAML files that should appear at the correct path
+(e.g. <code class="docutils literal notranslate"><span class="pre">jobs/{job-id}/spec.yml</span></code>). This section describes what can be
+put into the <code class="docutils literal notranslate"><span class="pre">spec.yml</span></code> files.</p>
+<div class="section" id="name">
+<h3><code class="docutils literal notranslate"><span class="pre">name</span></code><a class="headerlink" href="#name" title="Permalink to this headline">¶</a></h3>
 <p>Name of the Job Spec.</p>
-
-<h2 id="description"><code class="highlighter-rouge">description</code></h2>
-
+</div>
+<div class="section" id="description">
+<h3><code class="docutils literal notranslate"><span class="pre">description</span></code><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
 <p>Detailed Description of the Job Spec</p>
-
-<h2 id="expectedinputs"><code class="highlighter-rouge">expectedInputs</code></h2>
-
+</div>
+<div class="section" id="expectedinputs">
+<h3><code class="docutils literal notranslate"><span class="pre">expectedInputs</span></code><a class="headerlink" href="#expectedinputs" title="Permalink to this headline">¶</a></h3>
 <p>What Input Data Should be Provided to Execute a Job</p>
-
-<h2 id="execution"><code class="highlighter-rouge">execution</code></h2>
-
+</div>
+<div class="section" id="execution">
+<h3><code class="docutils literal notranslate"><span class="pre">execution</span></code><a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h3>
 <p>What Executes Once the Input Data is Received.</p>
-
-<h2 id="expectedoutputs"><code class="highlighter-rouge">expectedOutputs</code></h2>
-
+</div>
+<div class="section" id="expectedoutputs">
+<h3><code class="docutils literal notranslate"><span class="pre">expectedOutputs</span></code><a class="headerlink" href="#expectedoutputs" title="Permalink to this headline">¶</a></h3>
 <p>What is Produced by Execution (and should be persisted by Jobson).</p>
-
 <p>TODO: Work in progress. Need documentation about supported data types,
 scripting functions, etc.</p>
-
-	</main>
-	
-	<nav id="content-nav">
-	  <ul>
-  <li><a href="index.html">Overview</a></li>
-  <li><a href="quickstart.html">Quickstart</a></li>
-  <li><a href="https://github.com/adamkewley/jobson">Install</a></li>
-  <li><a href="commandline.html">Command-Line Interface</a></li>
-  <li><a href="workspaces.html">Workspaces</a></li>
-  <li><a href="specs.html">Job Specs</a></li>
-  <li><a href="template-expressions.html">Template Expressions</a></li>
-  <li><a href="server-configuration.html">Server Configuration</a></li>
+</div>
+</div>
+<div class="section" id="template-strings">
+<h2>Template Strings<a class="headerlink" href="#template-strings" title="Permalink to this headline">¶</a></h2>
+<p>Template strings, such as <code class="docutils literal notranslate"><span class="pre">${request.id}</span></code> allow developers to add
+runtime evaluation to their job specs. For example, template strings
+allow runtime input arguments to be used as application arguments:</p>
+<div class="code yaml highlight-default notranslate"><div class="highlight"><pre><span></span>execution:
+  application: bash
+  arguments:
+  - ${inputs.firstName}
+</pre></div>
+</div>
+<p>This is the main way of passing client inputs into an application at
+runtime.</p>
+<p>Template strings are ordinary strings with support for special
+expressions between <code class="docutils literal notranslate"><span class="pre">${</span></code> and <code class="docutils literal notranslate"><span class="pre">}</span></code>. Jobson interprets those
+expressions at runtime, evaluating them against an environment
+containing data (e.g. <code class="docutils literal notranslate"><span class="pre">inputs</span></code>, <code class="docutils literal notranslate"><span class="pre">request</span></code>) and functions (e.g.
+<code class="docutils literal notranslate"><span class="pre">toJSON</span></code>, <code class="docutils literal notranslate"><span class="pre">toFile</span></code>).</p>
+<p>Template strings have access to the following:</p>
+<div class="section" id="string-tojson-object-arg">
+<h3><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">toJSON(Object</span> <span class="pre">arg)</span></code><a class="headerlink" href="#string-tojson-object-arg" title="Permalink to this headline">¶</a></h3>
+<p>A function that takes an input (e.g. <code class="docutils literal notranslate"><span class="pre">request</span></code>, <code class="docutils literal notranslate"><span class="pre">request.id</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'string</span> <span class="pre">literal'</span></code>) and returns a JSON representation of the input.
+Object-/Hash-like arguments are converted into a JSON object, strings
+are converted into a JSON string, numbers into JSON numbers, etc.</p>
+</div>
+<div class="section" id="string-tofile-string-content">
+<h3><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">toFile(String</span> <span class="pre">content)</span></code><a class="headerlink" href="#string-tofile-string-content" title="Permalink to this headline">¶</a></h3>
+<p>A function that takes a string input (e.g. <code class="docutils literal notranslate"><span class="pre">request.id</span></code>,
+<code class="docutils literal notranslate"><span class="pre">toJSON(request)</span></code>), write the input to a file, and returns an absolute
+path to that file.</p>
+</div>
+<div class="section" id="string-join-string-delimiter-stringarray-strings">
+<h3><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">join(String</span> <span class="pre">delimiter,</span> <span class="pre">StringArray</span> <span class="pre">strings)</span></code><a class="headerlink" href="#string-join-string-delimiter-stringarray-strings" title="Permalink to this headline">¶</a></h3>
+<p>A function that takes a delimiter (e.g. <code class="docutils literal notranslate"><span class="pre">','</span></code>) and a <code class="docutils literal notranslate"><span class="pre">StringArray</span></code>
+(usually, from a Jobson <code class="docutils literal notranslate"><span class="pre">string[]</span></code> <code class="docutils literal notranslate"><span class="pre">expectedInput</span></code>) and returns a
+string that contains each element in the <code class="docutils literal notranslate"><span class="pre">StringArray</span></code> joined with the
+delimiter.</p>
+</div>
+<div class="section" id="string-tostring-object-arg">
+<h3><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">toString(Object</span> <span class="pre">arg)</span></code><a class="headerlink" href="#string-tostring-object-arg" title="Permalink to this headline">¶</a></h3>
+<p>A function that takes an argument (e.g. <code class="docutils literal notranslate"><span class="pre">request.firstName</span></code>) and
+returns a string representation of that arugment. Note: internally, this
+uses the Java <code class="docutils literal notranslate"><span class="pre">.toString</span></code> method on the argument, which may produce
+non-obvious results with complex arguments.</p>
+</div>
+<div class="section" id="object-request">
+<h3><code class="docutils literal notranslate"><span class="pre">Object</span> <span class="pre">request</span></code><a class="headerlink" href="#object-request" title="Permalink to this headline">¶</a></h3>
+<p>A reference to the request that initiated the job. Useful fields in the
+request are:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">id</span></code>: The job’s ID (e.g. <code class="docutils literal notranslate"><span class="pre">57s9fmopb</span></code>)</li>
+<li><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">owner</span></code>: The client that initaited the job request (e.g.
+<code class="docutils literal notranslate"><span class="pre">foouser</span></code>)</li>
+<li><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">name</span></code>: The name the client given the job</li>
+<li><code class="docutils literal notranslate"><span class="pre">Map&lt;JobExpectedInputId,</span> <span class="pre">JobInput&gt;</span> <span class="pre">inputs</span></code>: The inputs given for
+the job.</li>
+<li>Each input is accessible via the dot accessor (e.g.
+<code class="docutils literal notranslate"><span class="pre">request.inputs.firstName</span></code>).</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">Map</span></code> is serializable as JSON (e.g.
+<code class="docutils literal notranslate"><span class="pre">toJSON(request.inputs)</span></code>).</li>
+<li><code class="docutils literal notranslate"><span class="pre">JobSpec</span> <span class="pre">spec</span></code>: The job spec the job was submitted against</li>
 </ul>
+</div>
+<div class="section" id="object-inputs">
+<h3><code class="docutils literal notranslate"><span class="pre">Object</span> <span class="pre">inputs</span></code><a class="headerlink" href="#object-inputs" title="Permalink to this headline">¶</a></h3>
+<p>Shortcut for <code class="docutils literal notranslate"><span class="pre">request.inputs</span></code>.</p>
+</div>
+<div class="section" id="string-outputdir">
+<h3><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">outputDir</span></code><a class="headerlink" href="#string-outputdir" title="Permalink to this headline">¶</a></h3>
+<p>The output directory for the job. At time of writing, this is always the
+same as the job’s working directory.</p>
+</div>
+</div>
+</div>
 
-	</nav>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ui.html" class="btn btn-neutral float-right" title="User Interface (Jobson UI)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="workspaces.html" class="btn btn-neutral" title="Workspaces" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Adam Kewley
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
       </div>
+
     </section>
-  </body>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
 </html>

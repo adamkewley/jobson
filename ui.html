@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>User Interface (Jobson UI) &mdash; jobson-docs 1.0.0-dev.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer’s Guide" href="build.html" />
+    <link rel="prev" title="Job Specs" href="specs.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> jobson-docs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commandline.html">Command-Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server-configuration.html">Server Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workspaces.html">Workspaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="specs.html">Job Specs</a></li>
+<li class="toctree-l1"><a class="reference external" href="apidocs/index.html#://">HTTP API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Interface (Jobson UI)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#screenshot">Screenshot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-boot-jobson-somewhere">Optional: Boot <code class="docutils literal notranslate"><span class="pre">jobson</span></code> somewhere</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-jobson-ui-assets">Get <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> Assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#unpack-move-assets-to-webserver-root">Unpack/Move Assets to Webserver Root</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-edit-config-json">Optional: Edit <code class="docutils literal notranslate"><span class="pre">config.json</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configure-nginx">Configure <code class="docutils literal notranslate"><span class="pre">nginx</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-load-the-ui-in-a-browser">Optional: Load the UI in a Browser</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Developer’s Guide</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jobson-docs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>User Interface (Jobson UI)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ui.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="user-interface-jobson-ui">
+<h1>User Interface (Jobson UI)<a class="headerlink" href="#user-interface-jobson-ui" title="Permalink to this headline">¶</a></h1>
+<p>The core <code class="docutils literal notranslate"><span class="pre">jobson</span></code> server only hosts a JSON/websocket API for
+Jobson. <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> is a set of static web assets that should be
+installed separately on a production-grade webserver (e.g. <code class="docutils literal notranslate"><span class="pre">apache</span></code>,
+<code class="docutils literal notranslate"><span class="pre">nginx</span></code>).</p>
+<div class="section" id="screenshot">
+<h2>Screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/screenshot.jpg" src="_images/screenshot.jpg" />
+</div>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/ui-arch.svg" src="_images/ui-arch.svg" /><p><code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> is a set of static web assets that should be hosted on a
+standard webserver. This enables admins to administer the user-facing
+API of jobson with their own standard security/caching/authentication
+apporaches.</p>
+<p>At runtime, browser clients go through the following steps:</p>
+<ul class="simple">
+<li>Clients download <code class="docutils literal notranslate"><span class="pre">index.html</span></code> (from <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code>) from the
+webserver</li>
+<li><code class="docutils literal notranslate"><span class="pre">&lt;script&gt;</span></code> tags in the HTML cause clients to download associated
+javascript from the webserver</li>
+<li>The javascript makes clients download <code class="docutils literal notranslate"><span class="pre">config.json</span></code> from the
+webserver</li>
+<li><code class="docutils literal notranslate"><span class="pre">config.json</span></code> contains UI configuration options, including an
+<code class="docutils literal notranslate"><span class="pre">apiPrefix</span></code> property, which tells clients what to prefix jobson
+API requests with</li>
+<li>Subsequent <code class="docutils literal notranslate"><span class="pre">jobson</span></code> API calls are prefixed with <code class="docutils literal notranslate"><span class="pre">apiPrefix</span></code>
+(e.g. <code class="docutils literal notranslate"><span class="pre">/api/{some-req}</span></code>)</li>
+</ul>
+<p>This guide demonstrates configuring <code class="docutils literal notranslate"><span class="pre">nginx</span></code> to serve <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code>
+as described.</p>
+</div>
+<div class="section" id="optional-boot-jobson-somewhere">
+<h2>Optional: Boot <code class="docutils literal notranslate"><span class="pre">jobson</span></code> somewhere<a class="headerlink" href="#optional-boot-jobson-somewhere" title="Permalink to this headline">¶</a></h2>
+<p>Deploying the UI doesn’t require a running <code class="docutils literal notranslate"><span class="pre">jobson</span></code> server. However,
+for the sake of testing, this guide assumes you have a <code class="docutils literal notranslate"><span class="pre">jobson</span></code>
+server running at <code class="docutils literal notranslate"><span class="pre">localhost:8080</span></code>:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jobson</span> <span class="n">serve</span> <span class="n">config</span><span class="o">.</span><span class="n">yml</span>  <span class="c1"># config.yml is configured to serve on port 8080</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-jobson-ui-assets">
+<h2>Get <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> Assets<a class="headerlink" href="#get-jobson-ui-assets" title="Permalink to this headline">¶</a></h2>
+<p>Pre-packaged distributions (debian, unix) of the jobson platform
+include the assets at <code class="docutils literal notranslate"><span class="pre">/share/jobson/ui/html</span></code>. Those assets are
+“ready to go” and should be copied/linked to an appropriate location
+(below).</p>
+<p>The <a class="reference external" href="https://github.com/adamkewley/jobson">jobson project</a> build
+also uploads <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> as an independent artifact. If you just
+want the UI, you can download it from the <a class="reference external" href="https://github.com/adamkewley/jobson/releases">releases</a> page.</p>
+</div>
+<div class="section" id="unpack-move-assets-to-webserver-root">
+<h2>Unpack/Move Assets to Webserver Root<a class="headerlink" href="#unpack-move-assets-to-webserver-root" title="Permalink to this headline">¶</a></h2>
+<p>For this install guide, we will copy the assets to <code class="docutils literal notranslate"><span class="pre">/var/www/jobson</span></code>:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="o">-</span><span class="n">r</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">jobson</span><span class="o">/</span><span class="n">ui</span><span class="o">/</span><span class="n">html</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">jobson</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="optional-edit-config-json">
+<h2>Optional: Edit <code class="docutils literal notranslate"><span class="pre">config.json</span></code><a class="headerlink" href="#optional-edit-config-json" title="Permalink to this headline">¶</a></h2>
+<p>If you want to change the <code class="docutils literal notranslate"><span class="pre">apiPrefix</span></code>, edit the UI configuration file:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nano</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">jobson</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">json</span>
+</pre></div>
+</div>
+<p>This will cause <code class="docutils literal notranslate"><span class="pre">jobson</span></code> API requests to go elsewhere. For this
+guide, we assume the default value (<code class="docutils literal notranslate"><span class="pre">/api</span></code>).</p>
+</div>
+<div class="section" id="configure-nginx">
+<h2>Configure <code class="docutils literal notranslate"><span class="pre">nginx</span></code><a class="headerlink" href="#configure-nginx" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Create an nginx config file for the site at
+<code class="docutils literal notranslate"><span class="pre">/etc/nginx/sites-available/jobson-ui</span></code>:</li>
+</ul>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29</pre></div></td><td class="code"><div class="highlight"><pre><span></span>server {
+	listen 8090;
+	listen [::]:8090;
+
+	root /var/www/jobson-ui;
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
+	}
+
+	location /api {
+		# Any requests beginning with /api should be forwarded
+		# to Jobson
+		proxy_pass http://localhost:8080;
+
+		# The Jobson server itself doesn&#39;t take an /api prefix
+		# (it&#39;s just used for routing), so drop it.
+		rewrite ^/api/(.*) /$1 break;
+
+		# Enable websockets, which are used for dynamic updates
+		# (Jobson UI doesn&#39;t *require* them though).
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection &quot;upgrade&quot;;
+		proxy_read_timeout 86400;
+	}
+}
+</pre></div>
+</td></tr></table></div>
+<ul class="simple">
+<li>Enable the site configuration:</li>
+</ul>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sites</span><span class="o">-</span><span class="n">enabled</span>
+<span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">../</span><span class="n">sites</span><span class="o">-</span><span class="n">available</span><span class="o">/</span><span class="n">jobson</span><span class="o">-</span><span class="n">ui</span> <span class="n">jobson</span><span class="o">-</span><span class="n">ui</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Reload nginx:</li>
+</ul>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nginx</span> <span class="o">-</span><span class="n">s</span> <span class="n">reload</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="optional-load-the-ui-in-a-browser">
+<h2>Optional: Load the UI in a Browser<a class="headerlink" href="#optional-load-the-ui-in-a-browser" title="Permalink to this headline">¶</a></h2>
+<p>Try loading the UI in a browser:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">xdg</span><span class="o">-</span><span class="nb">open</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span>
+</pre></div>
+</div>
+<p>Which, if <code class="docutils literal notranslate"><span class="pre">jobson</span></code> is running, should work fine.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="build.html" class="btn btn-neutral float-right" title="Developer’s Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="specs.html" class="btn btn-neutral" title="Job Specs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Adam Kewley
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

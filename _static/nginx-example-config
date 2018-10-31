@@ -1,0 +1,29 @@
+server {
+	listen 8090;
+	listen [::]:8090;
+
+	root /var/www/jobson-ui;
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
+	}
+
+	location /api {
+		# Any requests beginning with /api should be forwarded
+		# to Jobson
+		proxy_pass http://localhost:8080;
+
+		# The Jobson server itself doesn't take an /api prefix
+		# (it's just used for routing), so drop it.
+		rewrite ^/api/(.*) /$1 break;
+
+		# Enable websockets, which are used for dynamic updates
+		# (Jobson UI doesn't *require* them though).
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+		proxy_read_timeout 86400;
+	}
+}

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Jobson &mdash; jobson-docs 1.0.0-dev.7 documentation</title>
+  <title>Developer’s Guide &mdash; jobson-docs 1.0.0-dev.7 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="How It Works" href="how-it-works.html" /> 
+    <link rel="prev" title="User Interface (Jobson UI)" href="ui.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -47,7 +47,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> jobson-docs
+            <a href="index.html" class="icon icon-home"> jobson-docs
           
 
           
@@ -78,7 +78,7 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
@@ -88,7 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="specs.html">Job Specs</a></li>
 <li class="toctree-l1"><a class="reference external" href="apidocs/index.html#://">HTTP API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ui.html">User Interface (Jobson UI)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build.html">Developer’s Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Developer’s Guide</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">jobson-docs</a>
+          <a href="index.html">jobson-docs</a>
         
       </nav>
 
@@ -132,15 +132,15 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Jobson</li>
+      <li>Developer’s Guide</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/build.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -153,25 +153,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="jobson">
-<h1>Jobson<a class="headerlink" href="#jobson" title="Permalink to this headline">¶</a></h1>
-<p>Jobson is a webserver that automates the most common steps required to
-build a web service around a batch application.</p>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commandline.html">Command-Line Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="server-configuration.html">Server Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workspaces.html">Workspaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="specs.html">Job Specs</a></li>
-<li class="toctree-l1"><a class="reference external" href="apidocs/index.html#://">HTTP API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ui.html">User Interface (Jobson UI)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build.html">Developer’s Guide</a></li>
-</ul>
+  <div class="section" id="developer-s-guide">
+<h1>Developer’s Guide<a class="headerlink" href="#developer-s-guide" title="Permalink to this headline">¶</a></h1>
+<p>Building the Jobson jar for development requires <code class="docutils literal notranslate"><span class="pre">maven</span></code> and <code class="docutils literal notranslate"><span class="pre">jdk</span></code> (8+). For
+example:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span> <span class="n">install</span> <span class="n">maven</span> <span class="n">openjdk</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="n">jdk</span>
+<span class="n">mvn</span> <span class="n">package</span>
+</pre></div>
 </div>
+<p>Building an entire release (packages, documentation, etc.) additionally
+requires <code class="docutils literal notranslate"><span class="pre">ruby</span></code> and <code class="docutils literal notranslate"><span class="pre">bundler</span></code>, along with some gems. For example:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span> <span class="n">install</span> <span class="n">maven</span> <span class="n">openjdk</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="n">jdk</span> <span class="n">ruby</span> <span class="n">ruby</span><span class="o">-</span><span class="n">bundler</span>
+<span class="n">gem</span> <span class="n">install</span> <span class="n">fpm</span>
+
+<span class="n">mvn</span> <span class="n">package</span> <span class="o">-</span><span class="n">P</span> <span class="n">release</span>
+</pre></div>
+</div>
+<p>See <code class="docutils literal notranslate"><span class="pre">.travis.yml</span></code> for a “clean” build example.</p>
+<p>Jobson UI is developed with <code class="docutils literal notranslate"><span class="pre">node</span></code> (<code class="docutils literal notranslate"><span class="pre">v6.11.4</span></code>+) and <code class="docutils literal notranslate"><span class="pre">npm</span></code>.</p>
+<p>To build a release of Jobson UI from source, which writes the built
+assets to <code class="docutils literal notranslate"><span class="pre">public/</span></code>:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span>
+<span class="n">npm</span> <span class="n">run</span> <span class="n">build</span>
+</pre></div>
+</div>
+<p>To run a development server, which dynamically updates as the source
+code is edited (best development experience):</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span>
+<span class="n">npm</span> <span class="n">run</span> <span class="n">start</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: This assumes an actual Jobson server is running at
+<code class="docutils literal notranslate"><span class="pre">localhost:8080</span></code>.</p>
 </div>
 
 
@@ -182,8 +195,8 @@ build a web service around a batch application.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="how-it-works.html" class="btn btn-neutral float-right" title="How It Works" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+        <a href="ui.html" class="btn btn-neutral" title="User Interface (Jobson UI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
