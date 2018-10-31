@@ -6,7 +6,7 @@
 
     <groupId>com.github.jobson</groupId>
     <artifactId>jobson-project</artifactId>
-    <version>1.0.0-dev.6</version>
+    <version>1.0.0-dev.7</version>
     <packaging>pom</packaging>
 
     <name>jobson project</name>
@@ -48,8 +48,8 @@
     </developers>
 
     <properties>
-        <version.jobsonswagger>1.0.0-dev.6</version.jobsonswagger>
-        <version.jobsonswaggerui>1.0.0-dev.6</version.jobsonswaggerui>
+        <version.jobsonswagger>1.0.0-dev.7</version.jobsonswagger>
+        <version.jobsonswaggerui>1.0.0-dev.7</version.jobsonswaggerui>
 
         <dropwizard.version>1.3.5</dropwizard.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
