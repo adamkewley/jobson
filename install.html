@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Install &mdash; jobson-docs 1.0.0-dev.7 documentation</title>
+  <title>Install &mdash; jobson-docs 1.0.0 documentation</title>
   
 
   
@@ -170,8 +170,8 @@ etc.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">jobson</span></code> build produces a <code class="docutils literal notranslate"><span class="pre">.deb</span></code> file that can be installed
 directly:</p>
 <pre class="literal-block">
-wget <a class="reference external" href="https://github.com/adamkewley/jobson/releases/download/">https://github.com/adamkewley/jobson/releases/download/</a>1.0.0-dev.7/<a href="#id1"><span class="problematic" id="id2">jobson_</span></a>1.0.0-dev.7_all.deb
-dpkg -i <a href="#id3"><span class="problematic" id="id4">jobson_</span></a>1.0.0-dev.7_all.deb  # contains dependencies on (e.g.) java
+wget <a class="reference external" href="https://github.com/adamkewley/jobson/releases/download/">https://github.com/adamkewley/jobson/releases/download/</a>1.0.0/<a href="#id1"><span class="problematic" id="id2">jobson_</span></a>1.0.0_all.deb
+dpkg -i <a href="#id3"><span class="problematic" id="id4">jobson_</span></a>1.0.0_all.deb  # contains dependencies on (e.g.) java
 apt-get -f install  # resolves dependencies
 </pre>
 </div>
@@ -181,8 +181,8 @@ apt-get -f install  # resolves dependencies
 to run jobson on a unix-like OS.</p>
 <p><strong>Note</strong>: You must have <code class="docutils literal notranslate"><span class="pre">java</span></code> (8+) installed on your system in order to run <code class="docutils literal notranslate"><span class="pre">jobson</span></code></p>
 <pre class="literal-block">
-wget <a class="reference external" href="https://github.com/adamkewley/jobson/releases/download/">https://github.com/adamkewley/jobson/releases/download/</a>1.0.0-dev.7/jobson-nix-1.0.0-dev.7.tar.gz
-tar xvf jobson-nix-1.0.0-dev.7.tar.gz
+wget <a class="reference external" href="https://github.com/adamkewley/jobson/releases/download/">https://github.com/adamkewley/jobson/releases/download/</a>1.0.0/jobson-nix-1.0.0.tar.gz
+tar xvf jobson-nix-1.0.0.tar.gz
 
 # optional: add to ~/.bashrc
 export PATH=$PATH:/location/of/unpacked/tarball/bin
@@ -193,7 +193,7 @@ export PATH=$PATH:/location/of/unpacked/tarball/bin
 <p>The <code class="docutils literal notranslate"><span class="pre">jobson</span></code> project builds a Docker image that pre-integrates <code class="docutils literal notranslate"><span class="pre">jobson</span></code> and <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> (with <code class="docutils literal notranslate"><span class="pre">nginx</span></code>) together.
 By default, it will create a demo workspace at <cite>/home/jobson/</cite> inside the container and listen on port 80:</p>
 <pre class="literal-block">
-docker run --name default-container -p 80:80 adamkewley/jobson:1.0.0-dev.7
+docker run --name default-container -p 80:80 adamkewley/jobson:1.0.0
 </pre>
 <p>It’s recommended that you host the workspace outside the container, so that you can backup job data, upgrade the image,
 etc. The easiest way to do this is to copy the default workspace out of the container and create a new container with
@@ -202,12 +202,12 @@ a volume mount:</p>
 HOST_PORT=9090
 
 # copy out the container's workspace
-docker run --name tmp-jobson-container -d adamkewley/jobson:1.0.0-dev.7
+docker run --name tmp-jobson-container -d adamkewley/jobson:1.0.0
 docker cp tmp-jobson-container:/home/jobson /host/path/jobson
 docker container rm -f tmp-jobson-container
 
 # boot a container that uses the out-of-container workspace
-docker run --name jobson-container -p ${HOST_PORT}:80 -v /host/path/jobson:/home/jobson:rw -d adamkewley/jobson:1.0.0-dev.7
+docker run --name jobson-container -p ${HOST_PORT}:80 -v /host/path/jobson:/home/jobson:rw -d adamkewley/jobson:1.0.0
 </pre>
 <p>This will boot a docker container that listens on <code class="docutils literal notranslate"><span class="pre">HOST_PORT</span></code>, which you can browse to.</p>
 </div>
