@@ -14,7 +14,7 @@ directly:
 
 .. parsed-literal::
 
-	  wget https://github.com/adamkewley/jobson-1.0-throwaway/releases/download/|release|/jobson_\ |release|\ _all.deb
+	  wget https://github.com/adamkewley/jobson/releases/download/|release|/jobson_\ |release|\ _all.deb
 	  dpkg -i jobson_\ |release|\ _all.deb  # contains dependencies on (e.g.) java
 	  apt-get -f install  # resolves dependencies
 
@@ -29,7 +29,7 @@ to run jobson on a unix-like OS.
 
 .. parsed-literal::
 
-      wget https://github.com/adamkewley/jobson-1.0-throwaway/releases/download/\ |release|\ /jobson-nix-\ |release|\ .tar.gz
+      wget https://github.com/adamkewley/jobson/releases/download/\ |release|\ /jobson-nix-\ |release|\ .tar.gz
       tar xvf jobson-nix-\ |release|\ .tar.gz
 
       # optional: add to ~/.bashrc
@@ -44,7 +44,7 @@ By default, it will create a demo workspace at `/home/jobson/` inside the contai
 
 .. parsed-literal::
 
-      docker run --name default-container -p 80:80 adamkewley/jobson-1.0.0-throwaway:\ |release|\
+      docker run --name default-container -p 80:80 adamkewley/jobson:\ |release|\
 
 It's recommended that you host the workspace outside the container, so that you can backup job data, upgrade the image,
 etc. The easiest way to do this is to copy the default workspace out of the container and create a new container with
@@ -55,13 +55,13 @@ a volume mount:
       HOST_PORT=9090
 
       # copy out the container's workspace
-      docker run --name tmp-jobson-container -d adamkewley/jobson-1.0.0-throwaway:\ |release|\
+      docker run --name tmp-jobson-container -d adamkewley/jobson:\ |release|\
 
       docker cp tmp-jobson-container:/home/jobson /host/path/jobson
       docker container rm -f tmp-jobson-container
 
       # boot a container that uses the out-of-container workspace
-      docker run --name jobson-container -p ${HOST_PORT}:80 -v /host/path/jobson:/home/jobson:rw -d adamkewley/jobson-1.0.0-throwaway:\ |release|\
+      docker run --name jobson-container -p ${HOST_PORT}:80 -v /host/path/jobson:/home/jobson:rw -d adamkewley/jobson:\ |release|\
 
 
 This will boot a docker container that listens on ``HOST_PORT``, which you can browse to.
@@ -75,6 +75,6 @@ windows. However, unofficial reports do state that it works on windows
 if you manually run the ``jobson-x.x.x.jar`` file:
 
 * Download and install ``java``
-* Download jobson unix tarball from `releases <https://github.com/adamkewley/jobson-1.0-throwaway/releases/>`_
+* Download jobson unix tarball from `releases <https://github.com/adamkewley/jobson/releases/>`_
 * Unpack somewhere (e.g. in ``DIR``)
 * Run the jobson CLI with ``java -jar DIR/share/jobson/java/jobson-x.x.x.jar``
