@@ -55,7 +55,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <docker.user>adamkewley</docker.user>
-        <docker.repo>jobson-1.0.0-throwaway</docker.repo>
+        <docker.repo>jobson</docker.repo>
         <version.swaggerui>3.19.3</version.swaggerui>
     </properties>
 

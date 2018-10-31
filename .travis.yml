@@ -23,10 +23,8 @@ before_install:
 script: mvn package
 env:
   global:
-  # travis encrypt GH_TOKEN=tok
-  - secure: at1grzYy9RfcIfmoACdaSiY+u+RBDGfk07jCAB2Bn8bEohv21Ny45Is4F3G6Nb9XN7LJdM+6cVINBdsTOKQlIIo0t6nD0sMfkb9IvFP5waDodjTu9Bb8hW2b/7Ul49ANQBErB5f0HxioqGnXvZvrln9UM2Dcml6Sa+1TR+OAkO79cWbiOfRyNbXbC2B1RNl8JNfFOhMhQF/8zE2hpVVW8BQX3V7cBQ+pxLP7X8qEbmifg4HlAkPP31PZn1wIlfdBFG57ODiEWOobO/MkrpbW4V+SAgJkZgW797XbmsE5CUhrtQWiYvze4ZsBknIdSDgD7AXYUDtvJW17jQXFvI5dA8YYdmJfiV5iGRFgMq+5I/1WnSg0OD82NNdYK9YnDKXwjnKObFR5CPJEITT5dMKLnNGSZnTawAfIqXr7rlxETF6UwzMVQl9rvPMK29x3TeqjOgwTVL+MsC0iIkDrh2QGQgzEn1nmfiTHMXLh4nARWoe7q01AfXM5zcp0jhib6yjwQjqT4kc8BQ8SiVLxZq8qD6TQhi7cnCjKaAw9gadJ1cKaNp4dJNsSfMa9oq1LhwukcaZ6VHJIwY9OSVnvC3o4EC+lTfwmztJy/neuZ9h7q71O7MZ6JYRXS+IX4h/ubeV9l6V2yFdgfbb3noNzHs5i39bPa2li89JOoIPMZzpPepc=
-  # travis encrypt DOCKER_PASSWORD=pw
-  - secure: kawEWOndc88HaE0L3ylHFnQx3+pdZIopwtYMNJCa1UcOs84OXRtrIQcPiEOcpa5yIoZB/R+BgdVMO9M0MiEmbhggplJNf56RZvafr2zJSzgl7tbhrakIa81Ve+7IBHWMCL2VJQifiRbhm1/J84OFvNfLwtKJvjbbCnO/E9nsCUva193J5hkiipPVVmKm5iJ31JkeP0F/NqGmpJZn/r9yM/jOXstfVI4cM9AY0WDZzdA7yWWytGorVAqWNBIgQ4FG9YlfpEcnOmpSGgBDNRVlFKFvZw2ORPZWpiZiPJAiuZ1DPMgJIJYjqqkzoH9v1AWqTIRlWI7E0wLYBc1XCHrARUqZcmH20vRYA6XCQG4blF94F7X0ju9IQm4XjeyOmCK8xLCRFAZdmiZAIHlv3ItYDcggHpqeeHSSc7XnCHiAc/0iCz0jZxWY4AYJM9PPU55NzAgNVfm7Jd3WqGpEuyyR5L4ZQ+XJzcixadNr1uvGEBs5xmUQ4n8X6InVnw0LNcn6u75gbpFmVMarzeXVzWyjvtC3kqnBvWzqlDWj1cQIjlQRn3N52K2XNOFJ49YVV6k7LWlhRR7JPG4Z1qH9E6uqWIWXGNmQxjpGqebJ1LxstCJklzdwCaCH2pxhAG1JVzQNCQ7clbl+B2+wptLpOtCG44yHWItFKL12FYy47qHi+oI=
+  - secure: s/YSS0GG2Vs9utbGnU8Ti+ty1BfbIPKvNsH45kICMo2W3M2yXyG4Rb9jSep4W3OQemDQC3KqSRZzkBBJgtm227/a84St6cWpw72kSiAD3krWfUNa2xTD8XzxpjCxdAlMV8PkeDZkBHnXaa+HS3HR/DjFrKllDZ76gDixdYWOcvY/FJDmQ0krsqGCtpyFheTBAItqCYpz6PIFwvGNPi81CLn+GLq3NK8jKJkgwJLyKbLuPDYRMCT5SgMtn4JtNi8w4Zo1Z8j67BZtXlGAbnBrDnRaNjUkEiniw8Hieh38ap5AGBr5leIYCF6xxDDy7+9kAb7Fg8QLYvLPjtIMOPXYJTvWgt/iLUrH2Y2C6mTnDuRJo9Iu3MX4d8jg5dtpS1OEAkEZmdbmlq0Fpc+u9gU7CuXryo3/1oUmOcdYpKHPtYfAn1K4ThPrvWoyYvp/15nd7/bl8E+SsnimN0tgJUj4J0mUaKQfuSHVDNXjlt2j09e/slFhtXaIStCG/U+p/OHKvwt1WUxJWrY6OFHM7O30HatYnkuvDSUos8STZzdxvZFOxbcX28FFRxDKH5/xuscnFCNRYfX986p6nInIXbPa9QzY+/fg/5Yo6C4D9QdeVvIh+hRgBwilIqjiH4AXI8RfGOpahldHNwSbDOhc/whCD2qTc/xCsHoXE4nGi1K5puA=
+  - secure: fyiP2ND9rEMB7ePtAGj+1Xr/JbQVRG6zblTj3pwiGtgpf9yKkikHRfQr0hlVI4uTEXfmTu8IJRW7LSXexanlPNQhuue0UPafH6yiBwukyX+w9OouT4+qN7I5P1tyCFJ9ENRM9zZ7ius7JdDPNA9pBefZmtXZqycJvgDzELafTWt21L+KfjzQplpmF2mGr7hFABowJ8uwCm3HGrxV7lWABY0UqRq4m3mPxdAf9TqkCKAnxYY4CnqM0+EdJxqUX2TpoVIC+D8FC/2jsDC8nTUslAWi9yP4YnLuhBGLQcrorSduecBeHoUjSKvCRQxICjg3jS/qdCOmos4LAF4stWJaGRH9kpIGtAEs2YpenyNibv5Kr3WIBO3TvgsJNRlWF1U8j0/bKQrvQpfBs9axTELmjerLW0oiv8MCMv5Phd5/7yJF4NYgiTJYyKCQsw792gkHwX5CCDx+5+hAnXkq7kqiREJ9NdyXgAYPWE8L3fvZaYvXgTg/743wL7C4HlscaZ1Vzu8I9yTgRV2J1zg8TYG8IfM1Hrw/myvfV0U/3O+vhhMhyj10/7EAnASr/pZSEQoWjbDxi/LYWIQdNrWum5+9AY6exHqgq666Umd4J+IcIa1F9ybwZRwVJh7YFeN+15NUf1xcSPVXWMDm/JuqoLsmxr43MTuka3WXj70nGnxOH6Q=
 deploy:
   provider: releases
   skip_cleanup: true
@@ -38,13 +36,13 @@ deploy:
   - jobson-nix/target/jobson-nix-${TRAVIS_TAG}.tar.gz
   - jobson-deb/target/jobson_${TRAVIS_TAG}_all.deb
   on:
-    repo: adamkewley/jobson-1.0-throwaway
+    repo: adamkewley/jobson
     tags: true
   api-key:
-    secure: Lt3KHY0yHJe//hpEeoeWAxhp1HrIppaT9EWZUNfA/fHvtiFYLj3ng0T5lsrpG1BQvAclVlGH1yq6PRo+ymKeG4jHAmlfxj4y9sGueBI/rTvOozPHDChBqbMrp5R0LdaH8uHZEzmeUhWJ13hcFbGaCqAPkiEHafV8q5Bu7rM4HH/A4Ah/ltvcF+efWJuOfRPZ7ccpYRR9KhCN4VkN3+AwrHBSgYw8MMIgwRAaDC4KLTrdzYD+3vG+TeKZxQ9z+LDhbzQT61bqaTJK9cWLyCRysouU1wVcGQ7+Un25c7eJqXBrHGHfnynzuHNCOueLaJtJz4Y8pmsnTfuhc003mOGm7v+hQhNx7oYHXozCIxHjjc2o2JTOHoll1wC9TNBijLR1bWx5iBgVt0CaIyvNwpXgJlwZ7VYSNH4fNF760X4way6FovG17m3XL6ql9tEoO2dQwsefZHQk+xgppm5hpncRWfsE29WS9KT+copvAO/RYEA3mlL3kUhCpPpGqxqt7bwY3s43bb3DqTeeyD+TSdd4KZb7hVVyCWEuukOgMxbtVAQmaBhMitxmFdryyDT9liF53Og1KmtcR7TjQz9sWkJ/CfsUfdUV8CS1JPKRcPCPtmKtlXt8J/GjGagGFryJHn2mgsLvxv8ZZYGx4o1iInzGxRhMpx8hl4aRhHkuAMD9CZM=
+    secure: fQfCOpNXj3AkOij+PlYxCREamrPja2ttGspZTk1yAjoLGzZPPtgvYGj6KVx4sPz+velP8CK2X32NC+4EvgbJKHqx8oERvUB5uK8roohBjz92dnC8Sndy5yiGut3eKFtReHZZmUfNHPXMn0nWd2JdjsBXIm6syLt9wBjXlDN8izwPNHUemJr111e8mygtibmrSD98Wt/nXffi/SsSPhuabrfkQ3MQXNg5WbY9+Gk0xsnOskQjwBMvx4NVzk6TpIpBxIHg6c/dV338aI1h7PrJvK/XD0FPdOjelBDyAZhWbSf7sPwBFyXcv2cbHgEv/cCPZpqpXT0IEghV0LAUkn4+7bjxr/QcUhckXmEzNKhdX6Gttn0jxDLKxljl3WOMeMxkcjhNcgTfBN75/MIzwYZgiQJOV/IHeYG5U0iuXmuvEZCn0FgSpVh2OgGXqhtJJ+2F5ndbRft3Ib1qMn7k0oB8JPEH2Tx2dkGnWhr+EvpHo4ub7R88t2OWcLAHh/LuRUOKASCpxL7uzcazoXh7sQHEyz++9DxUIHxtKqoqjM9whQ3DSi1s6amQcAnNBNbHarph+2fD8Iz5sAW9kohLr2XSjLgtQRQKCCkg0hq9NfF7ICRG4H8Em+xmiVij7ai7UUQ3xYLKxgHYQwl4WFU5ARUxIPTt8JYHkhZvO6pN8E6XEzo=
 after_deploy: |
   set -e
-  
+
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "Travis CI"
 
@@ -59,9 +57,9 @@ after_deploy: |
   touch .nojekyll
   git add -A
   git commit -m "Updated docs for ${TRAVIS_TAG}"
-  git remote add origin-pages https://${GH_TOKEN}@github.com/adamkewley/jobson-1.0-throwaway.git > /dev/null 2>&1
+  git remote add origin-pages https://${GH_TOKEN}@github.com/adamkewley/jobson.git > /dev/null 2>&1
   git push origin-pages gh-pages
 
   docker login --username "adamkewley" --password "$DOCKER_PASSWORD"
-  docker push adamkewley/jobson-1.0.0-throwaway:${TRAVIS_TAG}
-  docker push adamkewley/jobson-1.0.0-throwaway:latest
+  docker push adamkewley/jobson:${TRAVIS_TAG}
+  docker push adamkewley/jobson:latest
