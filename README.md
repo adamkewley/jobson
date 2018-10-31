@@ -25,29 +25,3 @@ execution:
   arguments:
   - ${inputs.message}
 ```
-
-
-# Superfast Runthrough (Debian)
-
-See [quickstart](TODO) for more details.
-
-```bash
-apt install openjdk-8-jre
-wget NIX_DIST
-tar xvf NIX_DIST && cd NIX_DIST
-bin/jobson new --demo
-bin/jobson generate spec my_spec
-emacs specs/my_spec/spec.yml
-bin/jobson serve config.yml
-```
-
-
-# Documentation
-
-TOC TODO
-
-- Overview
-- Install
-- Quickstart
-- Configuration
-- UI
