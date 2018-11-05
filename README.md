@@ -25,3 +25,32 @@ execution:
   arguments:
   - ${inputs.message}
 ```
+
+# Quickstart
+
+Requires java (8+):
+
+```bash
+# install and add to PATH
+wget https://github.com/adamkewley/jobson/releases/download/1.0.0/jobson-nix-1.0.0.tar.gz
+tar xvf jobson-nix-1.0.0.tar.gz
+export PATH=$PATH:jobson-nix-1.0.0/bin
+
+# create demo workspace
+jobson new --demo
+
+# generate new spec
+jobson generate spec someSpec
+
+# edit
+#nano specs/someSpec/spec.yml
+
+# validate 
+jobson validate spec someSpec
+
+# host JSON API for running job
+jobson serve config.yml
+```
+
+See [installation](https://adamkewley.github.io/jobson/install.html)
+documentation for details.
