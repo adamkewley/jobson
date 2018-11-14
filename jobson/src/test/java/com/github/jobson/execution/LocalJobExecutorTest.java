@@ -18,12 +18,41 @@
  */
 package com.github.jobson.execution;
 
+import com.github.jobson.execution.subprocess.MockApplication;
+import com.github.jobson.execution.subprocess.MockSubprocessFactory;
+import com.github.jobson.execution.subprocess.SubprocessFactory;
+import com.github.jobson.other.TestHelpers;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.github.jobson.other.TestHelpers.generateRandomBytes;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 public final class LocalJobExecutorTest {
+
+    private LocalJobExecutorConfig generateLocalJobExecutorConfig() {
+        return null;
+    }
+
+    private JobExecutorIO generateJobExecutorIO() {
+        return new MockJobExecutorIO(); // TODO: introspecting
+    }
+
+    private MockSubprocessFactory generateSubprocessFactory() {
+        final Map<String, MockApplication> mockApplications = new HashMap<>();
+        mockApplications.put("someapp", new MockApplication(generateRandomBytes(), generateRandomBytes(), 0, 1000));
+        return new MockSubprocessFactory(mockApplications);  // TODO: introspecting
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testCtorThrowsNPEIfAnyArgIsNull() {
+        final LocalJobExecutorConfig config = generateLocalJobExecutorConfig();
+        final JobExecutorIO jobExecutorIO = generateJobExecutorIO();
+        final SubprocessFactory subprocessFactory = generateSubprocessFactory();
+    }
 
     @Test
     public void testEnsureConformsToInterface() {
