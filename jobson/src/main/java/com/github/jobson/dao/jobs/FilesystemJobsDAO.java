@@ -309,6 +309,11 @@ public final class FilesystemJobsDAO implements JobDAO {
         }
     }
 
+    @Override
+    public void remove(JobId jobId) {
+        throw new RuntimeException("NYI");
+    }
+
     private void createIfDoesNotExist(Path p) {
         if (!p.toFile().exists()) {
             try {
