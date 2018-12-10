@@ -432,4 +432,18 @@ public final class FilesystemJobsDAOTest extends JobsDAOTest {
 
         assertThat(data).isNotPresent();  // Because the data itself has been deleted
     }
+
+    @Test
+    public void testRemoveDeletesTheJobsDirectory() throws IOException {
+        final Path jobsDir = createTmpDir(FilesystemJobsDAOTest.class);
+        final FilesystemJobsDAO dao = createStandardFilesystemDAO(jobsDir);
+
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+
+        assertThat(Files.exists(jobsDir.resolve(jobId.toString()))).isTrue();
+
+        dao.remove(jobId);
+
+        assertThat(Files.exists(jobsDir.resolve(jobId.toString()))).isFalse();
+    }
 }
