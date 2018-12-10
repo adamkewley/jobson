@@ -37,6 +37,7 @@ import com.github.jobson.utils.BinaryData;
 import com.github.jobson.utils.DiskSpaceHealthCheck;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -311,7 +312,13 @@ public final class FilesystemJobsDAO implements JobDAO {
 
     @Override
     public void remove(JobId jobId) {
-        throw new RuntimeException("NYI");
+        resolveJobDir(jobId).ifPresent(dir -> {
+            try {
+                FileUtils.deleteDirectory(dir.toFile());
+            } catch (IOException ex) {
+                log.warn("{}: cannot delete job dir {}: {}", jobId, dir, ex.getMessage());
+            }
+        });
     }
 
     private void createIfDoesNotExist(Path p) {
