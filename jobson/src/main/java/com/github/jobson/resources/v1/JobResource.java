@@ -217,6 +217,24 @@ public final class JobResource {
         return jobDAO.getJobDetailsById(jobId).map(this::toJobResponse);
     }
 
+    @DELETE
+    @Path("{job-id}")
+    @ApiOperation(
+            value = "Delete a job from the system",
+            code = 200,
+            notes = "Deletes a job from the system, removing **all** job data. Running jobs are aborted before deletion."
+    )
+    @PermitAll
+    public void deleteJob(
+            @Context
+                    SecurityContext context,
+            @ApiParam(value = "The job's ID")
+            @PathParam("job-id")
+            @NotNull
+                    JobId jobId) {
+        throw new RuntimeException("NYI");
+    }
+
     @POST
     @ApiOperation(
             value = "Submit a new job",
