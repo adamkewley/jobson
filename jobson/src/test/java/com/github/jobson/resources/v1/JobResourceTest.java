@@ -1020,4 +1020,26 @@ public final class JobResourceTest {
         assertThat(ret).isPresent();
         assertThat(ret.get()).isEqualTo(inputs);
     }
+
+    @Test(expected = WebApplicationException.class)
+    public void testDeleteJobThrowsBadRequestIfJobIdIsNull() {
+        final JobDAO jobDAO = mock(JobDAO.class);
+
+        final JobResource jobResource = resourceThatUses(jobDAO);
+
+        jobResource.deleteJob(generateSecureSecurityContext(), null);
+    }
+
+    @Test
+    public void testDeleteJobCallsJobDAORemove() {
+        final JobDAO jobDAO = mock(JobDAO.class);
+
+        final JobResource jobResource = resourceThatUses(jobDAO);
+
+        final JobId jobId = generateJobId();
+
+        jobResource.deleteJob(generateSecureSecurityContext(), jobId);
+
+        verify(jobDAO, times(1)).remove(jobId);
+    }
 }
