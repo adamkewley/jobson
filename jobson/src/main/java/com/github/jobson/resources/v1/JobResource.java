@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.dao.jobs.JobDAO;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.jobs.ReadonlyJobDAO;
 import com.github.jobson.dao.specs.JobSpecConfigurationDAO;
@@ -73,12 +74,12 @@ public final class JobResource {
     private final JobManagerActions jobManagerActions;
     private final JobSpecConfigurationDAO jobSpecConfigurationDAO;
     private final int defaultPageSize;
-    private final ReadonlyJobDAO jobDAO;
+    private final JobDAO jobDAO;
 
 
     public JobResource(
             JobManagerActions jobManagerActions,
-            ReadonlyJobDAO jobDAO,
+            JobDAO jobDAO,
             JobSpecConfigurationDAO jobSpecConfigurationDAO,
             int defaultPageSize) throws RuntimeException {
 
@@ -232,7 +233,11 @@ public final class JobResource {
             @PathParam("job-id")
             @NotNull
                     JobId jobId) {
-        throw new RuntimeException("NYI");
+
+        if (jobId == null)
+            throw new WebApplicationException("Job ID is null", 400);
+
+        jobDAO.remove(jobId);
     }
 
     @POST

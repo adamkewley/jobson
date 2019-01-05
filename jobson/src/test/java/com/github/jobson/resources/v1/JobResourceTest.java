@@ -570,7 +570,7 @@ public final class JobResourceTest {
     private JobResource mockedJobResource() {
         return new JobResource(
                 mock(JobManagerActions.class),
-                mock(ReadonlyJobDAO.class),
+                mock(JobDAO.class),
                 mock(JobSpecConfigurationDAO.class),
                 Constants.DEFAULT_PAGE_SIZE);
     }
@@ -578,7 +578,7 @@ public final class JobResourceTest {
     @Test
     public void testSubmitJobCallsTheDAOSubmitMethodIfValidAgainstSpec() throws IOException {
         final JobManagerActions jobManagerActions = mockJobManagerThatReturns(typicalSubmissionReturn());
-        final ReadonlyJobDAO jobDAO = mock(ReadonlyJobDAO.class);
+        final JobDAO jobDAO = mock(JobDAO.class);
         final JobSpec jobSpec = generateValidJobSpec();
         final JobSpecConfigurationDAO jobSpecConfigurationDAO = mockJobSpecDAOThatReturns(jobSpec);
 
@@ -625,7 +625,7 @@ public final class JobResourceTest {
         final JobId jobId = TestHelpers.generateJobId();
         final Pair<JobId, CancelablePromise<FinalizedJob>> managerRet = Pair.of(jobId, new SimpleCancelablePromise<>());
         final JobManagerActions jobManagerActions = mockJobManagerThatReturns(managerRet);
-        final ReadonlyJobDAO jobDAO = mock(ReadonlyJobDAO.class);
+        final JobDAO jobDAO = mock(JobDAO.class);
         final JobSpec jobSpec = generateValidJobSpec();
         final JobSpecConfigurationDAO jobSpecConfigurationDAO = mockJobSpecDAOThatReturns(jobSpec);
 
@@ -644,7 +644,7 @@ public final class JobResourceTest {
     @Test(expected = WebApplicationException.class)
     public void testSubmitJobThrowsWebApplicationErrorIfTheRequestProducedValidationErrors() throws IOException {
         final JobManagerActions jobManagerActions = mockJobManagerThatReturns(typicalSubmissionReturn());
-        final ReadonlyJobDAO jobDAO = mock(ReadonlyJobDAO.class);
+        final JobDAO jobDAO = mock(JobDAO.class);
         final JobSpec jobSpec = generateValidJobSpec();
         final JobSpecConfigurationDAO jobSpecConfigurationDAO = mockJobSpecDAOThatReturns(jobSpec);
 
@@ -666,7 +666,7 @@ public final class JobResourceTest {
     @Test
     public void testSubmitJobResolvesDefaultValuesInTheRequestIfNotProvidedInTheSubmissionRequest() throws IOException {
         final JobManagerActions jobManagerActions = mockJobManagerThatReturns(typicalSubmissionReturn());
-        final ReadonlyJobDAO jobDAO = mock(ReadonlyJobDAO.class);
+        final JobDAO jobDAO = mock(JobDAO.class);
         final JobSpec jobSpec = generateValidJobSpec();
         final JobSpecConfigurationDAO jobSpecConfigurationDAO = mockJobSpecDAOThatReturns(jobSpec);
 
@@ -724,7 +724,7 @@ public final class JobResourceTest {
     private JobResource resourceThatUses(JobManagerActions jobManagerActions) {
         return new JobResource(
                 jobManagerActions,
-                mock(ReadonlyJobDAO.class),
+                mock(JobDAO.class),
                 mock(JobSpecConfigurationDAO.class),
                 Constants.DEFAULT_PAGE_SIZE);
     }
