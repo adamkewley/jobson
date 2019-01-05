@@ -36,4 +36,6 @@ public interface WritingJobDAO {
     void addNewJobStatus(JobId jobId, JobStatus newStatus, String statusMessage);
 
     void persistOutput(JobId jobId, JobOutput jobOutput);
+
+    void remove(JobId jobId);
 }

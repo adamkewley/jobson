@@ -679,4 +679,24 @@ public abstract class JobsDAOTest {
         final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
         assertThat(dao.hasJobInputs(jobId)).isTrue();
     }
+
+    @Test
+    public void testRemoveRemovesAJob() {
+        final JobDAO dao = getInstance();
+        final JobId jobId = dao.persist(STANDARD_VALID_REQUEST).getId();
+
+        assertThat(dao.jobExists(jobId)).isTrue();
+
+        dao.remove(jobId);
+
+        assertThat(dao.jobExists(jobId)).isFalse();
+    }
+
+    @Test
+    public void testRemoveFailsSilentlyIfTryingToRemoveAJobThatDoesntExist() {
+        final JobDAO dao = getInstance();
+
+        // Shouldn't throw
+        dao.remove(generateJobId());
+    }
 }

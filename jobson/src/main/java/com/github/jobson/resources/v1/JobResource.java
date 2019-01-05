@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
 import com.github.jobson.api.v1.*;
+import com.github.jobson.dao.jobs.JobDAO;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.dao.jobs.ReadonlyJobDAO;
 import com.github.jobson.dao.specs.JobSpecConfigurationDAO;
@@ -73,12 +74,12 @@ public final class JobResource {
     private final JobManagerActions jobManagerActions;
     private final JobSpecConfigurationDAO jobSpecConfigurationDAO;
     private final int defaultPageSize;
-    private final ReadonlyJobDAO jobDAO;
+    private final JobDAO jobDAO;
 
 
     public JobResource(
             JobManagerActions jobManagerActions,
-            ReadonlyJobDAO jobDAO,
+            JobDAO jobDAO,
             JobSpecConfigurationDAO jobSpecConfigurationDAO,
             int defaultPageSize) throws RuntimeException {
 
@@ -215,6 +216,32 @@ public final class JobResource {
             throw new WebApplicationException("Job ID is null", 400);
 
         return jobDAO.getJobDetailsById(jobId).map(this::toJobResponse);
+    }
+
+    @DELETE
+    @Path("{job-id}")
+    @ApiOperation(
+            value = "Delete a job from the system",
+            code = 200,
+            notes = "Deletes a job from the system, removing **all** job data. Running jobs are aborted before deletion."
+    )
+    @PermitAll
+    public int deleteJob(
+            @Context
+                    SecurityContext context,
+            @ApiParam(value = "The job's ID")
+            @PathParam("job-id")
+            @NotNull
+                    JobId jobId) {
+
+        if (jobId == null)
+            throw new WebApplicationException("Job ID is null", 400);
+
+        // ensure the job is aborted before deleting it: stops dangling IO writes
+        jobManagerActions.tryAbort(jobId);
+        jobDAO.remove(jobId);
+
+        return 200;
     }
 
     @POST

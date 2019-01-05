@@ -99,6 +99,11 @@ public final class MockInMemoryJobWriter implements WritingJobDAO {
         persistOutputCalledWith.add(new PersistOutputArgs(jobId, jobOutput.getId(), jobOutput.getData()));
     }
 
+    @Override
+    public void remove(JobId jobId) {
+
+    }
+
 
     public Optional<JobId> getPersistStdoutCalledWith() {
         return persistStdoutCalledWith;
