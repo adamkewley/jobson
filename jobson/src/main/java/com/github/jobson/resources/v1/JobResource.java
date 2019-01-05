@@ -237,6 +237,8 @@ public final class JobResource {
         if (jobId == null)
             throw new WebApplicationException("Job ID is null", 400);
 
+        // ensure the job is aborted before deleting it: stops dangling IO writes
+        jobManagerActions.tryAbort(jobId);
         jobDAO.remove(jobId);
 
         return 200;

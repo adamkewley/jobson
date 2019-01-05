@@ -1042,4 +1042,19 @@ public final class JobResourceTest {
 
         verify(jobDAO, times(1)).remove(jobId);
     }
+
+    @Test
+    public void testDeleteJobCallsAbortOnJob() {
+        final JobManagerActions actions = mock(JobManagerActions.class);
+        final JobDAO jobDAO = mock(JobDAO.class);
+
+        final JobResource jobResource = resourceThatUses(actions, jobDAO);
+
+        final JobId jobId = generateJobId();
+        when(actions.tryAbort(jobId)).thenReturn(true);
+
+        jobResource.deleteJob(generateSecureSecurityContext(), jobId);
+
+        verify(actions, times(1)).tryAbort(jobId);
+    }
 }

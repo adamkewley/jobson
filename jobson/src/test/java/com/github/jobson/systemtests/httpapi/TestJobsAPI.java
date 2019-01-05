@@ -468,29 +468,33 @@ public final class TestJobsAPI {
         assertThat(responseAfterDeletion.getStatus()).isEqualTo(404);
     }
 
-    /*
     @Test
     public void testCanDeleteARunningJob() {
         final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
-                .post(json(REQUEST_AGAINST_FIRST_SPEC))
+                .post(json(REQUEST_AGAINST_THIRD_SPEC))
                 .readEntity(APIJobCreatedResponse.class)
                 .getId();
-
-        waitUntilJobTerminates(jobId);
-
-        final JobStatus statusAfterCompletion = generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId))
-                .get()
-                .readEntity(APIJobDetails.class)
-                .latestStatus();
-
-        // Sanity check
-        assertThat(statusAfterCompletion).isEqualTo(JobStatus.FINISHED);
-
 
         final Response deletionResponse = generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId))
                 .delete();
 
         assertThat(deletionResponse.getStatus()).isEqualTo(200);
     }
-    */
+
+    @Test
+    public void testDeletingARunningJobCausesItToNotExist() {
+        final JobId jobId = generateAuthenticatedRequest(RULE, HTTP_JOBS_PATH)
+                .post(json(REQUEST_AGAINST_THIRD_SPEC))
+                .readEntity(APIJobCreatedResponse.class)
+                .getId();
+
+
+        generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId))
+                .delete();
+
+        final Response responseAfterDeletion = generateAuthenticatedRequest(RULE, jobResourceSubpath(jobId))
+                .get();
+
+        assertThat(responseAfterDeletion.getStatus()).isEqualTo(404);
+    }
 }
