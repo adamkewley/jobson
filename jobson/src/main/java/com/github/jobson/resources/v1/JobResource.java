@@ -226,7 +226,7 @@ public final class JobResource {
             notes = "Deletes a job from the system, removing **all** job data. Running jobs are aborted before deletion."
     )
     @PermitAll
-    public void deleteJob(
+    public int deleteJob(
             @Context
                     SecurityContext context,
             @ApiParam(value = "The job's ID")
@@ -238,6 +238,8 @@ public final class JobResource {
             throw new WebApplicationException("Job ID is null", 400);
 
         jobDAO.remove(jobId);
+
+        return 200;
     }
 
     @POST
