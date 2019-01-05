@@ -133,6 +133,28 @@
             }
           }
         }
+      },
+      "delete" : {
+        "summary" : "Delete a job from the system",
+        "description" : "Deletes a job from the system, removing **all** job data. Running jobs are aborted before deletion.",
+        "operationId" : "deleteJob",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "job-id",
+          "in" : "path",
+          "description" : "The job's ID",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          }
+        }
       }
     },
     "/v1/jobs/{job-id}/abort" : {

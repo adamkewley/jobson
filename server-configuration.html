@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Server Configuration &mdash; jobson-docs 1.0.0 documentation</title>
+  <title>Server Configuration &mdash; jobson-docs 1.0.1 documentation</title>
   
 
   
@@ -85,6 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commandline.html">Command-Line Interface</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Server Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-note-dropwizard">Configuration Note: Dropwizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#top-level-fields">Top-Level Fields</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#workingdirs-working-directory-configuration"><code class="docutils literal notranslate"><span class="pre">workingDirs</span></code>: Working Directory Configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#removeafterexecution-policy-for-removing-working-directories"><code class="docutils literal notranslate"><span class="pre">removeAfterExecution</span></code>: Policy for Removing Working Directories</a></li>
@@ -173,7 +174,13 @@
 <h1>Server Configuration<a class="headerlink" href="#server-configuration" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">config.yml</span></code> is the top-level configuration file for Jobson. It is a
 standard YAML file.</p>
+<div class="section" id="configuration-note-dropwizard">
+<h2>Configuration Note: Dropwizard<a class="headerlink" href="#configuration-note-dropwizard" title="Permalink to this headline">¶</a></h2>
+<p>Internally, Jobson currently uses <a class="reference external" href="https://www.dropwizard.io">dropwizard</a> to handle its server configuration. If
+you need to configure webserver properties (e.g. ports, logs), refer
+to the <a class="reference external" href="https://www.dropwizard.io/1.3.5/docs/manual/configuration.html#man-configuration">dropwizard configuration reference</a></p>
 <p><strong>Note</strong>: Relative paths are resolved relative to <code class="docutils literal notranslate"><span class="pre">config.yml</span></code></p>
+</div>
 <div class="section" id="top-level-fields">
 <h2>Top-Level Fields<a class="headerlink" href="#top-level-fields" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils" id="id1">
