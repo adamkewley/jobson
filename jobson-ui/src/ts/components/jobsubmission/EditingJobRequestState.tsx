@@ -140,15 +140,28 @@ export class EditingJobRequestState extends Component<EditingJobRequestStateProp
     private renderJobSubmissionButtons(): ReactElement<any> {
         return (
             <div style={{marginTop: "1em", textAlign: "center"}}>
-                <div>
-                    <button className="ui primary button"
-                            onClick={this.onUserClickedSubmit.bind(this)}>
-                        Submit Job
-                    </button>
-                </div>
-
+                {this.state.isSubmittingJob ?
+                     this.renderSubmittingJobMessage() :
+                     this.renderSubmitJobButton()}
                 {this.renderDownloadRequestButton()}
             </div>
+        );
+    }
+
+    private renderSubmittingJobMessage(): ReactElement<any> {
+        return (
+            <button className="ui primary disabled loading button">
+                Submitting job
+            </button>
+        );
+    }
+
+    private renderSubmitJobButton(): ReactElement<any> {
+        return (
+            <button className="ui primary button"
+                    onClick={this.onUserClickedSubmit.bind(this)}>
+                Submit Job
+            </button>
         );
     }
 
