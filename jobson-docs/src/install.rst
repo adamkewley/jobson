@@ -66,6 +66,39 @@ a volume mount:
 
 This will boot a docker container that listens on ``HOST_PORT``, which you can browse to.
 
+
+Inheriting the ``jobson`` Docker Image
+======================================
+
+Running ``jobson`` in a Docker container might be challenging if the
+applications ``jobson`` runs have other dependencies (e.g. ``python``,
+``c++``). One way to get around this is to create a specialized Docker
+image that inherits from the ``jobson`` docker image. Below is an
+`example
+<https://gist.github.com/NickEngland/fb646dfc05bbcf26b1a78e8cdf57b2ee>`_
+posted by `NickEngland <https://github.com/NickEngland/>`_ for running
+Docker containers inside the Jobson container (because, why not):
+
+.. code::
+
+    FROM adamkewley/jobson:latest
+    RUN apt update && \
+        apt-get -y install apt-transport-https \
+            ca-certificates \
+            curl \
+            gnupg2 \
+            software-properties-common && \
+        curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
+        add-apt-repository \
+            "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
+            $(lsb_release -cs) \
+            stable" && \
+        apt-get update && \
+        apt-get -y install docker-ce
+
+    RUN usermod -aG docker jobson
+
+
 	  
 Windows
 -------
