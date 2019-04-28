@@ -243,13 +243,13 @@ export class JobDetailsComponent extends Component<JobDetailsComponentProps, Job
             "Job Name": () => this.state.job.name,
             "Created by": () => this.state.job.owner,
             "Submitted": () => {
-                return <Timestamp time={this.state.job.timestamps[0].time} format='ago'/>;
+                return <Timestamp relative time={this.state.job.timestamps[0].time} autoUpdate format='ago' />;
             },
             "Latest Status": () => {
                 return (
                     <div>
                         {Helpers.renderStatusField(this.getLatestStatus().status)}
-                        (<Timestamp time={this.getLatestStatus().time} format='ago'/>)
+                        (<Timestamp relative time={this.getLatestStatus().time} autoUpdate format='ago'/>)
                     </div>
                 );
             },
