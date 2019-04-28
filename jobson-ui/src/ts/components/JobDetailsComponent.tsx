@@ -20,7 +20,7 @@
 import * as React from "react";
 
 import {Link} from "react-router-dom";
-import Timestamp from "react-timestamp";
+import TimeAgo from "react-timeago";
 import {Helpers} from "../Helpers";
 import {JobOutputsViewer} from "./outputviewers/JobOutputsViewer";
 import {JobEventsComponent} from "./JobEventsComponent";
@@ -243,15 +243,25 @@ export class JobDetailsComponent extends Component<JobDetailsComponentProps, Job
             "Job Name": () => this.state.job.name,
             "Created by": () => this.state.job.owner,
             "Submitted": () => {
-                return <Timestamp relative time={this.state.job.timestamps[0].time} autoUpdate format='ago' />;
+                return <TimeAgo date={this.state.job.timestamps[0].time} />;
             },
             "Latest Status": () => {
                 return (
                     <div>
                         {Helpers.renderStatusField(this.getLatestStatus().status)}
-                        (<Timestamp relative time={this.getLatestStatus().time} autoUpdate format='ago'/>)
+                        (<TimeAgo date={this.getLatestStatus().time}/>)
                     </div>
                 );
+            },
+            "Elapsed Time": () => {
+                const latest = this.getLatestStatus();
+                const startTime = Date.parse(this.state.job.timestamps[0].time);
+                const now = Helpers.isTerminalStatus(latest.status) ?
+                    () => Date.parse(latest.time) : () => new Date();
+                const formatter = (val, unit, suffix) => {
+                    return `${val} ${unit}s`;
+                };
+                return <TimeAgo date={startTime} now={now} formatter={formatter} />;
             },
         };
     }

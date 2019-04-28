@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import {Component, ReactElement} from "react";
-import Timestamp from "react-timestamp";
+import TimeAgo from "react-timeago";
 import {Helpers} from "../Helpers";
 import {Timeline, TimelineEvent} from 'react-event-timeline';
 import {APITimestamp} from "./apitypes/APITimestamp";
@@ -33,7 +33,7 @@ export class JobEventsComponent extends Component<JobEventsComponentProps> {
     private static renderTimestamp(timestamp: APITimestamp, i: number): ReactElement<any> {
         return (
             <TimelineEvent title={`Status changed to ${timestamp.status}`}
-                           createdAt={<Timestamp time={timestamp.time} format='ago'/>}
+                           createdAt={<TimeAgo date={timestamp.time}/>}
                            icon={<i/>}
                            key={i}
                            iconColor={Helpers.jobStatusColor(timestamp.status)}>

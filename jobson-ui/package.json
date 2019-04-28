@@ -25,7 +25,7 @@
     "@types/node": "10.11.4",
     "react-event-timeline": "1.6.3",
     "react-json-view": "1.19.1",
-    "react-timestamp": "4.4.0",
+    "react-timeago": "4.4.0",
     "rxjs": "6.4.0",
     "semantic-ui-css": "2.4.1"
   },

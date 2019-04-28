@@ -193,6 +193,17 @@ export class Helpers {
         return Object.keys(o).map(k => f(k, o[k]));
     }
 
+    static isTerminalStatus(status: string): boolean {
+        switch (status) {
+            case "aborted":
+            case "fatal-error":
+            case "finished":
+                return true;
+            default:
+                return false;
+        }
+    }
+
     static renderStatusField(status: string): ReactElement<any> {
         switch (status) {
             case "aborted":
