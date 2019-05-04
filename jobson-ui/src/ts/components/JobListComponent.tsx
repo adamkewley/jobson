@@ -334,6 +334,6 @@ export class JobListComponent extends Component<JobListComponentProps, JobListCo
     }
 
     private renderJobActions(jobSummary: APIJobDetails): ReactElement<any>[] {
-        return Helpers.renderAllJobActions(this.props.api, jobSummary.id, jobSummary._links);
+        return Helpers.renderAllJobActions(this.props.api, this.props.routeProps, jobSummary.id, jobSummary._links);
     }
 }

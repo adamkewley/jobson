@@ -34,10 +34,12 @@ import {APIJobEvent} from "./apitypes/APIJobEvent";
 import {JobsonAPI} from "../JobsonAPI";
 import {APITimestamp} from "./apitypes/APITimestamp";
 import {APIRestLink} from "./apitypes/APIRestLink";
+import {ResubmitButtonComponent} from "./ResubmitButtonComponent";
 
 export interface JobDetailsComponentProps {
     params: { [k: string]: string };
     api: JobsonAPI;
+    routeProps: any;
 }
 
 export interface JobDetailsComponentState {
@@ -225,7 +227,9 @@ export class JobDetailsComponent extends Component<JobDetailsComponentProps, Job
                     </div>
                 </div>
 
-                {Helpers.renderJobActionsWithoutViewBtn(this.props.api, this.state.job.id, this.state.job._links)}
+                {Helpers.renderJobActionsWithoutViewBtn(this.props.api, this.props.routeProps, this.state.job.id, this.state.job._links)}
+
+                <ResubmitButtonComponent api={this.props.api} jobId={this.state.job.id} routeProps={this.props.routeProps} />
 
                 <div className="ui top tabular menu">
                     {this.renderTabHeaders()}
