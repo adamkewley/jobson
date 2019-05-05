@@ -19,11 +19,11 @@
 
 import * as React from "react";
 import {Component, ReactElement} from "react"
-import {Helpers} from "../../Helpers";
-import {APIErrorMessage} from "../../apitypes/APIErrorMessage";
-import {APIJobSpec} from "../../apitypes/APIJobSpec";
-import {JobsonAPI} from "../../JobsonAPI";
-import {APIExpectedInput} from "../../apitypes/APIExpectedInput";
+import {Helpers} from "../Helpers";
+import {APIErrorMessage} from "../apitypes/APIErrorMessage";
+import {APIJobSpec} from "../apitypes/APIJobSpec";
+import {JobsonAPI} from "../JobsonAPI";
+import {APIExpectedInput} from "../apitypes/APIExpectedInput";
 
 export interface SpecViewerComponentProps {
     api: JobsonAPI;
