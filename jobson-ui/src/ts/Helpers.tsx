@@ -23,8 +23,8 @@ import {Subject, fromEvent, merge, Observer, Observable} from "rxjs";
 import {delay, take} from "rxjs/operators";
 import {Link} from "react-router-dom";
 import {JobsonAPI} from "./JobsonAPI";
-import {APIRestLink} from "./components/apitypes/APIRestLink";
-import {APIErrorMessage} from "./components/apitypes/APIErrorMessage";
+import {APIRestLink} from "./apitypes/APIRestLink";
+import {APIErrorMessage} from "./apitypes/APIErrorMessage";
 
 export class Helpers {
 
@@ -273,7 +273,7 @@ export class Helpers {
             <div>
                 <p>
                     There was an error loading {noun} from the Jobson API.
-                    The API's error message was: {apiError.message}.
+                    The APIs error message was: {apiError.message}.
                 </p>
                 <button className="ui primary icon button"
                         onClick={retryCallback}>
@@ -313,9 +313,9 @@ export class Helpers {
         );
     }
 
-    static renderAllJobActions(jobsonApi: JobsonAPI, jobId: string, restLinks: { [name: string]: APIRestLink }): ReactElement<any>[] {
+    static renderAllJobActions(jobsonApi: JobsonAPI, routeProps: any, jobId: string, restLinks: { [name: string]: APIRestLink }): ReactElement<any>[] {
         const btnsWithoutView =
-            Helpers.renderJobActionsWithoutViewBtn(jobsonApi, jobId, restLinks);
+            Helpers.renderJobActionsWithoutViewBtn(jobsonApi, routeProps, jobId, restLinks);
 
         const selfLinkIdx = Object.keys(restLinks).indexOf("self");
 
@@ -333,7 +333,11 @@ export class Helpers {
         }
     }
 
-    static renderJobActionsWithoutViewBtn(jobsonApi: JobsonAPI, jobId: string, restLinks: { [name: string]: APIRestLink }): any[] {
+    static renderJobActionsWithoutViewBtn(jobsonApi: JobsonAPI,
+                                          routeProps: any,
+                                          jobId: string,
+                                          restLinks: { [name: string]: APIRestLink }): any[] {
+        
         const restLinkActions: (ReactElement<any> | null)[] = Object.keys(restLinks)
             .map((linkName, i) => {
                 switch (linkName) {

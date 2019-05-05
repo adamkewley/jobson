@@ -25,7 +25,7 @@ import {JobDetailsComponent} from "./JobDetailsComponent";
 import {Redirect, Route, Switch} from "react-router";
 import {NavbarComponent} from "./NavbarComponent";
 import {SubmitJobComponent} from "./SubmitJobComponent";
-import {APIErrorMessage} from "./apitypes/APIErrorMessage";
+import {APIErrorMessage} from "../apitypes/APIErrorMessage";
 import {Component} from "react";
 
 export interface AppComponentProps {
@@ -201,7 +201,7 @@ export class AppComponent extends Component<AppComponentProps, AppComponentState
                     <Route path="/submit"
                            render={props => <SubmitJobComponent api={this.state.api} routeProps={props}/>}/>
                     <Route path="/jobs/:id"
-                           render={props => <JobDetailsComponent params={props.match.params} api={this.state.api}/>}/>
+                           render={props => <JobDetailsComponent params={props.match.params} api={this.state.api} routeProps={props}/>}/>
                     <Route path="/jobs"
                            render={props => <JobListComponent api={this.state.api} routeProps={props}/>}/>
                     <Redirect from={"/"} to={"/jobs"}/>

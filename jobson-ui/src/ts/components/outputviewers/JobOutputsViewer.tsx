@@ -22,10 +22,10 @@ import {StdioComponent} from "./StdioComponent";
 import {Helpers} from "../../Helpers";
 import {Component, ReactElement} from "react";
 import {Observable, Subscription} from "rxjs/index";
-import {APIJobEvent} from "../apitypes/APIJobEvent";
+import {APIJobEvent} from "../../apitypes/APIJobEvent";
 import {JobsonAPI} from "../../JobsonAPI";
-import {APIErrorMessage} from "../apitypes/APIErrorMessage";
-import {APIJobOutput} from "../apitypes/APIJobOutput";
+import {APIErrorMessage} from "../../apitypes/APIErrorMessage";
+import {APIJobOutput} from "../../apitypes/APIJobOutput";
 
 export interface JobOutputsViewerProps {
     jobChangesSubject: Observable<APIJobEvent>;

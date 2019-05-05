@@ -21,11 +21,11 @@ import * as React from "react";
 import {Helpers} from "../../Helpers";
 import {EditingJobRequestState} from "./EditingJobRequestState";
 import {JobsonAPI} from "../../JobsonAPI";
-import {APIJobSpecSummary} from "../apitypes/APIJobSpecSummary";
+import {APIJobSpecSummary} from "../../apitypes/APIJobSpecSummary";
 import {ReactElement} from "react";
-import {APIJobDetails} from "../apitypes/APIJobDetails";
-import {APIErrorMessage} from "../apitypes/APIErrorMessage";
-import {APIJobSpec} from "../apitypes/APIJobSpec";
+import {APIJobDetails} from "../../apitypes/APIJobDetails";
+import {APIErrorMessage} from "../../apitypes/APIErrorMessage";
+import {APIJobSpec} from "../../apitypes/APIJobSpec";
 
 export interface LoadExistingJobRequestStateProps {
     api: JobsonAPI;

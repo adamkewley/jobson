@@ -24,10 +24,10 @@ import {Constants} from "../../Constants";
 import {Helpers} from "../../Helpers";
 import {JobRequestEditorUpdate} from "./editorupdates/JobRequestEditorUpdate";
 import {Component, FormEvent, ReactElement} from "react";
-import {APIExpectedInput} from "../apitypes/APIExpectedInput";
+import {APIExpectedInput} from "../../apitypes/APIExpectedInput";
 import {JobsonAPI} from "../../JobsonAPI";
-import {APIJobSpec} from "../apitypes/APIJobSpec";
-import {APIJobRequest} from "../apitypes/APIJobRequest";
+import {APIJobSpec} from "../../apitypes/APIJobSpec";
+import {APIJobRequest} from "../../apitypes/APIJobRequest";
 
 export interface JobRequestEditorComponentProps {
 	api: JobsonAPI;

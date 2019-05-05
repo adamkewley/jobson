@@ -19,9 +19,9 @@
 
 import * as React from "react";
 import ReactJson from 'react-json-view';
-import {Helpers} from "../../Helpers";
+import {Helpers} from "../Helpers";
 import {Component, ReactElement} from "react";
-import {JobsonAPI} from "../../JobsonAPI";
+import {JobsonAPI} from "../JobsonAPI";
 import {APIErrorMessage} from "../apitypes/APIErrorMessage";
 
 export interface JobInputsViewerProps {

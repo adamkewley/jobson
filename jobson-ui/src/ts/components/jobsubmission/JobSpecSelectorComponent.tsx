@@ -19,7 +19,7 @@
 
 import * as React from "react";
 import {Component, FormEvent, ReactElement} from "react";
-import {APIJobSpecSummary} from "../apitypes/APIJobSpecSummary";
+import {APIJobSpecSummary} from "../../apitypes/APIJobSpecSummary";
 
 export interface JobSpecSelectorComponentProps {
     selectedSpecId: string,

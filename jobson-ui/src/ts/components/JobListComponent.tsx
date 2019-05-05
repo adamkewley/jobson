@@ -22,11 +22,11 @@ import {Link} from "react-router-dom";
 import {Helpers} from "../Helpers";
 import {Component, FormEvent, ReactElement} from "react";
 import {JobsonAPI} from "../JobsonAPI";
-import {APIErrorMessage} from "./apitypes/APIErrorMessage";
-import {APIJobDetails} from "./apitypes/APIJobDetails";
+import {APIErrorMessage} from "../apitypes/APIErrorMessage";
+import {APIJobDetails} from "../apitypes/APIJobDetails";
 import {Subscription} from "rxjs/index";
-import {APIJobDetailsCollection} from "./apitypes/APIJobDetailsCollection";
-import {APITimestamp} from "./apitypes/APITimestamp";
+import {APIJobDetailsCollection} from "../apitypes/APIJobDetailsCollection";
+import {APITimestamp} from "../apitypes/APITimestamp";
 
 export interface JobListComponentProps {
     api: JobsonAPI;
@@ -334,6 +334,6 @@ export class JobListComponent extends Component<JobListComponentProps, JobListCo
     }
 
     private renderJobActions(jobSummary: APIJobDetails): ReactElement<any>[] {
-        return Helpers.renderAllJobActions(this.props.api, jobSummary.id, jobSummary._links);
+        return Helpers.renderAllJobActions(this.props.api, this.props.routeProps, jobSummary.id, jobSummary._links);
     }
 }

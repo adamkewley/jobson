@@ -22,9 +22,9 @@ import {Helpers} from "../../Helpers";
 import {EditingJobRequestState} from "./EditingJobRequestState";
 import {JobsonAPI} from "../../JobsonAPI";
 import {Component, ReactElement} from "react";
-import {APIJobSpecSummary} from "../apitypes/APIJobSpecSummary";
-import {APIErrorMessage} from "../apitypes/APIErrorMessage";
-import {APIJobSpec} from "../apitypes/APIJobSpec";
+import {APIJobSpecSummary} from "../../apitypes/APIJobSpecSummary";
+import {APIErrorMessage} from "../../apitypes/APIErrorMessage";
+import {APIJobSpec} from "../../apitypes/APIJobSpec";
 
 export interface LoadingJobSpecStateProps {
     api: JobsonAPI;
