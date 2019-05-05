@@ -23,8 +23,8 @@ import {Subject, fromEvent, merge, Observer, Observable} from "rxjs";
 import {delay, take} from "rxjs/operators";
 import {Link} from "react-router-dom";
 import {JobsonAPI} from "./JobsonAPI";
-import {APIRestLink} from "./components/apitypes/APIRestLink";
-import {APIErrorMessage} from "./components/apitypes/APIErrorMessage";
+import {APIRestLink} from "./apitypes/APIRestLink";
+import {APIErrorMessage} from "./apitypes/APIErrorMessage";
 
 export class Helpers {
 

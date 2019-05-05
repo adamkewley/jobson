@@ -25,11 +25,11 @@ import {LoadingJobSpecState} from "./LoadingJobSpecState";
 import {JobRequestEditorUpdate} from "./editorupdates/JobRequestEditorUpdate";
 import {Component, ReactElement} from "react";
 import {JobsonAPI} from "../../JobsonAPI";
-import {APIJobSpec} from "../apitypes/APIJobSpec";
-import {APIJobSpecSummary} from "../apitypes/APIJobSpecSummary";
-import {APIErrorMessage} from "../apitypes/APIErrorMessage";
-import {APIJobRequest} from "../apitypes/APIJobRequest";
-import {APIJobCreatedResponse} from "../apitypes/APIJobCreatedResponse";
+import {APIJobSpec} from "../../apitypes/APIJobSpec";
+import {APIJobSpecSummary} from "../../apitypes/APIJobSpecSummary";
+import {APIErrorMessage} from "../../apitypes/APIErrorMessage";
+import {APIJobRequest} from "../../apitypes/APIJobRequest";
+import {APIJobCreatedResponse} from "../../apitypes/APIJobCreatedResponse";
 
 export interface EditingJobRequestStateProps {
     api: JobsonAPI,

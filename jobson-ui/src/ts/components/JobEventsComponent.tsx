@@ -22,7 +22,7 @@ import {Component, ReactElement} from "react";
 import TimeAgo from "react-timeago";
 import {Helpers} from "../Helpers";
 import {Timeline, TimelineEvent} from 'react-event-timeline';
-import {APITimestamp} from "./apitypes/APITimestamp";
+import {APITimestamp} from "../apitypes/APITimestamp";
 
 export interface JobEventsComponentProps {
     timestamps: APITimestamp[];

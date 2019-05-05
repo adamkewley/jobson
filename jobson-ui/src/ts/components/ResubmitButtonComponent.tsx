@@ -21,8 +21,8 @@ import * as React from "react";
 
 import {Component, ReactElement} from "react";
 import {JobsonAPI} from "../JobsonAPI";
-import {APIErrorMessage} from "./apitypes/APIErrorMessage";
-import {APIJobRequest} from "./apitypes/APIJobRequest";
+import {APIErrorMessage} from "../apitypes/APIErrorMessage";
+import {APIJobRequest} from "../apitypes/APIJobRequest";
 
 
 export interface ResubmitButtonProps {

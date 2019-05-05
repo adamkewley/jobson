@@ -18,7 +18,7 @@
  */
 
 import {JobRequestEditorUpdate} from "./JobRequestEditorUpdate";
-import {APIJobRequest} from "../../apitypes/APIJobRequest";
+import {APIJobRequest} from "../../../apitypes/APIJobRequest";
 import {JobRequestEditorUpdateVisitor} from "./JobRequestEditorUpdateVisitor";
 
 export class ValueJobRequestEditorUpdate implements JobRequestEditorUpdate {

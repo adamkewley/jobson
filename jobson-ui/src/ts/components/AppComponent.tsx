@@ -25,7 +25,7 @@ import {JobDetailsComponent} from "./JobDetailsComponent";
 import {Redirect, Route, Switch} from "react-router";
 import {NavbarComponent} from "./NavbarComponent";
 import {SubmitJobComponent} from "./SubmitJobComponent";
-import {APIErrorMessage} from "./apitypes/APIErrorMessage";
+import {APIErrorMessage} from "../apitypes/APIErrorMessage";
 import {Component} from "react";
 
 export interface AppComponentProps {

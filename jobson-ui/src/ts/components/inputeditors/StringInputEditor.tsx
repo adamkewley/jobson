@@ -22,7 +22,7 @@ import {Helpers} from "../../Helpers";
 import {InputEditorUpdate} from "./updates/InputEditorUpdate";
 import {InputEditorProps} from "./InputEditor";
 import {Component, FormEvent, ReactElement} from "react";
-import {APIExpectedInput} from "../apitypes/APIExpectedInput";
+import {APIExpectedInput} from "../../apitypes/APIExpectedInput";
 import {string} from "prop-types";
 import {type} from "os";
 

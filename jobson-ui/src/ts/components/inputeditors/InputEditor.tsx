@@ -26,7 +26,7 @@ import {UnknownInputTypeInputEditor} from "./UnknownInputTypeInputEditor";
 import {IntegerInputEditor} from "./IntegerInputEditor";
 import {Constants} from "../../Constants";
 import {DecimalInputEditor} from "./DecimalInputEditor";
-import {APIExpectedInput} from "../apitypes/APIExpectedInput";
+import {APIExpectedInput} from "../../apitypes/APIExpectedInput";
 import {InputEditorUpdate} from "./updates/InputEditorUpdate";
 import {Component, ReactElement} from "react";
 

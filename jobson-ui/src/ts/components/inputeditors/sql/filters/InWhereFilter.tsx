@@ -22,7 +22,7 @@ import {StringArrayInputEditor} from "../../StringArrayInputEditor";
 import {SQLWhereFilterProps} from "../SQLWhereFilterSelector";
 import {Component, ReactElement} from "react";
 import {InputEditorUpdate} from "../../updates/InputEditorUpdate";
-import {APIExpectedInput} from "../../../apitypes/APIExpectedInput";
+import {APIExpectedInput} from "../../../../apitypes/APIExpectedInput";
 
 export interface InWhereFilterState {
     entries: string[];

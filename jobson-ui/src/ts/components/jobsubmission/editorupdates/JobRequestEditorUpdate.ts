@@ -20,7 +20,7 @@
 import {ValueJobRequestEditorUpdate} from "./ValueJobRequestEditorUpdate";
 import {ErrorsJobRequestUpdate} from "./ErrorsJobRequestUpdate";
 import {JobRequestEditorUpdateVisitor} from "./JobRequestEditorUpdateVisitor";
-import {APIJobRequest} from "../../apitypes/APIJobRequest";
+import {APIJobRequest} from "../../../apitypes/APIJobRequest";
 
 export abstract class JobRequestEditorUpdate {
 

@@ -24,7 +24,7 @@ import {Helpers} from "../../Helpers";
 import {InputEditorUpdate} from "./updates/InputEditorUpdate";
 import {InputEditorProps} from "./InputEditor";
 import {Component, ReactElement} from "react";
-import {APIExpectedInput} from "../apitypes/APIExpectedInput";
+import {APIExpectedInput} from "../../apitypes/APIExpectedInput";
 
 export interface SQLInputEditorState {
     query: string;

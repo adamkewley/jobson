@@ -20,7 +20,7 @@
 import * as React from "react";
 import {Helpers} from "../../Helpers";
 import {ChangeEvent, Component, ReactElement} from "react";
-import {APIErrorMessage} from "../apitypes/APIErrorMessage";
+import {APIErrorMessage} from "../../apitypes/APIErrorMessage";
 import {Observable, Subscription} from "rxjs/index";
 
 export interface StdioComponentProps {

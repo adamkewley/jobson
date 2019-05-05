@@ -28,12 +28,12 @@ import {JobInputsViewer} from "./inputviewers/JobInputsViewer";
 import {SpecViewerComponent} from "./specviewers/SpecViewerComponent";
 import {Component, ReactElement} from "react";
 import {Observable, Subscription} from "rxjs/index";
-import {APIErrorMessage} from "./apitypes/APIErrorMessage";
-import {APIJobDetails} from "./apitypes/APIJobDetails";
-import {APIJobEvent} from "./apitypes/APIJobEvent";
+import {APIErrorMessage} from "../apitypes/APIErrorMessage";
+import {APIJobDetails} from "../apitypes/APIJobDetails";
+import {APIJobEvent} from "../apitypes/APIJobEvent";
 import {JobsonAPI} from "../JobsonAPI";
-import {APITimestamp} from "./apitypes/APITimestamp";
-import {APIRestLink} from "./apitypes/APIRestLink";
+import {APITimestamp} from "../apitypes/APITimestamp";
+import {APIRestLink} from "../apitypes/APIRestLink";
 import {ResubmitButtonComponent} from "./ResubmitButtonComponent";
 
 export interface JobDetailsComponentProps {

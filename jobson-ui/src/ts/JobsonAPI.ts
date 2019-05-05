@@ -20,15 +20,15 @@
 import {Helpers} from "./Helpers";
 import {map} from "rxjs/operators";
 import {HttpService} from "./HttpService";
-import {APIJobSpecSummary} from "./components/apitypes/APIJobSpecSummary";
-import {APIJobSpec} from "./components/apitypes/APIJobSpec";
-import {APIJobDetails} from "./components/apitypes/APIJobDetails";
-import {APIJobDetailsCollection} from "./components/apitypes/APIJobDetailsCollection";
-import {APIJobRequest} from "./components/apitypes/APIJobRequest";
-import {APIJobCreatedResponse} from "./components/apitypes/APIJobCreatedResponse";
+import {APIJobSpecSummary} from "./apitypes/APIJobSpecSummary";
+import {APIJobSpec} from "./apitypes/APIJobSpec";
+import {APIJobDetails} from "./apitypes/APIJobDetails";
+import {APIJobDetailsCollection} from "./apitypes/APIJobDetailsCollection";
+import {APIJobRequest} from "./apitypes/APIJobRequest";
+import {APIJobCreatedResponse} from "./apitypes/APIJobCreatedResponse";
 import {Observable} from "rxjs/index";
-import {APIJobEvent} from "./components/apitypes/APIJobEvent";
-import {APIJobOutput} from "./components/apitypes/APIJobOutput";
+import {APIJobEvent} from "./apitypes/APIJobEvent";
+import {APIJobOutput} from "./apitypes/APIJobOutput";
 
 export class JobsonAPI {
 

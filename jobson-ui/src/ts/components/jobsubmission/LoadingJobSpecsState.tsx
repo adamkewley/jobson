@@ -23,9 +23,9 @@ import {Helpers} from "../../Helpers";
 import {LoadExistingJobRequestState} from "./LoadExistingJobRequestState";
 import {JobsonAPI} from "../../JobsonAPI";
 import {ReactElement} from "react";
-import {APIErrorMessage} from "../apitypes/APIErrorMessage";
-import {APIJobSpecSummary} from "../apitypes/APIJobSpecSummary";
-import {APIJobRequest} from "../apitypes/APIJobRequest";
+import {APIErrorMessage} from "../../apitypes/APIErrorMessage";
+import {APIJobSpecSummary} from "../../apitypes/APIJobSpecSummary";
+import {APIJobRequest} from "../../apitypes/APIJobRequest";
 
 export interface LoadingJobSpecsStateProps {
 	api: JobsonAPI,
