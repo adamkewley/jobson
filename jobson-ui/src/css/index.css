@@ -1,3 +1,13 @@
+.site-root {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.site-content {
+    flex: 1;
+}
+
 pre {
   padding: 0.1em;
   height: 30em;

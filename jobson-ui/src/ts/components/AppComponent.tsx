@@ -181,14 +181,13 @@ export class AppComponent extends Component<AppComponentProps, AppComponentState
                     <div className="loading-bar enabled"/> :
                     <div className="loading-bar"/>}
 
-                <div id="root-container">
-                    <div>
+                <div id="root-container" className="site-root">
+                    <div className="site-content">
                         {this.state.api !== null ? <NavbarComponent api={this.state.api}/> : null}
 
                         {this.renderMain()}
-
-                        {AppComponent.renderFooter()}
                     </div>
+                    {AppComponent.renderFooter()}
                 </div>
             </div>
         );
