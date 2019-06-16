@@ -149,16 +149,20 @@ export class EditingJobRequestState extends Component<EditingJobRequestStateProp
     }
 
     private renderSubmittingJobMessage(): ReactElement<any> {
+        const style = { "display": "block", "margin": "1em auto" };
         return (
-            <button className="ui primary disabled loading button">
+            <button className="ui primary disabled loading basic button"
+                    style={style}>
                 Submitting job
             </button>
         );
     }
 
     private renderSubmitJobButton(): ReactElement<any> {
+        const style = { "display": "block", "margin": "1em auto" };
         return (
             <button className="ui primary button"
+                    style={style}
                     onClick={this.onUserClickedSubmit.bind(this)}>
                 Submit Job
             </button>
@@ -167,7 +171,7 @@ export class EditingJobRequestState extends Component<EditingJobRequestStateProp
 
     private renderDownloadRequestButton(): ReactElement<any> {
         return (
-            <button className="ui tiny button"
+            <button className="ui tiny basic button"
                     onClick={this.onUserClickedDownloadRequest.bind(this)}>
                 Download Request (debug)
             </button>
