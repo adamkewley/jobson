@@ -1,0 +1,13 @@
+digraph G {
+    "JSON client (e.g. web UI)" -> inputs [label="produces"];
+    inputs -> jobson [label="provided to"];
+    "jobson" [shape="rectangle", style="filled", color="black", fontcolor="white"];
+    inputs -> "job spec" [label="described by"];
+    jobson -> "subprocess (e.g. python)" [label="launches + manages"];
+    "subprocess (e.g. python)" -> "stderr / stdout / files / exit code" [label="writes"];
+    "stderr / stdout / files / exit code" -> jobson [label="read by"];
+    jobson -> "job spec" [label="uses"];
+    jobson -> job [label="creates + writes to"];
+    job -> "JSON client (e.g. web UI)" [label="consumed by"];
+    job -> "subprocess (e.g. python)" [label="encapsulates a"];
+}

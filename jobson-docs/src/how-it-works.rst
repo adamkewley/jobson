@@ -1,6 +1,8 @@
 How It Works
 ============
 
+.. image:: _static/architecture.svg
+
 Jobson's architecture separates configuration, execution, and client
 interaction into three distinct APIs.
 
