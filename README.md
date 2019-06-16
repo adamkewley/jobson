@@ -32,9 +32,9 @@ Requires java (8+):
 
 ```bash
 # install and add to PATH
-wget https://github.com/adamkewley/jobson/releases/download/1.0.0/jobson-nix-1.0.0.tar.gz
-tar xvf jobson-nix-1.0.0.tar.gz
-export PATH=$PATH:jobson-nix-1.0.0/bin
+wget https://github.com/adamkewley/jobson/releases/download/1.0.4/jobson-nix-1.0.4.tar.gz
+tar xvf jobson-nix-1.0.4.tar.gz
+export PATH=$PATH:jobson-nix-1.0.4/bin
 
 # create demo workspace
 jobson new --demo
