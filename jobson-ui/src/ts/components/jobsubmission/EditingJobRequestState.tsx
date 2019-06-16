@@ -171,7 +171,7 @@ export class EditingJobRequestState extends Component<EditingJobRequestStateProp
 
     private renderDownloadRequestButton(): ReactElement<any> {
         return (
-            <button className="ui tiny basic button"
+            <button className="ui tiny compact basic button"
                     onClick={this.onUserClickedDownloadRequest.bind(this)}>
                 Download Request (debug)
             </button>
