@@ -5,6 +5,7 @@ branches:
   - master
   - dev
   - "/feature-*/"
+  - "/fix-*/"
   - "/\\d+.\\d+.\\d+/"
   - "/\\d+.\\d+.\\d+-staging/"
 addons:
