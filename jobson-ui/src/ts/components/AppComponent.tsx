@@ -57,16 +57,16 @@ export class AppComponent extends Component<AppComponentProps, AppComponentState
                 <div className="ui container">
                     <div className="ui stackable inverted divided equal height stackable grid">
                         <div className="ten wide column">
-                            <h4 className="ui inverted header">Jobson UI</h4>
+                            <h4 className="ui inverted header">Jobson</h4>
                             <p>
-                                Jobson is an open-source web server that can turn command-line
-                                applications into a job system.
+                                Jobson is an open-source web server that can turn any command-line
+                                application into a job system.
                             </p>
                         </div>
                         <div className="six wide column">
                             <div className="ui inverted link list">
-                                <a className="item" href="https://github.com/adamkewley/jobson">Jobson Project</a>
-                                <a className="item" href="https://github.com/adamkewley/jobson-ui">Jobson UI Project</a>
+                                <a className="item" href="https://adamkewley.github.io/jobson/">Documentation</a>
+                                <a className="item" href="https://github.com/adamkewley/jobson">Source Code</a>
                             </div>
                         </div>
                     </div>
@@ -181,14 +181,13 @@ export class AppComponent extends Component<AppComponentProps, AppComponentState
                     <div className="loading-bar enabled"/> :
                     <div className="loading-bar"/>}
 
-                <div id="root-container">
-                    <div>
+                <div id="root-container" className="site-root">
+                    <div className="site-content">
                         {this.state.api !== null ? <NavbarComponent api={this.state.api}/> : null}
 
                         {this.renderMain()}
-
-                        {AppComponent.renderFooter()}
                     </div>
+                    {AppComponent.renderFooter()}
                 </div>
             </div>
         );
