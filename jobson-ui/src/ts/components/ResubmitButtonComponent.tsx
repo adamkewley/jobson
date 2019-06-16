@@ -109,6 +109,7 @@ export class ResubmitButtonComponent extends Component<ResubmitButtonProps, Resu
                 })
                 .then(resp => {
                     this.props.routeProps.history.push(`/jobs/${resp.id}`);
+                    window.location.reload();
                 })
                 .catch(e => this.setState({ errorSubmitting: e }));
         });
