@@ -28,6 +28,10 @@ execution:
 
 # Quickstart
 
+See
+[documentation](https://adamkewley.github.io/jobson/quickstart.html)
+for comprehensive walkthrough.
+
 Requires java (8+):
 
 ```bash
