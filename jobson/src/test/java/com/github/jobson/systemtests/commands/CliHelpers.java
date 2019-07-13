@@ -76,8 +76,6 @@ public final class CliHelpers {
     }
 
     private static String reconstructClasspath() {
-      return Arrays.stream(((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs())
-              .map(URL::getFile)
-              .collect(Collectors.joining(File.pathSeparator));
+        return System.getProperty("java.class.path");
     }
 }

@@ -40,35 +40,35 @@
         <dependency>
             <groupId>io.reactivex.rxjava2</groupId>
             <artifactId>rxjava</artifactId>
-            <version>2.2.8</version>
+            <version>2.2.10</version>
         </dependency>
 
         <!-- Basic websocket support for Jetty (the core HTTP server) -->
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-server-impl</artifactId>
-            <version>9.4.15.v20190215</version>
+            <version>9.4.19.v20190610</version>
         </dependency>
 
         <!-- Generating Lorem-Ipsum etc. for generator commands -->
         <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
-            <version>0.17.2</version>
+            <version>0.18</version>
         </dependency>
 
         <!-- For automatically detecting MIME types from filenames/data -->
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>1.20</version>
+            <version>1.21</version>
         </dependency>
 
         <!-- For parsing + validating SQL inputs -->
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
-            <version>1.1</version>
+            <version>1.1</version> <!-- todo: later version breaks -->
         </dependency>
 
         <!-- To document the HTTP API -->
@@ -111,7 +111,7 @@
             <groupId>org.glassfish.jersey.test-framework</groupId>
             <artifactId>jersey-test-framework-util</artifactId>
             <scope>test</scope>
-            <version>2.28</version>
+            <version>2.29</version>
         </dependency>
 
 
@@ -176,7 +176,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.1</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>src</descriptorRef>
