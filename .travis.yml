@@ -13,7 +13,7 @@ addons:
     packages:
     - python3
     - python3-pip
-    - node
+    - nodejs
     - docker
 before_install:
 - gem install fpm --version 1.10.0
