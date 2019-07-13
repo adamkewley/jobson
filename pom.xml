@@ -56,7 +56,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <docker.user>adamkewley</docker.user>
         <docker.repo>jobson</docker.repo>
-        <version.swaggerui>3.19.3</version.swaggerui>
+        <version.swaggerui>3.23.0</version.swaggerui>
     </properties>
 
     <dependencyManagement>
