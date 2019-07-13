@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.Helpers;
 import com.github.jobson.TestHelpers;
 import com.github.jobson.jobinputs.JobExpectedInputId;
+import com.github.jobson.api.v1.UserId;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobOutput;
 import com.github.jobson.jobs.JobStatus;
@@ -295,6 +296,49 @@ public abstract class JobsDAOTest {
                         .collect(Collectors.toSet());
 
         final Set<JobId> expectedJobIds = allJobIds.get(firstRequest);
+
+        assertThat(returnedJobIds).isEqualTo(expectedJobIds);
+    }
+
+    @Test
+    public void testGetJobsWithSubmittedBySpecifierReturnsJobsSubmittedByUser() throws IOException {
+        final JobDAO dao = getInstance();
+
+        final UserId userA = generateUserId();
+        final UserId userB = generateUserId();
+        final String uniqueName = generateRandomString();
+        final String nameLikeUserA = userA.toString();
+
+        final ValidJobRequest reqByA = validRequestWithOwnerAndName(userA, uniqueName);
+        final ValidJobRequest reqByB = validRequestWithOwnerAndName(userB, uniqueName);
+        final ValidJobRequest reqByBWithAsName = validRequestWithOwnerAndName(userB, nameLikeUserA);
+
+        final int numJobRequests = 20;
+
+        final Map<ValidJobRequest, Set<JobId>> allJobIds =
+                IntStream.range(0, numJobRequests)
+                    .mapToObj(i -> {
+                            switch (i % 3) {
+                            case 0:
+                                return reqByA;
+                            case 1:
+                                return reqByB;
+                            case 3:
+                            default:
+                                return reqByBWithAsName;
+                            }
+                    }).map(req -> Pair.of(req, dao.persist(req).getId()))
+                    .collect(groupingBy(Pair::getLeft, mapping(Pair::getRight, toSet())));
+
+        final String query = "owner: " + userA.toString();
+
+        final Set<JobId> returnedJobIds =
+                dao.getJobs(numJobRequests, 0, query)
+                        .stream()
+                        .map(JobDetails::getId)
+                        .collect(Collectors.toSet());
+
+        final Set<JobId> expectedJobIds = allJobIds.get(reqByA);
 
         assertThat(returnedJobIds).isEqualTo(expectedJobIds);
     }

@@ -519,6 +519,14 @@ public final class TestHelpers {
                 STANDARD_VALID_REQUEST.getSpec());
     }
 
+    public static ValidJobRequest validRequestWithOwnerAndName(UserId owner, String name) {
+        return new ValidJobRequest(
+            owner,
+            name,
+            STANDARD_VALID_REQUEST.getInputs(),
+            STANDARD_VALID_REQUEST.getSpec());
+    }
+
     public static float randomFloat() {
         return rng.nextFloat();
     }

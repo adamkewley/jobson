@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -117,11 +117,29 @@ public final class FilesystemJobsDAO implements JobDAO {
         if (pageNumber < 0) throw new IllegalArgumentException("page is below 0");
         if (query == null) throw new IllegalArgumentException("query string is null");
 
-        final Predicate<JobDetails> resultFilter = jobDetails -> {
-            final String allFields =
-                    jobDetails.getName() + jobDetails.getOwner() + jobDetails.getId();
-            return allFields.toLowerCase().contains(query.toLowerCase());
-        };
+        Predicate<JobDetails> resultFilter;
+        if (query.startsWith("owner:")) {
+            final String parts[] = query.substring("owner:".length()).trim().split(" ", 2);
+            final String owner = parts[0];
+
+            resultFilter = jobDetails -> {
+                if (jobDetails.getOwner().toString().equals(owner)) {
+                    if (parts.length > 1) {
+                        final String allFields = jobDetails.getName() + jobDetails.getOwner() + jobDetails.getId();
+                        return allFields.toLowerCase().contains(parts[1]);
+                    } else {
+                        return true;
+                    }
+                } else {
+                    return false;
+                }
+            };
+        } else {
+            resultFilter = jobDetails -> {
+                final String allFields = jobDetails.getName() + jobDetails.getOwner() + jobDetails.getId();
+                return allFields.toLowerCase().contains(query.toLowerCase());
+            };
+        }
 
         return loadAllJobs()
                 .filter(resultFilter)
