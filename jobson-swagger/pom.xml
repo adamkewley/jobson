@@ -7,18 +7,18 @@
     <parent>
         <groupId>com.github.jobson</groupId>
         <artifactId>jobson-project</artifactId>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
     </parent>
 
     <artifactId>jobson-swagger</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.github.jobson</groupId>
             <artifactId>jobson</artifactId>
-            <version>1.0.5</version>
+            <version>1.0.6</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.fasterxml</groupId>
