@@ -1027,11 +1027,14 @@
     "JsonNode" : {
       "type" : "object",
       "properties" : {
+        "float" : {
+          "type" : "boolean"
+        },
         "nodeType" : {
           "type" : "string",
           "enum" : [ "ARRAY", "BINARY", "BOOLEAN", "MISSING", "NULL", "NUMBER", "OBJECT", "POJO", "STRING" ]
         },
-        "float" : {
+        "short" : {
           "type" : "boolean"
         },
         "number" : {
@@ -1056,9 +1059,6 @@
           "type" : "boolean"
         },
         "floatingPointNumber" : {
-          "type" : "boolean"
-        },
-        "short" : {
           "type" : "boolean"
         },
         "int" : {
@@ -1096,6 +1096,9 @@
     "Optional" : {
       "type" : "object",
       "properties" : {
+        "empty" : {
+          "type" : "boolean"
+        },
         "present" : {
           "type" : "boolean"
         }
@@ -1104,6 +1107,9 @@
     "OptionalAPIJobDetails" : {
       "type" : "object",
       "properties" : {
+        "empty" : {
+          "type" : "boolean"
+        },
         "present" : {
           "type" : "boolean"
         }
@@ -1112,6 +1118,9 @@
     "OptionalAPIJobSpec" : {
       "type" : "object",
       "properties" : {
+        "empty" : {
+          "type" : "boolean"
+        },
         "present" : {
           "type" : "boolean"
         }
@@ -1120,6 +1129,9 @@
     "OptionalMapJobExpectedInputIdJsonNode" : {
       "type" : "object",
       "properties" : {
+        "empty" : {
+          "type" : "boolean"
+        },
         "present" : {
           "type" : "boolean"
         }

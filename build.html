@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Developer’s Guide &mdash; jobson-docs 1.0.5 documentation</title>
+  <title>Developer’s Guide &mdash; jobson-docs 1.0.6 documentation</title>
   
 
   
@@ -17,33 +17,35 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="User Interface (Jobson UI)" href="ui.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -158,30 +160,30 @@
 <h1>Developer’s Guide<a class="headerlink" href="#developer-s-guide" title="Permalink to this headline">¶</a></h1>
 <p>Building the Jobson jar for development requires <code class="docutils literal notranslate"><span class="pre">maven</span></code> and <code class="docutils literal notranslate"><span class="pre">jdk</span></code> (8+). For
 example:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span> <span class="n">install</span> <span class="n">maven</span> <span class="n">openjdk</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="n">jdk</span>
-<span class="n">mvn</span> <span class="n">package</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>apt install maven openjdk-8-jdk
+mvn package
 </pre></div>
 </div>
 <p>Building an entire release (packages, documentation, etc.) additionally
 requires <code class="docutils literal notranslate"><span class="pre">ruby</span></code> and <code class="docutils literal notranslate"><span class="pre">bundler</span></code>, along with some gems. For example:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">apt</span> <span class="n">install</span> <span class="n">maven</span> <span class="n">openjdk</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="n">jdk</span> <span class="n">ruby</span> <span class="n">ruby</span><span class="o">-</span><span class="n">bundler</span>
-<span class="n">gem</span> <span class="n">install</span> <span class="n">fpm</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>apt install maven openjdk-8-jdk ruby ruby-bundler
+gem install fpm
 
-<span class="n">mvn</span> <span class="n">package</span> <span class="o">-</span><span class="n">P</span> <span class="n">release</span>
+mvn package -P release
 </pre></div>
 </div>
 <p>See <code class="docutils literal notranslate"><span class="pre">.travis.yml</span></code> for a “clean” build example.</p>
 <p>Jobson UI is developed with <code class="docutils literal notranslate"><span class="pre">node</span></code> (<code class="docutils literal notranslate"><span class="pre">v6.11.4</span></code>+) and <code class="docutils literal notranslate"><span class="pre">npm</span></code>.</p>
 <p>To build a release of Jobson UI from source, which writes the built
 assets to <code class="docutils literal notranslate"><span class="pre">public/</span></code>:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span>
-<span class="n">npm</span> <span class="n">run</span> <span class="n">build</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm install
+npm run build
 </pre></div>
 </div>
 <p>To run a development server, which dynamically updates as the source
 code is edited (best development experience):</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">npm</span> <span class="n">install</span>
-<span class="n">npm</span> <span class="n">run</span> <span class="n">start</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm install
+npm run start
 </pre></div>
 </div>
 <p><strong>Note</strong>: This assumes an actual Jobson server is running at
@@ -197,7 +199,7 @@ code is edited (best development experience):</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="ui.html" class="btn btn-neutral" title="User Interface (Jobson UI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="ui.html" class="btn btn-neutral float-left" title="User Interface (Jobson UI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -223,26 +225,16 @@ code is edited (best development experience):</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

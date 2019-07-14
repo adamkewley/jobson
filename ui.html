@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>User Interface (Jobson UI) &mdash; jobson-docs 1.0.5 documentation</title>
+  <title>User Interface (Jobson UI) &mdash; jobson-docs 1.0.6 documentation</title>
   
 
   
@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Developer’s Guide" href="build.html" />
     <link rel="prev" title="Job Specs" href="specs.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -183,17 +185,17 @@ API of jobson with their own standard security/caching/authentication
 apporaches.</p>
 <p>At runtime, browser clients go through the following steps:</p>
 <ul class="simple">
-<li>Clients download <code class="docutils literal notranslate"><span class="pre">index.html</span></code> (from <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code>) from the
-webserver</li>
-<li><code class="docutils literal notranslate"><span class="pre">&lt;script&gt;</span></code> tags in the HTML cause clients to download associated
-javascript from the webserver</li>
-<li>The javascript makes clients download <code class="docutils literal notranslate"><span class="pre">config.json</span></code> from the
-webserver</li>
-<li><code class="docutils literal notranslate"><span class="pre">config.json</span></code> contains UI configuration options, including an
+<li><p>Clients download <code class="docutils literal notranslate"><span class="pre">index.html</span></code> (from <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code>) from the
+webserver</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;script&gt;</span></code> tags in the HTML cause clients to download associated
+javascript from the webserver</p></li>
+<li><p>The javascript makes clients download <code class="docutils literal notranslate"><span class="pre">config.json</span></code> from the
+webserver</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">config.json</span></code> contains UI configuration options, including an
 <code class="docutils literal notranslate"><span class="pre">apiPrefix</span></code> property, which tells clients what to prefix jobson
-API requests with</li>
-<li>Subsequent <code class="docutils literal notranslate"><span class="pre">jobson</span></code> API calls are prefixed with <code class="docutils literal notranslate"><span class="pre">apiPrefix</span></code>
-(e.g. <code class="docutils literal notranslate"><span class="pre">/api/{some-req}</span></code>)</li>
+API requests with</p></li>
+<li><p>Subsequent <code class="docutils literal notranslate"><span class="pre">jobson</span></code> API calls are prefixed with <code class="docutils literal notranslate"><span class="pre">apiPrefix</span></code>
+(e.g. <code class="docutils literal notranslate"><span class="pre">/api/{some-req}</span></code>)</p></li>
 </ul>
 <p>This guide demonstrates configuring <code class="docutils literal notranslate"><span class="pre">nginx</span></code> to serve <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code>
 as described.</p>
@@ -203,7 +205,7 @@ as described.</p>
 <p>Deploying the UI doesn’t require a running <code class="docutils literal notranslate"><span class="pre">jobson</span></code> server. However,
 for the sake of testing, this guide assumes you have a <code class="docutils literal notranslate"><span class="pre">jobson</span></code>
 server running at <code class="docutils literal notranslate"><span class="pre">localhost:8080</span></code>:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jobson</span> <span class="n">serve</span> <span class="n">config</span><span class="o">.</span><span class="n">yml</span>  <span class="c1"># config.yml is configured to serve on port 8080</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jobson serve config.yml  <span class="c1"># config.yml is configured to serve on port 8080</span>
 </pre></div>
 </div>
 </div>
@@ -220,14 +222,14 @@ want the UI, you can download it from the <a class="reference external" href="ht
 <div class="section" id="unpack-move-assets-to-webserver-root">
 <h2>Unpack/Move Assets to Webserver Root<a class="headerlink" href="#unpack-move-assets-to-webserver-root" title="Permalink to this headline">¶</a></h2>
 <p>For this install guide, we will copy the assets to <code class="docutils literal notranslate"><span class="pre">/var/www/jobson</span></code>:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="o">-</span><span class="n">r</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">jobson</span><span class="o">/</span><span class="n">ui</span><span class="o">/</span><span class="n">html</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">jobson</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp -r /usr/share/jobson/ui/html /var/www/jobson
 </pre></div>
 </div>
 </div>
 <div class="section" id="optional-edit-config-json">
 <h2>Optional: Edit <code class="docutils literal notranslate"><span class="pre">config.json</span></code><a class="headerlink" href="#optional-edit-config-json" title="Permalink to this headline">¶</a></h2>
 <p>If you want to change the <code class="docutils literal notranslate"><span class="pre">apiPrefix</span></code>, edit the UI configuration file:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nano</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">jobson</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">json</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nano /var/www/jobson/config.json
 </pre></div>
 </div>
 <p>This will cause <code class="docutils literal notranslate"><span class="pre">jobson</span></code> API requests to go elsewhere. For this
@@ -236,8 +238,8 @@ guide, we assume the default value (<code class="docutils literal notranslate"><
 <div class="section" id="configure-nginx">
 <h2>Configure <code class="docutils literal notranslate"><span class="pre">nginx</span></code><a class="headerlink" href="#configure-nginx" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Create an nginx config file for the site at
-<code class="docutils literal notranslate"><span class="pre">/etc/nginx/sites-available/jobson-ui</span></code>:</li>
+<li><p>Create an nginx config file for the site at
+<code class="docutils literal notranslate"><span class="pre">/etc/nginx/sites-available/jobson-ui</span></code>:</p></li>
 </ul>
 <div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -299,23 +301,23 @@ guide, we assume the default value (<code class="docutils literal notranslate"><
 </pre></div>
 </td></tr></table></div>
 <ul class="simple">
-<li>Enable the site configuration:</li>
+<li><p>Enable the site configuration:</p></li>
 </ul>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">nginx</span><span class="o">/</span><span class="n">sites</span><span class="o">-</span><span class="n">enabled</span>
-<span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">../</span><span class="n">sites</span><span class="o">-</span><span class="n">available</span><span class="o">/</span><span class="n">jobson</span><span class="o">-</span><span class="n">ui</span> <span class="n">jobson</span><span class="o">-</span><span class="n">ui</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> /etc/nginx/sites-enabled
+ln -s ../sites-available/jobson-ui jobson-ui
 </pre></div>
 </div>
 <ul class="simple">
-<li>Reload nginx:</li>
+<li><p>Reload nginx:</p></li>
 </ul>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nginx</span> <span class="o">-</span><span class="n">s</span> <span class="n">reload</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nginx -s reload
 </pre></div>
 </div>
 </div>
 <div class="section" id="optional-load-the-ui-in-a-browser">
 <h2>Optional: Load the UI in a Browser<a class="headerlink" href="#optional-load-the-ui-in-a-browser" title="Permalink to this headline">¶</a></h2>
 <p>Try loading the UI in a browser:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">xdg</span><span class="o">-</span><span class="nb">open</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>xdg-open http://localhost
 </pre></div>
 </div>
 <p>Which, if <code class="docutils literal notranslate"><span class="pre">jobson</span></code> is running, should work fine.</p>
@@ -333,7 +335,7 @@ guide, we assume the default value (<code class="docutils literal notranslate"><
         <a href="build.html" class="btn btn-neutral float-right" title="Developer’s Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="specs.html" class="btn btn-neutral" title="Job Specs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="specs.html" class="btn btn-neutral float-left" title="Job Specs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -359,26 +361,16 @@ guide, we assume the default value (<code class="docutils literal notranslate"><
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

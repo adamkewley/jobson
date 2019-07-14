@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Server Configuration &mdash; jobson-docs 1.0.5 documentation</title>
+  <title>Server Configuration &mdash; jobson-docs 1.0.6 documentation</title>
   
 
   
@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Workspaces" href="workspaces.html" />
     <link rel="prev" title="Command-Line Interface" href="commandline.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -184,43 +186,43 @@ to the <a class="reference external" href="https://www.dropwizard.io/1.3.5/docs/
 </div>
 <div class="section" id="top-level-fields">
 <h2>Top-Level Fields<a class="headerlink" href="#top-level-fields" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="docutils" id="id1">
+<table class="docutils align-default" id="id1">
 <caption><span class="caption-text">Top-level fields</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Key</th>
-<th class="head">Default</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">specs:</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">specs/</span></code></td>
-<td>Path to the job specs directory</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">specs:</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">specs/</span></code></p></td>
+<td><p>Path to the job specs directory</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">jobs:</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">jobs/</span></code></td>
-<td>Path to the jobs directory</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">jobs:</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">jobs/</span></code></p></td>
+<td><p>Path to the jobs directory</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">workingDirs:</span></code></td>
-<td>(see below)</td>
-<td>Path to the temporary working directories</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">workingDirs:</span></code></p></td>
+<td><p>(see below)</p></td>
+<td><p>Path to the temporary working directories</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">users:</span></code></td>
-<td>(see below)</td>
-<td>An object containing the users configuration</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">users:</span></code></p></td>
+<td><p>(see below)</p></td>
+<td><p>An object containing the users configuration</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">authentication:</span></code></td>
-<td>(see below)</td>
-<td>An object containing the authentication configuration</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">authentication:</span></code></p></td>
+<td><p>(see below)</p></td>
+<td><p>An object containing the authentication configuration</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">execution:</span></code></td>
-<td>(see below)</td>
-<td>An object containing the execution configuration</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">execution:</span></code></p></td>
+<td><p>(see below)</p></td>
+<td><p>An object containing the execution configuration</p></td>
 </tr>
 </tbody>
 </table>
@@ -229,44 +231,44 @@ to the <a class="reference external" href="https://www.dropwizard.io/1.3.5/docs/
 <h2><code class="docutils literal notranslate"><span class="pre">workingDirs</span></code>: Working Directory Configuration<a class="headerlink" href="#workingdirs-working-directory-configuration" title="Permalink to this headline">¶</a></h2>
 <p>Configuration for working directories. Each process spawned by Jobson
 launches in its own working directory.</p>
-<table border="1" class="docutils" id="id2">
+<table class="docutils align-default" id="id2">
 <caption><span class="caption-text">Working Directory Configuration</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Key</td>
-<td>Default</td>
-<td>Description</td>
+<tbody>
+<tr class="row-odd"><td><p>Key</p></td>
+<td><p>Default</p></td>
+<td><p>Description</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">dir:</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">wds/</span></code></td>
-<td>Path the directory that holds working directories</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dir:</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">wds/</span></code></p></td>
+<td><p>Path the directory that holds working directories</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">removeAfterExecution:</span></code></td>
-<td>(see below)</td>
-<td>Configuration for removing working directories after execution</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">removeAfterExecution:</span></code></p></td>
+<td><p>(see below)</p></td>
+<td><p>Configuration for removing working directories after execution</p></td>
 </tr>
 </tbody>
 </table>
 <div class="section" id="removeafterexecution-policy-for-removing-working-directories">
 <h3><code class="docutils literal notranslate"><span class="pre">removeAfterExecution</span></code>: Policy for Removing Working Directories<a class="headerlink" href="#removeafterexecution-policy-for-removing-working-directories" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Key</td>
-<td>Default</td>
-<td>Description</td>
+<tbody>
+<tr class="row-odd"><td><p>Key</p></td>
+<td><p>Default</p></td>
+<td><p>Description</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">enabled:</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">true</span></code></td>
-<td>Indicates whether Jobson should remove working directories after execution</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">enabled:</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>Indicates whether Jobson should remove working directories after execution</p></td>
 </tr>
 </tbody>
 </table>
@@ -274,20 +276,20 @@ launches in its own working directory.</p>
 </div>
 <div class="section" id="users-users-configuration">
 <h2><code class="docutils literal notranslate"><span class="pre">users:</span></code>: Users Configuration<a class="headerlink" href="#users-users-configuration" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Key</td>
-<td>Default</td>
-<td>Description</td>
+<tbody>
+<tr class="row-odd"><td><p>Key</p></td>
+<td><p>Default</p></td>
+<td><p>Description</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">file</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">users</span></code></td>
-<td>Path to the <code class="docutils literal notranslate"><span class="pre">users</span></code> file. Used when <code class="docutils literal notranslate"><span class="pre">basic</span></code> authentication is enabled</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">file</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">users</span></code></p></td>
+<td><p>Path to the <code class="docutils literal notranslate"><span class="pre">users</span></code> file. Used when <code class="docutils literal notranslate"><span class="pre">basic</span></code> authentication is enabled</p></td>
 </tr>
 </tbody>
 </table>
@@ -297,20 +299,20 @@ launches in its own working directory.</p>
 <p>The relevant <code class="docutils literal notranslate"><span class="pre">authentication:</span></code> fields change based on what <code class="docutils literal notranslate"><span class="pre">type:</span></code>
 of authentication that was specified. <code class="docutils literal notranslate"><span class="pre">guest</span></code> auth has different
 configuration requriements from <code class="docutils literal notranslate"><span class="pre">jwt</span></code> auth, for example.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Key</td>
-<td>Default</td>
-<td>Description</td>
+<tbody>
+<tr class="row-odd"><td><p>Key</p></td>
+<td><p>Default</p></td>
+<td><p>Description</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">type:</span></code></td>
-<td><code class="docutils literal notranslate"><span class="pre">basic</span></code></td>
-<td>The type of authentication to use. Valid values are <code class="docutils literal notranslate"><span class="pre">basic</span></code>, <code class="docutils literal notranslate"><span class="pre">guest</span></code>, and <code class="docutils literal notranslate"><span class="pre">jwt</span></code>. Other keys in <code class="docutils literal notranslate"><span class="pre">authentication:</span></code> depend on what <code class="docutils literal notranslate"><span class="pre">type:</span></code> was specified (see below)</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">type:</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">basic</span></code></p></td>
+<td><p>The type of authentication to use. Valid values are <code class="docutils literal notranslate"><span class="pre">basic</span></code>, <code class="docutils literal notranslate"><span class="pre">guest</span></code>, and <code class="docutils literal notranslate"><span class="pre">jwt</span></code>. Other keys in <code class="docutils literal notranslate"><span class="pre">authentication:</span></code> depend on what <code class="docutils literal notranslate"><span class="pre">type:</span></code> was specified (see below)</p></td>
 </tr>
 </tbody>
 </table>
@@ -318,20 +320,20 @@ configuration requriements from <code class="docutils literal notranslate"><span
 <h3><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">guest</span></code>: Guest Authentication Configuration<a class="headerlink" href="#type-guest-guest-authentication-configuration" title="Permalink to this headline">¶</a></h3>
 <p>With <code class="docutils literal notranslate"><span class="pre">guest</span></code> authentication, the server will accept all incoming and
 assign them a username of <code class="docutils literal notranslate"><span class="pre">guestUserName</span></code>.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Key</td>
-<td>Default</td>
-<td>Description</td>
+<tbody>
+<tr class="row-odd"><td><p>Key</p></td>
+<td><p>Default</p></td>
+<td><p>Description</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">guestUserName</span></code></td>
-<td>guest</td>
-<td>The username to assign to all requests</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">guestUserName</span></code></p></td>
+<td><p>guest</p></td>
+<td><p>The username to assign to all requests</p></td>
 </tr>
 </tbody>
 </table>
@@ -344,20 +346,20 @@ collect a username+password pair from clients. Those credentials will
 then be authenticated against entries in Jobson’s <code class="docutils literal notranslate"><span class="pre">users</span></code> file (see
 TODO). Valid credentials shall be permitted to use the API. Invalid
 credentials shall be rejected.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Key</td>
-<td>Default</td>
-<td>Description</td>
+<tbody>
+<tr class="row-odd"><td><p>Key</p></td>
+<td><p>Default</p></td>
+<td><p>Description</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">realm</span></code></td>
-<td>JobsonBasicAuth</td>
-<td>The “realm” given during the basic auth scheme. For web-browser clients, this is usually displayed as a string in the popup dialog</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">realm</span></code></p></td>
+<td><p>JobsonBasicAuth</p></td>
+<td><p>The “realm” given during the basic auth scheme. For web-browser clients, this is usually displayed as a string in the popup dialog</p></td>
 </tr>
 </tbody>
 </table>
@@ -372,20 +374,20 @@ expects clients to set an <code class="docutils literal notranslate"><span class
 credentials in the token provided the token was signed with
 <code class="docutils literal notranslate"><span class="pre">secretKey</span></code> (below). If the header is missing, or mis-signed, Jobson
 shall reject the request.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Key</td>
-<td>Default</td>
-<td>Description</td>
+<tbody>
+<tr class="row-odd"><td><p>Key</p></td>
+<td><p>Default</p></td>
+<td><p>Description</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">secretKey</span></code></td>
-<td>(no default)</td>
-<td>Should be a base64-encoded string. The signature algorithm used by Jobson is “HS512” (from <a class="reference external" href="https://github.com/jwtk/jjwt/blob/master/src/main/java/io/jsonwebtoken/SignatureAlgorithm.java">here</a>), which is a HMAC, SHA-512 algorithm</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">secretKey</span></code></p></td>
+<td><p>(no default)</p></td>
+<td><p>Should be a base64-encoded string. The signature algorithm used by Jobson is “HS512” (from <a class="reference external" href="https://github.com/jwtk/jjwt/blob/master/src/main/java/io/jsonwebtoken/SignatureAlgorithm.java">here</a>), which is a HMAC, SHA-512 algorithm</p></td>
 </tr>
 </tbody>
 </table>
@@ -393,24 +395,24 @@ shall reject the request.</p>
 </div>
 <div class="section" id="execution-execution-configuration">
 <h2><code class="docutils literal notranslate"><span class="pre">execution:</span></code>: Execution Configuration<a class="headerlink" href="#execution-execution-configuration" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Key</td>
-<td>Default</td>
-<td>Description</td>
+<tbody>
+<tr class="row-odd"><td><p>Key</p></td>
+<td><p>Default</p></td>
+<td><p>Description</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">maxConcurrentJobs:</span></code></td>
-<td>10</td>
-<td>The number of applications that Jobson is allowed to run concurrently. Jobs are queued if there there are currently more than this number of applications running.</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">maxConcurrentJobs:</span></code></p></td>
+<td><p>10</p></td>
+<td><p>The number of applications that Jobson is allowed to run concurrently. Jobs are queued if there there are currently more than this number of applications running.</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">delayBeforeForciblyKillingJobs:</span></code></td>
-<td>PT10S</td>
-<td>An <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO8601</a> duration string that specifies how long Jobson should wait after sending a <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> to an application (see <a class="reference external" href="http://man7.org/linux/man-pages/man7/signal.7.html">signals</a>) before sending a <code class="docutils literal notranslate"><span class="pre">SIGKILL</span></code>. A <code class="docutils literal notranslate"><span class="pre">SIGKILL</span></code> is guaranteed to kill an application, but might result in a harsh exit. Some applications can intelligently handle <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code>s, allowing them to cleanup resources, but might take time to perform cleanup.</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">delayBeforeForciblyKillingJobs:</span></code></p></td>
+<td><p>PT10S</p></td>
+<td><p>An <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO8601</a> duration string that specifies how long Jobson should wait after sending a <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> to an application (see <a class="reference external" href="http://man7.org/linux/man-pages/man7/signal.7.html">signals</a>) before sending a <code class="docutils literal notranslate"><span class="pre">SIGKILL</span></code>. A <code class="docutils literal notranslate"><span class="pre">SIGKILL</span></code> is guaranteed to kill an application, but might result in a harsh exit. Some applications can intelligently handle <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code>s, allowing them to cleanup resources, but might take time to perform cleanup.</p></td>
 </tr>
 </tbody>
 </table>
@@ -428,7 +430,7 @@ shall reject the request.</p>
         <a href="workspaces.html" class="btn btn-neutral float-right" title="Workspaces" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="commandline.html" class="btn btn-neutral" title="Command-Line Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="commandline.html" class="btn btn-neutral float-left" title="Command-Line Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -454,26 +456,16 @@ shall reject the request.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

@@ -1,27 +1,27 @@
 {
-  "_from": "swagger-ui-dist@3.19.3",
-  "_id": "swagger-ui-dist@3.19.3",
+  "_from": "swagger-ui-dist@3.23.0",
+  "_id": "swagger-ui-dist@3.23.0",
   "_inBundle": false,
-  "_integrity": "sha512-bHH4yJrOpNCxLPqoEx2ZdwSuLMmc+V3JmFM9oetqWKKRv9AgUnrO1XNhePe9uc53QPaeJ0nCf3cLCxJBle6hjA==",
+  "_integrity": "sha512-DMnt69K3p8BwnKf8f8uOqsts/teZNRS4LlXAqjfa8HS2RKWWOCSiVEHkMzY3zlU4wqu/olPdF0zDEm9Ed5JZ4A==",
   "_location": "/swagger-ui-dist",
   "_phantomChildren": {},
   "_requested": {
     "type": "version",
     "registry": true,
-    "raw": "swagger-ui-dist@3.19.3",
+    "raw": "swagger-ui-dist@3.23.0",
     "name": "swagger-ui-dist",
     "escapedName": "swagger-ui-dist",
-    "rawSpec": "3.19.3",
+    "rawSpec": "3.23.0",
     "saveSpec": null,
-    "fetchSpec": "3.19.3"
+    "fetchSpec": "3.23.0"
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/swagger-ui-dist/-/swagger-ui-dist-3.19.3.tgz",
-  "_shasum": "b1e38b1497a884500788cde919517d83554af5e8",
-  "_spec": "swagger-ui-dist@3.19.3",
+  "_resolved": "https://registry.npmjs.org/swagger-ui-dist/-/swagger-ui-dist-3.23.0.tgz",
+  "_shasum": "41ebb4331464677d5d14975995c0391672befe5d",
+  "_spec": "swagger-ui-dist@3.23.0",
   "_where": "/home/travis/build/adamkewley/jobson/jobson-swagger-ui",
   "bugs": {
     "url": "https://github.com/swagger-api/swagger-ui/issues"
@@ -68,5 +68,5 @@
     "type": "git",
     "url": "git+ssh://git@github.com/swagger-api/swagger-ui.git"
   },
-  "version": "3.19.3"
+  "version": "3.23.0"
 }

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Quickstart &mdash; jobson-docs 1.0.5 documentation</title>
+  <title>Quickstart &mdash; jobson-docs 1.0.6 documentation</title>
   
 
   
@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Command-Line Interface" href="commandline.html" />
     <link rel="prev" title="Install" href="install.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -181,7 +183,7 @@ and launch convention-over-configuration projects (in Jobson,
 <p>This guide uses Jobson’s command-line, which should be available if
 you have installed Jobson correctly. Ensure you can run it, for
 example, by showing its help pages:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson --help
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ jobson --help
 </pre></div>
 </div>
 <p>More details about the command-line interface can be found
@@ -192,7 +194,7 @@ example, by showing its help pages:</p>
 <p>Workspaces are Jobson’s way of organizing its configuration and
 data. The <code class="docutils literal notranslate"><span class="pre">new</span></code> command generates a barebones workspace containing
 the minimum necessary files to run a Jobson server:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson new --demo
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ jobson new --demo
 create    config.yml
 create    users
 create    specs
@@ -200,7 +202,7 @@ create    specs/demo
 create    specs/demo/spec.yml
 create    specs/demo/demo-script.sh
 create    specs/demo/demo-dependency
-create    jobs
+create    <span class="nb">jobs</span>
 create    wds
 </pre></div>
 </div>
@@ -211,7 +213,7 @@ create    wds
 <p>Job specs are standard YAML files that describe an application. They
 are held in the <code class="docutils literal notranslate"><span class="pre">specs/</span></code> folder in a workspace. The <code class="docutils literal notranslate"><span class="pre">generate</span>
 <span class="pre">spec</span></code> command generates a new job spec:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson generate spec foo
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ jobson generate spec foo
 create    specs/foo
 create    specs/foo/spec.yml
 </pre></div>
@@ -223,14 +225,14 @@ create    specs/foo/spec.yml
 <p>For the sake of this guide, lets assume you want Jobson to host a python
 script takes two inputs, prints something to the standard output (via
 <code class="docutils literal notranslate"><span class="pre">print</span></code>), and writes an output file:</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># specs/foo/foo.py</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># specs/foo/foo.py</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="n">first_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">second_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">first_name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">second_name</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">first_name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">second_name</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;output.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Some output data</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -238,52 +240,52 @@ script takes two inputs, prints something to the standard output (via
 </div>
 <p>In order to turn this script into a web API, Jobson needs a job spec
 that describes the script. Lets edit <code class="docutils literal notranslate"><span class="pre">specs/foo/spec.yml</span></code> to do that:</p>
-<div class="code yaml highlight-default notranslate"><div class="highlight"><pre><span></span># specs/foo/spec.yml
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># specs/foo/spec.yml</span>
 
-name: A python script in the Jobson documentation
-description: &gt;
+<span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">A python script in the Jobson documentation</span>
+<span class="nt">description</span><span class="p">:</span> <span class="p p-Indicator">&gt;</span>
 
-  A job that prints the provided first and second name, followed by
-  writing some text to an output file.
+  <span class="no">A job that prints the provided first and second name, followed by</span>
+  <span class="no">writing some text to an output file.</span>
 
-expectedInputs:
+<span class="nt">expectedInputs</span><span class="p">:</span>
 
-- id: firstName
-  type: string
-  name: First Name
+<span class="p p-Indicator">-</span> <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">firstName</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">string</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">First Name</span>
 
-- id: secondName
-  type: string
-  name: Second Name
+<span class="p p-Indicator">-</span> <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">secondName</span>
+  <span class="nt">type</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">string</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Second Name</span>
 
-execution:
-  application: python
-  arguments:
-  - foo.py
-  - ${inputs.firstName}
-  - ${inputs.secondName}
-  dependencies:
-  - source: foo.py
-    target: foo.py
+<span class="nt">execution</span><span class="p">:</span>
+  <span class="nt">application</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">python</span>
+  <span class="nt">arguments</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">foo.py</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">${inputs.firstName}</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">${inputs.secondName}</span>
+  <span class="nt">dependencies</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">source</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foo.py</span>
+    <span class="nt">target</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foo.py</span>
 
-expectedOutputs:
-- id: outputFile
-  path: output.txt
+<span class="nt">expectedOutputs</span><span class="p">:</span>
+<span class="p p-Indicator">-</span> <span class="nt">id</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">outputFile</span>
+  <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">output.txt</span>
 </pre></div>
 </div>
 <p>This example is describing a job that:</p>
 <ul class="simple">
-<li>Takes two <code class="docutils literal notranslate"><span class="pre">string</span></code> inputs (<code class="docutils literal notranslate"><span class="pre">firstName</span></code> and <code class="docutils literal notranslate"><span class="pre">secondName</span></code>)</li>
-<li>Copies <code class="docutils literal notranslate"><span class="pre">foo.py</span></code> in the job spec’s folder to <code class="docutils literal notranslate"><span class="pre">foo.py</span></code> in the
-runtime working directory</li>
-<li>Executes <code class="docutils literal notranslate"><span class="pre">python</span></code> with arguments <code class="docutils literal notranslate"><span class="pre">{inputs.firstName}</span></code>,
+<li><p>Takes two <code class="docutils literal notranslate"><span class="pre">string</span></code> inputs (<code class="docutils literal notranslate"><span class="pre">firstName</span></code> and <code class="docutils literal notranslate"><span class="pre">secondName</span></code>)</p></li>
+<li><p>Copies <code class="docutils literal notranslate"><span class="pre">foo.py</span></code> in the job spec’s folder to <code class="docutils literal notranslate"><span class="pre">foo.py</span></code> in the
+runtime working directory</p></li>
+<li><p>Executes <code class="docutils literal notranslate"><span class="pre">python</span></code> with arguments <code class="docutils literal notranslate"><span class="pre">{inputs.firstName}</span></code>,
 <code class="docutils literal notranslate"><span class="pre">${inputs.secondName}</span></code>. These arguments are examples of template
 expressions. In this case, those expressions resolve to the
-<code class="docutils literal notranslate"><span class="pre">firstName</span></code> and <code class="docutils literal notranslate"><span class="pre">secondName</span></code> inputs provided by clients</li>
-<li>Checks that the <code class="docutils literal notranslate"><span class="pre">python</span></code> script exits with an exit code of <code class="docutils literal notranslate"><span class="pre">0</span></code></li>
-<li>Once the application has exited, checks for a file called
+<code class="docutils literal notranslate"><span class="pre">firstName</span></code> and <code class="docutils literal notranslate"><span class="pre">secondName</span></code> inputs provided by clients</p></li>
+<li><p>Checks that the <code class="docutils literal notranslate"><span class="pre">python</span></code> script exits with an exit code of <code class="docutils literal notranslate"><span class="pre">0</span></code></p></li>
+<li><p>Once the application has exited, checks for a file called
 <code class="docutils literal notranslate"><span class="pre">output.txt</span></code> in the application’s working directory and persists
-that file under the ID <code class="docutils literal notranslate"><span class="pre">outputFile</span></code></li>
+that file under the ID <code class="docutils literal notranslate"><span class="pre">outputFile</span></code></p></li>
 </ul>
 <p>More details about <a class="reference external" href="specs.html">job specs</a> and <a class="reference external" href="specs.html#template-strings">template
 expressions</a> are available at the links.</p>
@@ -294,7 +296,7 @@ expressions</a> are available at the links.</p>
 errors. The <code class="docutils literal notranslate"><span class="pre">validate</span> <span class="pre">spec</span></code> command will exit with no output if your
 job spec is syntactically valid. Run it from your main jobson deployment
 folder:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson validate spec foo
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ jobson validate spec foo
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">validate</span></code> command exits silently on success.</p>
@@ -303,15 +305,15 @@ job request against the job spec to see if any runtime bugs pop up.
 Jobson accepts accepts job requests in a JSON format. The
 <code class="docutils literal notranslate"><span class="pre">generate</span> <span class="pre">request</span></code> command generates a random standard JSON request
 against a spec:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson generate request foo
-{
-  &quot;spec&quot; : &quot;foo&quot;,
-  &quot;name&quot; : &quot;Adipisci voluptatum vel dolore omnis delectus.&quot;,
-  &quot;inputs&quot; : {
-    &quot;firstName&quot; : &quot;Et sint qui nam tempore.&quot;,
-    &quot;secondName&quot; : &quot;Maxime dolores aut est.&quot;
-  }
-}
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ jobson generate request foo
+<span class="o">{</span>
+  <span class="s2">&quot;spec&quot;</span> : <span class="s2">&quot;foo&quot;</span>,
+  <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;Adipisci voluptatum vel dolore omnis delectus.&quot;</span>,
+  <span class="s2">&quot;inputs&quot;</span> : <span class="o">{</span>
+    <span class="s2">&quot;firstName&quot;</span> : <span class="s2">&quot;Et sint qui nam tempore.&quot;</span>,
+    <span class="s2">&quot;secondName&quot;</span> : <span class="s2">&quot;Maxime dolores aut est.&quot;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
 </pre></div>
 </div>
 <p>Jobson has generated placeholder text (e.g.
@@ -321,7 +323,7 @@ the structure of requests as sent via the Jobson HTTP API (specifically,
 <p>Although the job spec is syntactically correct, it may still fail at
 runtime, so it’s good practice to run a request against the spec.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">run</span></code> command runs a job request locally:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson generate request foo &gt; request.json
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ jobson generate request foo &gt; request.json
 $ jobson run request.json
 Et sint qui nam tempore. Maxime dolores aut est.
 </pre></div>
@@ -341,7 +343,7 @@ that’s left is to host it.</p>
 <h2>Boot the Server<a class="headerlink" href="#boot-the-server" title="Permalink to this headline">¶</a></h2>
 <p>With a working job spec in place, we’re ready to boot a server. The
 <code class="docutils literal notranslate"><span class="pre">serve</span></code> command should be ran from the workspace:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ jobson serve config.yml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ jobson serve config.yml
 </pre></div>
 </div>
 <p>More details about the server configuration (<code class="docutils literal notranslate"><span class="pre">config.yml</span></code>) are
@@ -351,14 +353,14 @@ available <a class="reference external" href="server-configuration.html">here</a
 <h2>Verify the Server’s Working<a class="headerlink" href="#verify-the-server-s-working" title="Permalink to this headline">¶</a></h2>
 <p>The server is then running, which you can verify with a HTTP tool such
 as <code class="docutils literal notranslate"><span class="pre">curl</span></code>:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl localhost:8080/v1/
-{&quot;_links&quot;:{&quot;specs&quot;:{&quot;href&quot;:&quot;/v1/specs&quot;},&quot;current-user&quot;:{&quot;href&quot;:&quot;/v1/users/current&quot;},&quot;jobs&quot;:{&quot;href&quot;:&quot;/v1/jobs&quot;}}}
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl localhost:8080/v1/
+<span class="o">{</span><span class="s2">&quot;_links&quot;</span>:<span class="o">{</span><span class="s2">&quot;specs&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/specs&quot;</span><span class="o">}</span>,<span class="s2">&quot;current-user&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/users/current&quot;</span><span class="o">}</span>,<span class="s2">&quot;jobs&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/jobs&quot;</span><span class="o">}}}</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">request.json</span></code> generated for the <code class="docutils literal notranslate"><span class="pre">run</span></code> command is an entirely
 valid API request. Therefore, you can also <code class="docutils literal notranslate"><span class="pre">POST</span></code> it via the HTTP API:</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl --data @request.json -H &#39;Content-Type: application/json&#39; localhost:8080/v1/jobs
-{&quot;id&quot;:&quot;svpj5ppevn&quot;,&quot;_links&quot;:{&quot;outputs&quot;:{&quot;href&quot;:&quot;/v1/jobs/svpj5ppevn/outputs&quot;},&quot;inputs&quot;:{&quot;href&quot;:&quot;/v1/jobs/svpj5ppevn/inputs&quot;},&quot;self&quot;:{&quot;href&quot;:&quot;/v1/jobs/svpj5ppevn&quot;},&quot;spec&quot;:{&quot;href&quot;:&quot;/v1/jobs/svpj5ppevn/spec&quot;}}}
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ curl --data @request.json -H <span class="s1">&#39;Content-Type: application/json&#39;</span> localhost:8080/v1/jobs
+<span class="o">{</span><span class="s2">&quot;id&quot;</span>:<span class="s2">&quot;svpj5ppevn&quot;</span>,<span class="s2">&quot;_links&quot;</span>:<span class="o">{</span><span class="s2">&quot;outputs&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/jobs/svpj5ppevn/outputs&quot;</span><span class="o">}</span>,<span class="s2">&quot;inputs&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/jobs/svpj5ppevn/inputs&quot;</span><span class="o">}</span>,<span class="s2">&quot;self&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/jobs/svpj5ppevn&quot;</span><span class="o">}</span>,<span class="s2">&quot;spec&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/jobs/svpj5ppevn/spec&quot;</span><span class="o">}}}</span>
 </pre></div>
 </div>
 </div>
@@ -372,10 +374,10 @@ queueing, concurrency, etc.</p>
 <p>Now that you’ve seen the general idea behind Jobson, there’s several
 steps you can take:</p>
 <ul class="simple">
-<li><strong>Add a user interface</strong>: <code class="docutils literal notranslate"><span class="pre">jobson</span></code> only hosts a JSON API, you will need to install a <a class="reference external" href="ui.html">User Interface</a> to view the jobs.</li>
-<li><strong>Customize the server</strong>: See <a class="reference external" href="server-configuration.html">Server
-Configuration</a></li>
-<li><strong>Learn about Job Specs</strong>: See <a class="reference external" href="specs.html">Job Specs</a></li>
+<li><p><strong>Add a user interface</strong>: <code class="docutils literal notranslate"><span class="pre">jobson</span></code> only hosts a JSON API, you will need to install a <a class="reference external" href="ui.html">User Interface</a> to view the jobs.</p></li>
+<li><p><strong>Customize the server</strong>: See <a class="reference external" href="server-configuration.html">Server
+Configuration</a></p></li>
+<li><p><strong>Learn about Job Specs</strong>: See <a class="reference external" href="specs.html">Job Specs</a></p></li>
 </ul>
 </div>
 </div>
@@ -391,7 +393,7 @@ Configuration</a></li>
         <a href="commandline.html" class="btn btn-neutral float-right" title="Command-Line Interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="install.html" class="btn btn-neutral" title="Install" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="install.html" class="btn btn-neutral float-left" title="Install" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -417,26 +419,16 @@ Configuration</a></li>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

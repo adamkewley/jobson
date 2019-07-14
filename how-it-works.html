@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>How It Works &mdash; jobson-docs 1.0.5 documentation</title>
+  <title>How It Works &mdash; jobson-docs 1.0.6 documentation</title>
   
 
   
@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Install" href="install.html" />
     <link rel="prev" title="Jobson" href="index.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -210,10 +212,10 @@ spec would be:</p>
 </td></tr></table></div>
 <p>These configuration files are used by Jobson to automatically:</p>
 <ul class="simple">
-<li>Generate a HTTP/websocket API for the job</li>
-<li>Validate requests to run the job (correct inputs, etc.)</li>
-<li>Execute the job as a subprocess</li>
-<li>Persist the job’s output.</li>
+<li><p>Generate a HTTP/websocket API for the job</p></li>
+<li><p>Validate requests to run the job (correct inputs, etc.)</p></li>
+<li><p>Execute the job as a subprocess</p></li>
+<li><p>Persist the job’s output.</p></li>
 </ul>
 </div>
 <div class="section" id="execution-subprocesses">
@@ -222,12 +224,12 @@ spec would be:</p>
 on the host operating system. This means that, to Jobson, execution is
 a black box that:</p>
 <ul class="simple">
-<li>Is launched by the host operating system with command-line arguments
-and dependencies (files, scripts, etc.)</li>
-<li>Runs for an undetermined amount of time, perhaps producing
-continuous outputs via pipes (e.g. <code class="docutils literal notranslate"><span class="pre">stdout</span></code>, <code class="docutils literal notranslate"><span class="pre">stderr</span></code>)</li>
-<li>Exits with an exit code</li>
-<li>Produces files as a side-effect</li>
+<li><p>Is launched by the host operating system with command-line arguments
+and dependencies (files, scripts, etc.)</p></li>
+<li><p>Runs for an undetermined amount of time, perhaps producing
+continuous outputs via pipes (e.g. <code class="docutils literal notranslate"><span class="pre">stdout</span></code>, <code class="docutils literal notranslate"><span class="pre">stderr</span></code>)</p></li>
+<li><p>Exits with an exit code</p></li>
+<li><p>Produces files as a side-effect</p></li>
 </ul>
 </div>
 <div class="section" id="client-interaction-http-websockets">
@@ -236,14 +238,14 @@ continuous outputs via pipes (e.g. <code class="docutils literal notranslate"><s
 use.</p>
 <p>Features of the API:</p>
 <ul class="simple">
-<li>Jobson requires clients to provide the correct information (job
+<li><p>Jobson requires clients to provide the correct information (job
 inputs, logins, etc.) via the API, which shields the underlying
-applications from receiving bogus inputs</li>
-<li>Jobson’s execution approach (above) directly uses process forking so
+applications from receiving bogus inputs</p></li>
+<li><p>Jobson’s execution approach (above) directly uses process forking so
 clients cannot, for example, use shell injection attacks (there is
-no shell)</li>
-<li>The API is declarative and structured, which enables clients to
-automatically generate inputs for job specs, which is what <a class="reference external" href="ui.html">the UI</a> does.</li>
+no shell)</p></li>
+<li><p>The API is declarative and structured, which enables clients to
+automatically generate inputs for job specs, which is what <a class="reference external" href="ui.html">the UI</a> does.</p></li>
 </ul>
 <p>With this approach, Jobson is able to shield clients from the
 configuration and execution layers of the application and ensure that
@@ -265,7 +267,7 @@ client remain the same.</p>
         <a href="install.html" class="btn btn-neutral float-right" title="Install" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Jobson" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Jobson" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -291,26 +293,16 @@ client remain the same.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
