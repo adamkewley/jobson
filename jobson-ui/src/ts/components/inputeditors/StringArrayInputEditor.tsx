@@ -75,7 +75,7 @@ export class StringArrayInputEditor extends Component<InputEditorProps, StringAr
     }
 
     private static splitTextBlockIntoValues(text: string): string[] {
-        return text.length === 0 ? [] : text.split(/[\n,]/);
+        return text.length === 0 ? [] : text.split("\n");
     }
 
 
