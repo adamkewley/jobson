@@ -4,8 +4,19 @@
 
 A platform for transforming command-line applications into a job service.
 
+![ui video demo](jobson-docs/src/ui-animation.gif)
+
 [Documentation](https://adamkewley.github.io/jobson), [Demo](https://adamkewley.com/demos/jobson/show/index.html)
 
+Jobson is a platform (backend webserver, frontend UI, and command-line
+client) that transforms command-line applications into a web-ready job
+service. Jobson's goal is to make it easy to share existing
+applications across the web without requiring a lot of server
+expertise. It was started in 2017 as internal software for handling
+scientific data requests for the [Gaia](https://sci.esa.int/web/gaia)
+satellite mission. Because it solves a general problem (turning
+arbitrary CLI applications into a web service) it was subsequently
+open-sourced in 2018.
 
 Jobson generates a standard web service from a job specification file:
 
