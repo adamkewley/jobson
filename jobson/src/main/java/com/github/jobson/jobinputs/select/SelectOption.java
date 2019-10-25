@@ -20,27 +20,26 @@
 package com.github.jobson.jobinputs.select;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-@ApiModel(description = "An input schema for an option. An option is one of the available choices exposed by an options schema.")
+@Schema(description = "An input schema for an option. An option is one of the available choices exposed by an options schema.")
 public final class SelectOption {
 
-    @ApiModelProperty(value = "The ID of the schema", example = "json")
+    @Schema(description = "The ID of the schema", example = "json")
     @JsonProperty
     @NotNull
     private String id;
 
-    @ApiModelProperty(value = "The display name for the option", example = "JSON")
+    @Schema(description = "The display name for the option", example = "JSON")
     @JsonProperty
     @NotNull
     private String name;
 
-    @ApiModelProperty(
-            value = "A description of the option.",
+    @Schema(description = "A description of the option.",
             example = "JavaScript Object Notation (JSON) is a plaintext format for representing objects, arrays, and primitive values.")
     @JsonProperty
     private Optional<String> description = Optional.empty();

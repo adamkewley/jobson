@@ -23,12 +23,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.dao.specs.JobSpecSummary;
 import com.github.jobson.specs.JobSpecId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Map;
 
-@ApiModel(description = "Summary of a job spec")
+@Schema(description = "Summary of a job spec")
 public class APIJobSpecSummary extends JobSpecSummary {
 
     public static APIJobSpecSummary fromJobSpecSummary(
@@ -43,7 +43,7 @@ public class APIJobSpecSummary extends JobSpecSummary {
     }
 
 
-    @ApiModelProperty(value = "Links to related resources and actions")
+    @Schema(description = "Links to related resources and actions")
     @JsonProperty
     private Map<String, APIRestLink> _links;
 

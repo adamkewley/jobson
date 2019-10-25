@@ -20,31 +20,30 @@
 package com.github.jobson.jobinputs.sql;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 
-@ApiModel(description = "Schema of a column within an sql table")
+@Schema(description = "Schema of a column within an sql table")
 public final class ColumnSchema {
 
-    @ApiModelProperty(value = "The ID of the column", example = "TransitId")
+    @Schema(description = "The ID of the column", example = "TransitId")
     @JsonProperty
     @NotNull
     private String id;
 
-    @ApiModelProperty(value = "The name of the column", example = "Transit ID")
+    @Schema(description = "The name of the column", example = "Transit ID")
     @JsonProperty
     @NotNull
     private String name;
 
-    @ApiModelProperty(value = "A description of the column", example = "The Transit ID of a detector transit")
+    @Schema(description = "A description of the column", example = "The Transit ID of a detector transit")
     @JsonProperty
     @NotNull
     private String description;
 
-    @ApiModelProperty(
-            value = "A string representing the column's data type. Valid type primitives are 'string' 'int', and " +
+    @Schema(description = "A string representing the column's data type. Valid type primitives are 'string' 'int', and " +
                     "'decimal'. Arrays are represented by surrounding a type with brackets; for " +
                     "example '[int]'. An array is also a type, so nesting is permitted. Therefore, " +
                     "'[[string]]' would also a valid type identifier")

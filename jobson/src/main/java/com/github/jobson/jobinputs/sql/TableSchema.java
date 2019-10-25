@@ -20,32 +20,32 @@
 package com.github.jobson.jobinputs.sql;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@ApiModel(description = "Schema of an sql table exposed by an sql expected input")
+@Schema(description = "Schema of an sql table exposed by an sql expected input")
 public final class TableSchema {
 
-    @ApiModelProperty(value = "The ID of the table", example = "PreprocessedTransits")
+    @Schema(description = "The ID of the table", example = "PreprocessedTransits")
     @JsonProperty
     @NotNull
     private String id;
 
-    @ApiModelProperty(value = "The name of the table", example = "Preprocessed Transits")
+    @Schema(description = "The name of the table", example = "Preprocessed Transits")
     @JsonProperty
     @NotNull
     private String name;
 
-    @ApiModelProperty(value = "A description of the table", example = "Preprocessed Transits for Segment 1 and 0")
+    @Schema(description = "A description of the table", example = "Preprocessed Transits for Segment 1 and 0")
     @JsonProperty
     @NotNull
     private String description;
 
-    @ApiModelProperty(value = "Columns exposed by the table")
+    @Schema(description = "Columns exposed by the table")
     @JsonProperty
     @NotNull
     @NotEmpty

@@ -22,14 +22,14 @@ package com.github.jobson.api.v1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.dao.jobs.JobOutputDetails;
 import com.github.jobson.specs.JobOutputId;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@ApiModel(description = "Details about an output produced by a job")
+@Schema(description = "Details about an output produced by a job")
 public final class APIJobOutput {
 
     public static APIJobOutput fromJobOutput(

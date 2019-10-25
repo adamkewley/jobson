@@ -51,12 +51,12 @@
         <version.jobsonswagger>1.0.6</version.jobsonswagger>
         <version.jobsonswaggerui>1.0.6</version.jobsonswaggerui>
 
-        <dropwizard.version>1.3.12</dropwizard.version>
+        <dropwizard.version>1.3.16</dropwizard.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <docker.user>adamkewley</docker.user>
         <docker.repo>jobson</docker.repo>
-        <version.swaggerui>3.23.0</version.swaggerui>
+        <version.swaggerui>3.24.0</version.swaggerui>
     </properties>
 
     <dependencyManagement>

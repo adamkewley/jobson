@@ -22,19 +22,19 @@ package com.github.jobson.api.v1;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.jobs.JobId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Map;
 
-@ApiModel(description = "Response to a successful job submission request")
+@Schema(description = "Response to a successful job submission request")
 public final class APIJobCreatedResponse {
 
-    @ApiModelProperty(value = "The new job's ID")
+    @Schema(description = "The new job's ID")
     @JsonProperty
     private JobId id;
 
-    @ApiModelProperty(value = "Links to related resources and actions")
+    @Schema(description = "Links to related resources and actions")
     @JsonProperty
     private Map<String, APIRestLink> _links;
 

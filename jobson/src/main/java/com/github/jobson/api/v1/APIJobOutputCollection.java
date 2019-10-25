@@ -20,15 +20,15 @@
 package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
-@ApiModel(description = "Response to a request for job summaries")
+@Schema(description = "Response to a request for job summaries")
 public final class APIJobOutputCollection {
 
-    @ApiModelProperty(value = "The entries returned")
+    @Schema(description = "The entries returned")
     @JsonProperty
     private List<APIJobOutput> entries;
 

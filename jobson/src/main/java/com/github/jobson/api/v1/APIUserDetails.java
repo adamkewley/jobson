@@ -20,13 +20,13 @@
 package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Summary information for a user")
+@Schema(description = "Summary information for a user")
 public final class APIUserDetails {
 
-    @ApiModelProperty(value = "A unique identifier for the user", example = "akewley")
+    @Schema(description = "A unique identifier for the user", example = "akewley")
     @JsonProperty
     private UserId id;
 

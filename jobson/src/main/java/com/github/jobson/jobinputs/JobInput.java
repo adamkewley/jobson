@@ -19,7 +19,7 @@
 
 package com.github.jobson.jobinputs;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "A job input that satisfies a job input schema")
+@Schema(description = "A job input that satisfies a job input schema")
 public interface JobInput {}

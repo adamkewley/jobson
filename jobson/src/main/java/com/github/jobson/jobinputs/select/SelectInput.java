@@ -22,15 +22,15 @@ package com.github.jobson.jobinputs.select;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.jobson.jobinputs.JobInput;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 
-@ApiModel(description = "An input that satisfies a select expected input")
+@Schema(description = "An input that satisfies a select expected input")
 public final class SelectInput implements JobInput {
 
-    @ApiModelProperty(value = "ID of the option that was selected.", example = "json")
+    @Schema(description = "ID of the option that was selected.", example = "json")
     @NotNull
     private String value;
 

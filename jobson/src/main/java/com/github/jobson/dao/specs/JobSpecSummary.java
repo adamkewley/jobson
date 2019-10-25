@@ -21,19 +21,19 @@ package com.github.jobson.dao.specs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.specs.JobSpecId;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class JobSpecSummary {
 
-    @ApiModelProperty(value = "A unique identifier for the job spec being summarized.", example = "akewley")
+    @Schema(description = "A unique identifier for the job spec being summarized.", example = "akewley")
     @JsonProperty
     private JobSpecId id;
 
-    @ApiModelProperty(value = "Name of the job spec", example = "Echo")
+    @Schema(description = "Name of the job spec", example = "Echo")
     @JsonProperty
     private String name;
 
-    @ApiModelProperty(value = "Human-readable description of the job spec", example = "Echoes whatever text is provided via the input")
+    @Schema(description = "Human-readable description of the job spec", example = "Echoes whatever text is provided via the input")
     @JsonProperty
     private String description;
 

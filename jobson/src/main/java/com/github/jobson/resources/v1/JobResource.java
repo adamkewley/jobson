@@ -37,7 +37,10 @@ import com.github.jobson.utils.BinaryData;
 import com.github.jobson.utils.Either;
 import com.github.jobson.utils.EitherVisitorT;
 import com.github.jobson.utils.ValidationError;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.responses.*;
+import io.swagger.v3.oas.annotations.media.*;
+import io.swagger.v3.oas.annotations.info.*;
 import org.apache.commons.io.IOUtils;
 
 import javax.annotation.security.PermitAll;
@@ -63,7 +66,8 @@ import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-@Api(description = "Operations related to jobs")
+@OpenAPIDefinition(
+        info = @Info(description = "Operations related to jobs"))
 @Path(HTTP_JOBS_PATH)
 @Produces("application/json")
 public final class JobResource {
@@ -96,26 +100,30 @@ public final class JobResource {
 
 
     @GET
-    @ApiOperation(
-            value = "Retrieve jobs managed by the system.",
-            code = 200,
-            notes = "Gets *some* of the jobs managed by the system. The response does not necessarily " +
+    @Operation(
+            summary = "Retrieve jobs managed by the system.",
+            description = "Gets *some* of the jobs managed by the system. The response does not necessarily " +
                     "contain *all* the jobs managed by the system because pagination " +
                     "and client permissions may hide entries. ")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Entries returned", response = APIJobDetailsCollection.class)
+           @ApiResponse(
+                     responseCode = "200",
+                     description = "Entries returned",
+                     content = @Content(
+                             schema = @Schema(implementation = APIJobDetailsCollection.class)
+                     ))
     })
     @PermitAll
     public APIJobDetailsCollection getJobs(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "The page number (0-indexed)")
+            @Parameter(description = "The page number (0-indexed)")
             @QueryParam("page")
                     Optional<Integer> page,
-            @ApiParam(value = "The number of entries a response page should contain. Max page size is " + MAX_PAGE_SIZE)
+            @Parameter(description = "The number of entries a response page should contain. Max page size is " + MAX_PAGE_SIZE)
             @QueryParam("page-size")
                     Optional<Integer> pageSize,
-            @ApiParam(value = "Client query string")
+            @Parameter(description = "Client query string")
             @QueryParam("query")
                     Optional<String> query) {
 
@@ -194,20 +202,34 @@ public final class JobResource {
 
     @GET
     @Path("{job-id}")
-    @ApiOperation(
-            value = "Get details of a job managed by the system.",
-            code = 200,
-            notes = "")
+    @Operation(
+            summary = "Get details of a job managed by the system.",
+            description = "")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Job details found", response = APIJobDetails.class),
-            @ApiResponse(code = 404, message = "The job could not be found", response = APIErrorMessage.class),
-            @ApiResponse(code = 401, message = "Client not authorized to request job details", response = APIErrorMessage.class)
+            @ApiResponse(
+                     responseCode = "200",
+                     description = "Job details found",
+                     content = @Content(
+                             schema = @Schema(implementation = APIJobDetails.class)
+                     )),
+            @ApiResponse(
+                     responseCode = "404",
+                     description = "The job could not be found",
+                     content = @Content(
+                             schema = @Schema(implementation = APIErrorMessage.class)
+                     )),
+            @ApiResponse(
+                     responseCode = "401",
+                     description = "Client not authorized to request job details",
+                     content = @Content(
+                             schema = @Schema(implementation = APIErrorMessage.class)
+                     ))
     })
     @PermitAll
     public Optional<APIJobDetails> getJobDetailsById(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "The job's ID")
+            @Parameter(description = "The job's ID")
             @PathParam("job-id")
             @NotNull
                     JobId jobId) {
@@ -220,16 +242,15 @@ public final class JobResource {
 
     @DELETE
     @Path("{job-id}")
-    @ApiOperation(
-            value = "Delete a job from the system",
-            code = 200,
-            notes = "Deletes a job from the system, removing **all** job data. Running jobs are aborted before deletion."
+    @Operation(
+            summary = "Delete a job from the system",
+            description = "Deletes a job from the system, removing **all** job data. Running jobs are aborted before deletion."
     )
     @PermitAll
     public int deleteJob(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "The job's ID")
+            @Parameter(description = "The job's ID")
             @PathParam("job-id")
             @NotNull
                     JobId jobId) {
@@ -245,24 +266,33 @@ public final class JobResource {
     }
 
     @POST
-    @ApiOperation(
-            value = "Submit a new job",
-            code = 200,
-            notes = "Attempt to submit a new job to the system. The system will check the job against " +
+    @Operation(
+            summary = "Submit a new job",
+            description = "Attempt to submit a new job to the system. The system will check the job against " +
                     "the job spec specified in the request. If it does not match, the request will be " +
                     "immediately rejected by the server. Otherwise, the request will be immediately accepted " +
                     "by the server. Note: the server accepting the job is only indicates that the request " +
                     "matches the job spec. It does not guarantee that the underlying job will complete " +
                     "successfully.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Job request accepted", response = APIJobCreatedResponse.class),
-            @ApiResponse(code = 400, message = "Invalid or malformed job request", response = APIErrorMessage.class)
+            @ApiResponse(
+                     responseCode = "200",
+                     description = "Job request accepted",
+                     content = @Content(
+                             schema = @Schema(implementation = APIJobCreatedResponse.class)
+                     )),
+            @ApiResponse(
+                     responseCode = "400",
+                     description = "Invalid or malformed job request",
+                     content = @Content(
+                             schema = @Schema(implementation = APIErrorMessage.class)
+                     ))
     })
     @PermitAll
     public APIJobCreatedResponse submitJob(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "The job request")
+            @Parameter(description = "The job request")
             @NotNull
             @Valid
                     APIJobRequest apiJobRequest) {
@@ -306,9 +336,9 @@ public final class JobResource {
 
     @POST
     @Path("/{job-id}/abort")
-    @ApiOperation(
-            value = "Abort a running job",
-            notes = "Abort a job, stopping it or removing it from the job execute. The job's status " +
+    @Operation(
+            summary = "Abort a running job",
+            description = "Abort a job, stopping it or removing it from the job execute. The job's status " +
                     "should immediately change to aborting. However, full job abortion is not guaranteed " +
                     "to be immediate. This is because the underlying job may take time to close gracefully " +
                     "or because the system itself has a short delay before forcibly killing the job outright.")
@@ -316,7 +346,7 @@ public final class JobResource {
     public void abortJob(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "ID of the job to abort")
+            @Parameter(description = "ID of the job to abort")
             @PathParam("job-id")
             @NotNull
                     JobId jobId) {
@@ -332,9 +362,9 @@ public final class JobResource {
 
     @GET
     @Path("/{job-id}/stdout")
-    @ApiOperation(
-            value = "Get a job's standard output",
-            notes = "Get a job's standard output, if available. A job that has not yet started will not have a standard output and, " +
+    @Operation(
+            summary = "Get a job's standard output",
+            description = "Get a job's standard output, if available. A job that has not yet started will not have a standard output and, " +
                     "therefore, this method will return a 404. There is no guarantee that all running/finished jobs will have standard output " +
                     "data. This is because administrative and cleanup routines may dequeue a job's output in order to save space on the server. ")
     @Produces(DEFAULT_BINARY_MIME_TYPE)
@@ -342,7 +372,7 @@ public final class JobResource {
     public Response fetchJobStdoutById(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "ID of the job to get stdout for")
+            @Parameter(description = "ID of the job to get stdout for")
             @PathParam("job-id")
             @NotNull
             JobId jobId) {
@@ -382,9 +412,9 @@ public final class JobResource {
 
     @GET
     @Path("/{job-id}/stderr")
-    @ApiOperation(
-            value = "Get the job's standard error",
-            notes = "Get the job's standard error, if available. A job that has not yet started will not have a standard error and, " +
+    @Operation(
+            summary = "Get the job's standard error",
+            description = "Get the job's standard error, if available. A job that has not yet started will not have a standard error and, " +
                     "therefore, this method will return a 404. There is no guarantee that all running/finished jobs will have standard " +
                     "error data. This is because administrative and cleanup routines may dequeue a job's output in order to save space on " +
                     "the server.")
@@ -393,7 +423,7 @@ public final class JobResource {
     public Response fetchJobStderrById(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "ID of the job to get stderr for")
+            @Parameter(description = "ID of the job to get stderr for")
             @PathParam("job-id")
             @NotNull
             JobId jobId) {
@@ -406,15 +436,15 @@ public final class JobResource {
 
     @GET
     @Path("/{job-id}/spec")
-    @ApiOperation(
-            value = "Get the spec the job was submitted against",
-            notes = "Get the spec the job was submitted against. Note: This returns the spec as it was when the " +
+    @Operation(
+            summary = "Get the spec the job was submitted against",
+            description = "Get the spec the job was submitted against. Note: This returns the spec as it was when the " +
                     "job was submitted. Any subsequent updates to the spec will not be in the spec returned by this API call.")
     @PermitAll
     public Optional<APIJobSpec> fetchJobSpecJobWasSubmittedAgainst(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "ID of the job to get the spec for")
+            @Parameter(description = "ID of the job to get the spec for")
             @PathParam("job-id")
             @NotNull
                     JobId jobId) {
@@ -428,14 +458,14 @@ public final class JobResource {
 
     @GET
     @Path("/{job-id}/inputs")
-    @ApiOperation(
-            value = "Get the job's inputs",
-            notes = "Get the inputs that were supplied when the job was submitted.")
+    @Operation(
+            summary = "Get the job's inputs",
+            description = "Get the inputs that were supplied when the job was submitted.")
     @PermitAll
     public Optional<Map<JobExpectedInputId, JsonNode>> fetchJobInputs(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "ID of the job to get inputs for")
+            @Parameter(description = "ID of the job to get inputs for")
             @PathParam("job-id")
             @NotNull
                     JobId jobId) {
@@ -448,15 +478,15 @@ public final class JobResource {
 
     @GET
     @Path("/{job-id}/outputs")
-    @ApiOperation(
-            value = "Get the outputs produced by the job",
-            notes = "Gets all the outputs produced by the job. If the job has not *written* any outputs (even if specified) " +
+    @Operation(
+            summary = "Get the outputs produced by the job",
+            description = "Gets all the outputs produced by the job. If the job has not *written* any outputs (even if specified) " +
                     "then an empty map is returned. If the job does not exist, a 404 is returned")
     @PermitAll
     public APIJobOutputCollection fetchJobOutputs(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "ID of the job to get the outputs for")
+            @Parameter(description = "ID of the job to get the outputs for")
             @PathParam("job-id")
             @NotNull
                     JobId jobId) {
@@ -478,19 +508,19 @@ public final class JobResource {
 
     @GET
     @Path("/{job-id}/outputs/{output-id}")
-    @ApiOperation(
-            value = "Get an output produced by the job",
-            notes = "Gets an output produced by the job. If the job has not written this output, of it it has been " +
+    @Operation(
+            summary = "Get an output produced by the job",
+            description = "Gets an output produced by the job. If the job has not written this output, of it it has been " +
                     "subsequently deleted, a 404 shall be returned")
     @PermitAll
     public Response fetchJobOutput(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "ID of the job to get the output for")
+            @Parameter(description = "ID of the job to get the output for")
             @PathParam("job-id")
             @NotNull
                     JobId jobId,
-            @ApiParam(value = "ID of the output")
+            @Parameter(description = "ID of the output")
             @PathParam("output-id")
             @NotNull
                     JobOutputId outputId) {

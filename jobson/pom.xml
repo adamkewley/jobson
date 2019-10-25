@@ -34,34 +34,38 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.12</version>
+            <version>1.13</version>
         </dependency>
 
         <dependency>
             <groupId>io.reactivex.rxjava2</groupId>
             <artifactId>rxjava</artifactId>
-            <version>2.2.10</version>
+            <version>2.2.13</version>
         </dependency>
 
         <!-- Basic websocket support for Jetty (the core HTTP server) -->
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-server-impl</artifactId>
-            <version>9.4.19.v20190610</version>
+            <!-- Warning: this version should match the jetty version
+                 used by dropwizard-jetty. Otherwise, you may get
+                 ClassNotFound, because of transistive dependencies
+                 mismatching on the classpath -->
+            <version>9.4.18.v20190429</version>
         </dependency>
 
         <!-- Generating Lorem-Ipsum etc. for generator commands -->
         <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
-            <version>0.18</version>
+            <version>1.0.1</version>
         </dependency>
 
         <!-- For automatically detecting MIME types from filenames/data -->
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>1.21</version>
+            <version>1.22</version>
         </dependency>
 
         <!-- For parsing + validating SQL inputs -->
@@ -73,9 +77,9 @@
 
         <!-- To document the HTTP API -->
         <dependency>
-            <groupId>io.swagger</groupId>
+            <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.5.22</version>
+            <version>2.0.10</version> <!-- todo: later version breaks -->
             <scope>compile</scope>
         </dependency>
 
@@ -100,21 +104,21 @@
             </exclusions>
         </dependency>
 
-        <!-- For forwards compatability with Java9+: oracle deprecated including this with the runtime -->
+        <!-- For forwards compatability with Java9+: oracle deprecated
+             including this with the runtime -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>2.3.1</version>
         </dependency>
 
+        
         <dependency>
             <groupId>org.glassfish.jersey.test-framework</groupId>
             <artifactId>jersey-test-framework-util</artifactId>
             <scope>test</scope>
-            <version>2.29</version>
+            <version>2.29.1</version>
         </dependency>
-
-
 
         <dependency>
             <groupId>junit</groupId>
