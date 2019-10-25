@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.utils.ValidationError;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.statement.Statement;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -45,7 +45,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static net.sf.jsqlparser.parser.CCJSqlParserUtil.parse;
 
-@ApiModel(description = "Schema for an input that requires clients to construct an SQL query")
+@Schema(description = "Schema for an input that requires clients to construct an SQL query")
 public final class SQLExpectedInput extends JobExpectedInput<SQLInput> {
 
     @JsonProperty

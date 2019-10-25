@@ -22,7 +22,8 @@ package com.github.jobson.resources;
 import com.github.jobson.Constants;
 import com.github.jobson.api.APIRootResponse;
 import com.github.jobson.api.v1.APIRestLink;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.GET;
@@ -36,7 +37,8 @@ import java.util.Map;
 
 import static com.github.jobson.Constants.HTTP_ROOT;
 
-@Api(description = "Top-level resource, which lists sub-resources")
+@OpenAPIDefinition(
+    info = @Info(description = "Top-level resource, which lists sub-resources"))
 @Path(HTTP_ROOT)
 @Produces("application/json")
 public final class RootResource {

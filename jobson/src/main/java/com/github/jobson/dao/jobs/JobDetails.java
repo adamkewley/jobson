@@ -25,7 +25,7 @@ import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
 import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.jobs.jobstates.PersistedJob;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,19 +41,19 @@ public class JobDetails {
     }
 
 
-    @ApiModelProperty(value = "The job's ID")
+    @Schema(description = "The job's ID")
     @JsonProperty
     private JobId id;
 
-    @ApiModelProperty(value = "A name for the job")
+    @Schema(description = "A name for the job")
     @JsonProperty
     private String name;
 
-    @ApiModelProperty(value = "The owner of the job.")
+    @Schema(description = "The owner of the job.")
     @JsonProperty
     private UserId owner;
 
-    @ApiModelProperty(value = "Timestamps indicating when job status changes occurred")
+    @Schema(description = "Timestamps indicating when job status changes occurred")
     @JsonProperty
     private List<JobTimestamp> timestamps;
 

@@ -21,20 +21,20 @@ package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 import java.util.Map;
 
-@ApiModel(description = "Response to a request for job summaries")
+@Schema(description = "Response to a request for job summaries")
 public final class APIJobDetailsCollection {
 
-    @ApiModelProperty(value = "The entries returned")
+    @Schema(description = "The entries returned")
     @JsonProperty
     private List<APIJobDetails> entries;
 
-    @ApiModelProperty(value = "Links to related resources and actions")
+    @Schema(description = "Links to related resources and actions")
     @JsonProperty
     private Map<String, APIRestLink> _links;
 

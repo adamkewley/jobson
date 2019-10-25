@@ -23,8 +23,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.utils.ValidationError;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
@@ -38,10 +38,10 @@ import static java.lang.String.format;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toSet;
 
-@ApiModel(description = "Schema for an input that requires clients to select a single option from a set of options")
+@Schema(description = "Schema for an input that requires clients to select a single option from a set of options")
 public final class SelectExpectedInput extends JobExpectedInput<SelectInput> {
 
-    @ApiModelProperty(value = "Schema of options the client must select from")
+    @Schema(description = "Schema of options the client must select from")
     @JsonProperty
     @NotNull
     @NotEmpty

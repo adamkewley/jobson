@@ -20,10 +20,9 @@
 package com.github.jobson.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "An error message")
+@Schema(description = "An error message")
 public final class APIErrorMessage {
 
     private final String message;
@@ -38,13 +37,12 @@ public final class APIErrorMessage {
     }
 
 
-    @ApiModelProperty(value = "An explanation of the error", required = true)
+    @Schema(description = "An explanation of the error", required = true)
     public String getMessage() {
         return this.message;
     }
 
-    @ApiModelProperty(
-            value = "The HTTP status code associated with the message.",
+    @Schema(description = "The HTTP status code associated with the message.",
             required = true)
     public String getCode() {
         return this.code;

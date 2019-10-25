@@ -22,9 +22,9 @@ package com.github.jobson.websockets.v1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobStatus;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Response to a request for a job spec's details")
+@Schema(description = "Response to a request for a job spec's details")
 public final class JobEvent {
 
     @JsonProperty

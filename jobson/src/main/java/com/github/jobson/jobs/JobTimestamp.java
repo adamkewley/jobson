@@ -23,13 +23,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.Constants;
 import com.github.jobson.Helpers;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Date;
 import java.util.Optional;
 
-@ApiModel(description = "Timestamp on a job")
+@Schema(description = "Timestamp on a job")
 public final class JobTimestamp {
 
     public static JobTimestamp now(JobStatus jobStatus, String message) {
@@ -42,11 +42,11 @@ public final class JobTimestamp {
 
 
 
-    @ApiModelProperty(value = "The new status of the job")
+    @Schema(description = "The new status of the job")
     @JsonProperty
     private JobStatus status;
 
-    @ApiModelProperty(value = "When the status change occurred")
+    @Schema(description = "When the status change occurred")
     @JsonProperty
     @JsonFormat(
             shape = JsonFormat.Shape.STRING,
@@ -54,7 +54,7 @@ public final class JobTimestamp {
             timezone = Constants.API_VISIBLE_TIMESTAMPS_TIMEZONE)
     private Date time;
 
-    @ApiModelProperty(value = "(optional) A message associated with the status change")
+    @Schema(description = "(optional) A message associated with the status change")
     @JsonProperty
     private String message = null;
 

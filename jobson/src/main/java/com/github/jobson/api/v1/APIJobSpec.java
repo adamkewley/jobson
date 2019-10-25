@@ -23,12 +23,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.specs.JobSpecId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
-@ApiModel(description = "A job spec's details")
+@Schema(description = "A job spec's details")
 public final class APIJobSpec {
 
     public static APIJobSpec fromJobSpec(JobSpec jobSpec) {
@@ -40,19 +40,19 @@ public final class APIJobSpec {
     }
 
 
-    @ApiModelProperty(value = "ID of the job spec")
+    @Schema(description = "ID of the job spec")
     @JsonProperty
     private JobSpecId id;
 
-    @ApiModelProperty(value = "Human-readable name of the job spec")
+    @Schema(description = "Human-readable name of the job spec")
     @JsonProperty
     private String name;
 
-    @ApiModelProperty(value = "Human-readable description of the job spec")
+    @Schema(description = "Human-readable description of the job spec")
     @JsonProperty
     private String description;
 
-    @ApiModelProperty(value = "The inputs clients must provide to spawn to create a job from this spec")
+    @Schema(description = "The inputs clients must provide to spawn to create a job from this spec")
     @JsonProperty
     private List<JobExpectedInput<?>> expectedInputs;
 

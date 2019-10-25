@@ -23,7 +23,7 @@ import com.github.javafaker.Faker;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.utils.ValidationError;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-@ApiModel(description = "Schema for an input that requires clients to provide multiple values")
+@Schema(description = "Schema for an input that requires clients to provide multiple values")
 public final class StringArrayExpectedInput extends JobExpectedInput<StringArrayInput> {
 
     /**

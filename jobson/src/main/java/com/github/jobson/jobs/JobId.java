@@ -21,9 +21,9 @@ package com.github.jobson.jobs;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "A unique identifier for a job on the system")
+@Schema(description = "A unique identifier for a job on the system")
 public final class JobId {
 
     private final String jobId;

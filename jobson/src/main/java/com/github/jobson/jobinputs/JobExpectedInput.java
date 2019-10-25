@@ -32,13 +32,13 @@ import com.github.jobson.jobinputs.sql.SQLExpectedInput;
 import com.github.jobson.jobinputs.string.StringExpectedInput;
 import com.github.jobson.jobinputs.stringarray.StringArrayExpectedInput;
 import com.github.jobson.utils.ValidationError;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-@ApiModel(description = "The schema of a job input")
+@Schema(description = "The schema of a job input")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = SQLExpectedInput.class, name = "sql"),

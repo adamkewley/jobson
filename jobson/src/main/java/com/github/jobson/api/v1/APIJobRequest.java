@@ -23,26 +23,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.specs.JobSpecId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-@ApiModel(description = "A job request")
+@Schema(description = "A job request")
 public final class APIJobRequest {
 
-    @ApiModelProperty(value = "The job spec that the request is being made against")
+    @Schema(description = "The job spec that the request is being made against")
     @JsonProperty
     @NotNull
     private JobSpecId spec;
 
-    @ApiModelProperty(value = "Human-readable name for the job")
+    @Schema(description = "Human-readable name for the job")
     @JsonProperty
     @NotNull
     private String name;
 
-    @ApiModelProperty(value = "Inputs for the job")
+    @Schema(description = "Inputs for the job")
     @JsonProperty
     @NotNull
     private Map<JobExpectedInputId, JsonNode> inputs;

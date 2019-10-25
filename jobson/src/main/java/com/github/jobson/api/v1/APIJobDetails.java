@@ -24,13 +24,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.dao.jobs.JobDetails;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobTimestamp;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 import java.util.Map;
 
-@ApiModel(description = "Details of a job on the system")
+@Schema(description = "Details of a job on the system")
 public class APIJobDetails extends JobDetails {
 
     public static APIJobDetails fromJobDetails(
@@ -46,7 +46,7 @@ public class APIJobDetails extends JobDetails {
     }
 
 
-    @ApiModelProperty(value = "Links to related resources and actions")
+    @Schema(description = "Links to related resources and actions")
     @JsonProperty
     private Map<String, APIRestLink> _links;
 

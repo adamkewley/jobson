@@ -22,15 +22,15 @@ package com.github.jobson.api;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.jobson.api.v1.APIRestLink;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Map;
 
-@ApiModel(description = "A root response, which describes sub-resources")
+@Schema(description = "A root response, which describes sub-resources")
 public final class APIRootResponse {
 
-    @ApiModelProperty(value = "Links to related resources")
+    @Schema(description = "Links to related resources")
     @JsonProperty
     private Map<String, APIRestLink> _links;
 

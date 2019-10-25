@@ -19,15 +19,15 @@
 
 package com.github.jobson.api.v1;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.net.URI;
 
-@ApiModel(description = "A related resource link")
+@Schema(description = "A related resource link")
 public final class APIRestLink {
 
-    @ApiModelProperty(value = "The link's URL")
+    @Schema(description = "The link's URL")
     private URI href;
 
 

@@ -23,12 +23,12 @@ import com.github.javafaker.Faker;
 import com.github.jobson.jobinputs.JobExpectedInput;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.utils.ValidationError;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 import java.util.Optional;
 
-@ApiModel(description = "Schema for an input that requires clients to provide a single string.")
+@Schema(description = "Schema for an input that requires clients to provide a single string.")
 public final class StringExpectedInput extends JobExpectedInput<StringInput> {
 
     /**

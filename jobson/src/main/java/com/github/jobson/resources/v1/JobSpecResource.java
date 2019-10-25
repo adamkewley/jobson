@@ -23,7 +23,10 @@ import com.github.jobson.api.v1.*;
 import com.github.jobson.dao.specs.JobSpecDAO;
 import com.github.jobson.dao.specs.JobSpecSummary;
 import com.github.jobson.specs.JobSpecId;
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.responses.*;
+import io.swagger.v3.oas.annotations.info.*;
+import io.swagger.v3.oas.annotations.media.*;
 
 import javax.annotation.security.PermitAll;
 import javax.validation.constraints.NotNull;
@@ -43,7 +46,8 @@ import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-@Api(description = "Operations related to job specifications")
+@OpenAPIDefinition(
+                   info = @Info(description = "Operations related to job specifications"))
 @Path(HTTP_SPECS_PATH)
 @Produces("application/json")
 public final class JobSpecResource {
@@ -65,29 +69,33 @@ public final class JobSpecResource {
 
 
     @GET
-    @ApiOperation(
-            value = "Get summaries of the job specs exposed by the system",
-            code = 200,
-            notes = "Returns an object that contains summaries of *some* of the job specs exposed by the system. " +
+    @Operation(
+            summary = "Get summaries of the job specs exposed by the system",
+            description = "Returns an object that contains summaries of *some* of the job specs exposed by the system. " +
                     "The response does not necessarily contain summaries for *all* job specs exposed by the system. " +
                     "This is because pagination and client permissions may hide job specs. If further pages of job specs are " +
                     "available, links shall be set to contain hrefs which the client may use to fetch more specs." +
                     "The server may reorder job spec summaries based on its configuration or knowledge about the user. " +
                     "If a client sets a query string, the server will respond appropriately; however, the same rules apply.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Job summaries returned")
+            @ApiResponse(
+                     responseCode = "200",
+                     description = "Job summaries returned",
+                     content = @Content(
+                             schema = @Schema(implementation = APIJobSpecSummaryCollection.class)
+                     )),
     })
     @PermitAll
     public APIJobSpecSummaryCollection fetchJobSpecSummaries(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "The page number (0-indexed)")
+            @Parameter(description = "The page number (0-indexed)")
             @QueryParam("page")
                     Optional<Integer> page,
-            @ApiParam(value = "The number of entries a response page should contain.")
+            @Parameter(description = "The number of entries a response page should contain.")
             @QueryParam("page-size")
                     Optional<Integer> pageSize,
-            @ApiParam(value = "Client query string")
+            @Parameter(description = "Client query string")
             @QueryParam("query")
                     Optional<String> query) {
 
@@ -121,20 +129,29 @@ public final class JobSpecResource {
 
     @GET
     @Path("{job-spec-id}")
-    @ApiOperation(
-            value = "Get a a job spec.",
-            code = 200,
-            notes = "If found, returns a job spec. A job spec describes declaratively what a " +
+    @Operation(
+            summary = "Get a a job spec.",
+            description = "If found, returns a job spec. A job spec describes declaratively what a " +
                     "job needs in order to run.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Job specification found and returned", response = APIJobSpec.class),
-            @ApiResponse(code = 404, message = "The job specification cannot be found", response = APIErrorMessage.class)
+            @ApiResponse(
+                     responseCode = "200",
+                     description = "Job specification found and returned",
+                     content = @Content(
+                             schema = @Schema(implementation = APIJobSpec.class)
+                     )),
+            @ApiResponse(
+                     responseCode = "404",
+                     description = "The job specification cannot be found",
+                     content = @Content(
+                             schema = @Schema(implementation = APIErrorMessage.class)
+                     ))
     })
     @PermitAll
     public Optional<APIJobSpec> fetchJobSpecDetailsById(
             @Context
                     SecurityContext context,
-            @ApiParam(value = "The job spec's ID")
+            @Parameter(description = "The job spec's ID")
             @PathParam("job-spec-id")
             @NotNull
                     JobSpecId jobSpecId) throws IOException {

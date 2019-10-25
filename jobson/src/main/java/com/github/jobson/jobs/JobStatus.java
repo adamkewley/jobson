@@ -20,13 +20,13 @@
 package com.github.jobson.jobs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Set;
 
 import static com.github.jobson.Helpers.setOf;
 
-@ApiModel(description = "The status of a job")
+@Schema(description = "The status of a job")
 public enum JobStatus {
 
     @JsonProperty("submitted")

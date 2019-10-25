@@ -26,7 +26,7 @@ import com.github.jobson.jobinputs.JobInput;
 import com.github.jobson.jobs.JobId;
 import com.github.jobson.jobs.JobTimestamp;
 import com.github.jobson.specs.JobSpec;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 import java.util.Map;
@@ -54,7 +54,7 @@ public class PersistedJob extends ValidJobRequest {
     @JsonProperty
     private JobId id;
 
-    @ApiModelProperty(value = "Timestamps indicating when job status changes occurred")
+    @Schema(description = "Timestamps indicating when job status changes occurred")
     @JsonProperty
     private List<JobTimestamp> timestamps;
 

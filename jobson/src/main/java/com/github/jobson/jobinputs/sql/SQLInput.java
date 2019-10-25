@@ -23,16 +23,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.jobson.jobinputs.JobInput;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
 
-@ApiModel(description = "A job input that satisfies an sql expected input")
+@Schema(description = "A job input that satisfies an sql expected input")
 public final class SQLInput implements JobInput {
 
-    @ApiModelProperty(
-            value = "An SQL string against the schema",
+    @Schema(description = "An SQL string against the schema",
             example = "select TransitId from PreprocessedTransit")
     @JsonIgnore
     @NotNull

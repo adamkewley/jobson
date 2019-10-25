@@ -7,18 +7,18 @@
     <parent>
         <groupId>com.github.jobson</groupId>
         <artifactId>jobson-project</artifactId>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
     </parent>
 
     <artifactId>jobson-swagger</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.github.jobson</groupId>
             <artifactId>jobson</artifactId>
-            <version>1.0.6</version>
+            <version>1.0.7</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.fasterxml</groupId>
@@ -52,33 +52,21 @@
 
             <!-- Compile Swagger annotations into a swagger JSON spec -->
             <plugin>
-                <groupId>com.github.kongchen</groupId>
+                <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.7</version>
+                <version>2.0.10</version>
                 <configuration>
-                    <apiSources>
-                        <apiSource>
-                            <locations>
-                                <location>com.github.jobson.resources</location>
-                                <location>com.github.jobson.api</location>
-                            </locations>
-                            <schemes>
-                                <scheme>http</scheme>
-                            </schemes>
-                            <info>
-                                <title>Jobson API</title>
-                                <version>1</version>
-                            </info>
-                            <swaggerDirectory>${project.build.directory}/</swaggerDirectory>
-                            <swaggerFileName>${project.artifactId}-${project.version}</swaggerFileName>
-                        </apiSource>
-                    </apiSources>
+                  <outputFileName>${project.artifactId}-${project.version}</outputFileName>
+                  <outputPath>${project.build.directory}/</outputPath>
+                  <outputFormat>JSON</outputFormat>
+                  <resourcePackages>com.github.jobson.resources,com.github.jobson.api</resourcePackages>
+                  <prettyPrint>TRUE</prettyPrint>
                 </configuration>
                 <executions>
                     <execution>
                         <phase>compile</phase>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>resolve</goal>
                         </goals>
                     </execution>
                 </executions>

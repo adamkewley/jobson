@@ -22,11 +22,11 @@ package com.github.jobson.jobinputs.stringarray;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.jobson.jobinputs.JobInput;
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
-@ApiModel(description = "An input that satisfies a multivalue expected input")
+@Schema(description = "An input that satisfies a multivalue expected input")
 public final class StringArrayInput implements JobInput {
 
     private List<String> values;
