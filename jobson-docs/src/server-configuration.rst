@@ -11,7 +11,7 @@ Internally, Jobson currently uses `dropwizard
 <https://www.dropwizard.io>`_ to handle its server configuration. If
 you need to configure webserver properties (e.g. ports, logs), refer
 to the `dropwizard configuration reference
-<https://www.dropwizard.io/1.3.5/docs/manual/configuration.html#man-configuration>`_
+<https://www.dropwizard.io/en/stable/manual/configuration.html>`_
 
 **Note**: Relative paths are resolved relative to ``config.yml``
 
