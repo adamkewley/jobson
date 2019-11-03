@@ -17,4 +17,5 @@ build a web service around a batch application.
     specs
     HTTP API <apidocs/index.html#://>
     ui
+    http-proxying-to-jobson
     build

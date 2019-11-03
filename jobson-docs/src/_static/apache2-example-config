@@ -1,0 +1,19 @@
+# apache virtual host config (e.g. at
+# /etc/apache2/sites-enabled/000-default.conf on Ubuntu installs)
+
+<VirtualHost *:80>
+        # (other apache config options)
+        # .
+        # .
+        # .
+        # (insert below lines, assuming `jobson` is running locally on port 8080)
+        # these options depend on `mod_rewrite`, `mod_proxy`, and
+        # `mod_proxy_http`
+
+        # proxy all requests beginning with /api/ to jobson server at
+        # localhost:8080
+        
+        RewriteEngine On
+        RewriteRule "^/api/(.*)" "http://localhost:8080/$1" [P]
+        ProxyPassReverse "/api/" "http://localhost:8080/"
+</VirtualHost>
