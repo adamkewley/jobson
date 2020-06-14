@@ -68,9 +68,6 @@ public abstract class JobExpectedInput<TJobInput extends JobInput> {
     private Optional<TJobInput> defaultVal = Optional.empty();
 
 
-    /**
-     * @deprecated Used by JSON deserilizer.
-     */
     public JobExpectedInput() {}
 
     public JobExpectedInput(

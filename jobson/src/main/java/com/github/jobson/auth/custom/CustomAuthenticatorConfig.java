@@ -33,6 +33,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Principal;
 import java.util.Optional;
+import java.lang.reflect.InvocationTargetException;
 
 import static com.github.jobson.Helpers.readJSON;
 import static java.lang.Thread.currentThread;
@@ -87,8 +88,8 @@ public final class CustomAuthenticatorConfig implements AuthenticationConfig {
         try {
             return properties.isPresent() ?
                     readJSON(properties.get(), klass) :
-                    klass.newInstance();
-        } catch (IOException | IllegalAccessException | InstantiationException ex) {
+                    klass.getDeclaredConstructor().newInstance();
+        } catch (IOException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException ex) {
             throw new RuntimeException(ex);
         }
     }

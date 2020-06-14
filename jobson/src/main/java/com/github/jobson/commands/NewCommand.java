@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.charset.Charset;
 
 import static com.github.jobson.Constants.*;
 import static com.github.jobson.Helpers.openResourceFile;
@@ -63,7 +64,7 @@ public final class NewCommand extends Command {
             tryWriteFile(configPath, openResourceFile("config-template.yml"));
 
             final Path usersPath = Paths.get(WORKSPACE_USER_FILENAME);
-            tryWriteFile(usersPath, toInputStream(""));
+            tryWriteFile(usersPath, toInputStream("", Charset.forName("UTF-8")));
 
             final Path specDir = Paths.get(WORKSPACE_SPECS_DIRNAME);
             tryCreateDir(specDir);
