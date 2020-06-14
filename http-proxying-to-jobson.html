@@ -1,0 +1,370 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HTTP Proxying to Jobson &mdash; jobson-docs 1.0.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer’s Guide" href="build.html" />
+    <link rel="prev" title="User Interface (Jobson UI)" href="ui.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> jobson-docs
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commandline.html">Command-Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server-configuration.html">Server Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workspaces.html">Workspaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="specs.html">Job Specs</a></li>
+<li class="toctree-l1"><a class="reference external" href="apidocs/index.html#://">HTTP API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ui.html">User Interface (Jobson UI)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HTTP Proxying to Jobson</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#nginx">Nginx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#apache">Apache</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Developer’s Guide</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jobson-docs</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>HTTP Proxying to Jobson</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/http-proxying-to-jobson.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="http-proxying-to-jobson">
+<h1>HTTP Proxying to Jobson<a class="headerlink" href="#http-proxying-to-jobson" title="Permalink to this headline">¶</a></h1>
+<p>The main <code class="docutils literal notranslate"><span class="pre">jobson</span></code> java server hosts a standard JSON API that is
+accessed via HTTP. The default port for the JSON API is 8080, which
+can be changed in the <a class="reference external" href="server-configuration.html">server configuration</a>.</p>
+<p>In standard production deployments, a <code class="docutils literal notranslate"><span class="pre">jobson</span></code> server is typically
+hosted behind a a reverse proxy such as <a class="reference external" href="https://www.nginx.com/">nginx</a>, which adds HTTP encryption, load
+balancing, or path matching. Path matching is how <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> is
+integrated with <code class="docutils literal notranslate"><span class="pre">jobson</span></code>: <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> can be made to prefix all
+API call paths to <code class="docutils literal notranslate"><span class="pre">jobson</span></code> with (e.g.) <code class="docutils literal notranslate"><span class="pre">/api</span></code>, which the reverse
+proxy can then use to forward traffic to a <code class="docutils literal notranslate"><span class="pre">jobson</span></code> server.</p>
+<p>The server also hosts a websocket server, which is used to stream
+stdio updates directly to clients as they happen (e.g. <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code>
+uses this to update the console log dynamically). The websocket API is
+not strictly required to use <code class="docutils literal notranslate"><span class="pre">jobson</span></code> - <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> should
+function fine without websockets, but won’t dynamically update.</p>
+<div class="section" id="nginx">
+<h2>Nginx<a class="headerlink" href="#nginx" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Create an nginx config file for the site at
+<code class="docutils literal notranslate"><span class="pre">/etc/nginx/sites-available/jobson-ui</span></code>:</p></li>
+</ul>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29</pre></div></td><td class="code"><div class="highlight"><pre><span></span>server {
+	listen 8090;
+	listen [::]:8090;
+
+	root /var/www/jobson-ui;
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
+	}
+
+	location /api {
+		# Any requests beginning with /api should be forwarded
+		# to Jobson
+		proxy_pass http://localhost:8080;
+
+		# The Jobson server itself doesn&#39;t take an /api prefix
+		# (it&#39;s just used for routing), so drop it.
+		rewrite ^/api/(.*) /$1 break;
+
+		# Enable websockets, which are used for dynamic updates
+		# (Jobson UI doesn&#39;t *require* them though).
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection &quot;upgrade&quot;;
+		proxy_read_timeout 86400;
+	}
+}
+</pre></div>
+</td></tr></table></div>
+<ul class="simple">
+<li><p>Enable the site configuration:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> /etc/nginx/sites-enabled
+ln -s ../sites-available/jobson-ui jobson-ui
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Reload nginx:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nginx -s reload
+</pre></div>
+</div>
+</div>
+<div class="section" id="apache">
+<h2>Apache<a class="headerlink" href="#apache" title="Permalink to this headline">¶</a></h2>
+<p><em>Thanks to Odgen Brash for testing + documenting this</em>.</p>
+<ul class="simple">
+<li><p>Install <code class="docutils literal notranslate"><span class="pre">apache2</span></code> as normal</p></li>
+<li><p>Update your virtual host configuration to proxy API requests to a
+running <code class="docutils literal notranslate"><span class="pre">jobson</span></code> server:</p></li>
+</ul>
+<div class="highlight-default notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># apache virtual host config (e.g. at</span>
+<span class="c1"># /etc/apache2/sites-enabled/000-default.conf on Ubuntu installs)</span>
+
+<span class="o">&lt;</span><span class="n">VirtualHost</span> <span class="o">*</span><span class="p">:</span><span class="mi">80</span><span class="o">&gt;</span>
+        <span class="c1"># (other apache config options)</span>
+        <span class="c1"># .</span>
+        <span class="c1"># .</span>
+        <span class="c1"># .</span>
+        <span class="c1"># (insert below lines, assuming `jobson` is running locally on port 8080)</span>
+        <span class="c1"># these options depend on `mod_rewrite`, `mod_proxy`, and</span>
+        <span class="c1"># `mod_proxy_http`</span>
+
+        <span class="c1"># proxy all requests beginning with /api/ to jobson server at</span>
+        <span class="c1"># localhost:8080</span>
+        
+        <span class="n">RewriteEngine</span> <span class="n">On</span>
+        <span class="n">RewriteRule</span> <span class="s2">&quot;^/api/(.*)&quot;</span> <span class="s2">&quot;http://localhost:8080/$1&quot;</span> <span class="p">[</span><span class="n">P</span><span class="p">]</span>
+        <span class="n">ProxyPassReverse</span> <span class="s2">&quot;/api/&quot;</span> <span class="s2">&quot;http://localhost:8080/&quot;</span>
+<span class="o">&lt;/</span><span class="n">VirtualHost</span><span class="o">&gt;</span>
+</pre></div>
+</td></tr></table></div>
+<ul class="simple">
+<li><p>Enable required mods:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>a2enmod rewrite proxy proxy_http
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Restart <code class="docutils literal notranslate"><span class="pre">apache2</span></code>:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>apache2ctl restart
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="build.html" class="btn btn-neutral float-right" title="Developer’s Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ui.html" class="btn btn-neutral float-left" title="User Interface (Jobson UI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Adam Kewley
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

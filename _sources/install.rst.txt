@@ -68,7 +68,7 @@ This will boot a docker container that listens on ``HOST_PORT``, which you can b
 
 
 Inheriting the ``jobson`` Docker Image
-======================================
+--------------------------------------
 
 Running ``jobson`` in a Docker container might be challenging if the
 applications ``jobson`` runs have other dependencies (e.g. ``python``,

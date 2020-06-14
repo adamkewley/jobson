@@ -21,6 +21,87 @@
         }
       }
     },
+    "/v1/jobs" : {
+      "get" : {
+        "summary" : "Retrieve jobs managed by the system.",
+        "description" : "Gets *some* of the jobs managed by the system. The response does not necessarily contain *all* the jobs managed by the system because pagination and client permissions may hide entries. ",
+        "operationId" : "getJobs",
+        "parameters" : [ {
+          "name" : "page",
+          "in" : "query",
+          "description" : "The page number (0-indexed)",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "page-size",
+          "in" : "query",
+          "description" : "The number of entries a response page should contain. Max page size is 20",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "query",
+          "in" : "query",
+          "description" : "Client query string",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Entries returned",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIJobDetailsCollection"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Submit a new job",
+        "description" : "Attempt to submit a new job to the system. The system will check the job against the job spec specified in the request. If it does not match, the request will be immediately rejected by the server. Otherwise, the request will be immediately accepted by the server. Note: the server accepting the job is only indicates that the request matches the job spec. It does not guarantee that the underlying job will complete successfully.",
+        "operationId" : "submitJob",
+        "requestBody" : {
+          "description" : "The job request",
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/APIJobRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Job request accepted",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIJobCreatedResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid or malformed job request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/jobs/{job-id}/abort" : {
       "post" : {
         "summary" : "Abort a running job",
@@ -212,87 +293,6 @@
         }
       }
     },
-    "/v1/jobs" : {
-      "get" : {
-        "summary" : "Retrieve jobs managed by the system.",
-        "description" : "Gets *some* of the jobs managed by the system. The response does not necessarily contain *all* the jobs managed by the system because pagination and client permissions may hide entries. ",
-        "operationId" : "getJobs",
-        "parameters" : [ {
-          "name" : "page",
-          "in" : "query",
-          "description" : "The page number (0-indexed)",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "page-size",
-          "in" : "query",
-          "description" : "The number of entries a response page should contain. Max page size is 20",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "query",
-          "in" : "query",
-          "description" : "Client query string",
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Entries returned",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/APIJobDetailsCollection"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post" : {
-        "summary" : "Submit a new job",
-        "description" : "Attempt to submit a new job to the system. The system will check the job against the job spec specified in the request. If it does not match, the request will be immediately rejected by the server. Otherwise, the request will be immediately accepted by the server. Note: the server accepting the job is only indicates that the request matches the job spec. It does not guarantee that the underlying job will complete successfully.",
-        "operationId" : "submitJob",
-        "requestBody" : {
-          "description" : "The job request",
-          "content" : {
-            "*/*" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/APIJobRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Job request accepted",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/APIJobCreatedResponse"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Invalid or malformed job request",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/APIErrorMessage"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/jobs/{job-id}" : {
       "get" : {
         "summary" : "Get details of a job managed by the system.",
@@ -367,44 +367,6 @@
         }
       }
     },
-    "/v1/specs/{job-spec-id}" : {
-      "get" : {
-        "summary" : "Get a a job spec.",
-        "description" : "If found, returns a job spec. A job spec describes declaratively what a job needs in order to run.",
-        "operationId" : "fetchJobSpecDetailsById",
-        "parameters" : [ {
-          "name" : "job-spec-id",
-          "in" : "path",
-          "description" : "The job spec's ID",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Job specification found and returned",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/APIJobSpec"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "The job specification cannot be found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/APIErrorMessage"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/specs" : {
       "get" : {
         "summary" : "Get summaries of the job specs exposed by the system",
@@ -441,6 +403,44 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/APIJobSpecSummaryCollection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/specs/{job-spec-id}" : {
+      "get" : {
+        "summary" : "Get a a job spec.",
+        "description" : "If found, returns a job spec. A job spec describes declaratively what a job needs in order to run.",
+        "operationId" : "fetchJobSpecDetailsById",
+        "parameters" : [ {
+          "name" : "job-spec-id",
+          "in" : "path",
+          "description" : "The job spec's ID",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Job specification found and returned",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIJobSpec"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The job specification cannot be found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIErrorMessage"
                 }
               }
             }
@@ -510,6 +510,76 @@
           }
         },
         "description" : "A root response, which describes sub-resources"
+      },
+      "APIJobDetails" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "A name for the job"
+          },
+          "owner" : {
+            "type" : "string"
+          },
+          "timestamps" : {
+            "type" : "array",
+            "description" : "Timestamps indicating when job status changes occurred",
+            "items" : {
+              "$ref" : "#/components/schemas/JobTimestamp"
+            }
+          },
+          "_links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/APIRestLink"
+            },
+            "description" : "Links to related resources and actions"
+          }
+        },
+        "description" : "Details of a job on the system"
+      },
+      "APIJobDetailsCollection" : {
+        "type" : "object",
+        "properties" : {
+          "entries" : {
+            "type" : "array",
+            "description" : "The entries returned",
+            "items" : {
+              "$ref" : "#/components/schemas/APIJobDetails"
+            }
+          },
+          "_links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/APIRestLink"
+            },
+            "description" : "Links to related resources and actions"
+          }
+        },
+        "description" : "Response to a request for job summaries"
+      },
+      "JobTimestamp" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "description" : "The status of a job",
+            "enum" : [ "SUBMITTED", "RUNNING", "ABORTED", "FATAL_ERROR", "FINISHED" ]
+          },
+          "time" : {
+            "type" : "string",
+            "description" : "When the status change occurred",
+            "format" : "date-time"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "(optional) A message associated with the status change"
+          }
+        },
+        "description" : "Timestamp on a job"
       },
       "APIJobSpec" : {
         "type" : "object",
@@ -782,12 +852,6 @@
           "short" : {
             "type" : "boolean"
           },
-          "array" : {
-            "type" : "boolean"
-          },
-          "null" : {
-            "type" : "boolean"
-          },
           "number" : {
             "type" : "boolean"
           },
@@ -834,6 +898,12 @@
             "type" : "boolean"
           },
           "binary" : {
+            "type" : "boolean"
+          },
+          "array" : {
+            "type" : "boolean"
+          },
+          "null" : {
             "type" : "boolean"
           }
         },
@@ -883,76 +953,6 @@
           }
         },
         "description" : "Response to a request for job summaries"
-      },
-      "APIJobDetails" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "A name for the job"
-          },
-          "owner" : {
-            "type" : "string"
-          },
-          "timestamps" : {
-            "type" : "array",
-            "description" : "Timestamps indicating when job status changes occurred",
-            "items" : {
-              "$ref" : "#/components/schemas/JobTimestamp"
-            }
-          },
-          "_links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/APIRestLink"
-            },
-            "description" : "Links to related resources and actions"
-          }
-        },
-        "description" : "Details of a job on the system"
-      },
-      "APIJobDetailsCollection" : {
-        "type" : "object",
-        "properties" : {
-          "entries" : {
-            "type" : "array",
-            "description" : "The entries returned",
-            "items" : {
-              "$ref" : "#/components/schemas/APIJobDetails"
-            }
-          },
-          "_links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/APIRestLink"
-            },
-            "description" : "Links to related resources and actions"
-          }
-        },
-        "description" : "Response to a request for job summaries"
-      },
-      "JobTimestamp" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "description" : "The status of a job",
-            "enum" : [ "SUBMITTED", "RUNNING", "ABORTED", "FATAL_ERROR", "FINISHED" ]
-          },
-          "time" : {
-            "type" : "string",
-            "description" : "When the status change occurred",
-            "format" : "date-time"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "(optional) A message associated with the status change"
-          }
-        },
-        "description" : "Timestamp on a job"
       },
       "APIErrorMessage" : {
         "required" : [ "code", "message" ],

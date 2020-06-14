@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Install &mdash; jobson-docs 1.0.7 documentation</title>
+  <title>Install &mdash; jobson-docs 1.0.8 documentation</title>
   
 
   
@@ -87,9 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#debian-oses-ubuntu-mint-etc">Debian OSes (Ubuntu, Mint, etc.)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#osx-linux-any">OSX/Linux (any)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#docker">Docker</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#inheriting-the-jobson-docker-image">Inheriting the <code class="docutils literal notranslate"><span class="pre">jobson</span></code> Docker Image</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#inheriting-the-jobson-docker-image">Inheriting the <code class="docutils literal notranslate"><span class="pre">jobson</span></code> Docker Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#windows">Windows</a></li>
 </ul>
 </li>
@@ -100,6 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="specs.html">Job Specs</a></li>
 <li class="toctree-l1"><a class="reference external" href="apidocs/index.html#://">HTTP API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ui.html">User Interface (Jobson UI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http-proxying-to-jobson.html">HTTP Proxying to Jobson</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build.html">Developer’s Guide</a></li>
 </ul>
 
@@ -174,8 +173,8 @@ etc.</p>
 <h2>Debian OSes (Ubuntu, Mint, etc.)<a class="headerlink" href="#debian-oses-ubuntu-mint-etc" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">jobson</span></code> build produces a <code class="docutils literal notranslate"><span class="pre">.deb</span></code> file that can be installed
 directly:</p>
-<pre class="literal-block">wget <a class="reference external" href="https://github.com/adamkewley/jobson/releases/download/">https://github.com/adamkewley/jobson/releases/download/</a>1.0.7/<a href="#id1"><span class="problematic" id="id2">jobson_</span></a>1.0.7_all.deb
-dpkg -i <a href="#id3"><span class="problematic" id="id4">jobson_</span></a>1.0.7_all.deb  # contains dependencies on (e.g.) java
+<pre class="literal-block">wget <a class="reference external" href="https://github.com/adamkewley/jobson/releases/download/">https://github.com/adamkewley/jobson/releases/download/</a>1.0.8/<a href="#id1"><span class="problematic" id="id2">jobson_</span></a>1.0.8_all.deb
+dpkg -i <a href="#id3"><span class="problematic" id="id4">jobson_</span></a>1.0.8_all.deb  # contains dependencies on (e.g.) java
 apt-get -f install  # resolves dependencies</pre>
 </div>
 <div class="section" id="osx-linux-any">
@@ -183,8 +182,8 @@ apt-get -f install  # resolves dependencies</pre>
 <p>The <code class="docutils literal notranslate"><span class="pre">jobson</span></code> project produces a tarball containing all assets needed
 to run jobson on a unix-like OS.</p>
 <p><strong>Note</strong>: You must have <code class="docutils literal notranslate"><span class="pre">java</span></code> (8+) installed on your system in order to run <code class="docutils literal notranslate"><span class="pre">jobson</span></code></p>
-<pre class="literal-block">wget <a class="reference external" href="https://github.com/adamkewley/jobson/releases/download/">https://github.com/adamkewley/jobson/releases/download/</a>1.0.7/jobson-nix-1.0.7.tar.gz
-tar xvf jobson-nix-1.0.7.tar.gz
+<pre class="literal-block">wget <a class="reference external" href="https://github.com/adamkewley/jobson/releases/download/">https://github.com/adamkewley/jobson/releases/download/</a>1.0.8/jobson-nix-1.0.8.tar.gz
+tar xvf jobson-nix-1.0.8.tar.gz
 
 # optional: add to ~/.bashrc
 export PATH=$PATH:/location/of/unpacked/tarball/bin</pre>
@@ -193,24 +192,23 @@ export PATH=$PATH:/location/of/unpacked/tarball/bin</pre>
 <h2>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">jobson</span></code> project builds a Docker image that pre-integrates <code class="docutils literal notranslate"><span class="pre">jobson</span></code> and <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> (with <code class="docutils literal notranslate"><span class="pre">nginx</span></code>) together.
 By default, it will create a demo workspace at <cite>/home/jobson/</cite> inside the container and listen on port 80:</p>
-<pre class="literal-block">docker run --name default-container -p 80:80 adamkewley/jobson:1.0.7</pre>
+<pre class="literal-block">docker run --name default-container -p 80:80 adamkewley/jobson:1.0.8</pre>
 <p>It’s recommended that you host the workspace outside the container, so that you can backup job data, upgrade the image,
 etc. The easiest way to do this is to copy the default workspace out of the container and create a new container with
 a volume mount:</p>
 <pre class="literal-block">HOST_PORT=9090
 
 # copy out the container's workspace
-docker run --name tmp-jobson-container -d adamkewley/jobson:1.0.7
+docker run --name tmp-jobson-container -d adamkewley/jobson:1.0.8
 docker cp tmp-jobson-container:/home/jobson /host/path/jobson
 docker container rm -f tmp-jobson-container
 
 # boot a container that uses the out-of-container workspace
-docker run --name jobson-container -p ${HOST_PORT}:80 -v /host/path/jobson:/home/jobson:rw -d adamkewley/jobson:1.0.7</pre>
+docker run --name jobson-container -p ${HOST_PORT}:80 -v /host/path/jobson:/home/jobson:rw -d adamkewley/jobson:1.0.8</pre>
 <p>This will boot a docker container that listens on <code class="docutils literal notranslate"><span class="pre">HOST_PORT</span></code>, which you can browse to.</p>
 </div>
-</div>
 <div class="section" id="inheriting-the-jobson-docker-image">
-<h1>Inheriting the <code class="docutils literal notranslate"><span class="pre">jobson</span></code> Docker Image<a class="headerlink" href="#inheriting-the-jobson-docker-image" title="Permalink to this headline">¶</a></h1>
+<h2>Inheriting the <code class="docutils literal notranslate"><span class="pre">jobson</span></code> Docker Image<a class="headerlink" href="#inheriting-the-jobson-docker-image" title="Permalink to this headline">¶</a></h2>
 <p>Running <code class="docutils literal notranslate"><span class="pre">jobson</span></code> in a Docker container might be challenging if the
 applications <code class="docutils literal notranslate"><span class="pre">jobson</span></code> runs have other dependencies (e.g. <code class="docutils literal notranslate"><span class="pre">python</span></code>,
 <code class="docutils literal notranslate"><span class="pre">c++</span></code>). One way to get around this is to create a specialized Docker
@@ -235,6 +233,7 @@ RUN apt update &amp;&amp; \
 
 RUN usermod -aG docker jobson
 </pre></div>
+</div>
 </div>
 <div class="section" id="windows">
 <h2>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">¶</a></h2>
