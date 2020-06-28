@@ -1,0 +1,9 @@
+{
+  "spec": "",
+  "inputs": {
+    "file-input": {
+      "filename": "hw.txt",
+      "data": "SGVsbG8sIHdvcmxkIQo="
+    }
+  }
+}
