@@ -26,6 +26,7 @@ import {UnknownInputTypeInputEditor} from "./UnknownInputTypeInputEditor";
 import {IntegerInputEditor} from "./IntegerInputEditor";
 import {Constants} from "../../Constants";
 import {DecimalInputEditor} from "./DecimalInputEditor";
+import {FileInputEditor} from "./FileInputEditor";
 import {APIExpectedInput} from "../../apitypes/APIExpectedInput";
 import {InputEditorUpdate} from "./updates/InputEditorUpdate";
 import {Component, ReactElement} from "react";
@@ -75,15 +76,19 @@ export class InputEditor extends Component<InputEditorProps> {
             max: Constants.F64_MAX,
             typeName: "double"
         }, props),
+        "file": props => new FileInputEditor(props),
     };
+
+    private static unknownInputCtor = props => new UnknownInputTypeInputEditor(props);
 
     public static getSupportedInputEditors(): string[] {
         return Object.keys(this.expectedInputUiComponentCtors);
     }
 
     public render(): ReactElement<any> {
-        const unknownCtor = (props: InputEditorProps) => new UnknownInputTypeInputEditor(props);
-        const inputEditor = InputEditor.expectedInputUiComponentCtors[this.props.expectedInput.type] || unknownCtor;
+        const inputEditor =
+            InputEditor.expectedInputUiComponentCtors[this.props.expectedInput.type] ||
+            InputEditor.unknownInputCtor;
         const expectedInput = this.props.expectedInput;
 
         const editorProps = {
