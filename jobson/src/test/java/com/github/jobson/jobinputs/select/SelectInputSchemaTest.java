@@ -36,7 +36,7 @@ public final class SelectInputSchemaTest {
     public void testCanDeserializeFromJSON() {
         // Shouldn't throw
         TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/select/SelectInputSchema/example-schema.json",
+                "fixtures/jobinputs/select/example-schema.json",
                 SelectExpectedInput.class);
     }
 
@@ -45,7 +45,7 @@ public final class SelectInputSchemaTest {
         // I'm using this to spot-check what jackson actually produces
         // when serializing JSON
         final SelectExpectedInput deserializedSchema = TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/select/SelectInputSchema/example-schema.json",
+                "fixtures/jobinputs/select/example-schema.json",
                 SelectExpectedInput.class);
 
         final String serialziedSchemaJSON = Helpers.toJSON(deserializedSchema);
@@ -54,11 +54,11 @@ public final class SelectInputSchemaTest {
     @Test
     public void testValidateReturnsNoErrorsForAValidInputAgainstTheSchema() {
         final SelectExpectedInput validSchema = TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/select/SelectInputSchema/1_correct-schema.json",
+                "fixtures/jobinputs/select/1_correct-schema.json",
                 SelectExpectedInput.class);
 
         final SelectInput validOptionsInput = TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/select/SelectInputSchema/1_correct-input.json",
+                "fixtures/jobinputs/select/1_correct-input.json",
                 SelectInput.class);
 
         final Optional<List<ValidationError>> maybeValidationErrors = validSchema.validate(validOptionsInput);
@@ -69,11 +69,11 @@ public final class SelectInputSchemaTest {
     @Test
     public void testValidateReturnsErrorsIfTheSelectedOptionIsntInTheSchema() {
         final SelectExpectedInput validSchema = TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/select/SelectInputSchema/2_correct-schema.json",
+                "fixtures/jobinputs/select/2_correct-schema.json",
                 SelectExpectedInput.class);
 
         final SelectInput invalidOptionsInput = TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/select/SelectInputSchema/2_incorrect-input.json",
+                "fixtures/jobinputs/select/2_incorrect-input.json",
                 SelectInput.class);
 
         final Optional<List<ValidationError>> maybeValidationErrors = validSchema.validate(invalidOptionsInput);

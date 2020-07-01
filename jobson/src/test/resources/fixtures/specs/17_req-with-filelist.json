@@ -1,0 +1,15 @@
+{
+  "spec": "",
+  "inputs": {
+    "flist": [
+      {
+        "filename": "hw.txt",
+        "data": "SGVsbG8sIHdvcmxkIQo="
+      },
+      {
+        "filename": "hw2.txt",
+        "data": "SGVsbG8sIHdvcmxkIQo="
+      }
+    ]
+  }
+}

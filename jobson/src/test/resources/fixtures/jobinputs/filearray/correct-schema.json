@@ -1,0 +1,6 @@
+{
+  "id": "foo",
+  "name": "Example Filelist Schema",
+  "description": "Example Description",
+  "type": "file[]"
+}

@@ -34,14 +34,14 @@ public final class SQLInputSchemaTest {
     @Test
     public void testCanDeserializeFromJson() {
         readJSONFixture(
-                "fixtures/jobinputs/sql/SQLInputSchema/example-schema.json",
+                "fixtures/jobinputs/sql/example-schema.json",
                 SQLExpectedInput.class);
     }
 
     @Test
     public void testCanSerailizeToJSON() {
         final SQLExpectedInput sqlInputSchema = readJSONFixture(
-                "fixtures/jobinputs/sql/SQLInputSchema/example-schema.json",
+                "fixtures/jobinputs/sql/example-schema.json",
                 SQLExpectedInput.class);
 
         final String serializedSQLInputSchema = toJSON(sqlInputSchema);
@@ -50,11 +50,11 @@ public final class SQLInputSchemaTest {
     @Test
     public void testValidateReturnsNoErrorsIfTheInputIsValid() {
         final SQLExpectedInput sqlInputSchema = readJSONFixture(
-                "fixtures/jobinputs/sql/SQLInputSchema/1_correct-schema.json",
+                "fixtures/jobinputs/sql/1_correct-schema.json",
                 SQLExpectedInput.class);
 
         final SQLInput sqlInput = readJSONFixture(
-                "fixtures/jobinputs/sql/SQLInputSchema/1_correct-input.json",
+                "fixtures/jobinputs/sql/1_correct-input.json",
                 SQLInput.class);
 
         final Optional<List<ValidationError>> maybeValidationErrors = sqlInputSchema.validate(sqlInput);
@@ -65,11 +65,11 @@ public final class SQLInputSchemaTest {
     @Test
     public void testValidateReturnsErrorsIfAnIncorrectColumnIsRequestedInTheSQL() {
         final SQLExpectedInput sqlInputSchema = readJSONFixture(
-                "fixtures/jobinputs/sql/SQLInputSchema/2_correct-schema.json",
+                "fixtures/jobinputs/sql/2_correct-schema.json",
                 SQLExpectedInput.class);
 
         final SQLInput sqlInput = readJSONFixture(
-                "fixtures/jobinputs/sql/SQLInputSchema/2_incorrect-input.json",
+                "fixtures/jobinputs/sql/2_incorrect-input.json",
                 SQLInput.class);
 
         final Optional<List<ValidationError>> maybeValidationErrors = sqlInputSchema.validate(sqlInput);
@@ -80,11 +80,11 @@ public final class SQLInputSchemaTest {
     @Test
     public void testValidateReturnsErrorsIfInvalidSQLIsProvided() {
         final SQLExpectedInput sqlInputSchema = readJSONFixture(
-                "fixtures/jobinputs/sql/SQLInputSchema/3_correct-schema.json",
+                "fixtures/jobinputs/sql/3_correct-schema.json",
                 SQLExpectedInput.class);
 
         final SQLInput sqlInput = readJSONFixture(
-                "fixtures/jobinputs/sql/SQLInputSchema/3_incorrect-input.json",
+                "fixtures/jobinputs/sql/3_incorrect-input.json",
                 SQLInput.class);
 
         final Optional<List<ValidationError>> maybeValidationErrors = sqlInputSchema.validate(sqlInput);

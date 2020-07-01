@@ -28,21 +28,21 @@ public final class FileInputTest {
     @Test
     public void testCanDeserializeFromJSON() {
         TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/select/FileInput/example-input.json",
+                "fixtures/jobinputs/file/example-input.json",
                 FileInput.class);
     }
 
     @Test(expected = Exception.class)
     public void testThrowsWhenContainsInvalidB64() {
         TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/select/FileInput/invalid-input.json",
+                "fixtures/jobinputs/file/invalid-input.json",
                 FileInput.class);
     }
 
     @Test
     public void testDefaultsNameWhenNameIsMissing() {
         final FileInput fi = TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/select/FileInput/valid-but-missing-name.json",
+                "fixtures/jobinputs/file/valid-but-missing-name.json",
                 FileInput.class);
 
         assertThat(fi.getFilename()).isEqualTo("unnamed");

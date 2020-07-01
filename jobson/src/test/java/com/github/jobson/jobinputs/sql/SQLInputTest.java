@@ -31,7 +31,7 @@ public final class SQLInputTest {
     public void testCanDeserializeFromJson() throws IOException {
         // Shouldn't throw
         readJSONFixture(
-                "fixtures/jobinputs/sql/SQLJobInput/example-input.json",
+                "fixtures/jobinputs/sql/example-input.json",
                 SQLInput.class);
     }
 }

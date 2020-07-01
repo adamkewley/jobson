@@ -17,25 +17,16 @@
  * under the License.
  */
 
-package com.github.jobson.jobinputs.file;
+package com.github.jobson.jobinputs.filearray;
 
 import com.github.jobson.TestHelpers;
 import org.junit.Test;
 
-public final class FileInputSchemaTest {
+public class FileArrayInputTest {
     @Test
     public void testCanDeserializeFromJSON() {
-        // Shouldn't throw
         TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/file/correct-schema.json",
-                FileExpectedInput.class);
-    }
-
-    @Test
-    public void testCanDeserializeFromJSONWithDefault() {
-        // Shouldn't throw
-        TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/file/correct-schema-with-default.json",
-                FileExpectedInput.class);
+                "fixtures/jobinputs/filearray/example-input.json",
+                FileArrayInput.class);
     }
 }
