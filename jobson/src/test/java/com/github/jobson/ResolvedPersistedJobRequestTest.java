@@ -56,7 +56,6 @@ public final class ResolvedPersistedJobRequestTest {
         final Either<ValidJobRequest, List<ValidationError>> ret =
                 ValidJobRequest.tryCreate(validJobSchema, userId, jobRequestWithInvalidSpecifiedOption);
 
-
         ret.handleBoth(req, validationErrors);
     }
 
@@ -175,6 +174,15 @@ public final class ResolvedPersistedJobRequestTest {
                 "fixtures/specs/15_req-with-long.json",
                 req -> fail("Invalid request generated no validation errors"),
                 validationErrors -> assertThat(validationErrors.size()).isGreaterThan(0));
+    }
+
+    @Test
+    public void testValidateProducesNoErrorsWhenSpecContainsFile() {
+        testSpecReqPair(
+                "fixtures/specs/16_job-spec-with-file.json",
+                "fixtures/specs/16_req-with-file.json",
+                req -> {},
+                validationErrors -> assertThat(validationErrors.size()).isEqualTo(0));
     }
 
     @Test

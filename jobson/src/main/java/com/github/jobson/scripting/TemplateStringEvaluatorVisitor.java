@@ -122,7 +122,19 @@ public final class TemplateStringEvaluatorVisitor extends JsLikeExpressionBaseVi
 
     @Override
     public Object visitIdentifierExpression(JsLikeExpressionParser.IdentifierExpressionContext ctx) {
-        return environment.get(ctx.getText());
+        final String k = ctx.getText();
+        final Object maybeElement = environment.get(k);
+
+        if (maybeElement != null) {
+            return maybeElement;
+        }
+
+        final String errMsg = String.format(
+                "%s: not found in template string environment (available: %s)",
+                k,
+                String.join(", ", environment.keySet()));
+
+        throw new RuntimeException(errMsg);
     }
 
     @Override

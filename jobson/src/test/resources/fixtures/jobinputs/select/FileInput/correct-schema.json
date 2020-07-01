@@ -1,0 +1,6 @@
+{
+  "id": "foo",
+  "name": "Example File Schema",
+  "description": "Example Description",
+  "type": "file"
+}

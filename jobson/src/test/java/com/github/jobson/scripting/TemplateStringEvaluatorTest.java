@@ -20,13 +20,16 @@
 package com.github.jobson.scripting;
 
 import com.github.jobson.TestHelpers;
+import com.github.jobson.jobinputs.file.FileInput;
 import com.github.jobson.scripting.testclasses.ExampleObject;
 import com.github.jobson.scripting.testclasses.JsonStringifier;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.github.jobson.Helpers.generateRandomBase36String;
 import static com.github.jobson.Helpers.toJSON;
@@ -263,5 +266,39 @@ public final class TemplateStringEvaluatorTest {
         final String ret = evaluate(templateString, environment);
 
         assertThat(ret).isEqualTo(mapValue);
+    }
+
+    @Test
+    public void testPassingFileInputCallsToFileOnInput() throws IOException {
+        final AtomicBoolean called = new AtomicBoolean(false);
+        final FreeFunction f = new FreeFunction() {
+            @Override
+            public Object call(Object... args) {
+                called.set(true);
+                return "some-path";
+            }
+        };
+        final FileInput fileInput = new FileInput("fname", "SGVsbG8sIHdvcmxkIQo=");
+        final Map<String, Object> map = new HashMap<>();
+        map.put("toFile", f);
+        map.put("someFile", fileInput);
+
+        final String ret = evaluate("${someFile}", map);
+
+        assertThat(ret).isEqualTo("some-path");
+        assertThat(called.get()).isTrue();
+    }
+
+    @Test
+    public void testThrowsUsefulExceptionWhenIdentifierMissing() {
+        Exception exceptionThrown = null;
+        try {
+            evaluate("${missingIdentifier}", new HashMap<>());
+        } catch (Exception ex) {
+            exceptionThrown = ex;
+        }
+
+        assertThat(exceptionThrown).isNotNull();
+        assertThat(exceptionThrown.getMessage()).contains("missingIdentifier");
     }
 }

@@ -1,0 +1,20 @@
+{
+  "id": "job-schema-8",
+  "name": "Job Schema 8",
+  "description": "Job Schema 8: file input",
+  "expectedInputs": [
+    {
+      "id": "file-input",
+      "name": "File input",
+      "description": "File input",
+      "type": "file"
+    }
+  ],
+  "execution": {
+    "application": "bash",
+    "arguments": [
+      "arg1",
+      "arg2"
+    ]
+  }
+}
