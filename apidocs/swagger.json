@@ -102,6 +102,80 @@
         }
       }
     },
+    "/v1/jobs/{job-id}" : {
+      "get" : {
+        "summary" : "Get details of a job managed by the system.",
+        "operationId" : "getJobDetailsById",
+        "parameters" : [ {
+          "name" : "job-id",
+          "in" : "path",
+          "description" : "The job's ID",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Job details found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIJobDetails"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "The job could not be found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIErrorMessage"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Client not authorized to request job details",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/APIErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete a job from the system",
+        "description" : "Deletes a job from the system, removing **all** job data. Running jobs are aborted before deletion.",
+        "operationId" : "deleteJob",
+        "parameters" : [ {
+          "name" : "job-id",
+          "in" : "path",
+          "description" : "The job's ID",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "integer",
+                  "format" : "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/jobs/{job-id}/abort" : {
       "post" : {
         "summary" : "Abort a running job",
@@ -288,80 +362,6 @@
             "description" : "default response",
             "content" : {
               "application/json" : { }
-            }
-          }
-        }
-      }
-    },
-    "/v1/jobs/{job-id}" : {
-      "get" : {
-        "summary" : "Get details of a job managed by the system.",
-        "operationId" : "getJobDetailsById",
-        "parameters" : [ {
-          "name" : "job-id",
-          "in" : "path",
-          "description" : "The job's ID",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Job details found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/APIJobDetails"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "The job could not be found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/APIErrorMessage"
-                }
-              }
-            }
-          },
-          "401" : {
-            "description" : "Client not authorized to request job details",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/APIErrorMessage"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete" : {
-        "summary" : "Delete a job from the system",
-        "description" : "Deletes a job from the system, removing **all** job data. Running jobs are aborted before deletion.",
-        "operationId" : "deleteJob",
-        "parameters" : [ {
-          "name" : "job-id",
-          "in" : "path",
-          "description" : "The job's ID",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "default" : {
-            "description" : "default response",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "integer",
-                  "format" : "int32"
-                }
-              }
             }
           }
         }
@@ -581,6 +581,127 @@
         },
         "description" : "Timestamp on a job"
       },
+      "APIErrorMessage" : {
+        "required" : [ "code", "message" ],
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "description" : "An explanation of the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The HTTP status code associated with the message."
+          }
+        },
+        "description" : "An error message"
+      },
+      "APIJobCreatedResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "_links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/APIRestLink"
+            },
+            "description" : "Links to related resources and actions"
+          }
+        },
+        "description" : "Response to a successful job submission request"
+      },
+      "APIJobRequest" : {
+        "required" : [ "inputs", "name", "spec" ],
+        "type" : "object",
+        "properties" : {
+          "spec" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Human-readable name for the job"
+          },
+          "inputs" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/JsonNode"
+            },
+            "description" : "Inputs for the job"
+          }
+        },
+        "description" : "A job request"
+      },
+      "JsonNode" : {
+        "type" : "object",
+        "properties" : {
+          "short" : {
+            "type" : "boolean"
+          },
+          "float" : {
+            "type" : "boolean"
+          },
+          "nodeType" : {
+            "type" : "string",
+            "enum" : [ "ARRAY", "BINARY", "BOOLEAN", "MISSING", "NULL", "NUMBER", "OBJECT", "POJO", "STRING" ]
+          },
+          "number" : {
+            "type" : "boolean"
+          },
+          "valueNode" : {
+            "type" : "boolean"
+          },
+          "containerNode" : {
+            "type" : "boolean"
+          },
+          "missingNode" : {
+            "type" : "boolean"
+          },
+          "object" : {
+            "type" : "boolean"
+          },
+          "pojo" : {
+            "type" : "boolean"
+          },
+          "integralNumber" : {
+            "type" : "boolean"
+          },
+          "floatingPointNumber" : {
+            "type" : "boolean"
+          },
+          "int" : {
+            "type" : "boolean"
+          },
+          "long" : {
+            "type" : "boolean"
+          },
+          "double" : {
+            "type" : "boolean"
+          },
+          "bigDecimal" : {
+            "type" : "boolean"
+          },
+          "bigInteger" : {
+            "type" : "boolean"
+          },
+          "textual" : {
+            "type" : "boolean"
+          },
+          "boolean" : {
+            "type" : "boolean"
+          },
+          "binary" : {
+            "type" : "boolean"
+          },
+          "array" : {
+            "type" : "boolean"
+          },
+          "null" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "APIJobSpec" : {
         "type" : "object",
         "properties" : {
@@ -658,6 +779,36 @@
             }
           }
         } ]
+      },
+      "FileExpectedInput" : {
+        "required" : [ "description", "id", "name" ],
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/JobExpectedInputObject"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "default" : {
+              "$ref" : "#/components/schemas/FileInput"
+            }
+          }
+        } ]
+      },
+      "FileInput" : {
+        "required" : [ "data", "filename" ],
+        "type" : "object",
+        "properties" : {
+          "filename" : {
+            "type" : "string"
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "byte"
+            }
+          }
+        }
       },
       "I32ExpectedInput" : {
         "required" : [ "description", "id", "name" ],
@@ -839,76 +990,6 @@
         },
         "description" : "Schema of an sql table exposed by an sql expected input"
       },
-      "JsonNode" : {
-        "type" : "object",
-        "properties" : {
-          "float" : {
-            "type" : "boolean"
-          },
-          "nodeType" : {
-            "type" : "string",
-            "enum" : [ "ARRAY", "BINARY", "BOOLEAN", "MISSING", "NULL", "NUMBER", "OBJECT", "POJO", "STRING" ]
-          },
-          "short" : {
-            "type" : "boolean"
-          },
-          "number" : {
-            "type" : "boolean"
-          },
-          "valueNode" : {
-            "type" : "boolean"
-          },
-          "containerNode" : {
-            "type" : "boolean"
-          },
-          "missingNode" : {
-            "type" : "boolean"
-          },
-          "object" : {
-            "type" : "boolean"
-          },
-          "pojo" : {
-            "type" : "boolean"
-          },
-          "integralNumber" : {
-            "type" : "boolean"
-          },
-          "floatingPointNumber" : {
-            "type" : "boolean"
-          },
-          "int" : {
-            "type" : "boolean"
-          },
-          "long" : {
-            "type" : "boolean"
-          },
-          "double" : {
-            "type" : "boolean"
-          },
-          "bigDecimal" : {
-            "type" : "boolean"
-          },
-          "bigInteger" : {
-            "type" : "boolean"
-          },
-          "textual" : {
-            "type" : "boolean"
-          },
-          "boolean" : {
-            "type" : "boolean"
-          },
-          "binary" : {
-            "type" : "boolean"
-          },
-          "array" : {
-            "type" : "boolean"
-          },
-          "null" : {
-            "type" : "boolean"
-          }
-        },
-        "description" : "Inputs for the job"
-      },
       "APIJobOutput" : {
         "required" : [ "href", "id", "mimeType" ],
         "type" : "object",
@@ -953,58 +1034,6 @@
           }
         },
         "description" : "Response to a request for job summaries"
-      },
-      "APIErrorMessage" : {
-        "required" : [ "code", "message" ],
-        "type" : "object",
-        "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "An explanation of the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The HTTP status code associated with the message."
-          }
-        },
-        "description" : "An error message"
-      },
-      "APIJobCreatedResponse" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "_links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/APIRestLink"
-            },
-            "description" : "Links to related resources and actions"
-          }
-        },
-        "description" : "Response to a successful job submission request"
-      },
-      "APIJobRequest" : {
-        "required" : [ "inputs", "name", "spec" ],
-        "type" : "object",
-        "properties" : {
-          "spec" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "Human-readable name for the job"
-          },
-          "inputs" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/JsonNode"
-            },
-            "description" : "Inputs for the job"
-          }
-        },
-        "description" : "A job request"
       },
       "APIJobSpecSummary" : {
         "type" : "object",
