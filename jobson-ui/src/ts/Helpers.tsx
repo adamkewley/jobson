@@ -364,4 +364,28 @@ export class Helpers {
 
         return restLinkActions.concat([copyLink]);
     }
+
+    static toB64(file: File): Promise<string> {
+        const dataPrefixRegex = /^data:[^\/]*\/[^;]*;base64,/;
+
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                // e.g.
+                // data:application/octet-stream;base64,<some_b64_str>*
+                const b64WithDataPrefix = e.target.result as string;
+
+                // Remove the URL prefix that the `FileReader` adds
+                const b64str = b64WithDataPrefix.replace(dataPrefixRegex, "");
+                resolve(b64str);
+            };
+            reader.onerror = e => {
+                reject(e);
+            };
+            reader.onabort = e => {
+                reject(e);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
 }

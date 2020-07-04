@@ -30,6 +30,7 @@ import {FileInputEditor} from "./FileInputEditor";
 import {APIExpectedInput} from "../../apitypes/APIExpectedInput";
 import {InputEditorUpdate} from "./updates/InputEditorUpdate";
 import {Component, ReactElement} from "react";
+import {FileArrayInputEditor} from "./FileArrayInputEditor";
 
 export interface InputEditorProps {
     suggestedValue: any;
@@ -77,6 +78,7 @@ export class InputEditor extends Component<InputEditorProps> {
             typeName: "double"
         }, props),
         "file": props => new FileInputEditor(props),
+        "file[]": props => new FileArrayInputEditor(props),
     };
 
     private static unknownInputCtor = props => new UnknownInputTypeInputEditor(props);
