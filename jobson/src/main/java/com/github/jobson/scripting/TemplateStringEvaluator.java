@@ -20,6 +20,7 @@
 package com.github.jobson.scripting;
 
 import com.github.jobson.jobinputs.file.FileInput;
+import com.github.jobson.jobinputs.filearray.FileArrayInput;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -62,9 +63,14 @@ public final class TemplateStringEvaluator {
                 // numeric (f32, f64, i32, i64) -> string (e.g. `1.34 -> "1.34")
                 // string-like (select, sql, string, stringarray) -> string (e.g. ["a", "b"] -> "a,b")
                 // file -> path to a temporary file
-                final String coercedValue = evaluationOutput instanceof FileInput ?
-                        ((FreeFunction)environment.get("toFile")).call(evaluationOutput).toString() :
-                        evaluationOutput.toString();
+                String coercedValue;
+                if (evaluationOutput instanceof FileInput) {
+                    coercedValue = ((FreeFunction)environment.get("toFile")).call(evaluationOutput).toString();
+                } else if (evaluationOutput instanceof FileArrayInput) {
+                    coercedValue = ((FreeFunction)environment.get("toDir")).call(evaluationOutput).toString();
+                } else {
+                    coercedValue = evaluationOutput.toString();
+                }
 
                 ret.append(coercedValue);
             } else {
