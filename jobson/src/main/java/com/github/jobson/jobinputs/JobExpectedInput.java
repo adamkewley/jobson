@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.github.jobson.jobinputs.f32.F32ExpectedInput;
 import com.github.jobson.jobinputs.f64.F64ExpectedInput;
 import com.github.jobson.jobinputs.file.FileExpectedInput;
+import com.github.jobson.jobinputs.filearray.FileArrayExpectedInput;
 import com.github.jobson.jobinputs.i32.I32ExpectedInput;
 import com.github.jobson.jobinputs.i64.I64ExpectedInput;
 import com.github.jobson.jobinputs.select.SelectExpectedInput;
@@ -51,6 +52,7 @@ import java.util.Optional;
         @JsonSubTypes.Type(value = I32ExpectedInput.class, name = "int"),
         @JsonSubTypes.Type(value = I64ExpectedInput.class, name = "long"),
         @JsonSubTypes.Type(value = FileExpectedInput.class, name = "file"),
+        @JsonSubTypes.Type(value = FileArrayExpectedInput.class, name = "file[]"),
 })
 public abstract class JobExpectedInput<TJobInput extends JobInput> {
 

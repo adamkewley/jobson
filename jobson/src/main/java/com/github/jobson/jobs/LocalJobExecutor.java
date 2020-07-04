@@ -24,10 +24,7 @@ import com.github.jobson.Helpers;
 import com.github.jobson.config.RemoveAfterExecutionConfig;
 import com.github.jobson.jobinputs.JobExpectedInputId;
 import com.github.jobson.jobs.jobstates.PersistedJob;
-import com.github.jobson.scripting.functions.JoinFunction;
-import com.github.jobson.scripting.functions.ToFileFunction;
-import com.github.jobson.scripting.functions.ToJSONFunction;
-import com.github.jobson.scripting.functions.ToStringFunction;
+import com.github.jobson.scripting.functions.*;
 import com.github.jobson.specs.*;
 import com.github.jobson.utils.BinaryData;
 import com.github.jobson.utils.CancelablePromise;
@@ -67,6 +64,7 @@ public final class LocalJobExecutor implements JobExecutor {
         environment.put("request", persistedJob);
         environment.put("inputs", mapKeys(persistedJob.getInputs(), JobExpectedInputId::toString));
         environment.put("outputDir", jobWorkingDir.toString());
+        environment.put("toDir", new ToDirFunction(jobWorkingDir));
 
         return arg.tryEvaluate(environment);
     }

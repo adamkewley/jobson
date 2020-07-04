@@ -27,7 +27,7 @@ public final class SelectInputTest {
     @Test
     public void testCanDeserializeFromJSON() {
         TestHelpers.readJSONFixture(
-                "fixtures/jobinputs/select/SelectInput/example-input.json",
+                "fixtures/jobinputs/select/example-input.json",
                 SelectInput.class);
     }
 }

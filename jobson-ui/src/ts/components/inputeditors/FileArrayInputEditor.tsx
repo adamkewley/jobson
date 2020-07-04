@@ -23,87 +23,80 @@ import * as React from "react";
 import {InputEditorUpdate} from "./updates/InputEditorUpdate";
 import {Helpers} from "../../Helpers";
 
-const enum States {
-    Showing,
-    Loading,
-}
-
-interface ShowingState {
-    type: States.Showing;
+interface State {
+    loading: boolean;
     error: string | null;
 }
 
-interface LoadingState {
-    type: States.Loading;
+interface APIFile {
+    filename: string;
+    data: string;  // base64 encoded
 }
 
-type State = ShowingState | LoadingState;
+async function toJobsonFile(file: File): Promise<APIFile> {
+    return {
+        filename: file.name,
+        data: await Helpers.toB64(file),
+    };
+}
 
-export class FileInputEditor extends Component<InputEditorProps, State> {
+async function toJobsonFilesArray(files: FileList): Promise<APIFile[]> {
+    const ret: APIFile[] = [];
+    for (let i = 0; i < files.length; ++i) {
+        const file: File = files[i];
+        const apiFile = await toJobsonFile(file);
+        ret.push(apiFile);
+    }
+    return ret;
+}
+
+export class FileArrayInputEditor extends Component<InputEditorProps, State> {
 
     public state: State = {
-        type: States.Showing,
+        loading: false,
         error: null,
     };
 
     private fileInput: React.RefObject<HTMLInputElement> = React.createRef();
 
     public render(): ReactElement<any> {
-        switch (this.state.type) {
-            case States.Showing:
-                return this.renderShowingState();
-            case States.Loading:
-                return this.renderLoadingState();
-        }
-    }
-
-    private renderShowingState(): ReactElement<any> {
         return (
             <div>
+                {this.state.error !== null ?
+                    Helpers.renderErrorMessage("Error loading file", this.state.error) :
+                    <div></div>}
                 <input type="file"
                        ref={this.fileInput}
                        onChange={e => this.onFileInputChanged(e)}
-                       required />
+                       required
+                       multiple
+                       disabled={this.state.loading} />
             </div>
-        );
-    }
-
-    private renderLoadingState(): ReactElement<any> {
-        return (
-            <div>
-                <input type="file"
-                       ref={this.fileInput}
-                       onChange={e => this.onFileInputChanged(e)}
-                       required />
-                Loading...
-            </div>
-        );
+        )
     }
 
     private onFileInputChanged(e: React.FormEvent): void {
-        const file: File = this.fileInput.current.files[0];
+        const files: FileList = this.fileInput.current.files;
 
         this.setState({
-            type: States.Loading,
+            loading: true,
+            error: null,
         }, () => {
-            Helpers.toB64(file)
-                .then(b64Str => {
-                    const upd = InputEditorUpdate.value({
-                        filename: file.name,
-                        data: b64Str,
-                    });
+            toJobsonFilesArray(files)
+                .then(ary => {
+                    const upd = InputEditorUpdate.value(ary);
                     this.props.onJobInputUpdate(upd);
                     this.setState({
-                        type: States.Showing,
+                        loading: false,
                         error: null,
                     });
                 })
                 .catch(err => {
                     this.setState({
-                        type: States.Showing,
-                        error: err,
+                        loading: false,
+                        error: err.toString(),
                     });
-                })
+                });
         });
     }
 }

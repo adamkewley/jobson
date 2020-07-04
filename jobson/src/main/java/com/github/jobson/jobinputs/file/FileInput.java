@@ -21,11 +21,9 @@ package com.github.jobson.jobinputs.file;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.jobson.jobinputs.JobInput;
 
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 import java.util.Base64;
 
 public final class FileInput implements JobInput {

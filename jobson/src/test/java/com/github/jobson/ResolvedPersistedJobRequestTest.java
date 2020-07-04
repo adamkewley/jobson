@@ -186,6 +186,15 @@ public final class ResolvedPersistedJobRequestTest {
     }
 
     @Test
+    public void testValidateProducesNoErrorsWhenSpecContainsFilelist() {
+        testSpecReqPair(
+                "fixtures/specs/17_job-spec-with-filelist.json",
+                "fixtures/specs/17_req-with-filelist.json",
+                req -> {},
+                validationErrors -> assertThat(validationErrors.size()).isEqualTo(0));
+    }
+
+    @Test
     public void testValidateReturnsValidationErrorsIfTheRequestContainsTheWrongInputTypesForTheSchema() {
         final JobSpecId jobSpecId = TestHelpers.generateJobSpecId();
         final JobExpectedInputId schemaInputId = TestHelpers.generateJobInputSchemaId();
