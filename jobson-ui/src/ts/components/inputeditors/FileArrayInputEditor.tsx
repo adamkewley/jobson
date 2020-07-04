@@ -29,13 +29,13 @@ interface State {
 }
 
 interface APIFile {
-    name: string;
+    filename: string;
     data: string;  // base64 encoded
 }
 
 async function toJobsonFile(file: File): Promise<APIFile> {
     return {
-        name: file.name,
+        filename: file.name,
         data: await Helpers.toB64(file),
     };
 }
