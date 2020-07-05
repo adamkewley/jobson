@@ -27,13 +27,18 @@ import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.alter.Alter;
+import net.sf.jsqlparser.statement.alter.sequence.AlterSequence;
+import net.sf.jsqlparser.statement.comment.Comment;
 import net.sf.jsqlparser.statement.create.index.CreateIndex;
+import net.sf.jsqlparser.statement.create.schema.CreateSchema;
+import net.sf.jsqlparser.statement.create.sequence.CreateSequence;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.create.view.AlterView;
 import net.sf.jsqlparser.statement.create.view.CreateView;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.drop.Drop;
 import net.sf.jsqlparser.statement.execute.Execute;
+import net.sf.jsqlparser.statement.grant.Grant;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.merge.Merge;
 import net.sf.jsqlparser.statement.replace.Replace;
@@ -41,6 +46,7 @@ import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
+import net.sf.jsqlparser.statement.values.ValuesStatement;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,8 +64,6 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
 
         return this.columns;
     }
-
-
 
     public void visit(Select select) {
         select.getSelectBody().accept(this);
@@ -128,6 +132,16 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
     public void visit(SetOperationList setOperationList) {
     }
 
+    @Override
+    public void visit(BitwiseRightShift bitwiseRightShift) {
+
+    }
+
+    @Override
+    public void visit(BitwiseLeftShift bitwiseLeftShift) {
+
+    }
+
     public void visit(NullValue nullValue) {
     }
 
@@ -140,6 +154,10 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
     public void visit(InExpression inExpression) {
     }
 
+    @Override
+    public void visit(FullTextSearch fullTextSearch) {
+
+    }
 
 
     // Unimplemented SQL features
@@ -184,6 +202,11 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
         throw new UnsupportedSQLFeatureException("Feature Division not supported");
     }
 
+    @Override
+    public void visit(IntegerDivision integerDivision) {
+        throw new UnsupportedSQLFeatureException("Feature IntegerDivision not supported");
+    }
+
     public void visit(Multiplication multiplication) {
         throw new UnsupportedSQLFeatureException("Feature Multiplication not supported");
     }
@@ -204,6 +227,11 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
         throw new UnsupportedSQLFeatureException("Feature IsNullExpression not supported");
     }
 
+    @Override
+    public void visit(IsBooleanExpression isBooleanExpression) {
+        throw new UnsupportedSQLFeatureException("Feature IsBooleanExpression not supported");
+    }
+
     public void visit(LikeExpression likeExpression) {
         throw new UnsupportedSQLFeatureException("Feature LikeExpression not supported");
     }
@@ -219,6 +247,11 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
 
     public void visit(WithItem withItem) {
         throw new UnsupportedSQLFeatureException("Feature WithItem not supported");
+    }
+
+    @Override
+    public void visit(Comment comment) {
+
     }
 
     @Override
@@ -254,6 +287,11 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
         throw new UnsupportedSQLFeatureException("Feature CreateIndex not supported");
     }
 
+    @Override
+    public void visit(CreateSchema createSchema) {
+        throw new UnsupportedSQLFeatureException("Feature CreateSchema not supported");
+    }
+
     public void visit(CreateTable createTable) {
         throw new UnsupportedSQLFeatureException("Feature CreateTable not supported");
     }
@@ -280,6 +318,11 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
 
     public void visit(SetStatement setStatement) {
         throw new UnsupportedSQLFeatureException("Feature SetStatement not supported");
+    }
+
+    @Override
+    public void visit(ShowColumnsStatement showColumnsStatement) {
+        throw new UnsupportedSQLFeatureException("Feature ShowColumnsStatement not supported");
     }
 
     public void visit(Merge merge) {
@@ -342,10 +385,6 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
         throw new UnsupportedSQLFeatureException("Feature AnalyticExpression not supported");
     }
 
-    public void visit(WithinGroupExpression withinGroupExpression) {
-        throw new UnsupportedSQLFeatureException("Feature WithinGroupExpression not supported");
-    }
-
     public void visit(ExtractExpression extractExpression) {
         throw new UnsupportedSQLFeatureException("Feature ExtractExpression not supported");
     }
@@ -391,6 +430,10 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
         throw new UnsupportedSQLFeatureException("Feature MySQLGroupConcat not supported");
     }
 
+    @Override
+    public void visit(ValueListExpression valueListExpression) {
+    }
+
     public void visit(RowConstructor rowConstructor) {
         throw new UnsupportedSQLFeatureException("Feature RowConstructor not supported");
     }
@@ -413,7 +456,82 @@ public final class AllColumnRefsFinder implements StatementVisitor, SelectVisito
     }
 
     @Override
+    public void visit(NextValExpression nextValExpression) {
+        throw new UnsupportedSQLFeatureException("Feature NextValExpression not supported");
+    }
+
+    @Override
+    public void visit(CollateExpression collateExpression) {
+        throw new UnsupportedSQLFeatureException("Feature CollateExpression not supported");
+    }
+
+    @Override
+    public void visit(SimilarToExpression similarToExpression) {
+        throw new UnsupportedSQLFeatureException("Feature SimilarToExpression not supported");
+    }
+
+    @Override
+    public void visit(ArrayExpression arrayExpression) {
+        throw new UnsupportedSQLFeatureException("Feature ArrayExpression not supported");
+    }
+
+    @Override
     public void visit(Upsert upsert) {
         throw new UnsupportedSQLFeatureException("Feature Upsert not supported");
+    }
+
+    @Override
+    public void visit(UseStatement useStatement) {
+        throw new UnsupportedSQLFeatureException("Feature UseStatement not supported");
+    }
+
+    @Override
+    public void visit(Block block) {
+        throw new UnsupportedSQLFeatureException("Feature Block not supported");
+    }
+
+    @Override
+    public void visit(ValuesStatement valuesStatement) {
+        throw new UnsupportedSQLFeatureException("Feature ValuesStatement not supported");
+    }
+
+    @Override
+    public void visit(DescribeStatement describeStatement) {
+        throw new UnsupportedSQLFeatureException("Feature DescribeStatement not supported");
+    }
+
+    @Override
+    public void visit(ExplainStatement explainStatement) {
+        throw new UnsupportedSQLFeatureException("Feature ExplainStatement not supported");
+    }
+
+    @Override
+    public void visit(ShowStatement showStatement) {
+        throw new UnsupportedSQLFeatureException("Feature ShowStatement not supported");
+    }
+
+    @Override
+    public void visit(DeclareStatement declareStatement) {
+        throw new UnsupportedSQLFeatureException("Feature DeclareStatement not supported");
+    }
+
+    @Override
+    public void visit(Grant grant) {
+        throw new UnsupportedSQLFeatureException("Feature Grant not supported");
+    }
+
+    @Override
+    public void visit(CreateSequence createSequence) {
+        throw new UnsupportedSQLFeatureException("Feature CreateSequence not supported");
+    }
+
+    @Override
+    public void visit(AlterSequence alterSequence) {
+        throw new UnsupportedSQLFeatureException("Feature AlterSequence not supported");
+    }
+
+    @Override
+    public void visit(CreateFunctionalStatement createFunctionalStatement) {
+        throw new UnsupportedSQLFeatureException("Feature CreateFunctionalStatement not supported");
     }
 }
