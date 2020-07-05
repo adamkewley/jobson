@@ -5,7 +5,6 @@ import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.Authorizer;
 import io.dropwizard.auth.PrincipalImpl;
-import org.glassfish.jersey.test.util.server.ContainerRequestBuilder;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
@@ -13,7 +12,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -118,10 +117,9 @@ public class JsonWebTokenAuthFilterTest {
     }
 
     private static ContainerRequestContext createRequestWithAuthorizationHeader(String authHeaderValue) {
-        return ContainerRequestBuilder
-                .from("/doesnt-matter", "GET")
-                .header("Authorization", authHeaderValue)
-                .build();
+        final Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", authHeaderValue);
+        return new MockRequestContext("GET", headers);
     }
 
     @Test(expected = WebApplicationException.class)

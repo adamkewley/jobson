@@ -28,7 +28,6 @@ import com.github.jobson.jobs.JobId;
 import com.github.jobson.specs.JobSpec;
 import com.github.jobson.systemtests.httpapi.TestJobSpecsAPI;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.glassfish.jersey.internal.util.Base64;
 
 import javax.ws.rs.client.Invocation;
 import java.io.IOException;
@@ -36,11 +35,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 import static com.github.jobson.Constants.HTTP_JOBS_PATH;
 import static io.dropwizard.testing.FixtureHelpers.fixture;
-import static java.lang.Thread.sleep;
 
 public final class SystemTestHelpers {
 
@@ -119,7 +118,10 @@ public final class SystemTestHelpers {
     }
 
     public static void authenticate(Invocation.Builder builder, String username, String password) {
-        builder.header("Authorization", "Basic " + Base64.encodeAsString(username + ":" + password));
+        final String headerVal = username + ":" + password;
+        final byte[] headerValByes = headerVal.getBytes();
+        final String headerBase64 = Base64.getEncoder().encodeToString(headerValByes);
+        builder.header("Authorization", "Basic " + headerBase64);
     }
 
     public static void waitUntilJobTerminates(DropwizardAppRule<ApplicationConfig> rule, JobId jobId) throws InterruptedException {
