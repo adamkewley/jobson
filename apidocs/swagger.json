@@ -780,6 +780,23 @@
           }
         } ]
       },
+      "FileArrayExpectedInput" : {
+        "required" : [ "description", "id", "name" ],
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/JobExpectedInputObject"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "default" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/FileInput"
+              }
+            }
+          }
+        } ]
+      },
       "FileExpectedInput" : {
         "required" : [ "description", "id", "name" ],
         "type" : "object",
