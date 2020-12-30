@@ -184,14 +184,35 @@ public abstract class JobExecutorTest {
     @Test
     public void testExecutePromiseResolvesWithAbortedIfPromiseIsCancelled() throws Throwable {
         final JobExecutor jobExecutor = getInstance();
-        final PersistedJob req =
-                standardRequestWithCommand("cat"); // Long-running, because it blocks on an STDIN read.
+        final PersistedJob req = standardRequestWithCommand("sleep", "100");
         final CancelablePromise<JobExecutionResult> ret =
                 jobExecutor.execute(req, createNullListeners());
 
         promiseAssert(
                 ret,
                 result -> assertThat(result.getFinalStatus()).isEqualTo(JobStatus.ABORTED),
+                () -> ret.cancel(true));
+    }
+
+    @Test
+    public void testExecutePromiseResolvesCompletedIfApplicationReadsFromStdin() throws Throwable {
+        // jobson should close `stdin`, so that any application
+        // attempting to read from stdin reads nothing (rather than
+        // deadlocking indefinitely on content Jobson will never
+        // write)
+        //
+        // see: https://github.com/adamkewley/jobson/issues/67
+        //
+        // (abstract): user ran an application that reads from stdin
+        // in certain circumstances and Jobson was deadlocking on that
+        final JobExecutor jobExecutor = getInstance();
+        final PersistedJob req = standardRequestWithCommand("cat");  // reads from stdin
+        final CancelablePromise<JobExecutionResult> ret =
+                jobExecutor.execute(req, createNullListeners());
+
+        promiseAssert(
+                ret,
+                result -> assertThat(result.getFinalStatus()).isEqualTo(JobStatus.FINISHED),
                 () -> ret.cancel(true));
     }
 

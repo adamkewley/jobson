@@ -160,6 +160,15 @@ public final class LocalJobExecutor implements JobExecutor {
 
             final Process runningProcess = processBuilder.start();
 
+            // close process's stdin stream. If this isn't done, the
+            // child process will block if it tries to read from stdin
+            // (because it's connected to jobson's stdin, which isn't
+            // being used)
+            //
+            // see https://github.com/adamkewley/jobson/issues/67 for
+            // a breakdown of the kinds of problems this can create
+            runningProcess.getOutputStream().close();
+
             log.info(req.getId() + ": launched: " + String.join(" ", argList));
 
             final SimpleCancelablePromise<JobExecutionResult> ret = new SimpleCancelablePromise<>();

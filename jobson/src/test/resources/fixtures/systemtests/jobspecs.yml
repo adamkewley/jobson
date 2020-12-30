@@ -71,8 +71,8 @@
   expectedInputs: []
 
   execution:
-    application: cat
-    arguments: []
+    application: sleep
+    arguments: ['100']
 
 - id: fourth-spec
   name: Spec that creates an output
