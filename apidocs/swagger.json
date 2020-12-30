@@ -636,15 +636,15 @@
       "JsonNode" : {
         "type" : "object",
         "properties" : {
-          "short" : {
-            "type" : "boolean"
-          },
           "float" : {
             "type" : "boolean"
           },
           "nodeType" : {
             "type" : "string",
             "enum" : [ "ARRAY", "BINARY", "BOOLEAN", "MISSING", "NULL", "NUMBER", "OBJECT", "POJO", "STRING" ]
+          },
+          "short" : {
+            "type" : "boolean"
           },
           "number" : {
             "type" : "boolean"
