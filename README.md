@@ -1,8 +1,10 @@
-# jobson
+# jobson <img src="logo.svg" align="right" alt="" width="128" height="128" />
+
+> A platform for transforming command-line applications into a job service
+
 
 [![Build Status](https://travis-ci.org/adamkewley/jobson.svg?branch=master)](https://travis-ci.org/adamkewley/jobson)
 
-A platform for transforming command-line applications into a job service.
 
 ![ui video demo](jobson-docs/src/ui-animation.gif)
 
