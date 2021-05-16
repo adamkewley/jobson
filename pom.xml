@@ -142,8 +142,10 @@
         <module>jobson-docs</module>
 
         <!-- Packaging -->
-        <module>jobson-deb</module>
         <module>jobson-nix</module>
+        <module>jobson-deb</module>
         <module>jobson-docker</module>
+        <module>jobson-docker-jdk11</module>
     </modules>
+
 </project>
