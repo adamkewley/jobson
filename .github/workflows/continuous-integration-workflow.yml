@@ -1,0 +1,70 @@
+on: [push]
+
+jobs:
+
+  ubuntu:
+    name: Build Jobson on Ubuntu
+    runs-on: ubuntu-20.04
+    steps:
+
+    - uses: actions/checkout@v2
+
+    # install dependencies on the CI machine
+    - name: Install dependencies
+      run: |
+        cd $GITHUB_WORKSPACE && scripts/ubuntu_install-deps.sh
+
+    # ensure docker installed
+    - name: Ensure Docker works
+      run: docker --version
+
+    # build + test jobson
+    - name: Build + test jobson
+      run: |
+        cd $GITHUB_WORKSPACE && scripts/ubuntu_build.sh
+
+    # upload jar
+    - uses: actions/upload-artifact@v2
+      with:
+        path: jobson/target/jobson-*.jar
+        if-no-files-found: error
+
+    # upload JSON docs
+    - uses: actions/upload-artifact@v2
+      with:
+        path: jobson-swagger/target/jobson-swagger-*.json
+        if-no-files-found: error
+
+    # upload UI
+    - uses: actions/upload-artifact@v2
+      with:
+        path: jobson-ui/target/jobson-ui-*.tar.gz
+        if-no-files-found: error
+
+    # upload jobson user docs
+    - uses: actions/upload-artifact@v2
+      with:
+        path: jobson-docs/target/jobson-docs-*.tar.gz
+        if-no-files-found: error
+
+    # upload linux (not distro specific) tarball
+    - uses: actions/upload-artifact@v2
+      with:
+        path: jobson-nix/target/jobson-nix-*.tar.gz
+        if-no-files-found: error
+
+    # upload deb
+    - uses: actions/upload-artifact@v2
+      with:
+        path: jobson-deb/target/jobson_*.deb
+        if-no-files-found: error
+
+    # (if a tagged release): publish docs
+    - if: startsWith(github.ref, 'refs/tags/')
+      name: Upload Documentation to gh-pages branch
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: jobson-docs/target/html
+
+    # TODO: release

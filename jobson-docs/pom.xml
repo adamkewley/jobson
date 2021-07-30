@@ -86,17 +86,19 @@
                                     <arg value="html" />
                                 </exec>
 
-                                <move file="${project.basedir}/target/html"
-                                      tofile="${project.basedir}/target/${project.artifactId}-${project.version}" />
-
-                                <!-- Copy the swagger docs into that dir -->
-                                <move todir="${project.build.directory}/${project.artifactId}-${project.version}/">
-                                    <fileset dir="${project.build.directory}/apidocs" />
-                                </move>
-
                                 <!-- Rename swagger docs to `apidocs` because the Sphinx docs link to that -->
-                                <move file="${project.build.directory}/${project.artifactId}-${project.version}/jobson-swagger-ui-${version.jobsonswaggerui}"
-                                      tofile="${project.build.directory}/${project.artifactId}-${project.version}/apidocs" />
+                                <move file="${project.build.directory}/apidocs/jobson-swagger-ui-${version.jobsonswaggerui}"
+                                      tofile="${project.build.directory}/apidocs" />
+
+                                <!-- Copy the swagger docs into html dir -->
+                                <copy todir="${project.basedir}/target/html/apidocs">
+                                    <fileset dir="${project.build.directory}/apidocs" />
+                                </copy>
+
+                                <!-- Copy HTML dir to named dir (for tarballing) -->
+                                <copy todir="${project.basedir}/target/${project.artifactId}-${project.version}">
+				    <fileset dir="${project.basedir}/target/html" />
+				</copy>
                             </target>
                         </configuration>
                     </execution>
