@@ -2,8 +2,11 @@
 
 > A platform for transforming command-line applications into a job service
 
+<a href="https://github.com/adamkewley/jobson/actions">
+  <img src="https://github.com/adamkewley/jobson/actions/workflows/continuous-integration-workflow.yml/badge.svg" />
+</a> 
 
-[![Build Status](https://travis-ci.org/adamkewley/jobson.svg?branch=master)](https://travis-ci.org/adamkewley/jobson) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5148300.svg)](https://doi.org/10.5281/zenodo.5148300)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5148300.svg)](https://doi.org/10.5281/zenodo.5148300)
 
 
 ![ui video demo](jobson-docs/src/ui-animation.gif)
