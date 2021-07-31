@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>User Interface (Jobson UI) &mdash; jobson-docs 1.0.11 documentation</title>
+  <title>User Interface (Jobson UI) &mdash; jobson-docs 1.0.12 documentation</title>
   
 
   
@@ -80,7 +81,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
@@ -167,17 +168,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="user-interface-jobson-ui">
+  <section id="user-interface-jobson-ui">
 <h1>User Interface (Jobson UI)<a class="headerlink" href="#user-interface-jobson-ui" title="Permalink to this headline">¶</a></h1>
 <p>The core <code class="docutils literal notranslate"><span class="pre">jobson</span></code> server only hosts a JSON/websocket API for
 Jobson. <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> is a set of static web assets that should be
 installed separately on a production-grade webserver (e.g. <code class="docutils literal notranslate"><span class="pre">apache</span></code>,
 <code class="docutils literal notranslate"><span class="pre">nginx</span></code>).</p>
-<div class="section" id="screenshot">
+<section id="screenshot">
 <h2>Screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
 <img alt="_images/screenshot.jpg" src="_images/screenshot.jpg" />
-</div>
-<div class="section" id="overview">
+</section>
+<section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <img alt="_images/ui-arch.svg" src="_images/ui-arch.svg" /><p><code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> is a set of static web assets that should be hosted on a
 standard webserver. This enables admins to administer the user-facing
@@ -199,8 +200,8 @@ API requests with</p></li>
 </ul>
 <p>This guide demonstrates configuring <code class="docutils literal notranslate"><span class="pre">nginx</span></code> to serve <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code>
 as described.</p>
-</div>
-<div class="section" id="optional-boot-jobson-somewhere">
+</section>
+<section id="optional-boot-jobson-somewhere">
 <h2>Optional: Boot <code class="docutils literal notranslate"><span class="pre">jobson</span></code> somewhere<a class="headerlink" href="#optional-boot-jobson-somewhere" title="Permalink to this headline">¶</a></h2>
 <p>Deploying the UI doesn’t require a running <code class="docutils literal notranslate"><span class="pre">jobson</span></code> server. However,
 for the sake of testing, this guide assumes you have a <code class="docutils literal notranslate"><span class="pre">jobson</span></code>
@@ -208,8 +209,8 @@ server running at <code class="docutils literal notranslate"><span class="pre">l
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jobson serve config.yml  <span class="c1"># config.yml is configured to serve on port 8080</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="get-jobson-ui-assets">
+</section>
+<section id="get-jobson-ui-assets">
 <h2>Get <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> Assets<a class="headerlink" href="#get-jobson-ui-assets" title="Permalink to this headline">¶</a></h2>
 <p>Pre-packaged distributions (debian, unix) of the jobson platform
 include the assets at <code class="docutils literal notranslate"><span class="pre">/share/jobson/ui/html</span></code>. Those assets are
@@ -218,15 +219,15 @@ include the assets at <code class="docutils literal notranslate"><span class="pr
 <p>The <a class="reference external" href="https://github.com/adamkewley/jobson">jobson project</a> build
 also uploads <code class="docutils literal notranslate"><span class="pre">jobson-ui</span></code> as an independent artifact. If you just
 want the UI, you can download it from the <a class="reference external" href="https://github.com/adamkewley/jobson/releases">releases</a> page.</p>
-</div>
-<div class="section" id="unpack-move-assets-to-webserver-root">
+</section>
+<section id="unpack-move-assets-to-webserver-root">
 <h2>Unpack/Move Assets to Webserver Root<a class="headerlink" href="#unpack-move-assets-to-webserver-root" title="Permalink to this headline">¶</a></h2>
 <p>For this install guide, we will copy the assets to <code class="docutils literal notranslate"><span class="pre">/var/www/jobson</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp -r /usr/share/jobson/ui/html /var/www/jobson
 </pre></div>
 </div>
-</div>
-<div class="section" id="optional-edit-config-json">
+</section>
+<section id="optional-edit-config-json">
 <h2>Optional: Edit <code class="docutils literal notranslate"><span class="pre">config.json</span></code><a class="headerlink" href="#optional-edit-config-json" title="Permalink to this headline">¶</a></h2>
 <p>If you want to change the <code class="docutils literal notranslate"><span class="pre">apiPrefix</span></code>, edit the UI configuration file:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nano /var/www/jobson/config.json
@@ -234,8 +235,8 @@ want the UI, you can download it from the <a class="reference external" href="ht
 </div>
 <p>This will cause <code class="docutils literal notranslate"><span class="pre">jobson</span></code> API requests to go elsewhere. For this
 guide, we assume the default value (<code class="docutils literal notranslate"><span class="pre">/api</span></code>).</p>
-</div>
-<div class="section" id="configure-nginx">
+</section>
+<section id="configure-nginx">
 <h2>Configure <code class="docutils literal notranslate"><span class="pre">nginx</span></code><a class="headerlink" href="#configure-nginx" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Create an nginx config file for the site at
@@ -313,16 +314,16 @@ ln -s ../sites-available/jobson-ui jobson-ui
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nginx -s reload
 </pre></div>
 </div>
-</div>
-<div class="section" id="optional-load-the-ui-in-a-browser">
+</section>
+<section id="optional-load-the-ui-in-a-browser">
 <h2>Optional: Load the UI in a Browser<a class="headerlink" href="#optional-load-the-ui-in-a-browser" title="Permalink to this headline">¶</a></h2>
 <p>Try loading the UI in a browser:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>xdg-open http://localhost
 </pre></div>
 </div>
 <p>Which, if <code class="docutils literal notranslate"><span class="pre">jobson</span></code> is running, should work fine.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

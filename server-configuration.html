@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Server Configuration &mdash; jobson-docs 1.0.11 documentation</title>
+  <title>Server Configuration &mdash; jobson-docs 1.0.12 documentation</title>
   
 
   
@@ -80,7 +81,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
@@ -173,18 +174,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="server-configuration">
+  <section id="server-configuration">
 <h1>Server Configuration<a class="headerlink" href="#server-configuration" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">config.yml</span></code> is the top-level configuration file for Jobson. It is a
 standard YAML file.</p>
-<div class="section" id="configuration-note-dropwizard">
+<section id="configuration-note-dropwizard">
 <h2>Configuration Note: Dropwizard<a class="headerlink" href="#configuration-note-dropwizard" title="Permalink to this headline">¶</a></h2>
 <p>Internally, Jobson currently uses <a class="reference external" href="https://www.dropwizard.io">dropwizard</a> to handle its server configuration. If
 you need to configure webserver properties (e.g. ports, logs), refer
 to the <a class="reference external" href="https://www.dropwizard.io/en/stable/manual/configuration.html">dropwizard configuration reference</a></p>
 <p><strong>Note</strong>: Relative paths are resolved relative to <code class="docutils literal notranslate"><span class="pre">config.yml</span></code></p>
-</div>
-<div class="section" id="top-level-fields">
+</section>
+<section id="top-level-fields">
 <h2>Top-Level Fields<a class="headerlink" href="#top-level-fields" title="Permalink to this headline">¶</a></h2>
 <table class="docutils align-default" id="id1">
 <caption><span class="caption-text">Top-level fields</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
@@ -226,8 +227,8 @@ to the <a class="reference external" href="https://www.dropwizard.io/en/stable/m
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="workingdirs-working-directory-configuration">
+</section>
+<section id="workingdirs-working-directory-configuration">
 <h2><code class="docutils literal notranslate"><span class="pre">workingDirs</span></code>: Working Directory Configuration<a class="headerlink" href="#workingdirs-working-directory-configuration" title="Permalink to this headline">¶</a></h2>
 <p>Configuration for working directories. Each process spawned by Jobson
 launches in its own working directory.</p>
@@ -253,7 +254,7 @@ launches in its own working directory.</p>
 </tr>
 </tbody>
 </table>
-<div class="section" id="removeafterexecution-policy-for-removing-working-directories">
+<section id="removeafterexecution-policy-for-removing-working-directories">
 <h3><code class="docutils literal notranslate"><span class="pre">removeAfterExecution</span></code>: Policy for Removing Working Directories<a class="headerlink" href="#removeafterexecution-policy-for-removing-working-directories" title="Permalink to this headline">¶</a></h3>
 <table class="docutils align-default">
 <colgroup>
@@ -272,9 +273,9 @@ launches in its own working directory.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="users-users-configuration">
+</section>
+</section>
+<section id="users-users-configuration">
 <h2><code class="docutils literal notranslate"><span class="pre">users:</span></code>: Users Configuration<a class="headerlink" href="#users-users-configuration" title="Permalink to this headline">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
@@ -293,8 +294,8 @@ launches in its own working directory.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="authentication-authentication-configuration">
+</section>
+<section id="authentication-authentication-configuration">
 <h2><code class="docutils literal notranslate"><span class="pre">authentication:</span></code>: Authentication Configuration<a class="headerlink" href="#authentication-authentication-configuration" title="Permalink to this headline">¶</a></h2>
 <p>The relevant <code class="docutils literal notranslate"><span class="pre">authentication:</span></code> fields change based on what <code class="docutils literal notranslate"><span class="pre">type:</span></code>
 of authentication that was specified. <code class="docutils literal notranslate"><span class="pre">guest</span></code> auth has different
@@ -316,7 +317,7 @@ configuration requriements from <code class="docutils literal notranslate"><span
 </tr>
 </tbody>
 </table>
-<div class="section" id="type-guest-guest-authentication-configuration">
+<section id="type-guest-guest-authentication-configuration">
 <h3><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">guest</span></code>: Guest Authentication Configuration<a class="headerlink" href="#type-guest-guest-authentication-configuration" title="Permalink to this headline">¶</a></h3>
 <p>With <code class="docutils literal notranslate"><span class="pre">guest</span></code> authentication, the server will accept all incoming and
 assign them a username of <code class="docutils literal notranslate"><span class="pre">guestUserName</span></code>.</p>
@@ -337,8 +338,8 @@ assign them a username of <code class="docutils literal notranslate"><span class
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="type-basic-http-basic-authentication-configuration">
+</section>
+<section id="type-basic-http-basic-authentication-configuration">
 <h3><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">basic</span></code>: HTTP Basic Authentication Configuration<a class="headerlink" href="#type-basic-http-basic-authentication-configuration" title="Permalink to this headline">¶</a></h3>
 <p>With <code class="docutils literal notranslate"><span class="pre">basic</span></code> authentication, the server will use a HTTP Basic (<a class="reference external" href="https://tools.ietf.org/html/rfc7617">RFC
 7617</a>) authentication scheme to
@@ -363,8 +364,8 @@ credentials shall be rejected.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="type-jwt-stateless-json-web-token-jwt-authentication-configuration">
+</section>
+<section id="type-jwt-stateless-json-web-token-jwt-authentication-configuration">
 <h3><code class="docutils literal notranslate"><span class="pre">type:</span> <span class="pre">jwt</span></code>: Stateless JSON Web Token (JWT) Authentication Configuration<a class="headerlink" href="#type-jwt-stateless-json-web-token-jwt-authentication-configuration" title="Permalink to this headline">¶</a></h3>
 <p>With <code class="docutils literal notranslate"><span class="pre">jwt</span></code> authentication, the server will use stateless JWTs (<a class="reference external" href="https://tools.ietf.org/html/rfc7519">RFC
 7519</a>), which allow clients to
@@ -391,9 +392,9 @@ shall reject the request.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="execution-execution-configuration">
+</section>
+</section>
+<section id="execution-execution-configuration">
 <h2><code class="docutils literal notranslate"><span class="pre">execution:</span></code>: Execution Configuration<a class="headerlink" href="#execution-execution-configuration" title="Permalink to this headline">¶</a></h2>
 <table class="docutils align-default">
 <colgroup>
@@ -416,8 +417,8 @@ shall reject the request.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

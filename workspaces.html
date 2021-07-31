@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Workspaces &mdash; jobson-docs 1.0.11 documentation</title>
+  <title>Workspaces &mdash; jobson-docs 1.0.12 documentation</title>
   
 
   
@@ -80,7 +81,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
@@ -167,32 +168,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="workspaces">
+  <section id="workspaces">
 <h1>Workspaces<a class="headerlink" href="#workspaces" title="Permalink to this headline">¶</a></h1>
 <p>Jobson is configured through standard plaintext configuration files and
 directories. All the necessary files (e.g. <code class="docutils literal notranslate"><span class="pre">config.yml</span></code>, <code class="docutils literal notranslate"><span class="pre">specs/</span></code>,
 <code class="docutils literal notranslate"><span class="pre">jobs/</span></code>) are, by default, kept together in the same directory after
 running the <code class="docutils literal notranslate"><span class="pre">jobson</span> <span class="pre">new</span></code> command. That directory is what we call a
 “workspace”.</p>
-<div class="section" id="top-level-files-directories">
+<section id="top-level-files-directories">
 <h2>Top-Level Files/Directories<a class="headerlink" href="#top-level-files-directories" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="config-yml-main-configuration-file">
+<section id="config-yml-main-configuration-file">
 <h3><code class="docutils literal notranslate"><span class="pre">config.yml</span></code>: Main Configuration File<a class="headerlink" href="#config-yml-main-configuration-file" title="Permalink to this headline">¶</a></h3>
 <p>A standard YAML file that is used by many of Jobson’s commands (e.g.
 <code class="docutils literal notranslate"><span class="pre">serve</span></code>, <code class="docutils literal notranslate"><span class="pre">generate</span></code>). It contains everything you would expect a
 top-level configuration file to contain: data locations, server ports,
 authentication configuration, job queue behavior, etc.</p>
 <p>See <a class="reference external" href="#config-yml">config.yml</a> for more details.</p>
-</div>
-<div class="section" id="specs-job-specs">
+</section>
+<section id="specs-job-specs">
 <h3><code class="docutils literal notranslate"><span class="pre">specs/</span></code>: Job Specs<a class="headerlink" href="#specs-job-specs" title="Permalink to this headline">¶</a></h3>
 <p>A directory that contains the <a class="reference external" href="#job-specs">job specs</a> hosted by the
 Jobson server. Each subdirectory in <code class="docutils literal notranslate"><span class="pre">specs/</span></code> is a job spec hosted by
 Jobson. A job spec ID—as exposed via the Jobson API—is derived from the
 subdirectory’s name. For example, a job spec at <code class="docutils literal notranslate"><span class="pre">specs/foo/spec.yml</span></code>
 would result in <code class="docutils literal notranslate"><span class="pre">foo</span></code> being exposed via the Jobson API.</p>
-</div>
-<div class="section" id="jobs-job-data">
+</section>
+<section id="jobs-job-data">
 <h3><code class="docutils literal notranslate"><span class="pre">jobs/</span></code>: Job Data<a class="headerlink" href="#jobs-job-data" title="Permalink to this headline">¶</a></h3>
 <p>A directory that contains job data. The data associted with each job
 request (inputs, timestamps, outputs) is persisted here under a
@@ -200,8 +201,8 @@ subdirectory named <code class="docutils literal notranslate"><span class="pre">
 <p><strong>Note:</strong> Although job folders are designed to be easy for 3rd-party
 scripts to read, their structure is not yet stable. Don’t go building
 something big on the assumption that they are stable.</p>
-</div>
-<div class="section" id="wds-temporary-working-directories">
+</section>
+<section id="wds-temporary-working-directories">
 <h3><code class="docutils literal notranslate"><span class="pre">wds/</span></code>: Temporary Working Directories<a class="headerlink" href="#wds-temporary-working-directories" title="Permalink to this headline">¶</a></h3>
 <p>A directory that contains runtime working directories. Jobson generates
 a unique job ID for each successful job request. The working directory
@@ -221,17 +222,17 @@ directory used by that particular job.</p></li>
 <p>Jobson does not need a working directory after an application has
 finised executing. After finishing, Jobson copies any outputs (as
 specified in the <a class="reference external" href="#job-specs">job spec</a>) to the <code class="docutils literal notranslate"><span class="pre">jobs/</span></code> folder.</p>
-</div>
-<div class="section" id="users-authorized-system-users">
+</section>
+<section id="users-authorized-system-users">
 <h3><code class="docutils literal notranslate"><span class="pre">users</span></code>: Authorized System Users<a class="headerlink" href="#users-authorized-system-users" title="Permalink to this headline">¶</a></h3>
 <p>A plaintext file that contains users authorized to use the Jobson API
 when <code class="docutils literal notranslate"><span class="pre">basic</span></code> authorization (see configuration documentation) is
 enabled.</p>
 <p>This file should not be edited directly. Instead, the <code class="docutils literal notranslate"><span class="pre">users</span></code> command
 should be used to add or modify entries in the file.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>

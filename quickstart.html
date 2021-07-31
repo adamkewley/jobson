@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Quickstart &mdash; jobson-docs 1.0.11 documentation</title>
+  <title>Quickstart &mdash; jobson-docs 1.0.12 documentation</title>
   
 
   
@@ -80,7 +81,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
@@ -168,17 +169,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="quickstart">
+  <section id="quickstart">
 <h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
 <p>Jobson’s initial setup is inspired by <a class="reference external" href="//rubyonrails.org">Ruby on
 Rails</a>, where the command-line is used to generate
 and launch convention-over-configuration projects (in Jobson,
 <a class="reference external" href="workspaces.html">workspaces</a>).</p>
-<div class="section" id="install">
+<section id="install">
 <h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
 <p>View the <a class="reference external" href="install.html">install</a> page.</p>
-</div>
-<div class="section" id="test-jobson-s-command-line-interface">
+</section>
+<section id="test-jobson-s-command-line-interface">
 <h2>Test Jobson’s Command-Line Interface<a class="headerlink" href="#test-jobson-s-command-line-interface" title="Permalink to this headline">¶</a></h2>
 <p>This guide uses Jobson’s command-line, which should be available if
 you have installed Jobson correctly. Ensure you can run it, for
@@ -188,8 +189,8 @@ example, by showing its help pages:</p>
 </div>
 <p>More details about the command-line interface can be found
 <a class="reference external" href="commandline.html">here</a>.</p>
-</div>
-<div class="section" id="generate-a-workspace">
+</section>
+<section id="generate-a-workspace">
 <h2>Generate a Workspace<a class="headerlink" href="#generate-a-workspace" title="Permalink to this headline">¶</a></h2>
 <p>Workspaces are Jobson’s way of organizing its configuration and
 data. The <code class="docutils literal notranslate"><span class="pre">new</span></code> command generates a barebones workspace containing
@@ -207,8 +208,8 @@ create    wds
 </pre></div>
 </div>
 <p>More details about workspaces can be found <a class="reference external" href="workspaces.html">here</a>.</p>
-</div>
-<div class="section" id="generate-a-job-spec">
+</section>
+<section id="generate-a-job-spec">
 <h2>Generate a Job Spec<a class="headerlink" href="#generate-a-job-spec" title="Permalink to this headline">¶</a></h2>
 <p>Job specs are standard YAML files that describe an application. They
 are held in the <code class="docutils literal notranslate"><span class="pre">specs/</span></code> folder in a workspace. The <code class="docutils literal notranslate"><span class="pre">generate</span>
@@ -219,8 +220,8 @@ create    specs/foo/spec.yml
 </pre></div>
 </div>
 <p>More details about job specs can be found <a class="reference external" href="specs.html">here</a>.</p>
-</div>
-<div class="section" id="edit-the-job-spec-to-match-the-application">
+</section>
+<section id="edit-the-job-spec-to-match-the-application">
 <h2>Edit the Job Spec to match the Application<a class="headerlink" href="#edit-the-job-spec-to-match-the-application" title="Permalink to this headline">¶</a></h2>
 <p>For the sake of this guide, lets assume you want Jobson to host a python
 script takes two inputs, prints something to the standard output (via
@@ -232,7 +233,7 @@ script takes two inputs, prints something to the standard output (via
 <span class="n">first_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">second_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">first_name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">second_name</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">first_name</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">second_name</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;output.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Some output data</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -289,8 +290,8 @@ that file under the ID <code class="docutils literal notranslate"><span class="p
 </ul>
 <p>More details about <a class="reference external" href="specs.html">job specs</a> and <a class="reference external" href="specs.html#template-strings">template
 expressions</a> are available at the links.</p>
-</div>
-<div class="section" id="optional-validate-and-run-a-job-against-the-job-spec">
+</section>
+<section id="optional-validate-and-run-a-job-against-the-job-spec">
 <h2><em>Optional</em>: Validate and Run a Job Against the Job Spec<a class="headerlink" href="#optional-validate-and-run-a-job-against-the-job-spec" title="Permalink to this headline">¶</a></h2>
 <p>The job spec can be validated by Jobson to check for basic syntactical
 errors. The <code class="docutils literal notranslate"><span class="pre">validate</span> <span class="pre">spec</span></code> command will exit with no output if your
@@ -338,8 +339,8 @@ standard error, and exit code from the application back to the
 command-line, which lets you debug runtime errors more easily.</p>
 <p>We’ve now created a job spec, validated it, and ran it locally, all
 that’s left is to host it.</p>
-</div>
-<div class="section" id="boot-the-server">
+</section>
+<section id="boot-the-server">
 <h2>Boot the Server<a class="headerlink" href="#boot-the-server" title="Permalink to this headline">¶</a></h2>
 <p>With a working job spec in place, we’re ready to boot a server. The
 <code class="docutils literal notranslate"><span class="pre">serve</span></code> command should be ran from the workspace:</p>
@@ -348,8 +349,8 @@ that’s left is to host it.</p>
 </div>
 <p>More details about the server configuration (<code class="docutils literal notranslate"><span class="pre">config.yml</span></code>) are
 available <a class="reference external" href="server-configuration.html">here</a>.</p>
-</div>
-<div class="section" id="verify-the-server-s-working">
+</section>
+<section id="verify-the-server-s-working">
 <h2>Verify the Server’s Working<a class="headerlink" href="#verify-the-server-s-working" title="Permalink to this headline">¶</a></h2>
 <p>The server is then running, which you can verify with a HTTP tool such
 as <code class="docutils literal notranslate"><span class="pre">curl</span></code>:</p>
@@ -363,8 +364,8 @@ valid API request. Therefore, you can also <code class="docutils literal notrans
 <span class="o">{</span><span class="s2">&quot;id&quot;</span>:<span class="s2">&quot;svpj5ppevn&quot;</span>,<span class="s2">&quot;_links&quot;</span>:<span class="o">{</span><span class="s2">&quot;outputs&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/jobs/svpj5ppevn/outputs&quot;</span><span class="o">}</span>,<span class="s2">&quot;inputs&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/jobs/svpj5ppevn/inputs&quot;</span><span class="o">}</span>,<span class="s2">&quot;self&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/jobs/svpj5ppevn&quot;</span><span class="o">}</span>,<span class="s2">&quot;spec&quot;</span>:<span class="o">{</span><span class="s2">&quot;href&quot;</span>:<span class="s2">&quot;/v1/jobs/svpj5ppevn/spec&quot;</span><span class="o">}}}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="what-s-next">
+</section>
+<section id="what-s-next">
 <h2>What’s Next?<a class="headerlink" href="#what-s-next" title="Permalink to this headline">¶</a></h2>
 <p>Now that a server is running, downstream clients can use the API to post
 job requests to the server, which will validate the request is valid
@@ -379,8 +380,8 @@ steps you can take:</p>
 Configuration</a></p></li>
 <li><p><strong>Learn about Job Specs</strong>: See <a class="reference external" href="specs.html">Job Specs</a></p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

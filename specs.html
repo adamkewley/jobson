@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Job Specs &mdash; jobson-docs 1.0.11 documentation</title>
+  <title>Job Specs &mdash; jobson-docs 1.0.12 documentation</title>
   
 
   
@@ -80,7 +81,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
@@ -179,9 +180,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="job-specs">
+  <section id="job-specs">
 <h1>Job Specs<a class="headerlink" href="#job-specs" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="overview">
+<section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>Job specs are saved in the job specs directory (e.g.
 <code class="docutils literal notranslate"><span class="pre">specs/{spec-id}/spec.yml</span></code>). At runtime, Jobson uses the job spec to
@@ -293,8 +294,8 @@ the job’s working directory (<code class="docutils literal notranslate"><span 
 Once the script runs, it produces a file called <code class="docutils literal notranslate"><span class="pre">output</span></code>, which has an
 <code class="docutils literal notranslate"><span class="pre">image/jpeg</span></code> MIME type and should be persisted as
 <code class="docutils literal notranslate"><span class="pre">${request.id}.jpg</span></code> by Jobson.</p>
-</div>
-<div class="section" id="creating-a-job-spec">
+</section>
+<section id="creating-a-job-spec">
 <h2>Creating a Job Spec<a class="headerlink" href="#creating-a-job-spec" title="Permalink to this headline">¶</a></h2>
 <p>The Jobson command-line interface comes with a basic spec generator for
 creating a bareboes spec:</p>
@@ -303,36 +304,36 @@ creating a bareboes spec:</p>
 </div>
 <p>This creates a job spec with an ID of <code class="docutils literal notranslate"><span class="pre">new-spec</span></code> at
 <code class="docutils literal notranslate"><span class="pre">jobs/new-spec/spec.yml</span></code>.</p>
-</div>
-<div class="section" id="spec-yml-schema">
+</section>
+<section id="spec-yml-schema">
 <h2><code class="docutils literal notranslate"><span class="pre">spec.yml</span></code> Schema<a class="headerlink" href="#spec-yml-schema" title="Permalink to this headline">¶</a></h2>
 <p>Job specs are standard YAML files that should appear at the correct path
 (e.g. <code class="docutils literal notranslate"><span class="pre">jobs/{job-id}/spec.yml</span></code>). This section describes what can be
 put into the <code class="docutils literal notranslate"><span class="pre">spec.yml</span></code> files.</p>
-<div class="section" id="name">
+<section id="name">
 <h3><code class="docutils literal notranslate"><span class="pre">name</span></code><a class="headerlink" href="#name" title="Permalink to this headline">¶</a></h3>
 <p>Name of the Job Spec.</p>
-</div>
-<div class="section" id="description">
+</section>
+<section id="description">
 <h3><code class="docutils literal notranslate"><span class="pre">description</span></code><a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
 <p>Detailed Description of the Job Spec</p>
-</div>
-<div class="section" id="expectedinputs">
+</section>
+<section id="expectedinputs">
 <h3><code class="docutils literal notranslate"><span class="pre">expectedInputs</span></code><a class="headerlink" href="#expectedinputs" title="Permalink to this headline">¶</a></h3>
 <p>What Input Data Should be Provided to Execute a Job</p>
-</div>
-<div class="section" id="execution">
+</section>
+<section id="execution">
 <h3><code class="docutils literal notranslate"><span class="pre">execution</span></code><a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h3>
 <p>What Executes Once the Input Data is Received.</p>
-</div>
-<div class="section" id="expectedoutputs">
+</section>
+<section id="expectedoutputs">
 <h3><code class="docutils literal notranslate"><span class="pre">expectedOutputs</span></code><a class="headerlink" href="#expectedoutputs" title="Permalink to this headline">¶</a></h3>
 <p>What is Produced by Execution (and should be persisted by Jobson).</p>
 <p>TODO: Work in progress. Need documentation about supported data types,
 scripting functions, etc.</p>
-</div>
-</div>
-<div class="section" id="template-strings">
+</section>
+</section>
+<section id="template-strings">
 <h2>Template Strings<a class="headerlink" href="#template-strings" title="Permalink to this headline">¶</a></h2>
 <p>Template strings, such as <code class="docutils literal notranslate"><span class="pre">${request.id}</span></code> allow developers to add
 runtime evaluation to their job specs. For example, template strings
@@ -351,34 +352,34 @@ expressions at runtime, evaluating them against an environment
 containing data (e.g. <code class="docutils literal notranslate"><span class="pre">inputs</span></code>, <code class="docutils literal notranslate"><span class="pre">request</span></code>) and functions (e.g.
 <code class="docutils literal notranslate"><span class="pre">toJSON</span></code>, <code class="docutils literal notranslate"><span class="pre">toFile</span></code>).</p>
 <p>Template strings have access to the following:</p>
-<div class="section" id="string-tojson-object-arg">
+<section id="string-tojson-object-arg">
 <h3><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">toJSON(Object</span> <span class="pre">arg)</span></code><a class="headerlink" href="#string-tojson-object-arg" title="Permalink to this headline">¶</a></h3>
 <p>A function that takes an input (e.g. <code class="docutils literal notranslate"><span class="pre">request</span></code>, <code class="docutils literal notranslate"><span class="pre">request.id</span></code>,
 <code class="docutils literal notranslate"><span class="pre">'string</span> <span class="pre">literal'</span></code>) and returns a JSON representation of the input.
 Object-/Hash-like arguments are converted into a JSON object, strings
 are converted into a JSON string, numbers into JSON numbers, etc.</p>
-</div>
-<div class="section" id="string-tofile-string-content">
+</section>
+<section id="string-tofile-string-content">
 <h3><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">toFile(String</span> <span class="pre">content)</span></code><a class="headerlink" href="#string-tofile-string-content" title="Permalink to this headline">¶</a></h3>
 <p>A function that takes a string input (e.g. <code class="docutils literal notranslate"><span class="pre">request.id</span></code>,
 <code class="docutils literal notranslate"><span class="pre">toJSON(request)</span></code>), write the input to a file, and returns an absolute
 path to that file.</p>
-</div>
-<div class="section" id="string-join-string-delimiter-stringarray-strings">
+</section>
+<section id="string-join-string-delimiter-stringarray-strings">
 <h3><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">join(String</span> <span class="pre">delimiter,</span> <span class="pre">StringArray</span> <span class="pre">strings)</span></code><a class="headerlink" href="#string-join-string-delimiter-stringarray-strings" title="Permalink to this headline">¶</a></h3>
 <p>A function that takes a delimiter (e.g. <code class="docutils literal notranslate"><span class="pre">','</span></code>) and a <code class="docutils literal notranslate"><span class="pre">StringArray</span></code>
 (usually, from a Jobson <code class="docutils literal notranslate"><span class="pre">string[]</span></code> <code class="docutils literal notranslate"><span class="pre">expectedInput</span></code>) and returns a
 string that contains each element in the <code class="docutils literal notranslate"><span class="pre">StringArray</span></code> joined with the
 delimiter.</p>
-</div>
-<div class="section" id="string-tostring-object-arg">
+</section>
+<section id="string-tostring-object-arg">
 <h3><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">toString(Object</span> <span class="pre">arg)</span></code><a class="headerlink" href="#string-tostring-object-arg" title="Permalink to this headline">¶</a></h3>
 <p>A function that takes an argument (e.g. <code class="docutils literal notranslate"><span class="pre">request.firstName</span></code>) and
 returns a string representation of that arugment. Note: internally, this
 uses the Java <code class="docutils literal notranslate"><span class="pre">.toString</span></code> method on the argument, which may produce
 non-obvious results with complex arguments.</p>
-</div>
-<div class="section" id="object-request">
+</section>
+<section id="object-request">
 <h3><code class="docutils literal notranslate"><span class="pre">Object</span> <span class="pre">request</span></code><a class="headerlink" href="#object-request" title="Permalink to this headline">¶</a></h3>
 <p>A reference to the request that initiated the job. Useful fields in the
 request are:</p>
@@ -395,18 +396,18 @@ the job.</p></li>
 <code class="docutils literal notranslate"><span class="pre">toJSON(request.inputs)</span></code>).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">JobSpec</span> <span class="pre">spec</span></code>: The job spec the job was submitted against</p></li>
 </ul>
-</div>
-<div class="section" id="object-inputs">
+</section>
+<section id="object-inputs">
 <h3><code class="docutils literal notranslate"><span class="pre">Object</span> <span class="pre">inputs</span></code><a class="headerlink" href="#object-inputs" title="Permalink to this headline">¶</a></h3>
 <p>Shortcut for <code class="docutils literal notranslate"><span class="pre">request.inputs</span></code>.</p>
-</div>
-<div class="section" id="string-outputdir">
+</section>
+<section id="string-outputdir">
 <h3><code class="docutils literal notranslate"><span class="pre">String</span> <span class="pre">outputDir</span></code><a class="headerlink" href="#string-outputdir" title="Permalink to this headline">¶</a></h3>
 <p>The output directory for the job. At time of writing, this is always the
 same as the job’s working directory.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>

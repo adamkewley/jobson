@@ -5,10 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Command-Line Interface &mdash; jobson-docs 1.0.11 documentation</title>
+  <title>Command-Line Interface &mdash; jobson-docs 1.0.12 documentation</title>
   
 
   
@@ -80,7 +81,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="how-it-works.html">How It Works</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
@@ -162,13 +163,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="command-line-interface">
+  <section id="command-line-interface">
 <h1>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h1>
 <p>The command-line interface (CLI) for Jobson, <code class="docutils literal notranslate"><span class="pre">jobson</span></code>, contains
 commands aimed at day-to-day development and administration of Jobson.
 The CLI is available once jobson has been
 <a class="reference external" href="install.html">installed</a>.</p>
-<div class="section" id="running-the-cli-via-a-docker-container">
+<section id="running-the-cli-via-a-docker-container">
 <h2>Running the CLI via a Docker Container<a class="headerlink" href="#running-the-cli-via-a-docker-container" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">jobson</span></code> CLI can be used from outside a container by first entering the workspace (<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">/home/jobson</span></code>) then
 executing the commands. For example, adding a <code class="docutils literal notranslate"><span class="pre">basic</span></code> auth user via a container:</p>
@@ -176,8 +177,8 @@ executing the commands. For example, adding a <code class="docutils literal notr
 docker <span class="nb">exec</span> -ti jobson-container sh -c <span class="s2">&quot;cd /home/jobson &amp;&amp; jobson users add config.yml -p PASSWORD USERNAME&quot;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="viewing-help-with-help">
+</section>
+<section id="viewing-help-with-help">
 <h2>Viewing Help with <code class="docutils literal notranslate"><span class="pre">--help</span></code><a class="headerlink" href="#viewing-help-with-help" title="Permalink to this headline">¶</a></h2>
 <p>Pass the <code class="docutils literal notranslate"><span class="pre">--help</span></code> argument to <code class="docutils literal notranslate"><span class="pre">jobson</span></code> to view the help
 documentation for a particular command.</p>
@@ -206,8 +207,8 @@ optional arguments:
   -h, --help             show this <span class="nb">help</span> message and <span class="nb">exit</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="adding-a-new-user-basic-auth">
+</section>
+<section id="adding-a-new-user-basic-auth">
 <h2>Adding a new User (basic auth)<a class="headerlink" href="#adding-a-new-user-basic-auth" title="Permalink to this headline">¶</a></h2>
 <p>If Jobson is configured to use <code class="docutils literal notranslate"><span class="pre">basic</span></code> authentication in the <a class="reference external" href="server-configuration.html">server config</a> :</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config.yml</span>
@@ -227,8 +228,8 @@ being read:</p>
 USERNAME:basic:<span class="nv">$6$XbPs6uOo$7</span>AYilI2.iL84jLxXqb10vnzGygtXWCy1W27EUU7AhbKrDrtHGSI1jTRCIlUUmMhDzdwZ0sS7vm7iBrJ1VV6JB.
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
