@@ -3,7 +3,7 @@
 > A platform for transforming command-line applications into a job service
 
 
-[![Build Status](https://travis-ci.org/adamkewley/jobson.svg?branch=master)](https://travis-ci.org/adamkewley/jobson)
+[![Build Status](https://travis-ci.org/adamkewley/jobson.svg?branch=master)](https://travis-ci.org/adamkewley/jobson) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5148300.svg)](https://doi.org/10.5281/zenodo.5148300)
 
 
 ![ui video demo](jobson-docs/src/ui-animation.gif)
