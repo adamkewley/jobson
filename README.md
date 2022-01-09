@@ -12,7 +12,7 @@
 ![ui video demo](jobson-docs/src/ui-animation.gif)
 
 
-📖 [Documentation](https://adamkewley.github.io/jobson), ⭐️ [Demo](https://adamkewley.com/demos/jobson/show/index.html)
+📖 [Documentation](https://adamkewley.github.io/jobson), ⭐️ [Demo](https://jobson.adamkewley.com)
 
 Jobson is a platform (backend webserver, frontend UI, and command-line
 client) that transforms command-line applications into a web-ready job
