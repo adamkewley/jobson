@@ -2,7 +2,7 @@ FROM azul/zulu-openjdk-alpine:11
 
 # Install 3rd-party dependencies
 RUN apk update && \
-    apk add nginx supervisor && \
+    apk add bash nginx supervisor && \
     rm -rf /etc/nginx/sites-enabled/default
 
 # Install jobson debian package
@@ -20,7 +20,7 @@ RUN mkdir /tmp/jobson && \
     mkdir -p /run/nginx
 
 # Configure nginx
-COPY default.conf /etc/nginx/conf.d/default.conf
+COPY default.conf /etc/nginx/http.d/default.conf
 
 # Configure supervisord
 COPY supervisord.conf /etc/supervisord.conf
