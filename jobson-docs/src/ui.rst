@@ -74,11 +74,11 @@ want the UI, you can download it from the `releases
 Unpack/Move Assets to Webserver Root
 ------------------------------------
 
-For this install guide, we will copy the assets to ``/var/www/jobson``:
+For this install guide, we will copy the assets to ``/var/www/jobson-ui``:
 
 .. code:: bash
 
-	  cp -r /usr/share/jobson/ui/html /var/www/jobson
+	  cp -r /usr/share/jobson/ui/html /var/www/jobson-ui
 
 
 	  
