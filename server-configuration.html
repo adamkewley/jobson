@@ -5,11 +5,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Server Configuration &mdash; jobson-docs 1.0.12 documentation</title>
+  <title>Server Configuration &mdash; jobson-docs 1.0.13 documentation</title>
   
 
   
@@ -187,13 +187,8 @@ to the <a class="reference external" href="https://www.dropwizard.io/en/stable/m
 </section>
 <section id="top-level-fields">
 <h2>Top-Level Fields<a class="headerlink" href="#top-level-fields" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default" id="id1">
-<caption><span class="caption-text">Top-level fields</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
+<table class="docutils align-default" id="table-1">
+<caption><span class="caption-text">Top-level fields</span><a class="headerlink" href="#table-1" title="Permalink to this table">¶</a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>
 <th class="head"><p>Default</p></th>
@@ -232,13 +227,8 @@ to the <a class="reference external" href="https://www.dropwizard.io/en/stable/m
 <h2><code class="docutils literal notranslate"><span class="pre">workingDirs</span></code>: Working Directory Configuration<a class="headerlink" href="#workingdirs-working-directory-configuration" title="Permalink to this headline">¶</a></h2>
 <p>Configuration for working directories. Each process spawned by Jobson
 launches in its own working directory.</p>
-<table class="docutils align-default" id="id2">
-<caption><span class="caption-text">Working Directory Configuration</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
+<table class="docutils align-default" id="table-2">
+<caption><span class="caption-text">Working Directory Configuration</span><a class="headerlink" href="#table-2" title="Permalink to this table">¶</a></caption>
 <tbody>
 <tr class="row-odd"><td><p>Key</p></td>
 <td><p>Default</p></td>
@@ -257,11 +247,6 @@ launches in its own working directory.</p>
 <section id="removeafterexecution-policy-for-removing-working-directories">
 <h3><code class="docutils literal notranslate"><span class="pre">removeAfterExecution</span></code>: Policy for Removing Working Directories<a class="headerlink" href="#removeafterexecution-policy-for-removing-working-directories" title="Permalink to this headline">¶</a></h3>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>Key</p></td>
 <td><p>Default</p></td>
@@ -278,11 +263,6 @@ launches in its own working directory.</p>
 <section id="users-users-configuration">
 <h2><code class="docutils literal notranslate"><span class="pre">users:</span></code>: Users Configuration<a class="headerlink" href="#users-users-configuration" title="Permalink to this headline">¶</a></h2>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>Key</p></td>
 <td><p>Default</p></td>
@@ -301,11 +281,6 @@ launches in its own working directory.</p>
 of authentication that was specified. <code class="docutils literal notranslate"><span class="pre">guest</span></code> auth has different
 configuration requriements from <code class="docutils literal notranslate"><span class="pre">jwt</span></code> auth, for example.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>Key</p></td>
 <td><p>Default</p></td>
@@ -322,11 +297,6 @@ configuration requriements from <code class="docutils literal notranslate"><span
 <p>With <code class="docutils literal notranslate"><span class="pre">guest</span></code> authentication, the server will accept all incoming and
 assign them a username of <code class="docutils literal notranslate"><span class="pre">guestUserName</span></code>.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>Key</p></td>
 <td><p>Default</p></td>
@@ -348,11 +318,6 @@ then be authenticated against entries in Jobson’s <code class="docutils litera
 TODO). Valid credentials shall be permitted to use the API. Invalid
 credentials shall be rejected.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>Key</p></td>
 <td><p>Default</p></td>
@@ -376,11 +341,6 @@ credentials in the token provided the token was signed with
 <code class="docutils literal notranslate"><span class="pre">secretKey</span></code> (below). If the header is missing, or mis-signed, Jobson
 shall reject the request.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>Key</p></td>
 <td><p>Default</p></td>
@@ -397,11 +357,6 @@ shall reject the request.</p>
 <section id="execution-execution-configuration">
 <h2><code class="docutils literal notranslate"><span class="pre">execution:</span></code>: Execution Configuration<a class="headerlink" href="#execution-execution-configuration" title="Permalink to this headline">¶</a></h2>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>Key</p></td>
 <td><p>Default</p></td>
