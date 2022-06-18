@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.github.jobson</groupId>
         <artifactId>jobson-project</artifactId>
-        <version>1.0.13</version>
+        <version>1.0.14</version>
     </parent>
 
     <artifactId>jobson-docs</artifactId>
-    <version>1.0.13</version>
+    <version>1.0.14</version>
     <packaging>pom</packaging>
 
     <dependencies>
