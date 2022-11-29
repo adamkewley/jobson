@@ -1,3 +1,10 @@
+> **⚠️ Warning ⚠️: This project is (effectively) unmaintained.**
+>
+> It mostly works fine, but additional patch/feature support is not currently available, or is very sparse. Apologies
+> for the inconvenience, but I am quite busy 😥!
+>
+> - AK
+
 # jobson <img src="logo.svg" align="right" alt="" width="128" height="128" />
 
 > A platform for transforming command-line applications into a job service
